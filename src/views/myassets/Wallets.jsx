@@ -1,0 +1,352 @@
+import React from "react";
+import PropTypes from "prop-types";
+// react plugin for creating notifications over the dashboard
+import NotificationAlert from "react-notification-alert";
+// reactstrap components
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardBody,
+  CardTitle,
+  Row,
+  Col,
+  UncontrolledTooltip
+} from "reactstrap";
+// react component for creating dynamic tables
+import ReactTable from "react-table";
+// react component used to create sweet alerts
+import ReactBSAlert from "react-bootstrap-sweetalert";
+import FixedButton from "../../components/FixedPlugin/FixedButton";
+
+import ModalCreateWallet from "../modals/wallet/ModalCreateWallet";
+import ModalUpdateWallet from "../modals/wallet/ModalUpdateWallet";
+import { convertFloatToCurrency, getValueListFromObjList, orderByAsc } from "../../core/utils";
+
+class Wallets extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      compId: this.constructor.name.toLowerCase(),
+      langId: props.prefs.langId,
+
+      pageFirstLoading: true,
+
+      alert: null,
+      data: [],
+      sWalletNames: [],
+
+      wallet: {
+        id: undefined,
+        name: undefined,
+        nameState: undefined,
+        nameCurr: undefined,
+        desc: undefined,
+        descState: undefined,
+        stockExchange: undefined,
+        balance: undefined,
+        balanceState: undefined,
+        balanceCurr: undefined,
+        hasChanged: false,
+      },
+
+      currency: { code: "USD", symbol: "$", thousands_separator_symbol: ",", decimal_symbol: "." },
+
+      modal_createWallet_isOpen: false,
+      modal_updateWallet_isOpen: false,
+    }
+
+    this.prepareData = this.prepareData.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
+    this.createClick = this.createClick.bind(this);
+  }
+  static getDerivedStateFromProps(props, state) {
+    if (props.prefs.langId !== state.langId)
+      return { langId: props.prefs.langId }
+    return null
+  }
+  componentDidMount() {
+    this.props.setNavbarTitleId("title_" + this.state.compId)
+    this.prepareRequirements()
+  }
+
+  async prepareRequirements() {
+    let currency = await this.props.managers.app.currencyRetrieve(this.props.prefs.currency)
+
+    this.setState({ currency })
+    await this.prepareData()
+    this.setState({ pageFirstLoading: false })
+  }
+
+  async prepareData() {
+    let wallets = await this.props.managers.app.walletList()
+
+    if (wallets.data) {
+      for (var obj of wallets.data) {
+        obj.stockExchange = await this.props.managers.market.stockExchangeRetrieve(obj.se_short)
+        obj.currency = await this.props.managers.app.currencyRetrieve(obj.currency)
+      }
+
+      wallets.data = orderByAsc(wallets.data, "name")
+
+      let data = wallets.data.map((obj, key) => {
+        return {
+          key: key,
+          id: obj.id,
+          name: obj.name,
+          desc: obj.desc,
+          stockExchange: obj.stockExchange.se_name,
+          currency: obj.currency.code,
+          balance: convertFloatToCurrency(obj.balance, obj.currency),
+          actions: (
+            <div className="actions-right">
+              {/* use this button to edit kind of action */}
+              <Button
+                id={"wallets_edit_" + obj.id}
+                onClick={() => {
+                  let obj = this.state.data.find(obj => obj.key === key);
+                  this.updateClick(obj)
+                }}
+                color="warning"
+                size="sm"
+                className="btn-icon btn-link edit"
+              >
+                <i className="fa fa-edit" />
+              </Button>{" "}
+              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"wallets_edit_" + obj.id}>
+                {this.props.getString(this.state.langId, this.state.compId, "wallets_edit_hint")}
+              </UncontrolledTooltip>
+              {/* use this button to remove the data row */}
+              <Button
+                id={"wallets_delete_" + obj.id}
+                onClick={() => {
+                  let obj = this.state.data.find(obj => obj.key === key);
+                  this.deleteClick(obj)
+                }}
+                color="danger"
+                size="sm"
+                className="btn-icon btn-link remove"
+              >
+                <i className="fa fa-times" />
+              </Button>
+              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"wallets_delete_" + obj.id}>
+                {this.props.getString(this.state.langId, this.state.compId, "wallets_delete_hint")}
+              </UncontrolledTooltip>
+            </div>
+          )
+        }
+      })
+
+      let sWalletNames = getValueListFromObjList(wallets.data, "name")
+      this.setState({ data, sWalletNames })
+    }
+    else
+      this.notify(await this.props.getHttpTranslation(wallets, this.state.compId, "wallet"))
+
+  }
+  async updateClick(obj) {
+    let currency = await this.props.managers.app.currencyRetrieve(obj.currency)
+
+    obj.nameState = ""
+    obj.balanceState = ""
+    obj.descState = ""
+    obj.nameCurr = obj.name
+    obj.balanceCurr = obj.balance
+    obj.hasChanged = false
+
+    this.setState({
+      currency,
+      wallet: obj
+    })
+
+    this.toggleModal("updateWallet")
+  }
+
+  deleteClick(obj) {
+    this.setState({
+      alert: (
+        <ReactBSAlert
+          warning
+          style={{ display: "block", marginTop: "-100px" }}
+          title={this.props.getString(this.state.langId, this.state.compId, "alert_confirming_title")}
+          onConfirm={() => this.deleteObject(obj)}
+          onCancel={() => this.hideAlert()}
+          confirmBtnBsStyle="info"
+          cancelBtnBsStyle="danger"
+          confirmBtnText={this.props.getString(this.state.langId, this.state.compId, "btn_alert_confirm")}
+          cancelBtnText={this.props.getString(this.state.langId, this.state.compId, "btn_alert_cancel")}
+          showCancel
+        >
+          {this.props.getString(this.state.langId, this.state.compId, "alert_confirming_text")}
+        </ReactBSAlert>
+      )
+    });
+  }
+  async deleteObject(obj) {
+    let result = await this.props.managers.app.walletDelete(obj.id)
+
+    if (result.status == 204)
+      this.objectDeleted()
+    else {
+      this.hideAlert()
+      this.notify(await this.props.getHttpTranslation(result, this.state.compId, "wallet"))
+    }
+  }
+  objectDeleted() {
+    this.setState({
+      alert: (
+        <ReactBSAlert
+          success
+          style={{ display: "block", marginTop: "-100px" }}
+          title={this.props.getString(this.state.langId, this.state.compId, "alert_deleted_title")}
+          onConfirm={() => this.hideAlert()}
+          confirmBtnBsStyle="info"
+        >
+          {this.props.getString(this.state.langId, this.state.compId, "alert_deleted_text")}
+        </ReactBSAlert>
+      )
+    });
+
+    this.prepareData()
+  }
+
+  hideAlert() {
+    this.setState({
+      alert: null
+    });
+  };
+
+  notify(msg) {
+    let options = {
+      place: "tc",
+      message: msg,
+      type: "danger",
+      icon: "nc-icon nc-alert-circle-i",
+      autoDismiss: 7
+    };
+    this.refs.notificationAlert.notificationAlert(options);
+  }
+
+  createClick() {
+    this.toggleModal("createWallet")
+  }
+  toggleModal(modalId) {
+    this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
+  };
+
+  render() {
+    let { getString } = this.props;
+    let {
+      langId,
+      compId,
+
+      pageFirstLoading,
+
+      alert,
+
+      data,
+      wallet,
+      sWalletNames,
+      currency,
+
+      modal_createWallet_isOpen,
+      modal_updateWallet_isOpen,
+
+    } = this.state;
+
+    return (
+      <div className="content">
+        <NotificationAlert ref="notificationAlert" />
+        {alert}
+        <ModalCreateWallet
+          {...this.props}
+          modalId="createWallet"
+          isOpen={modal_createWallet_isOpen}
+          sWalletNames={sWalletNames}
+          currency={currency}
+          toggleModal={this.toggleModal}
+          runItIfSuccess={this.prepareData}
+        />
+        <ModalUpdateWallet
+          {...this.props}
+          modalId="updateWallet"
+          isOpen={modal_updateWallet_isOpen}
+          wallet={{ ...wallet }}              // send just a copy
+          sWalletNames={sWalletNames}
+          currency={currency}
+          toggleModal={this.toggleModal}
+          runItIfSuccess={this.prepareData}
+        />
+        <Row>
+          <Col md="12">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">{getString(langId, compId, "card_title")}</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <ReactTable
+                  data={data}
+                  filterable
+                  columns={[
+                    {
+                      Header: getString(langId, compId, "header_name"),
+                      accessor: "name"
+                    },
+                    {
+                      Header: getString(langId, compId, "header_desc"),
+                      accessor: "desc"
+                    },
+                    {
+                      Header: getString(langId, compId, "header_stockExchange"),
+                      accessor: "stockExchange",
+                    },
+                    {
+                      Header: getString(langId, compId, "header_balance"),
+                      accessor: "balance",
+                      className: "text-right"
+                    },
+                    {
+                      Header: getString(langId, compId, "header_actions"),
+                      accessor: "actions",
+                      width: 120,
+                      sortable: false,
+                      filterable: false
+                    }
+                  ]}
+                  defaultPageSize={10}
+                  noDataText={
+                    pageFirstLoading ?
+                      getString(langId, "generic", "label_loading") :
+                      data.length == 0 ?
+                        getString(langId, compId, "table_emptyData") :
+                        getString(langId, compId, "table_noDataFound")
+                  }
+                  showPaginationBottom
+                  className="-striped -highlight info-pagination"
+                />
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <FixedButton
+          {...this.props}
+          id="wallets_newWallet"
+          position="bottom"
+          onClick={this.createClick}
+          icon="fa fa-plus fa-2x"
+        />
+      </div>
+    )
+  }
+}
+
+export default Wallets;
+
+Wallets.propTypes = {
+  managers: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
+  prefs: PropTypes.object.isRequired,
+  setAuthStatus: PropTypes.func.isRequired,
+  setNavbarTitleId: PropTypes.func.isRequired
+}

@@ -1,0 +1,67 @@
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-choice{
+    text-align: center;
+    cursor: pointer;
+    margin-top: 5px;
+
+    &[disabled]{
+        pointer-events: none;
+        cursor: not-allowed;
+        opacity: .5;
+    }
+
+    .icon{
+        text-align: center;
+        vertical-align: middle;
+        border-radius: 50%;
+        color: $default-color;
+        margin: 0 auto 5px;
+        border: 1px solid $light-gray;
+        transition: all 0.2s;
+        -webkit-transition: all 0.2s;
+
+        &.sm{
+            height: 24px;
+            width: 24px;
+        }
+        &.mm{
+            height: 48px;
+            width: 48px;
+        }
+    }
+
+    i{
+        position: absolute;
+        left: 0;
+        right: 0;
+
+        &.sm{
+            font-size: 14px;
+            line-height: 24px;
+        }
+        &.mm{
+            font-size: 20px;
+            line-height: 48px;
+            
+        }
+    }
+
+    &:hover,
+    &.active{
+        .icon{
+            border-color: $info-color;
+        }
+    }
+
+    input[type="radio"],
+    input[type="checkbox"]{
+        position: absolute;
+        left: -10000px;
+        z-index: -1;
+    }
+}
