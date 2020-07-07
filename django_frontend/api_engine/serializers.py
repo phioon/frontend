@@ -55,7 +55,6 @@ class PositionSerializer(serializers.ModelSerializer):
         return value
 
 
-
 class PositionTypeSerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 

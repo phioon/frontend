@@ -4,7 +4,7 @@ module.exports = {
   entry: path.join(__dirname, 'src', 'index.js'),
   output: {
     filename: 'main.js',
-    path: path.join(__dirname, './django_backend/app/static/app'),
+    path: path.join(__dirname, './django_frontend/app/static/app'),
     publicPath: '/static/app'
   },
   mode: process.env.NODE_ENV || 'development',

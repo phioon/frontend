@@ -79,7 +79,7 @@ if os.getenv('GAE_APPLICATION', None):
     }
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = False
-elif os.path.dirname(os.getcwd()).endswith('prd'):
+elif '/prd/' in os.getcwd() or '\\prd\\' in os.getcwd():
     # Running locally so connect to either a local Postgres instance or connect to
     # Cloud SQL via the proxy. To start the proxy via command line:
     #
@@ -99,7 +99,7 @@ elif os.path.dirname(os.getcwd()).endswith('prd'):
     }
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
-elif os.path.dirname(os.getcwd()).endswith('dev'):
+elif '/dev/' in os.getcwd() or '\\dev\\' in os.getcwd():
     # Running locally
     DATABASES = {
         'default': {
