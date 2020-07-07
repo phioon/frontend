@@ -3,6 +3,3 @@ appengine-generated/
 
 # Dependency directories
 node_modules/
-
-# Virtual Environments
-.venv/
