@@ -20,6 +20,7 @@ import {
 import PropTypes from "prop-types";
 
 // CORE
+import { project } from "../../core/projectData";
 import LabelAlert from "../../components/LabelAlert";
 // --------------------
 
@@ -177,7 +178,7 @@ class ForgotPassword extends React.Component {
         <div
           className="full-page-background"
           style={{
-            backgroundImage: `url(${"/static/app/assets/img/bg/bruno-abatti.jpg"})`
+            backgroundImage: `url(${project.img.bg.app_ligth.src})`
           }}
         />
       </div>

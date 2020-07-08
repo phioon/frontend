@@ -20,6 +20,7 @@ import {
 
 // CORE
 import LabelAlert from "../../components/LabelAlert";
+import { project } from "../../core/projectData";
 // --------------------
 
 class Login extends React.Component {
@@ -215,7 +216,7 @@ class Login extends React.Component {
         <div
           className="full-page-background"
           style={{
-            backgroundImage: `url(${"/static/app/assets/img/bg/bruno-abatti.jpg"})`
+            backgroundImage: `url(${project.img.bg.app_ligth.src})`
           }}
         />
       </div>

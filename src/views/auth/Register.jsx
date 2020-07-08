@@ -25,6 +25,7 @@ import {
 import Select from "react-select";
 
 // CORE
+import { project } from "../../core/projectData";
 import LabelAlert from "../../components/LabelAlert";
 import { orderByAsc } from "../../core/utils";
 // --------------------
@@ -642,7 +643,7 @@ class Register extends React.Component {
         <div
           className="full-page-background"
           style={{
-            backgroundImage: `url(${"/static/app/assets/img/bg/jan-sendereks.jpg"})`
+            backgroundImage: `url(${project.img.bg.app_ligth.src})`
           }}
         />
       </div>

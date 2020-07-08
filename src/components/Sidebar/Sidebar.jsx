@@ -21,12 +21,11 @@ import { Nav, Collapse } from "reactstrap";
 import PerfectScrollbar from "perfect-scrollbar";
 
 import avatar from "assets/img/faces/ayo-ogunseinde-2.jpg";
-import logo from "assets/img/logo.png";
 
 import PropTypes from "prop-types";
 
 // CORE
-import { projName, projWebsite } from "../../core/projectInfo";
+import { project } from "../../core/projectData";
 
 
 var ps;
@@ -177,18 +176,28 @@ class Sidebar extends React.Component {
       >
         <div className="logo">
           <a
-            href={projWebsite}
+            href={project.info.website}
             className="simple-text logo-mini"
           >
             <div className="logo-img">
-              <img src={logo} alt="react-logo" />
+              <img
+                alt={project.img.branding.icon.original.alt}
+                width={project.img.branding.icon.original.width}
+                height={project.img.branding.icon.original.heigth}
+                src={project.img.branding.icon.original.src}
+              />
             </div>
           </a>
           <a
-            href={projWebsite}
+            href={project.info.website}
             className="simple-text logo-normal"
           >
-            {projName}
+            <img
+              alt={project.img.branding.logo.white.alt}
+              width={project.img.branding.logo.white.width * 0.06}
+              height={project.img.branding.logo.white.heigth * 0.06}
+              src={project.img.branding.logo.white.src}
+            />
           </a>
         </div>
 

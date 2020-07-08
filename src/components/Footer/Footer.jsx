@@ -18,7 +18,7 @@ import { Container, Row } from "reactstrap";
 import PropTypes from "prop-types";
 
 // Core
-import { projWebsite } from "../../core/projectInfo";
+import { project } from "../../core/projectData";
 // --------------------
 
 class Footer extends React.Component {
@@ -49,7 +49,7 @@ class Footer extends React.Component {
             <nav className="footer-nav">
               <ul>
                 <li>
-                  <a href={projWebsite} target="_blank">
+                  <a href={project.info.website} target="_blank">
                     {getString(langId, compId, "webSite")}
                   </a>
                 </li>

@@ -19,7 +19,7 @@ import {
 } from "reactstrap";
 
 import { getLangList } from "../../core/lang";
-import { projName, logo } from "../../core/projectInfo";
+import { project } from "../../core/projectData";
 
 class AuthNavbar extends React.Component {
   constructor(props) {
@@ -83,7 +83,12 @@ class AuthNavbar extends React.Component {
         <Container>
           <div className="navbar-wrapper">
             <NavbarBrand onClick={e => e.preventDefault()}>
-              {projName}
+              <img
+                alt={project.img.branding.logo.white.alt}
+                width={project.img.branding.logo.white.width * 0.09}
+                height={project.img.branding.logo.white.heigth * 0.09}
+                src={project.img.branding.logo.white.src}
+              />
             </NavbarBrand>
           </div>
           <button
