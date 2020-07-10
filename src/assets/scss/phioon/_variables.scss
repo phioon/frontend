@@ -1,6 +1,13 @@
-
+// Variables
 // Branding Colors
-$phioon-dark-color:             #062229 !default;
-$phioon-petro-color:            #3a5966 !default;
-$phioon-green-color:            #91c7b0 !default;
-$phioon-grey-color:             #bcbdc0 !default;
+$brand-dark-color:             #062229 !default;
+// $brand-dark-states-color:      darken($brand-dark-color, 10%) !default;
+
+$brand-petro-color:            #3a5966 !default;
+// $brand-petro-states-color:     darken($brand-petro-color, 10%) !default;
+
+$brand-green-color:            #91c7b0 !default;
+// $brand-green-states-color:     darken($brand-green-color, 10%) !default;
+
+$brand-grey-color:             #bcbdc0 !default;
+// $brand-grey-states-color:      darken($brand-grey-color, 10%) !default;

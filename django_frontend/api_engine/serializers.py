@@ -44,8 +44,12 @@ class PositionSerializer(serializers.ModelSerializer):
         return value
 
     def validate_ended_on(self, value):
-        started_on = datetime.strptime(self.initial_data['started_on'], '%Y-%m-%dT%H:%M:%SZ')
-        started_on = timezone.make_aware(started_on, timezone.utc)
+        started_on = None
+        if 'started_on' in self.initial_data:
+            started_on = datetime.strptime(self.initial_data['started_on'], '%Y-%m-%d %H:%M:%S')
+            started_on = timezone.make_aware(started_on, timezone.utc)
+        else:
+            started_on = self.context['view'].get_object().started_on
 
         if started_on > value:
             raise serializers.ValidationError("Must be greater than started_on.")

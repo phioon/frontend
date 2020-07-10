@@ -48,10 +48,10 @@ class TimeManager {
       return Moment(timestamp).format("DD")
     return Moment(new Date()).format("DD")
   }
-  static getDatetimeString(timestamp, keepLocaltime = true) {
+  static getDatetimeString(timestamp, keepLocaltime = true, format = "YYYY-MM-DD HH:mm:ss") {
     if (timestamp)
-      return Moment(timestamp).utc(keepLocaltime).format("YYYY-MM-DD HH:mm:ss")
-    return Moment(new Date()).utc(keepLocaltime).format("YYYY-MM-DD HH:mm:ss")
+      return Moment(timestamp).utc(keepLocaltime).format(format)
+    return Moment(new Date()).utc(keepLocaltime).format(format)
   }
   static getMoment(timestamp, keepLocaltime = true) {
     if (timestamp)

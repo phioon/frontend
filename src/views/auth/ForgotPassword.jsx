@@ -155,7 +155,7 @@ class ForgotPassword extends React.Component {
                     block
                     type="submit"
                     className="btn-round"
-                    color="warning"
+                    color="primary"
                     name="btnLogin"
                     disabled={
                       this.state.emailState === "has-success" ?

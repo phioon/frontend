@@ -46,7 +46,7 @@ class LockScreen extends React.Component {
               <CardFooter>
                 <Button
                   className="btn-round"
-                  color="default"
+                  color="primary"
                   href="#pablo"
                   onClick={e => e.preventDefault()}
                   outline

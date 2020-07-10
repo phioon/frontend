@@ -330,23 +330,23 @@
     &[data-color="brown"]{
       @include sidebar-color($default-color);
     }
-    &[data-color="phioon-dark"]{
-      @include sidebar-color($phioon-dark-color);
+    &[data-color="brand-dark"]{
+      @include sidebar-color($brand-dark-color);
     }
-    &[data-color="phioon-grey"]{
-      @include sidebar-color($phioon-grey-color);
+    &[data-color="brand-grey"]{
+      @include sidebar-color($brand-grey-color);
     }
 
     // Active color changing
 
-    &[data-active-color="phioon-petro"]{
-      @include sidebar-active-color($phioon-petro-color);
+    &[data-active-color="brand-petro"]{
+      @include sidebar-active-color($brand-petro-color);
     }
-    &[data-active-color="phioon-green"]{
-      @include sidebar-active-color($phioon-green-color);
+    &[data-active-color="brand-green"]{
+      @include sidebar-active-color($brand-green-color);
     }
-    &[data-active-color="phioon-grey"]{
-      @include sidebar-active-color($phioon-grey-color);
+    &[data-active-color="brand-grey"]{
+      @include sidebar-active-color($brand-grey-color);
     }
     &[data-active-color="primary"]{
         @include sidebar-active-color($primary-color);

@@ -24,6 +24,7 @@ import ModalUpdatePosition from "../modals/position/ModalUpdatePosition";
 import {
   convertFloatToCurrency,
   convertFloatToPercentage,
+  deepCloneObj,
   integerWithThousandsSeparator,
   orderByDesc
 } from "../../core/utils";
@@ -46,31 +47,36 @@ class Positions extends React.Component {
       assetOptions: [],
 
       position: {
-        hasChanged: false,
+        data: {
+          typeIsBuy: true,
+          wallet: undefined,
+          asset: undefined,
+          amount: undefined,
 
-        typeIsBuy: true,        // false = Sell
-        wallet: undefined,
-        walletState: undefined,
-        asset: undefined,
-        assetState: undefined,
-        amount: undefined,
-        amountState: undefined,
-        startedOn: undefined,
-        startedOnState: undefined,
-        endedOn: undefined,
-        endedOnState: undefined,
+          startedOn: undefined,
+          s_price: undefined,
+          s_cost: undefined,
+          s_opCost: undefined,
+          s_totalCost: undefined,
 
-        s_price: undefined,
-        s_priceState: undefined,
-        s_cost: undefined,
-        s_opCost: undefined,
-        s_totalCost: undefined,
+          endedOn: undefined,
+          e_price: undefined,
+          e_cost: undefined,
+          e_opCost: undefined,
+          e_totalCost: undefined
+        },
+        patch: {},  // Used only to update Position
+        states: {
+          walletState: undefined,
+          assetState: undefined,
+          amountState: undefined,
+          startedOnState: undefined,
+          endedOnState: undefined,
+          s_priceState: undefined,
+          e_priceState: undefined
+        },
 
-        e_price: undefined,
-        e_priceState: undefined,
-        e_cost: undefined,
-        e_opCost: undefined,
-        e_totalCost: undefined,
+        isValidated: undefined
       },
 
       currency: { code: "USD", symbol: "$", thousands_separator_symbol: ",", decimal_symbol: "." },
@@ -112,8 +118,7 @@ class Positions extends React.Component {
         obj.wallet.label = obj.wallet.name
 
         obj.asset = await this.props.managers.market.assetRetrieve(obj.asset_symbol)
-        obj.asset.value = obj.asset.asset_symbol
-        obj.asset.label = obj.asset.asset_label
+        obj.asset = { value: obj.asset.asset_symbol, label: obj.asset.asset_label }
 
         obj.currency = await this.props.managers.app.currencyRetrieve(obj.wallet.currency)
 
@@ -147,8 +152,7 @@ class Positions extends React.Component {
           type: obj.type,
           typeIsBuy: obj.typeIsBuy,
           type_label: obj.typeIsBuy ? getString(langId, compId, "item_buy") : getString(langId, compId, "item_sell"),
-          amount: obj.amount,
-          amount_label: integerWithThousandsSeparator(obj.amount, obj.currency.thousands_separator_symbol),
+          amount: integerWithThousandsSeparator(obj.amount, obj.currency.thousands_separator_symbol),
 
           s_price: convertFloatToCurrency(obj.s_unit_price, obj.currency),
           s_cost: convertFloatToCurrency(obj.s_total_price, obj.currency),
@@ -212,24 +216,22 @@ class Positions extends React.Component {
     this.toggleModal("openPosition")
   }
 
-  async updateClick(obj) {
-    let assetOptions = await this.props.managers.market.assetsForSelect(obj.asset.stockExchange)
-    let currency = await this.props.managers.app.currencyRetrieve(obj.wallet.currency)
+  async updateClick(positionData) {
+    let assetOptions = await this.props.managers.market.assetsForSelect(positionData.wallet.se_short)
+    let currency = await this.props.managers.app.currencyRetrieve(positionData.wallet.currency)
 
-    obj.walletState = ""
-    obj.assetState = ""
-    obj.amountState = ""
-    obj.startedOnState = ""
-    obj.endedOnState = ""
-    obj.s_priceState = ""
-    obj.e_priceState = ""
-    obj.hasChanged = false
-    obj.isClosed = obj.endedOn ? true : false
+    let position = {
+      data: positionData,
+      patch: {},
+      states: {},
+
+      isValidated: undefined
+    }
 
     this.setState({
+      position,
       assetOptions,
-      currency,
-      position: obj
+      currency
     })
     this.toggleModal("updatePosition")
   }
@@ -322,7 +324,6 @@ class Positions extends React.Component {
 
       modal_openPosition_isOpen,
       modal_updatePosition_isOpen,
-
     } = this.state;
 
     return (
@@ -386,7 +387,7 @@ class Positions extends React.Component {
                     },
                     {
                       Header: getString(langId, compId, "header_amount"),
-                      accessor: "amount_label",
+                      accessor: "amount",
                       className: "text-right"
                     },
                     {

@@ -275,9 +275,30 @@ export function integerWithThousandsSeparator(integer, thousands_separator) {
 
   return result
 }
+
+// Math
+export function multiply(v1, v2) {
+  return Math.round((v1 * v2) * 100) / 100
+}
 export function percentage(v1, v2) {
   return v2 > 0 ? Math.round(v1 / v2 * 100 * 10) / 10 : 0
 }
+export function sum(v1, v2) {
+  return Math.round((v1 + v2) * 100) / 100
+}
+// function that verifies if a number is greater than another number
+export function verifyGreaterThan(value, gt) {
+  if (value > gt) {
+    return true;
+  }
+  return false;
+};
+// function that verifies if number is a integer
+export function verifyIfInteger(value) {
+  if (value % 1 == 0)
+    return true;
+  return false;
+};
 
 export function orderByAsc(objList, field = "id", isNumber = false) {
   if (isNumber)

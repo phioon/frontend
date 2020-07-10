@@ -32,9 +32,17 @@ import TimeManager from "../../../core/managers/TimeManager";
 import LabelAlert from "../../../components/LabelAlert";
 import CurrencyInput from "../../../components/CurrencyInput";
 import {
+  areObjsEqual,
   convertMaskedStringToFloat,
   convertFloatToCurrency,
-  convertFloatToPercentage
+  convertFloatToPercentage,
+  deepCloneObj,
+  retrieveObjFromObjList,
+
+  multiply,
+  sum,
+  verifyGreaterThan,
+  verifyIfInteger
 } from "../../../core/utils";
 
 
@@ -51,8 +59,9 @@ class ModalUpdatePosition extends React.Component {
       walletOptions: props.walletOptions,
       assetOptions: [],
       opCostIsPercentage: true,   // true = Porcentage
-      activeNavId: "open",
+      activeNavId: "start",
 
+      initial_position: props.position,
       position: props.position,
 
       currency: props.currency,
@@ -64,18 +73,19 @@ class ModalUpdatePosition extends React.Component {
   static getDerivedStateFromProps(props, state) {
     if (props.prefs.langId !== state.langId)
       return { langId: props.prefs.langId }
-    if (props.isOpen !== state.isOpen)
+    if (props.isOpen !== state.isOpen) {
       return {
         isOpen: props.isOpen,
+        currency: props.currency,
         walletOptions: props.walletOptions,
         assetOptions: props.assetOptions,
+        initial_position: deepCloneObj(props.position),
         position: props.position,
-        currency: props.currency
       }
+    }
 
     return null
   }
-
 
   async handleSelect(model, se_short = null) {
     let newState = {}
@@ -89,28 +99,6 @@ class ModalUpdatePosition extends React.Component {
     }
 
     this.setState(newState)
-  }
-
-  // function that verifies if number is a integer
-  verifyIfInteger = (value) => {
-    if (value % 1 == 0)
-      return true;
-    return false;
-  };
-  // function that verifies if a number is greater than another number
-  verifyGreaterThan = (value, gt) => {
-    if (value > gt) {
-      return true;
-    }
-    return false;
-  };
-  // function to multiply two values, turning it into decimals
-  multiply(n1, n2) {
-    return Math.round((n1 * n2) * 100) / 100
-  }
-  // function to sum two values, turning it into decimals
-  sum(n1, n2) {
-    return Math.round((n1 + n2) * 100) / 100
   }
 
   onChange(event, stateName) {
@@ -128,187 +116,195 @@ class ModalUpdatePosition extends React.Component {
       newState.alertMsg = ""
     }
 
-    newState.position[stateName] = event.target.value
-    newState.position.hasChanged = true
+    newState.position.data[stateName] = event.target.value
 
     switch (stateName) {
       case "amount":
-        amount = event.target.value
-        let s_price = convertMaskedStringToFloat(newState.position.s_price, currency)
-        let e_price = convertMaskedStringToFloat(newState.position.e_price, currency)
-        let s_cost = this.multiply(amount, s_price)
-        let e_cost = this.multiply(amount, e_price)
+        newState.position.patch[stateName] = event.target.value
 
-        let s_opCost = convertMaskedStringToFloat(newState.position.s_opCost, currency)
-        let e_opCost = convertMaskedStringToFloat(newState.position.e_opCost, currency)
-        let s_opCostPercent = convertMaskedStringToFloat(newState.position.s_opCostPercent, currency)
-        let e_opCostPercent = convertMaskedStringToFloat(newState.position.e_opCostPercent, currency)
+        amount = event.target.value
+        let s_price = convertMaskedStringToFloat(newState.position.data.s_price, currency)
+        let e_price = convertMaskedStringToFloat(newState.position.data.e_price, currency)
+        let s_cost = multiply(amount, s_price)
+        let e_cost = multiply(amount, e_price)
+
+        let s_opCost = convertMaskedStringToFloat(newState.position.data.s_opCost, currency)
+        let e_opCost = convertMaskedStringToFloat(newState.position.data.e_opCost, currency)
+        let s_opCostPercent = convertMaskedStringToFloat(newState.position.data.s_opCostPercent, currency)
+        let e_opCostPercent = convertMaskedStringToFloat(newState.position.data.e_opCostPercent, currency)
 
         let s_totalCost = 0
         let e_totalCost = 0
 
         if (this.state.opCostIsPercentage) {
-          s_totalCost = this.multiply(s_cost, 1 + (s_opCostPercent / 100))
-          e_totalCost = this.multiply(e_cost, 1 + (e_opCostPercent / 100))
-          s_opCost = this.multiply(s_cost, (s_opCostPercent / 100))
-          e_opCost = this.multiply(e_cost, (e_opCostPercent / 100))
+          s_totalCost = multiply(s_cost, 1 + (s_opCostPercent / 100))
+          e_totalCost = multiply(e_cost, 1 + (e_opCostPercent / 100))
+          s_opCost = multiply(s_cost, (s_opCostPercent / 100))
+          e_opCost = multiply(e_cost, (e_opCostPercent / 100))
         }
         else {
-          s_totalCost = this.sum(s_cost, s_opCost)
-          e_totalCost = this.sum(e_cost, e_opCost)
+          s_totalCost = sum(s_cost, s_opCost)
+          e_totalCost = sum(e_cost, e_opCost)
           s_opCostPercent = s_opCost / s_cost * 100
           e_opCostPercent = e_opCost / e_cost * 100
         }
 
-        newState.position.s_opCost = convertFloatToCurrency(s_opCost, currency)
-        newState.position.e_opCost = convertFloatToCurrency(e_opCost, currency)
-        newState.position.s_opCostPercent = convertFloatToPercentage(s_opCostPercent, currency.decimal_symbol)
-        newState.position.e_opCostPercent = convertFloatToPercentage(e_opCostPercent, currency.decimal_symbol)
-        newState.position.s_cost = convertFloatToCurrency(s_cost, currency)
-        newState.position.e_cost = convertFloatToCurrency(e_cost, currency)
-        newState.position.s_totalCost = convertFloatToCurrency(s_totalCost, currency)
-        newState.position.e_totalCost = convertFloatToCurrency(e_totalCost, currency)
+        newState.position.data.s_opCost = convertFloatToCurrency(s_opCost, currency)
+        newState.position.data.e_opCost = convertFloatToCurrency(e_opCost, currency)
+        newState.position.data.s_opCostPercent = convertFloatToPercentage(s_opCostPercent, currency.decimal_symbol)
+        newState.position.data.e_opCostPercent = convertFloatToPercentage(e_opCostPercent, currency.decimal_symbol)
+        newState.position.data.s_cost = convertFloatToCurrency(s_cost, currency)
+        newState.position.data.e_cost = convertFloatToCurrency(e_cost, currency)
+        newState.position.data.s_totalCost = convertFloatToCurrency(s_totalCost, currency)
+        newState.position.data.e_totalCost = convertFloatToCurrency(e_totalCost, currency)
 
-        if (this.verifyGreaterThan(amount, 0) && this.verifyIfInteger(amount))
-          newState.position[stateName + "State"] = "has-success"
+        if (verifyGreaterThan(amount, 0) && verifyIfInteger(amount))
+          newState.position.states[stateName] = "has-success"
         else
-          newState.position[stateName + "State"] = "has-danger"
+          newState.position.states[stateName] = "has-danger"
         break;
 
       case "s_price":
-        amount = newState.position.amount
+        amount = newState.position.data.amount
         price = convertMaskedStringToFloat(event.target.value, currency)
-        cost = this.multiply(amount, price)
+        cost = multiply(amount, price)
 
-        opCost = convertMaskedStringToFloat(newState.position.s_opCost, currency)
-        opCostPercent = convertMaskedStringToFloat(newState.position.s_opCostPercent, currency)
+        opCost = convertMaskedStringToFloat(newState.position.data.s_opCost, currency)
+        opCostPercent = convertMaskedStringToFloat(newState.position.data.s_opCostPercent, currency)
 
         if (this.state.opCostIsPercentage) {
-          totalCost = this.multiply(cost, 1 + (opCostPercent / 100))
-          opCost = this.multiply(cost, (opCostPercent / 100))
+          totalCost = multiply(cost, 1 + (opCostPercent / 100))
+          opCost = multiply(cost, (opCostPercent / 100))
         }
         else {
-          totalCost = this.sum(cost, opCost)
+          totalCost = sum(cost, opCost)
           opCostPercent = opCost / cost * 100
         }
 
-        newState.position.s_opCost = convertFloatToCurrency(opCost, currency)
-        newState.position.s_opCostPercent = convertFloatToPercentage(opCostPercent, currency.decimal_symbol)
-        newState.position.s_cost = convertFloatToCurrency(cost, currency)
-        newState.position.s_totalCost = convertFloatToCurrency(totalCost, currency)
+        newState.position.data.s_opCost = convertFloatToCurrency(opCost, currency)
+        newState.position.data.s_opCostPercent = convertFloatToPercentage(opCostPercent, currency.decimal_symbol)
+        newState.position.data.s_cost = convertFloatToCurrency(cost, currency)
+        newState.position.data.s_totalCost = convertFloatToCurrency(totalCost, currency)
 
-        if (this.verifyGreaterThan(price, 0))
-          newState.position[stateName + "State"] = "has-success"
+        if (verifyGreaterThan(price, 0))
+          newState.position.states[stateName] = "has-success"
         else
-          newState.position[stateName + "State"] = "has-danger"
+          newState.position.states[stateName] = "has-danger"
         break;
 
       case "e_price":
-        amount = newState.position.amount
+        amount = newState.position.data.amount
         price = convertMaskedStringToFloat(event.target.value, currency)
-        cost = this.multiply(amount, price)
+        cost = multiply(amount, price)
 
-        opCost = convertMaskedStringToFloat(newState.position.e_opCost, currency)
-        opCostPercent = convertMaskedStringToFloat(newState.position.e_opCostPercent, currency)
+        opCost = convertMaskedStringToFloat(newState.position.data.e_opCost, currency)
+        opCostPercent = convertMaskedStringToFloat(newState.position.data.e_opCostPercent, currency)
 
         if (this.state.opCostIsPercentage) {
-          totalCost = this.multiply(cost, 1 + (opCostPercent / 100))
-          opCost = this.multiply(cost, (opCostPercent / 100))
+          totalCost = multiply(cost, 1 + (opCostPercent / 100))
+          opCost = multiply(cost, (opCostPercent / 100))
         }
         else {
-          totalCost = this.sum(cost, opCost)
+          totalCost = sum(cost, opCost)
           opCostPercent = opCost / cost * 100
         }
 
-        newState.position.e_opCost = convertFloatToCurrency(opCost, currency)
-        newState.position.e_opCostPercent = convertFloatToPercentage(opCostPercent, currency.decimal_symbol)
-        newState.position.e_cost = convertFloatToCurrency(cost, currency)
-        newState.position.e_totalCost = convertFloatToCurrency(totalCost, currency)
+        newState.position.data.e_opCost = convertFloatToCurrency(opCost, currency)
+        newState.position.data.e_opCostPercent = convertFloatToPercentage(opCostPercent, currency.decimal_symbol)
+        newState.position.data.e_cost = convertFloatToCurrency(cost, currency)
+        newState.position.data.e_totalCost = convertFloatToCurrency(totalCost, currency)
 
-        if (this.verifyGreaterThan(price, 0))
-          newState.position[stateName + "State"] = "has-success"
+        if (verifyGreaterThan(price, 0))
+          newState.position.states[stateName] = "has-success"
         else
-          newState.position[stateName + "State"] = "has-danger"
+          newState.position.states[stateName] = "has-danger"
 
-        if (!newState.position.endedOn && (price > 0 || opCost > 0)) {
+        if (!newState.position.data.endedOn && (price > 0 || opCost > 0)) {
           newState.alertState = ""
           newState.alertMsg = this.props.getString(this.state.langId, this.state.compId,
-            newState.position.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
+            newState.position.data.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
         }
         break;
 
       case "s_opCost":
-        cost = convertMaskedStringToFloat(newState.position.s_cost, currency)
+        cost = convertMaskedStringToFloat(newState.position.data.s_cost, currency)
         opCost = convertMaskedStringToFloat(event.target.value, currency)
         opCostPercent = opCost / cost * 100
 
-        totalCost = this.sum(cost, opCost)
+        totalCost = sum(cost, opCost)
 
-        newState.position.s_opCostPercent = convertFloatToPercentage(opCostPercent, currency.decimal_symbol)
-        newState.position.s_totalCost = convertFloatToCurrency(totalCost, currency)
+        newState.position.data.s_opCostPercent = convertFloatToPercentage(opCostPercent, currency.decimal_symbol)
+        newState.position.data.s_totalCost = convertFloatToCurrency(totalCost, currency)
 
-        if (this.verifyGreaterThan(opCost, 0))
-          newState.position[stateName + "State"] = "has-success"
+        if (verifyGreaterThan(opCost, 0))
+          newState.position.states[stateName] = "has-success"
         else
-          newState.position[stateName + "State"] = "has-danger"
+          newState.position.states[stateName] = "has-danger"
         break;
 
       case "e_opCost":
-        cost = convertMaskedStringToFloat(newState.position.e_cost, currency)
+        cost = convertMaskedStringToFloat(newState.position.data.e_cost, currency)
         opCost = convertMaskedStringToFloat(event.target.value, currency)
         opCostPercent = opCost / cost * 100
 
-        totalCost = this.sum(cost, opCost)
+        totalCost = sum(cost, opCost)
 
-        newState.position.e_opCostPercent = convertFloatToPercentage(opCostPercent, currency.decimal_symbol)
-        newState.position.e_totalCost = convertFloatToCurrency(totalCost, currency)
+        newState.position.data.e_opCostPercent = convertFloatToPercentage(opCostPercent, currency.decimal_symbol)
+        newState.position.data.e_totalCost = convertFloatToCurrency(totalCost, currency)
 
-        if (this.verifyGreaterThan(opCost, 0))
-          newState.position[stateName + "State"] = "has-success"
+        if (verifyGreaterThan(opCost, 0))
+          newState.position.states[stateName] = "has-success"
         else
-          newState.position[stateName + "State"] = "has-danger"
+          newState.position.states[stateName] = "has-danger"
 
-        if (!newState.position.endedOn && (convertMaskedStringToFloat(newState.position.e_price, currency) > 0 || opCost > 0)) {
+        if (!newState.position.data.endedOn && (convertMaskedStringToFloat(newState.position.data.e_price, currency) > 0 || opCost > 0)) {
           newState.alertState = ""
           newState.alertMsg = this.props.getString(this.state.langId, this.state.compId,
-            newState.position.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
+            newState.position.data.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
         }
         break;
 
       case "s_opCostPercent":
-        cost = convertMaskedStringToFloat(newState.position.s_cost, currency)
+        cost = convertMaskedStringToFloat(newState.position.data.s_cost, currency)
         opCostPercent = convertMaskedStringToFloat(event.target.value, currency)
-        opCost = this.multiply(cost, (opCostPercent / 100))
+        opCost = multiply(cost, (opCostPercent / 100))
 
-        totalCost = this.sum(cost, opCost)
+        totalCost = sum(cost, opCost)
 
-        newState.position.s_opCost = convertFloatToCurrency(opCost, currency)
-        newState.position.s_totalCost = convertFloatToCurrency(totalCost, currency)
+        newState.position.data.s_opCost = convertFloatToCurrency(opCost, currency)
+        newState.position.patch.s_opCost = convertFloatToCurrency(opCost, currency)
 
-        if (this.verifyGreaterThan(opCostPercent, 0))
-          newState.position[stateName + "State"] = "has-success"
-        else
-          newState.position[stateName + "State"] = "has-danger"
+        newState.position.data.s_totalCost = convertFloatToCurrency(totalCost, currency)
+        newState.position.patch.s_totalCost = convertFloatToCurrency(totalCost, currency)
+
+        // if (verifyGreaterThan(opCostPercent, 0))
+        //   newState.position.states[stateName] = "has-success"
+        // else
+        //   newState.position.states[stateName] = "has-danger"
         break;
+
       case "e_opCostPercent":
-        cost = convertMaskedStringToFloat(newState.position.e_cost, currency)
+        cost = convertMaskedStringToFloat(newState.position.data.e_cost, currency)
         opCostPercent = convertMaskedStringToFloat(event.target.value, currency)
-        opCost = this.multiply(cost, (opCostPercent / 100))
+        opCost = multiply(cost, (opCostPercent / 100))
 
-        totalCost = this.sum(cost, opCost)
+        totalCost = sum(cost, opCost)
 
-        newState.position.e_opCost = convertFloatToCurrency(opCost, currency)
-        newState.position.e_totalCost = convertFloatToCurrency(totalCost, currency)
+        newState.position.data.e_opCost = convertFloatToCurrency(opCost, currency)
+        newState.position.patch.e_opCost = convertFloatToCurrency(opCost, currency)
 
-        if (this.verifyGreaterThan(opCostPercent, 0))
-          newState.position[stateName + "State"] = "has-success"
-        else
-          newState.position[stateName + "State"] = "has-danger"
+        newState.position.data.e_totalCost = convertFloatToCurrency(totalCost, currency)
+        newState.position.patch.e_totalCost = convertFloatToCurrency(totalCost, currency)
 
-        if (!newState.position.endedOn && (convertMaskedStringToFloat(newState.position.e_price, currency) > 0 || opCost > 0)) {
+        // if (verifyGreaterThan(opCostPercent, 0))
+        //   newState.position.states[stateName] = "has-success"
+        // else
+        //   newState.position.states[stateName] = "has-danger"
+
+        if (!newState.position.data.endedOn && (convertMaskedStringToFloat(newState.position.data.e_price, currency) > 0 || opCost > 0)) {
           newState.alertState = ""
           newState.alertMsg = this.props.getString(this.state.langId, this.state.compId,
-            newState.position.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
+            newState.position.data.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
         }
         break;
       default:
@@ -316,7 +312,6 @@ class ModalUpdatePosition extends React.Component {
     }
 
     newState.position.isValidated = this.isValidated(newState.position)
-
 
     this.setState(newState)
   }
@@ -329,47 +324,52 @@ class ModalUpdatePosition extends React.Component {
       newState.alertMsg = ""
     }
 
-    newState.position[fieldName] = value
-    newState.position.hasChanged = true
+    newState.position.data[fieldName] = value
+    newState.position.patch[fieldName] = value
 
     switch (fieldName) {
       case "asset":
-        newState.position[fieldName + "State"] = "has-success"
+        newState.position.states[fieldName] = "has-success"
         break;
       case "startedOn":
         if (value._isAMomentObject) {
-          newState.position[fieldName + "State"] = "has-success"
+          newState.position.states[fieldName] = "has-success"
 
-          if (newState.position.endedOn._isAMomentObject)
-            if (value.isSameOrBefore(newState.position.endedOn))
-              newState.position[fieldName + "State"] = "has-success"
+          if (newState.position.data.endedOn && newState.position.data.endedOn._isAMomentObject)
+            if (value.isSameOrBefore(newState.position.data.endedOn))
+              newState.position.states[fieldName] = "has-success"
             else
-              newState.position[fieldName + "State"] = "has-danger"
+              newState.position.states[fieldName] = "has-danger"
         }
         else
-          newState.position[fieldName + "State"] = "has-danger"
+          newState.position.states[fieldName] = "has-danger"
         break;
       case "endedOn":
-        if (value._isAMomentObject) {
-          newState.position[fieldName + "State"] = "has-success"
+        if (!value) {
+          newState.position.data[fieldName] = null
+          newState.position.states[fieldName] = ""
+        }
+        else if (value._isAMomentObject) {
+          newState.position.states[fieldName] = "has-success"
 
-          if (newState.position.startedOn._isAMomentObject)
-            if (value.isSameOrAfter(newState.position.startedOn))
-              newState.position[fieldName + "State"] = "has-success"
+          if (newState.position.data.startedOn._isAMomentObject)
+            if (value.isSameOrAfter(newState.position.data.startedOn))
+              newState.position.states[fieldName] = "has-success"
             else
-              newState.position[fieldName + "State"] = "has-danger"
+              newState.position.states[fieldName] = "has-danger"
         }
         else
-          newState.position[fieldName + "State"] = "has-danger"
+          newState.position.states[fieldName] = "has-danger"
 
         if (!value && (
-          convertMaskedStringToFloat(newState.position.e_price, currency) > 0 ||
-          convertMaskedStringToFloat(newState.position.e_opCost, currency) > 0)) {
+          convertMaskedStringToFloat(newState.position.data.e_price, currency) > 0 ||
+          convertMaskedStringToFloat(newState.position.data.e_opCost, currency) > 0)) {
 
           newState.alertState = ""
           newState.alertMsg = this.props.getString(this.state.langId, this.state.compId,
-            newState.position.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
+            newState.position.data.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
         }
+
         break;
       case "wallet":
         this.handleSelect("asset", value.se_short)
@@ -379,26 +379,26 @@ class ModalUpdatePosition extends React.Component {
         if (prevCurrency != newCurrency) {
           let price = 0, cost = 0, opCost = 0, totalCost = 0;
           // Start
-          price = convertMaskedStringToFloat(newState.position.s_price, prevCurrency)
-          newState.position.s_price = convertFloatToCurrency(price, newCurrency)
-          cost = convertMaskedStringToFloat(newState.position.s_cost, prevCurrency)
-          newState.position.s_cost = convertFloatToCurrency(cost, newCurrency)
-          opCost = convertMaskedStringToFloat(newState.position.s_opCost, prevCurrency)
-          newState.position.s_opCost = convertFloatToCurrency(opCost, newCurrency)
-          totalCost = convertMaskedStringToFloat(newState.position.s_totalCost, prevCurrency)
-          newState.position.s_totalCost = convertFloatToCurrency(totalCost, newCurrency)
+          price = convertMaskedStringToFloat(newState.position.data.s_price, prevCurrency)
+          newState.position.data.s_price = convertFloatToCurrency(price, newCurrency)
+          cost = convertMaskedStringToFloat(newState.position.data.s_cost, prevCurrency)
+          newState.position.data.s_cost = convertFloatToCurrency(cost, newCurrency)
+          opCost = convertMaskedStringToFloat(newState.position.data.s_opCost, prevCurrency)
+          newState.position.data.s_opCost = convertFloatToCurrency(opCost, newCurrency)
+          totalCost = convertMaskedStringToFloat(newState.position.data.s_totalCost, prevCurrency)
+          newState.position.data.s_totalCost = convertFloatToCurrency(totalCost, newCurrency)
           // End
-          price = convertMaskedStringToFloat(newState.position.e_price, prevCurrency)
-          newState.position.e_price = convertFloatToCurrency(price, newCurrency)
-          cost = convertMaskedStringToFloat(newState.position.e_cost, prevCurrency)
-          newState.position.e_cost = convertFloatToCurrency(cost, newCurrency)
-          opCost = convertMaskedStringToFloat(newState.position.e_opCost, prevCurrency)
-          newState.position.e_opCost = convertFloatToCurrency(opCost, newCurrency)
-          totalCost = convertMaskedStringToFloat(newState.position.e_totalCost, prevCurrency)
-          newState.position.e_totalCost = convertFloatToCurrency(totalCost, newCurrency)
+          price = convertMaskedStringToFloat(newState.position.data.e_price, prevCurrency)
+          newState.position.data.e_price = convertFloatToCurrency(price, newCurrency)
+          cost = convertMaskedStringToFloat(newState.position.data.e_cost, prevCurrency)
+          newState.position.data.e_cost = convertFloatToCurrency(cost, newCurrency)
+          opCost = convertMaskedStringToFloat(newState.position.data.e_opCost, prevCurrency)
+          newState.position.data.e_opCost = convertFloatToCurrency(opCost, newCurrency)
+          totalCost = convertMaskedStringToFloat(newState.position.data.e_totalCost, prevCurrency)
+          newState.position.data.e_totalCost = convertFloatToCurrency(totalCost, newCurrency)
         }
 
-        newState.position[fieldName + "State"] = "has-success"
+        newState.position.states[fieldName] = "has-success"
         newState.currency = newCurrency
         break;
       default:
@@ -410,10 +410,13 @@ class ModalUpdatePosition extends React.Component {
   }
   onChoiceChange(choiceName, value) {
     let newState = { position: this.state.position }
-    newState.position.hasChanged = true
 
-    if (newState.position[choiceName] != value)
-      newState.position[choiceName] = value
+    if (newState.position.data[choiceName] != value) {
+      newState.position.data[choiceName] = value
+      newState.position.patch[choiceName] = value
+    }
+
+    newState.position.isValidated = this.isValidated(newState.position)
 
     this.setState(newState)
   }
@@ -426,27 +429,60 @@ class ModalUpdatePosition extends React.Component {
     e.preventDefault();
     this.setState({ isLoading: true })
 
-    let position = {
-      id: this.state.position.id,
-      started_on: TimeManager.getDatetimeString(this.state.position.startedOn),
-      ended_on: this.state.position.endedOn ? TimeManager.getDatetimeString(this.state.position.endedOn) : null,
-      wallet: this.state.position.wallet.id,
-      asset_symbol: this.state.position.asset.value,
-      asset_label: this.state.position.asset.label,
-      type: this.state.position.type.id,
-      amount: this.state.position.amount,
-      s_unit_price: convertMaskedStringToFloat(this.state.position.s_price, this.state.currency),
-      s_total_price: convertMaskedStringToFloat(this.state.position.s_cost, this.state.currency),
-      s_operational_cost: convertMaskedStringToFloat(this.state.position.s_opCost, this.state.currency),
-      e_unit_price: convertMaskedStringToFloat(this.state.position.e_price, this.state.currency),
-      e_total_price: convertMaskedStringToFloat(this.state.position.e_cost, this.state.currency),
-      e_operational_cost: convertMaskedStringToFloat(this.state.position.e_opCost, this.state.currency),
-    };
+    let position = { id: this.state.position.data.id }
+    let patch = this.state.position.patch
+    let currency = this.state.currency
+
+    for (var [k, v] of Object.entries(patch))
+      switch (k) {
+        case "typeIsBuy":
+          let positionTypes = await this.props.managers.app.positionTypeData()
+          let type = undefined
+
+          if (patch.typeIsBuy)
+            type = retrieveObjFromObjList(positionTypes, "name", "buy")
+          else
+            type = retrieveObjFromObjList(positionTypes, "name", "sell")
+
+          position.type = type.id
+          break;
+        case "wallet":
+          position.wallet = v.id
+          break;
+        case "asset":
+          position.asset_symbol = v.value
+          position.asset_label = v.label
+          break;
+        case "amount":
+          position[k] = v
+          break;
+        case "startedOn":
+          position.started_on = TimeManager.getDatetimeString(v)
+          break;
+        case "endedOn":
+          position.ended_on = TimeManager.getDatetimeString(v)
+          break;
+        case "e_price":
+          position.e_unit_price = convertMaskedStringToFloat(v, currency)
+          break;
+        default:
+          break;
+      }
+
+
+    // The following attributes are taken separatedly because changing one may affect others.
+    position.s_unit_price = convertMaskedStringToFloat(this.state.position.data.s_price, currency)
+    position.s_total_price = convertMaskedStringToFloat(this.state.position.data.s_cost, currency)
+    position.s_operational_cost = convertMaskedStringToFloat(this.state.position.data.s_opCost, currency)
+
+    position.e_unit_price = convertMaskedStringToFloat(this.state.position.data.e_price, currency)
+    position.e_total_price = convertMaskedStringToFloat(this.state.position.data.e_cost, currency)
+    position.e_operational_cost = convertMaskedStringToFloat(this.state.position.data.e_opCost, currency)
 
     let result = await this.props.managers.app.positionUpdate(position)
 
     if (result.status == 200) {
-      this.objectUpdated(position)
+      this.objectUpdated(this.state.position)
       // Send signal to sync dRaw for this asset.
     }
     else {
@@ -475,7 +511,7 @@ class ModalUpdatePosition extends React.Component {
     });
 
     // Send MarketManager a signal to sync this asset.
-    this.props.managers.market.dRawList(true, position.asset_symbol, position.started_on, position.ended_on)
+    this.props.managers.market.dRawList(true, position.data.asset.value, position.data.started_on, position.data.ended_on)
 
     this.props.runItIfSuccess()
   }
@@ -507,8 +543,8 @@ class ModalUpdatePosition extends React.Component {
         result = date.isBefore(today) ? true : false
         break;
       case "endedOn":
-        let startedOn = this.state.position.startedOn
-        result = date.isBefore(today) && date.isAfter(startedOn) ? true : false
+        let startedOn = this.state.position.data.startedOn
+        result = date.isBefore(today) && date.isSameOrAfter(startedOn) ? true : false
         break;
       default:
         break;
@@ -527,13 +563,13 @@ class ModalUpdatePosition extends React.Component {
     let { langId, compId, position, opCostIsPercentage, currency } = this.state;
 
     return (
-      <TabPane tabId="open">
+      <TabPane tabId="start">
         {/* Started On */}
         <Row className="justify-content-center">
           <Col xs="7" md="7">
-            <FormGroup className={`has-label ${position.startedOnState}`}>
+            <FormGroup className={`has-label ${position.states.startedOn}`}>
               {
-                position.typeIsBuy ?
+                position.data.typeIsBuy ?
                   <label>{this.props.getString(langId, compId, "input_purchaseDate")} *</label> :
                   <label>{this.props.getString(langId, compId, "input_saleDate")} *</label>
               }
@@ -542,7 +578,7 @@ class ModalUpdatePosition extends React.Component {
                   className: "form-control",
                   placeholder: this.props.getString(langId, compId, "input_select")
                 }}
-                value={position.startedOn}
+                value={position.data.startedOn}
                 onChange={value => this.onSelectChange("startedOn", value)}
                 isValidDate={value => this.isDateValid("startedOn", value)}
                 closeOnSelect
@@ -553,14 +589,14 @@ class ModalUpdatePosition extends React.Component {
         {/* Price */}
         <Row className="justify-content-center">
           <Col xs="7" md="7">
-            <FormGroup className={`has-label ${position.s_priceState}`}>
+            <FormGroup className={`has-label ${position.states.s_price}`}>
               <label>{this.props.getString(langId, compId, "input_price")} *</label>
               <CurrencyInput
                 className="form-control text-right"
                 placeholder={currency.symbol}
                 type="text"
                 name="s_price"
-                value={position.s_price}
+                value={position.data.s_price}
                 onChange={e => this.onChange(e, e.target.name)}
                 maskOptions={{
                   prefix: currency.symbol + " ",
@@ -582,7 +618,7 @@ class ModalUpdatePosition extends React.Component {
                 placeholder={currency.symbol}
                 type="text"
                 name="s_cost"
-                value={position.s_cost}
+                value={position.data.s_cost}
                 disabled
                 maskOptions={{
                   prefix: currency.symbol + " ",
@@ -608,7 +644,7 @@ class ModalUpdatePosition extends React.Component {
                 placeholder={opCostIsPercentage ? "%" : currency.symbol}
                 type="text"
                 name={opCostIsPercentage ? "s_opCostPercent" : "s_opCost"}
-                value={opCostIsPercentage ? position.s_opCostPercent : position.s_opCost}
+                value={opCostIsPercentage ? position.data.s_opCostPercent : position.data.s_opCost}
                 onChange={e => this.onChange(e, e.target.name)}
                 maskOptions={{
                   prefix: opCostIsPercentage ? "" : currency.symbol + " ",
@@ -665,7 +701,7 @@ class ModalUpdatePosition extends React.Component {
                 placeholder={currency.symbol}
                 type="text"
                 name="s_totalCost"
-                value={position.s_totalCost}
+                value={position.data.s_totalCost}
                 onChange={e => this.onChange(e, e.target.name)}
                 disabled
                 maskOptions={{
@@ -686,12 +722,12 @@ class ModalUpdatePosition extends React.Component {
     let { langId, compId, position, opCostIsPercentage, currency } = this.state;
 
     return (
-      <TabPane tabId="close">
+      <TabPane tabId="end">
         {/* Ended On */}
         <Row className="justify-content-center">
           <Col xs="7" md="7">
-            <FormGroup className={`has-label ${position.startedOnState}`}>
-              {position.typeIsBuy ?
+            <FormGroup className={`has-label ${position.states.endedOn}`}>
+              {position.data.typeIsBuy ?
                 <label>{this.props.getString(langId, compId, "input_saleDate")} *</label> :
                 <label>{this.props.getString(langId, compId, "input_purchaseDate")} *</label>
               }
@@ -700,7 +736,7 @@ class ModalUpdatePosition extends React.Component {
                   className: "form-control",
                   placeholder: this.props.getString(langId, compId, "input_select")
                 }}
-                value={position.endedOn}
+                value={position.data.endedOn}
                 onChange={value => this.onSelectChange("endedOn", value)}
                 isValidDate={value => this.isDateValid("endedOn", value)}
                 closeOnSelect
@@ -711,14 +747,14 @@ class ModalUpdatePosition extends React.Component {
         {/* Price */}
         <Row className="justify-content-center">
           <Col xs="7" md="7">
-            <FormGroup className={`has-label ${position.e_priceState}`}>
+            <FormGroup className={`has-label ${position.states.e_price}`}>
               <label>{this.props.getString(langId, compId, "input_price")} *</label>
               <CurrencyInput
                 className="form-control text-right"
                 placeholder={currency.symbol}
                 type="text"
                 name="e_price"
-                value={position.e_price}
+                value={position.data.e_price}
                 onChange={e => this.onChange(e, e.target.name)}
                 maskOptions={{
                   prefix: currency.symbol + " ",
@@ -740,7 +776,7 @@ class ModalUpdatePosition extends React.Component {
                 placeholder={currency.symbol}
                 type="text"
                 name="e_cost"
-                value={position.e_cost}
+                value={position.data.e_cost}
                 disabled
                 maskOptions={{
                   prefix: currency.symbol + " ",
@@ -766,7 +802,7 @@ class ModalUpdatePosition extends React.Component {
                 placeholder={opCostIsPercentage ? "%" : currency.symbol}
                 type="text"
                 name={opCostIsPercentage ? "e_opCostPercent" : "e_opCost"}
-                value={opCostIsPercentage ? position.e_opCostPercent : position.e_opCost}
+                value={opCostIsPercentage ? position.data.e_opCostPercent : position.data.e_opCost}
                 onChange={e => this.onChange(e, e.target.name)}
                 maskOptions={{
                   prefix: opCostIsPercentage ? "" : currency.symbol + " ",
@@ -823,7 +859,7 @@ class ModalUpdatePosition extends React.Component {
                 placeholder={currency.symbol}
                 type="text"
                 name="e_totalCost"
-                value={position.e_totalCost}
+                value={position.data.e_totalCost}
                 onChange={e => this.onChange(e, e.target.name)}
                 disabled
                 maskOptions={{
@@ -841,31 +877,16 @@ class ModalUpdatePosition extends React.Component {
     )
   }
 
-  isValidated(position) {
-    let startStates = [
-      position.startedOnState,
-      position.walletState,
-      position.assetState,
-      position.amountState,
-      position.s_priceState,
-    ]
-    let endStates = [
-      position.endedOnState,
-      position.e_priceState,
-    ]
+  isValidated(obj) {
+    let initial_obj = this.state.initial_position
 
-    if (!startStates.includes("has-danger")) {
-      if (position.endedOn) {
-        if (!endStates.includes("has-danger"))
-          if (position.e_price)
-            return true
-      }
-      else {
-        return true
-      }
-    }
+    if (areObjsEqual(initial_obj.data, obj.data))
+      return false
 
-    return false
+    if (Object.values(obj.states).includes("has-danger"))
+      return false
+
+    return true
   }
 
   render() {
@@ -907,7 +928,7 @@ class ModalUpdatePosition extends React.Component {
             <Row className="justify-content-center">
               <Col className="col-md-3">
                 <div
-                  className={classnames("card-choice", { active: position.typeIsBuy })}
+                  className={classnames("card-choice", { active: position.data.typeIsBuy })}
                   // data-toggle="wizard-checkbox"
                   onClick={() => this.onChoiceChange("typeIsBuy", true)}
                 >
@@ -915,7 +936,7 @@ class ModalUpdatePosition extends React.Component {
                     id="buy"
                     name="type"
                     type="radio"
-                    defaultChecked={position.typeIsBuy}
+                    defaultChecked={position.data.typeIsBuy}
                   />
                   <div className="icon mm">
                     <i className="nc-icon nc-spaceship mm" />
@@ -925,7 +946,7 @@ class ModalUpdatePosition extends React.Component {
               </Col>
               <Col className="col-md-3">
                 <div
-                  className={classnames("card-choice", { active: !position.typeIsBuy })}
+                  className={classnames("card-choice", { active: !position.data.typeIsBuy })}
                   // data-toggle="wizard-checkbox"
                   onClick={() => this.onChoiceChange("typeIsBuy", false)}
                 >
@@ -943,38 +964,38 @@ class ModalUpdatePosition extends React.Component {
             </Row>
             <br />
             {/* Wallet */}
-            <FormGroup className={`has-label ${position.walletState}`}>
+            <FormGroup className={`has-label ${position.states.wallet}`}>
               <label>{getString(langId, compId, "input_wallet")} *</label>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
                 placeholder={getString(langId, compId, "input_select")}
                 name="wallet"
-                value={position.wallet}
+                value={position.data.wallet}
                 options={walletOptions}
                 onChange={value => this.onSelectChange("wallet", value)}
               />
             </FormGroup>
             {/* Asset */}
-            <FormGroup className={`has-label ${position.assetState}`}>
+            <FormGroup className={`has-label ${position.states.asset}`}>
               <label>{getString(langId, compId, "input_asset")} *</label>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
                 placeholder={getString(langId, compId, "input_select")}
                 name="asset"
-                value={position.asset}
+                value={position.data.asset}
                 options={assetOptions}
                 onChange={value => this.onSelectChange("asset", value)}
               />
             </FormGroup>
             {/* Amount */}
-            <FormGroup className={`has-label ${position.amountState}`}>
+            <FormGroup className={`has-label ${position.states.amount}`}>
               <label>{getString(langId, compId, "input_amount")} *</label>
               <Input
                 type="number"
                 name="amount"
-                value={position.amount}
+                value={position.data.amount}
                 onChange={e => this.onChange(e, e.target.name)}
               />
             </FormGroup>
@@ -982,25 +1003,27 @@ class ModalUpdatePosition extends React.Component {
             <div className="nav-tabs-navigation">
               <div className="nav-tabs-wrapper">
                 <Nav tabs>
+                  {/* START */}
                   <NavItem>
                     <NavLink
                       href="#"
-                      className={activeNavId == "open" ? "active" : ""}
-                      onClick={() => this.toggleNavLink("activeNavId", "open")}
+                      className={activeNavId == "start" ? "active" : ""}
+                      onClick={() => this.toggleNavLink("activeNavId", "start")}
                     >
-                      {position.typeIsBuy ?
+                      {position.data.typeIsBuy ?
                         getString(langId, compId, "tab_purchaseInfo") :
                         getString(langId, compId, "tab_saleInfo")
                       }
                     </NavLink>
                   </NavItem>
+                  {/* END */}
                   <NavItem>
                     <NavLink
                       href="#"
-                      className={activeNavId == "close" ? "active" : ""}
-                      onClick={() => this.toggleNavLink("activeNavId", "close")}
+                      className={activeNavId == "end" ? "active" : ""}
+                      onClick={() => this.toggleNavLink("activeNavId", "end")}
                     >
-                      {position.typeIsBuy ?
+                      {position.data.typeIsBuy ?
                         getString(langId, compId, "tab_saleInfo") :
                         getString(langId, compId, "tab_purchaseInfo")
                       }
@@ -1023,9 +1046,7 @@ class ModalUpdatePosition extends React.Component {
               data-dismiss="modal"
               type="submit"
               disabled={
-                !isLoading &&
-                  position.hasChanged &&
-                  position.isValidated ?
+                !isLoading && position.isValidated ?
                   false : true
               }
               onClick={e => this.confirmClick(e)}

@@ -326,7 +326,7 @@ class SetPassword extends React.Component {
                         block
                         type="submit"
                         className="btn-round"
-                        color="warning"
+                        color="primary"
                         name="btnLogin"
                         onClick={() => this.setState({ redirectToLogin: true })}
                       >
@@ -337,7 +337,7 @@ class SetPassword extends React.Component {
                         block
                         type="submit"
                         className="btn-round"
-                        color="warning"
+                        color="primary"
                         name="btnLogin"
                         disabled={
                           this.compare(password, confirmPassword) &&

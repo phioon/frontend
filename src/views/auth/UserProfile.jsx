@@ -38,7 +38,6 @@ class UserProfile extends React.Component {
           email: "",
           first_name: "",
           last_name: "",
-          full_name: "",
           nationality: "",
           birthday: "",
         },
@@ -141,15 +140,15 @@ class UserProfile extends React.Component {
     switch (stateName) {
       case "first_name":
         if (this.verifyLength(event.target.value, 3) && this.verifyOnlyLetters(event.target.value))
-          newState[type].states[stateName + "State"] = "has-success";
+          newState[type].states[stateName] = "has-success";
         else
-          newState[type].states[stateName + "State"] = "has-danger";
+          newState[type].states[stateName] = "has-danger";
         break;
       case "last_name":
         if (this.verifyLength(event.target.value, 3) && this.verifyOnlyLetters(event.target.value))
-          newState[type].states[stateName + "State"] = "has-success";
+          newState[type].states[stateName] = "has-success";
         else
-          newState[type].states[stateName + "State"] = "has-danger";
+          newState[type].states[stateName] = "has-danger";
         break;
       default:
         break;
@@ -168,20 +167,20 @@ class UserProfile extends React.Component {
       case "birthday":
         if (!value) {
           newState[type].data[fieldName] = null
-          newState[type].states[fieldName + "State"] = ""
+          newState[type].states[fieldName] = ""
         }
         else if (value._isAMomentObject)
-          newState[type].states[fieldName + "State"] = "has-success"
+          newState[type].states[fieldName] = "has-success"
         else
-          newState[type].states[fieldName + "State"] = "has-danger"
+          newState[type].states[fieldName] = "has-danger"
         break;
       case "pref_currency":
         // this.props.setPrefs({ pref_currency: value.value })
-        newState[type].states[fieldName + "State"] = "has-success"
+        newState[type].states[fieldName] = "has-success"
         break;
       case "pref_langId":
         // this.props.setPrefs({ pref_langId: value.value })
-        newState[type].states[fieldName + "State"] = "has-success"
+        newState[type].states[fieldName] = "has-success"
         break;
       default:
         break;
@@ -437,7 +436,7 @@ class UserProfile extends React.Component {
                       </Col>
                       {/* First Name */}
                       <Col md="4">
-                        <FormGroup className={`has-label ${personalData.states.first_nameState}`}>
+                        <FormGroup className={`has-label ${personalData.states.first_name}`}>
                           <label>{getString(langId, compId, "input_firstName")}</label>
                           <Input
                             placeholder={getString(langId, compId, "input_firstName")}
@@ -450,7 +449,7 @@ class UserProfile extends React.Component {
                       </Col>
                       {/* Last Name */}
                       <Col md="4">
-                        <FormGroup className={`has-label ${personalData.states.last_nameState}`}>
+                        <FormGroup className={`has-label ${personalData.states.last_name}`}>
                           <label>{getString(langId, compId, "input_lastName")}</label>
                           <Input
                             placeholder={getString(langId, compId, "input_lastName")}
@@ -479,7 +478,7 @@ class UserProfile extends React.Component {
                       </Col>
                       {/* Birthday */}
                       <Col md="4">
-                        <FormGroup className={`has-label ${personalData.states.birthdayState}`}>
+                        <FormGroup className={`has-label ${personalData.states.birthday}`}>
                           <label>{getString(langId, compId, "input_birthday")}
                             {" "}
                             <i id="input_birthday_hint" className="nc-icon nc-alert-circle-i" />

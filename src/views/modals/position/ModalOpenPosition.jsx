@@ -31,7 +31,13 @@ import CurrencyInput from "../../../components/CurrencyInput";
 import {
   convertMaskedStringToFloat,
   convertFloatToCurrency,
-  convertFloatToPercentage
+  convertFloatToPercentage,
+  retrieveObjFromObjList,
+
+  multiply,
+  sum,
+  verifyGreaterThan,
+  verifyIfInteger
 } from "../../../core/utils";
 
 
@@ -50,26 +56,30 @@ class ModalOpenPosition extends React.Component {
       walletOptions: props.walletOptions,
       assetOptions: [],
       opCostIsPercentage: false,   // true = Porcentage
-      activeNavId: "open",
 
-      // Going to change position: {}?, remeber to check/update this.clearInputFields()
       position: {
-        startedOn: null,
-        startedOnState: "",
-        wallet: null,
-        walletState: "",
-        asset: null,
-        assetState: "",
-        typeIsBuy: true,        // false = Sell
-        typeState: "",
-        amount: "",
-        amountState: "",
-        s_price: 0.00,
-        s_priceState: "",
-        s_cost: 0.00,
-        s_opCost: 0.00,
-        s_opCostPercent: 0.00,
-        s_totalCost: 0.00,
+        data: {
+          typeIsBuy: true,
+          wallet: null,
+          asset: null,
+          amount: "",
+
+          startedOn: null,
+          s_price: 0.00,
+          s_cost: 0.00,
+          s_opCost: 0.00,
+          s_opCostPercent: 0.00,
+          s_totalCost: 0.00,
+        },
+        states: {
+          startedOn: "",
+          wallet: "",
+          asset: "",
+          type: "has-success",
+          amount: "",
+          s_price: "",
+        },
+        isValidated: undefined
       },
 
       alert: null,
@@ -91,49 +101,33 @@ class ModalOpenPosition extends React.Component {
   }
 
   clearInputFields = () => {
-    this.setState({
-      position: {
-        startedOn: null,
-        startedOnState: "",
+    let position = {
+      data: {
+        typeIsBuy: true,
         wallet: null,
-        walletState: "",
         asset: null,
-        assetState: "",
-        typeIsBuy: true,        // false = Sell
-        typeState: "",
         amount: "",
-        amountState: "",
+
+        startedOn: null,
         s_price: 0.00,
-        s_priceState: "",
         s_cost: 0.00,
         s_opCost: 0.00,
         s_opCostPercent: 0.00,
         s_totalCost: 0.00,
       },
-    });
-  };
-
-  // function that verifies if number is a integer
-  verifyIfInteger = (value) => {
-    if (value % 1 == 0)
-      return true;
-    return false;
-  };
-  // function that verifies if a number is greater than another number
-  verifyGreaterThan = (value, gt) => {
-    if (value > gt) {
-      return true;
+      states: {
+        startedOnState: "",
+        walletState: "",
+        assetState: "",
+        typeState: "",
+        amountState: "",
+        s_priceState: "",
+      },
+      isValidated: undefined
     }
-    return false;
+
+    this.setState({ position });
   };
-  // function to multiply two values, turning it into decimals
-  multiply(n1, n2) {
-    return Math.round((n1 * n2) * 100) / 100
-  }
-  // function to sum two values, turning it into decimals
-  sum(n1, n2) {
-    return Math.round((n1 + n2) * 100) / 100
-  }
 
   onChange(event, stateName) {
     let amount = 0
@@ -150,110 +144,97 @@ class ModalOpenPosition extends React.Component {
       newState.alertMsg = ""
     }
 
-    newState.position[stateName] = event.target.value
+    newState.position.data[stateName] = event.target.value
 
     switch (stateName) {
       case "amount":
         amount = event.target.value
-        let s_price = convertMaskedStringToFloat(newState.position.s_price, currency)
-        let e_price = convertMaskedStringToFloat(newState.position.e_price, currency)
-        let s_cost = this.multiply(amount, s_price)
-        let e_cost = this.multiply(amount, e_price)
+        let s_price = convertMaskedStringToFloat(newState.position.data.s_price, currency)
+        let s_cost = multiply(amount, s_price)
 
-        let s_opCost = convertMaskedStringToFloat(newState.position.s_opCost, currency)
-        let e_opCost = convertMaskedStringToFloat(newState.position.e_opCost, currency)
-        let s_opCostPercent = convertMaskedStringToFloat(newState.position.s_opCostPercent, currency)
-        let e_opCostPercent = convertMaskedStringToFloat(newState.position.e_opCostPercent, currency)
+        let s_opCost = convertMaskedStringToFloat(newState.position.data.s_opCost, currency)
+        let s_opCostPercent = convertMaskedStringToFloat(newState.position.data.s_opCostPercent, currency)
 
         let s_totalCost = 0
-        let e_totalCost = 0
 
         if (this.state.opCostIsPercentage) {
-          s_totalCost = this.multiply(s_cost, 1 + (s_opCostPercent / 100))
-          e_totalCost = this.multiply(e_cost, 1 + (e_opCostPercent / 100))
-          s_opCost = this.multiply(s_cost, (s_opCostPercent / 100))
-          e_opCost = this.multiply(e_cost, (e_opCostPercent / 100))
+          s_totalCost = multiply(s_cost, 1 + (s_opCostPercent / 100))
+          s_opCost = multiply(s_cost, (s_opCostPercent / 100))
         }
         else {
-          s_totalCost = this.sum(s_cost, s_opCost)
-          e_totalCost = this.sum(e_cost, e_opCost)
+          s_totalCost = sum(s_cost, s_opCost)
           s_opCostPercent = s_opCost / s_cost * 100
-          e_opCostPercent = e_opCost / e_cost * 100
         }
 
-        newState.position.s_opCost = convertFloatToCurrency(s_opCost, currency)
-        newState.position.e_opCost = convertFloatToCurrency(e_opCost, currency)
-        newState.position.s_opCostPercent = convertFloatToPercentage(s_opCostPercent, currency.decimal_symbol)
-        newState.position.e_opCostPercent = convertFloatToPercentage(e_opCostPercent, currency.decimal_symbol)
-        newState.position.s_cost = convertFloatToCurrency(s_cost, currency)
-        newState.position.e_cost = convertFloatToCurrency(e_cost, currency)
-        newState.position.s_totalCost = convertFloatToCurrency(s_totalCost, currency)
-        newState.position.e_totalCost = convertFloatToCurrency(e_totalCost, currency)
+        newState.position.data.s_opCost = convertFloatToCurrency(s_opCost, currency)
+        newState.position.data.s_opCostPercent = convertFloatToPercentage(s_opCostPercent, currency.decimal_symbol)
+        newState.position.data.s_cost = convertFloatToCurrency(s_cost, currency)
+        newState.position.data.s_totalCost = convertFloatToCurrency(s_totalCost, currency)
 
-        if (this.verifyGreaterThan(amount, 0) && this.verifyIfInteger(amount))
-          newState.position[stateName + "State"] = "has-success"
+        if (verifyGreaterThan(amount, 0) && verifyIfInteger(amount))
+          newState.position.states[stateName] = "has-success"
         else
-          newState.position[stateName + "State"] = "has-danger"
+          newState.position.states[stateName] = "has-danger"
         break;
 
       case "s_price":
-        amount = newState.position.amount
+        amount = newState.position.data.amount
         price = convertMaskedStringToFloat(event.target.value, currency)
-        cost = this.multiply(amount, price)
+        cost = multiply(amount, price)
 
-        opCost = convertMaskedStringToFloat(newState.position.s_opCost, currency)
-        opCostPercent = convertMaskedStringToFloat(newState.position.s_opCostPercent, currency)
+        opCost = convertMaskedStringToFloat(newState.position.data.s_opCost, currency)
+        opCostPercent = convertMaskedStringToFloat(newState.position.data.s_opCostPercent, currency)
 
         if (this.state.opCostIsPercentage) {
-          totalCost = this.multiply(cost, 1 + (opCostPercent / 100))
-          opCost = this.multiply(cost, (opCostPercent / 100))
+          totalCost = multiply(cost, 1 + (opCostPercent / 100))
+          opCost = multiply(cost, (opCostPercent / 100))
         }
         else {
-          totalCost = this.sum(cost, opCost)
+          totalCost = sum(cost, opCost)
           opCostPercent = opCost / cost * 100
         }
 
-        newState.position.s_opCost = convertFloatToCurrency(opCost, currency)
-        newState.position.s_opCostPercent = convertFloatToPercentage(opCostPercent, currency.decimal_symbol)
-        newState.position.s_cost = convertFloatToCurrency(cost, currency)
-        newState.position.s_totalCost = convertFloatToCurrency(totalCost, currency)
+        newState.position.data.s_opCost = convertFloatToCurrency(opCost, currency)
+        newState.position.data.s_opCostPercent = convertFloatToPercentage(opCostPercent, currency.decimal_symbol)
+        newState.position.data.s_cost = convertFloatToCurrency(cost, currency)
+        newState.position.data.s_totalCost = convertFloatToCurrency(totalCost, currency)
 
-        if (this.verifyGreaterThan(price, 0))
-          newState.position[stateName + "State"] = "has-success"
+        if (verifyGreaterThan(price, 0))
+          newState.position.states[stateName] = "has-success"
         else
-          newState.position[stateName + "State"] = "has-danger"
+          newState.position.states[stateName] = "has-danger"
         break;
 
       case "s_opCost":
-        cost = convertMaskedStringToFloat(newState.position.s_cost, currency)
+        cost = convertMaskedStringToFloat(newState.position.data.s_cost, currency)
         opCost = convertMaskedStringToFloat(event.target.value, currency)
         opCostPercent = opCost / cost * 100
 
-        totalCost = this.sum(cost, opCost)
+        totalCost = sum(cost, opCost)
 
-        newState.position.s_opCostPercent = convertFloatToPercentage(opCostPercent, currency.decimal_symbol)
-        newState.position.s_totalCost = convertFloatToCurrency(totalCost, currency)
+        newState.position.data.s_opCostPercent = convertFloatToPercentage(opCostPercent, currency.decimal_symbol)
+        newState.position.data.s_totalCost = convertFloatToCurrency(totalCost, currency)
 
-        if (this.verifyGreaterThan(opCost, 0))
-          newState.position[stateName + "State"] = "has-success"
+        if (verifyGreaterThan(opCost, 0))
+          newState.position.states[stateName] = "has-success"
         else
-          newState.position[stateName + "State"] = "has-danger"
+          newState.position.states[stateName] = "has-danger"
         break;
 
       case "s_opCostPercent":
-        cost = convertMaskedStringToFloat(newState.position.s_cost, currency)
+        cost = convertMaskedStringToFloat(newState.position.data.s_cost, currency)
         opCostPercent = convertMaskedStringToFloat(event.target.value, currency)
-        opCost = this.multiply(cost, (opCostPercent / 100))
+        opCost = multiply(cost, (opCostPercent / 100))
 
-        totalCost = this.sum(cost, opCost)
+        totalCost = sum(cost, opCost)
 
-        newState.position.s_opCost = convertFloatToCurrency(opCost, currency)
-        newState.position.s_totalCost = convertFloatToCurrency(totalCost, currency)
+        newState.position.data.s_opCost = convertFloatToCurrency(opCost, currency)
+        newState.position.data.s_totalCost = convertFloatToCurrency(totalCost, currency)
 
-        if (this.verifyGreaterThan(opCostPercent, 0))
-          newState.position[stateName + "State"] = "has-success"
+        if (verifyGreaterThan(opCostPercent, 0))
+          newState.position.states[stateName] = "has-success"
         else
-          newState.position[stateName + "State"] = "has-danger"
+          newState.position.states[stateName] = "has-danger"
         break;
       default:
         break;
@@ -278,17 +259,17 @@ class ModalOpenPosition extends React.Component {
   async onSelectChange(fieldName, value) {
     let newState = { position: this.state.position }
 
-    newState.position[fieldName] = value
+    newState.position.data[fieldName] = value
 
     switch (fieldName) {
       case "asset":
-        newState.position[fieldName + "State"] = "has-success"
+        newState.position.states[fieldName] = "has-success"
         break;
       case "startedOn":
         if (value._isAMomentObject)
-          newState.position[fieldName + "State"] = "has-success"
+          newState.position.states[fieldName] = "has-success"
         else
-          newState.position[fieldName + "State"] = "has-danger"
+          newState.position.states[fieldName] = "has-danger"
         break;
       case "wallet":
         this.handleSelect("asset", value.se_short)
@@ -296,17 +277,17 @@ class ModalOpenPosition extends React.Component {
         let newCurrency = await this.props.managers.app.currencyRetrieve(value.currency)
 
         if (prevCurrency != newCurrency) {
-          let price = convertMaskedStringToFloat(newState.position.s_price, prevCurrency)
-          newState.position.s_price = convertFloatToCurrency(price, newCurrency)
-          let cost = convertMaskedStringToFloat(newState.position.s_cost, prevCurrency)
-          newState.position.s_cost = convertFloatToCurrency(cost, newCurrency)
-          let opCost = convertMaskedStringToFloat(newState.position.s_opCost, prevCurrency)
-          newState.position.s_opCost = convertFloatToCurrency(opCost, newCurrency)
-          let totalCost = convertMaskedStringToFloat(newState.position.s_totalCost, prevCurrency)
-          newState.position.s_totalCost = convertFloatToCurrency(totalCost, newCurrency)
+          let price = convertMaskedStringToFloat(newState.position.data.s_price, prevCurrency)
+          newState.position.data.s_price = convertFloatToCurrency(price, newCurrency)
+          let cost = convertMaskedStringToFloat(newState.position.data.s_cost, prevCurrency)
+          newState.position.data.s_cost = convertFloatToCurrency(cost, newCurrency)
+          let opCost = convertMaskedStringToFloat(newState.position.data.s_opCost, prevCurrency)
+          newState.position.data.s_opCost = convertFloatToCurrency(opCost, newCurrency)
+          let totalCost = convertMaskedStringToFloat(newState.position.data.s_totalCost, prevCurrency)
+          newState.position.data.s_totalCost = convertFloatToCurrency(totalCost, newCurrency)
         }
 
-        newState.position[fieldName + "State"] = "has-success"
+        newState.position.states[fieldName] = "has-success"
         newState.currency = newCurrency
         break;
       default:
@@ -321,29 +302,42 @@ class ModalOpenPosition extends React.Component {
   onChoiceChange(choiceName, value) {
     let newState = { position: this.state.position }
 
-    if (newState.position[choiceName] != value)
-      newState.position[choiceName] = value
-
-    this.setState(newState)
+    if (newState.position.data[choiceName] != value) {
+      newState.position.data[choiceName] = value
+      this.setState(newState)
+    }
   }
 
   async confirmClick(e) {
     e.preventDefault();
     this.setState({ isLoading: true })
+    let { position } = this.state
 
-    let position = {
-      started_on: TimeManager.getDatetimeString(this.state.position.startedOn),
-      wallet: this.state.position.wallet.id,
-      asset_symbol: this.state.position.asset.value,
-      asset_label: this.state.position.asset.label,
-      type: this.state.position.typeIsBuy ? 1 : 2,
-      amount: this.state.position.amount,
-      s_unit_price: convertMaskedStringToFloat(this.state.position.s_price, this.state.currency),
-      s_total_price: convertMaskedStringToFloat(this.state.position.s_cost, this.state.currency),
-      s_operational_cost: convertMaskedStringToFloat(this.state.position.s_opCost, this.state.currency)
+    let positionTypes = await this.props.managers.app.positionTypeData()
+    let type = undefined
+
+    if (position.data.typeIsBuy) {
+      type = retrieveObjFromObjList(positionTypes, "name", "buy")
+      type = type.id
+    }
+    else {
+      type = retrieveObjFromObjList(positionTypes, "name", "sell")
+      type = type.id
+    }
+
+    let data = {
+      started_on: TimeManager.getDatetimeString(position.data.startedOn),
+      wallet: position.data.wallet.id,
+      asset_symbol: position.data.asset.value,
+      asset_label: position.data.asset.label,
+      type: type,
+      amount: position.data.amount,
+      s_unit_price: convertMaskedStringToFloat(position.data.s_price, this.state.currency),
+      s_total_price: convertMaskedStringToFloat(position.data.s_cost, this.state.currency),
+      s_operational_cost: convertMaskedStringToFloat(position.data.s_opCost, this.state.currency)
     };
 
-    let result = await this.props.managers.app.positionCreate(position)
+    let result = await this.props.managers.app.positionCreate(data)
 
     if (result.status == 201) {
       this.objectCreated()
@@ -399,15 +393,11 @@ class ModalOpenPosition extends React.Component {
     var today = new Date()
     return date.isBefore(today) ? true : false
   }
-  isValidated(position) {
-    if (position.walletState === "has-success" &&
-      position.assetState === "has-success" &&
-      position.amountState === "has-success" &&
-      position.startedOnState === "has-success" &&
-      position.s_priceState === "has-success")
-      return true
-
-    return false
+  isValidated(obj) {
+    for (var state of Object.values(obj.states))
+      if (state != "has-success")
+        return false
+    return true
   }
 
   hideAlert() {
@@ -458,7 +448,7 @@ class ModalOpenPosition extends React.Component {
             <Row className="justify-content-center">
               <Col className="col-md-3">
                 <div
-                  className={classnames("card-choice", { active: position.typeIsBuy })}
+                  className={classnames("card-choice", { active: position.data.typeIsBuy })}
                   // data-toggle="wizard-checkbox"
                   onClick={() => this.onChoiceChange("typeIsBuy", true)}
                 >
@@ -466,7 +456,7 @@ class ModalOpenPosition extends React.Component {
                     id="buy"
                     name="type"
                     type="radio"
-                    defaultChecked={position.typeIsBuy}
+                    defaultChecked={position.data.typeIsBuy}
                   />
                   <div className="icon mm">
                     <i className="nc-icon nc-spaceship mm" />
@@ -476,7 +466,7 @@ class ModalOpenPosition extends React.Component {
               </Col>
               <Col className="col-md-3">
                 <div
-                  className={classnames("card-choice", { active: !position.typeIsBuy })}
+                  className={classnames("card-choice", { active: !position.data.typeIsBuy })}
                   // data-toggle="wizard-checkbox"
                   onClick={() => this.onChoiceChange("typeIsBuy", false)}
                 >
@@ -494,52 +484,52 @@ class ModalOpenPosition extends React.Component {
             </Row>
             <br />
             {/* Wallet */}
-            <FormGroup className={`has-label ${position.walletState}`}>
+            <FormGroup className={`has-label ${position.states.wallet}`}>
               <label>{getString(langId, compId, "input_wallet")} *</label>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
                 placeholder={getString(langId, compId, "input_select")}
                 name="wallet"
-                value={position.wallet}
+                value={position.data.wallet}
                 options={walletOptions}
                 onChange={value => this.onSelectChange("wallet", value)}
               />
             </FormGroup>
             {/* Asset */}
-            <FormGroup className={`has-label ${position.assetState}`}>
+            <FormGroup className={`has-label ${position.states.asset}`}>
               <label>{getString(langId, compId, "input_asset")} *</label>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
                 placeholder={getString(langId, compId, "input_select")}
                 name="asset"
-                value={position.asset}
+                value={position.data.asset}
                 options={assetOptions}
                 onChange={value => this.onSelectChange("asset", value)}
               />
             </FormGroup>
             {/* Amount */}
-            <FormGroup className={`has-label ${position.amountState}`}>
+            <FormGroup className={`has-label ${position.states.amount}`}>
               <label>{getString(langId, compId, "input_amount")} *</label>
               <Input
                 type="number"
                 name="amount"
-                value={position.amount}
+                value={position.data.amount}
                 onChange={e => this.onChange(e, e.target.name)}
               />
             </FormGroup>
             {/* Started On */}
             <Row className="justify-content-center">
               <Col xs="7" md="7">
-                <FormGroup className={`has-label ${position.startedOnState}`}>
+                <FormGroup className={`has-label ${position.states.startedOn}`}>
                   <label>{this.props.getString(langId, compId, "input_date")} *</label>
                   <ReactDatetime
                     inputProps={{
                       className: "form-control",
                       placeholder: this.props.getString(langId, compId, "input_select")
                     }}
-                    value={position.startedOn}
+                    value={position.data.startedOn}
                     onChange={value => this.onSelectChange("startedOn", value)}
                     isValidDate={this.isDateValid}
                     closeOnSelect
@@ -550,14 +540,14 @@ class ModalOpenPosition extends React.Component {
             {/* Price */}
             <Row className="justify-content-center">
               <Col xs="7" md="7">
-                <FormGroup className={`has-label ${position.s_priceState}`}>
+                <FormGroup className={`has-label ${position.states.s_price}`}>
                   <label>{this.props.getString(langId, compId, "input_price")} *</label>
                   <CurrencyInput
                     className="form-control text-right"
                     placeholder={currency.symbol}
                     type="text"
                     name="s_price"
-                    value={position.s_price}
+                    value={position.data.s_price}
                     onChange={e => this.onChange(e, e.target.name)}
                     maskOptions={{
                       prefix: currency.symbol + " ",
@@ -579,7 +569,7 @@ class ModalOpenPosition extends React.Component {
                     placeholder={currency.symbol}
                     type="text"
                     name="s_cost"
-                    value={position.s_cost}
+                    value={position.data.s_cost}
                     disabled
                     maskOptions={{
                       prefix: currency.symbol + " ",
@@ -605,7 +595,7 @@ class ModalOpenPosition extends React.Component {
                     placeholder={opCostIsPercentage ? "%" : currency.symbol}
                     type="text"
                     name={opCostIsPercentage ? "s_opCostPercent" : "s_opCost"}
-                    value={opCostIsPercentage ? position.s_opCostPercent : position.s_opCost}
+                    value={opCostIsPercentage ? position.data.s_opCostPercent : position.data.s_opCost}
                     onChange={e => this.onChange(e, e.target.name)}
                     maskOptions={{
                       prefix: opCostIsPercentage ? "" : currency.symbol + " ",
@@ -662,7 +652,7 @@ class ModalOpenPosition extends React.Component {
                     placeholder={currency.symbol}
                     type="text"
                     name="s_totalCost"
-                    value={position.s_totalCost}
+                    value={position.data.s_totalCost}
                     onChange={e => this.onChange(e, e.target.name)}
                     disabled
                     maskOptions={{

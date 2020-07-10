@@ -639,6 +639,15 @@ class AppManager {
     this.getHttpTranslation(result.error, "positionTypeList", "positionType", true)
     return StorageManager.getItem(sKey)
   }
+  async positionTypeData() {
+    let sItem = await this.positionTypeList()
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details <result.error>
+    return sItem
+  }
   async positionTypeRetrieve(pk) {
     let sItem = await this.positionTypeList()
 

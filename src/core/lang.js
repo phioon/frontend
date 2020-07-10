@@ -747,7 +747,7 @@ const strings = {
       input_type_buy: "COMPRA",
       input_type_sell: "VENDA",
       input_amount: "Quantidade",
-      input_price: "Preço Médio",
+      input_price: "Preço",
       input_cost: "Custo",
       input_opCost: "Custo Operacional",
       input_opCost_format: "Formato de Custo Operacional",
@@ -981,7 +981,7 @@ const strings = {
       nav_chart: "Gráfico",
     },
     setupintervalfilter: {
-      label_title: "Intervalo de Tempo",
+      label_title: "Intervalo Tempo",
       title_hint: "Relacionado às datas em que as Operações iniciaram.",
 
       input_dateFrom: "A partir de...",

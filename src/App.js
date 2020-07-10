@@ -224,9 +224,9 @@ class App extends React.Component {
     }
 
     if (notify && msg.text)
-      this.notify("br", msg.color, msg.icon, msg.text, msg.autoDismiss,)
+      this.notify("br", msg.color, msg.icon, msg.text, msg.autoDismiss)
 
-    return msg
+    return msg.text
   }
 
   render() {
