@@ -9,6 +9,20 @@ export const project = {
   },
   img: {
     branding: {
+      avatar: {
+        original: {
+          alt: "P H I O O N",
+          width: 1080,
+          heigth: 1080,
+          src: "/static/app/assets/img/branding/avatar/avatar_original.jpg"
+        },
+        green: {
+          alt: "P H I O O N",
+          width: 1080,
+          heigth: 1080,
+          src: "/static/app/assets/img/branding/avatar/avatar_green.jpg"
+        },
+      },
       logo: {
         original: {
           alt: "P H I O O N",

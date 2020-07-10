@@ -134,7 +134,7 @@ class App extends React.Component {
 
   async getHttpTranslation(rResult, context, model, notify = false) {
     let { prefs } = this.state;
-    let successCodes = [200]
+    let successCodes = [200, 201, 202, 203, 204]
     let badRequestCodes = [400]
     let unauthorizedCodes = [401]
     let goneCodes = [410]
@@ -153,7 +153,7 @@ class App extends React.Component {
       msg.autoDismiss = 3
 
       if (model == "user") {
-        if (context == "profileUpdate")
+        if (context == "profileupdate")
           msg.text = getString(prefs.langId, "httptranslation", model + "_profileUpdated")
       }
     }
@@ -184,7 +184,7 @@ class App extends React.Component {
       else if (goneCodes.includes(rResult.response.status)) {
         if (model == "user") {
           if (rData.includes("Token is expired")) {
-            if (context == "confirmEmail")
+            if (context == "confirmemail")
               msg.text = getString(prefs.langId, "httptranslation", model + "_tokenExpired_" + context)
             else
               msg.text = getString(prefs.langId, "httptranslation", model + "_tokenExpired")

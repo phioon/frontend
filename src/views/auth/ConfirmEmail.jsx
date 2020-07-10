@@ -55,7 +55,7 @@ class ConfirmEmail extends React.Component {
     document.body.classList.toggle("login-page");
   }
   async prepareRequirements() {
-    let { pageFirstLoading, redirectToLogin, alertState, alertMsg } = this.state
+    let { compId, pageFirstLoading, redirectToLogin, alertState, alertMsg } = this.state
     let uidb64 = undefined
     let token = undefined
 
@@ -79,14 +79,14 @@ class ConfirmEmail extends React.Component {
             this.emailConfirmed()
           else {
             // Something went wrong trying to update UserCustom
-            let msg = await this.props.getHttpTranslation(result, "confirmEmail", "user")
+            let msg = await this.props.getHttpTranslation(result, compId, "user")
             alertState = "has-danger"
             alertMsg = msg
           }
         }
         else {
           // Token is invalid
-          let msg = await this.props.getHttpTranslation(result, "confirmEmail", "user")
+          let msg = await this.props.getHttpTranslation(result, compId, "user")
           alertState = "has-danger"
           alertMsg = msg
         }

@@ -293,6 +293,13 @@ export function verifyGreaterThan(value, gt) {
   }
   return false;
 };
+// function that verifies if a string has a given length or not
+export function verifyLength(value, length) {
+  if (value.length >= length) {
+    return true;
+  }
+  return false;
+};
 // function that verifies if number is a integer
 export function verifyIfInteger(value) {
   if (value % 1 == 0)

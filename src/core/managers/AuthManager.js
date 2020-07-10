@@ -127,7 +127,7 @@ class AuthManager {
 
       result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_userCustom)
 
-      this.getHttpTranslation(result, "profileUpdate", "user", true)
+      this.getHttpTranslation(result, "profileupdate", "user", true)
     }
 
     if (Object.keys(obj_user).length > 0) {
@@ -140,7 +140,7 @@ class AuthManager {
       result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_user)
 
       if (!result.error) {
-        this.getHttpTranslation(result, "profileUpdate", "user", true)
+        this.getHttpTranslation(result, "profileupdate", "user", true)
         result = result.data
 
         let sUser = this.storedUser()

@@ -103,7 +103,7 @@ class AppManager {
       return StorageManager.store(sKey, result)
     }
 
-    this.getHttpTranslation(result.error, "countryList", "country", true)
+    this.getHttpTranslation(result.error, "countrylist", "country", true)
     return StorageManager.getItem(sKey)
   }
   async countryRetrieve(pk) {
@@ -134,7 +134,7 @@ class AppManager {
     }
 
     this.finishRequest(sKey)
-    this.getHttpTranslation(result.error, "currencyList", "currency", true)
+    this.getHttpTranslation(result.error, "currencylist", "currency", true)
     return StorageManager.getItem(sKey)
   }
   async currencyRetrieve(pk) {
@@ -178,7 +178,7 @@ class AppManager {
       return StorageManager.store(sKey, result)
     }
 
-    this.getHttpTranslation(result.error, "subscriptionList", "subscription", true)
+    this.getHttpTranslation(result.error, "subscriptionlist", "subscription", true)
     return StorageManager.getItem(sKey)
   }
 
@@ -221,7 +221,7 @@ class AppManager {
     }
 
     this.finishRequest(sKey)
-    this.getHttpTranslation(result.error, "positionList", "position", true)
+    this.getHttpTranslation(result.error, "positionlist", "position", true)
     return StorageManager.getItem(sKey)
   }
   async positionData(syncFull = false) {
@@ -275,8 +275,10 @@ class AppManager {
       let syncFull = true
       await this.positionList(syncFull)
       this.walletList(syncFull)     //Backend operation (no await)
+      return result
     }
 
+    this.getHttpTranslation(result, "positiondelete", "position", true)
     return result
   }
 
@@ -636,7 +638,7 @@ class AppManager {
       return StorageManager.store(sKey, result)
     }
 
-    this.getHttpTranslation(result.error, "positionTypeList", "positionType", true)
+    this.getHttpTranslation(result.error, "positiontypelist", "positionType", true)
     return StorageManager.getItem(sKey)
   }
   async positionTypeData() {
@@ -747,7 +749,7 @@ class AppManager {
     }
 
     this.finishRequest(sKey)
-    this.getHttpTranslation(result.error, "walletList", "wallet", true)
+    this.getHttpTranslation(result.error, "walletlist", "wallet", true)
     return StorageManager.getItem(sKey)
   }
   async walletData(syncFull = false) {
@@ -804,8 +806,10 @@ class AppManager {
       let syncFull = true
       await this.walletList(syncFull)
       this.positionList(syncFull)    //Backend operation (no await)
+      return result
     }
 
+    this.getHttpTranslation(result, "walletdelete", "wallet", true)
     return result
   }
   async walletAsDimension() {

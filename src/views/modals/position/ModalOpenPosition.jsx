@@ -311,7 +311,7 @@ class ModalOpenPosition extends React.Component {
   async confirmClick(e) {
     e.preventDefault();
     this.setState({ isLoading: true })
-    let { position } = this.state
+    let { compId, position } = this.state
 
     let positionTypes = await this.props.managers.app.positionTypeData()
     let type = undefined
@@ -346,7 +346,7 @@ class ModalOpenPosition extends React.Component {
       this.setState({
         isLoading: false,
         alertState: "has-danger",
-        alertMsg: await this.props.getHttpTranslation(result, this.state.compId, "position")
+        alertMsg: await this.props.getHttpTranslation(result, compId, "position")
       })
     }
   }

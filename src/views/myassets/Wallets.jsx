@@ -38,17 +38,22 @@ class Wallets extends React.Component {
       sWalletNames: [],
 
       wallet: {
-        id: undefined,
-        name: undefined,
-        nameState: undefined,
-        nameCurr: undefined,
-        desc: undefined,
-        descState: undefined,
-        stockExchange: undefined,
-        balance: undefined,
-        balanceState: undefined,
-        balanceCurr: undefined,
-        hasChanged: false,
+        data: {
+          id: undefined,
+          name: undefined,
+          desc: undefined,
+          stockExchange: undefined,
+          balance: undefined,
+          balanceCurr: undefined,
+        },
+        patch: {},  // Used only to update Wallet
+        states: {
+          nameState: undefined,
+          descState: undefined,
+          balanceState: undefined,
+        },
+
+        isValidated: undefined,
       },
 
       currency: { code: "USD", symbol: "$", thousands_separator_symbol: ",", decimal_symbol: "." },
@@ -73,8 +78,8 @@ class Wallets extends React.Component {
 
   async prepareRequirements() {
     let currency = await this.props.managers.app.currencyRetrieve(this.props.prefs.currency)
-
     this.setState({ currency })
+
     await this.prepareData()
     this.setState({ pageFirstLoading: false })
   }
@@ -141,23 +146,21 @@ class Wallets extends React.Component {
       let sWalletNames = getValueListFromObjList(wallets.data, "name")
       this.setState({ data, sWalletNames })
     }
-    else
-      this.notify(await this.props.getHttpTranslation(wallets, this.state.compId, "wallet"))
-
   }
-  async updateClick(obj) {
-    let currency = await this.props.managers.app.currencyRetrieve(obj.currency)
+  async updateClick(walletData) {
+    let currency = await this.props.managers.app.currencyRetrieve(walletData.currency)
 
-    obj.nameState = ""
-    obj.balanceState = ""
-    obj.descState = ""
-    obj.nameCurr = obj.name
-    obj.balanceCurr = obj.balance
-    obj.hasChanged = false
+    let wallet = {
+      data: walletData,
+      patch: {},
+      states: {},
+
+      isValidated: undefined
+    }
 
     this.setState({
+      wallet,
       currency,
-      wallet: obj
     })
 
     this.toggleModal("updateWallet")
@@ -188,10 +191,8 @@ class Wallets extends React.Component {
 
     if (result.status == 204)
       this.objectDeleted()
-    else {
+    else
       this.hideAlert()
-      this.notify(await this.props.getHttpTranslation(result, this.state.compId, "wallet"))
-    }
   }
   objectDeleted() {
     this.setState({
@@ -212,21 +213,8 @@ class Wallets extends React.Component {
   }
 
   hideAlert() {
-    this.setState({
-      alert: null
-    });
+    this.setState({ alert: null });
   };
-
-  notify(msg) {
-    let options = {
-      place: "tc",
-      message: msg,
-      type: "danger",
-      icon: "nc-icon nc-alert-circle-i",
-      autoDismiss: 7
-    };
-    this.refs.notificationAlert.notificationAlert(options);
-  }
 
   createClick() {
     this.toggleModal("createWallet")

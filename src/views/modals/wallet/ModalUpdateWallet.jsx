@@ -17,7 +17,12 @@ import ReactBSAlert from "react-bootstrap-sweetalert";
 
 import LabelAlert from "../../../components/LabelAlert";
 import CurrencyInput from "../../../components/CurrencyInput";
-import { convertMaskedStringToFloat } from "../../../core/utils";
+import {
+  areObjsEqual,
+  convertMaskedStringToFloat,
+  deepCloneObj,
+  verifyLength
+} from "../../../core/utils";
 
 
 class ModalUpdateWallet extends React.Component {
@@ -33,6 +38,7 @@ class ModalUpdateWallet extends React.Component {
       sWalletNames: props.sWalletNames,
       currency: props.currency,
 
+      initial_wallet: props.wallet,
       wallet: props.wallet,
 
       alertState: null,
@@ -45,32 +51,27 @@ class ModalUpdateWallet extends React.Component {
     if (props.isOpen !== state.isOpen)
       return {
         isOpen: props.isOpen,
-        wallet: props.wallet,
+        currency: props.currency,
         sWalletNames: props.sWalletNames,
-        currency: props.currency
+        initial_wallet: deepCloneObj(props.wallet),
+        wallet: props.wallet,
       }
 
     return null
   }
 
   verifyWalletName(walletName) {
-    if (!this.state.sWalletNames.includes(walletName) || walletName == this.state.currName)
-      return true
-    return false
-  }
-  verifyBalance(walletBalance) {
-    if (this.verifyLength(walletBalance, 1))
-      if (this.state.wallet.balanceCurr !== convertMaskedStringToFloat(walletBalance, this.state.currency))
-        return true
-    return false
-  }
-  // function that verifies if a string has a given length or not
-  verifyLength = (value, length) => {
-    if (value.length >= length) {
-      return true;
+    let isValidated = false
+    if (verifyLength(walletName, 1)) {
+      isValidated = true
+      if (walletName == this.state.initial_wallet.data.name)
+        isValidated = true
+      else if (this.state.sWalletNames.includes(walletName))
+        isValidated = false
     }
-    return false;
-  };
+
+    return isValidated
+  }
 
   onChange(event, stateName) {
     let newState = { wallet: this.state.wallet }
@@ -80,31 +81,27 @@ class ModalUpdateWallet extends React.Component {
       newState.alertMsg = ""
     }
 
-    newState.wallet[stateName] = event.target.value
-    newState.wallet.hasChanged = true
+    newState.wallet.data[stateName] = event.target.value
+    newState.wallet.patch[stateName] = event.target.value
 
     switch (stateName) {
       case "name":
-        if (this.state.wallet.nameCurr === event.target.value)
-          newState.wallet[stateName + "State"] = ""
-        else if (this.verifyWalletName(event.target.value))
-          newState.wallet[stateName + "State"] = "has-success"
+        if (this.verifyWalletName(event.target.value))
+          newState.wallet.states[stateName] = "has-success"
         else
-          newState.wallet[stateName + "State"] = "has-danger"
+          newState.wallet.states[stateName] = "has-danger"
         break;
       case "balance":
-        if (this.state.wallet.balanceCurr === convertMaskedStringToFloat(event.target.value, this.state.currency))
-          newState.wallet[stateName + "State"] = ""
-        else if (this.verifyBalance(event.target.value))
-          newState.wallet[stateName + "State"] = "has-success"
+        if (verifyLength(event.target.value, 1))
+          newState.wallet.states[stateName] = "has-success"
         else
-          newState.wallet[stateName + "State"] = "has-danger"
+          newState.wallet.states[stateName] = "has-danger"
         break;
-      case "desc":
-        newState.wallet[stateName + "State"] = "has-success"
       default:
         break;
     }
+
+    newState.wallet.isValidated = this.isValidated(newState.wallet)
 
     this.setState(newState)
   }
@@ -113,12 +110,21 @@ class ModalUpdateWallet extends React.Component {
     e.preventDefault();
     this.setState({ isLoading: true })
 
-    let wallet = {
-      id: this.state.wallet.id,
-      name: this.state.wallet.name,
-      desc: this.state.wallet.desc,
-      balance: convertMaskedStringToFloat(this.state.wallet.balance, this.state.currency),
-    };
+    let wallet = { id: this.state.wallet.data.id }
+    let patch = this.state.wallet.patch
+
+    for (var [k, v] of Object.entries(patch))
+      switch (k) {
+        case "name":
+          wallet.name = v
+          break;
+        case "desc":
+          wallet.desc = v
+          break;
+        case "balance":
+          wallet.balance = convertMaskedStringToFloat(v, this.state.currency)
+          break;
+      }
 
     let result = await this.props.managers.app.walletUpdate(wallet)
 
@@ -151,6 +157,18 @@ class ModalUpdateWallet extends React.Component {
     });
 
     this.props.runItIfSuccess()
+  }
+
+  isValidated(obj) {
+    let initial_obj = this.state.initial_wallet
+
+    if (areObjsEqual(initial_obj.data, obj.data))
+      return false
+
+    if (Object.values(obj.states).includes("has-danger"))
+      return false
+
+    return true
   }
 
   hideAlert() {
@@ -194,27 +212,27 @@ class ModalUpdateWallet extends React.Component {
           </CardHeader>
           <CardBody>
             {/* Name */}
-            <FormGroup className={`has-label ${wallet.nameState}`}>
+            <FormGroup className={`has-label ${wallet.states.name}`}>
               <label>{getString(langId, compId, "input_name")} *</label>
               <Input
                 type="text"
                 name="name"
-                value={wallet.name}
+                value={wallet.data.name}
                 onChange={e => this.onChange(e, e.target.name)}
               />
-              {wallet.nameState === "has-danger" ? (
+              {wallet.states.name === "has-danger" ? (
                 <label className="error">
                   {getString(langId, compId, "error_name")}
                 </label>
               ) : null}
             </FormGroup>
             {/* Description */}
-            <FormGroup className={`has-label ${wallet.descState}`}>
+            <FormGroup className={`has-label ${wallet.states.desc}`}>
               <label>{getString(langId, compId, "input_description")}</label>
               <Input
                 type="text"
                 name="desc"
-                value={wallet.desc}
+                value={wallet.data.desc}
                 onChange={e => this.onChange(e, e.target.name)}
               />
             </FormGroup>
@@ -224,19 +242,19 @@ class ModalUpdateWallet extends React.Component {
               <Input
                 type="text"
                 name="stockExchange"
-                value={wallet.stockExchange}
+                value={wallet.data.stockExchange}
                 disabled
               />
             </FormGroup>
             {/* Balance */}
-            <FormGroup className={`has-label ${wallet.balanceState}`}>
+            <FormGroup className={`has-label ${wallet.states.balance}`}>
               <label>{getString(langId, compId, "input_balance")}</label>
               <CurrencyInput
                 className="form-control text-right"
                 placeholder={currency.symbol}
                 type="text"
                 name="balance"
-                value={wallet.balance}
+                value={wallet.data.balance}
                 onChange={e => this.onChange(e, e.target.name)}
                 maskOptions={{
                   prefix: currency.symbol + " ",
@@ -255,11 +273,7 @@ class ModalUpdateWallet extends React.Component {
               data-dismiss="modal"
               type="submit"
               disabled={
-                !isLoading &&
-                  wallet.hasChanged &&
-                  (wallet.nameState === "has-success" ||
-                    wallet.descState === "has-success" ||
-                    wallet.balanceState === "has-success") ?
+                !isLoading && wallet.isValidated ?
                   false : true
               }
               onClick={e => this.confirmClick(e)}

@@ -19,7 +19,12 @@ import Select from "react-select";
 
 import LabelAlert from "../../../components/LabelAlert";
 import CurrencyInput from "../../../components/CurrencyInput";
-import { convertMaskedStringToFloat, convertFloatToCurrency } from "../../../core/utils";
+import {
+  convertMaskedStringToFloat,
+  convertFloatToCurrency,
+
+  verifyLength
+} from "../../../core/utils";
 
 
 class ModalCreateWallet extends React.Component {
@@ -38,13 +43,18 @@ class ModalCreateWallet extends React.Component {
 
       // Going to change wallet: {}?, remeber to check/update this.clearInputFields()
       wallet: {
-        name: "",
-        nameState: "",
-        desc: "",
-        stockExchange: "",
-        stockExchangeState: "",
-        balance: "",
-        balanceState: ""
+        data: {
+          name: "",
+          desc: "",
+          stockExchange: "",
+          balance: "",
+        },
+        states: {
+          name: "",
+          stockExchange: "",
+          balance: ""
+        },
+        isValidated: undefined
       },
 
       alertState: null,
@@ -72,34 +82,27 @@ class ModalCreateWallet extends React.Component {
   clearInputFields = () => {
     this.setState({
       wallet: {
-        name: "",
-        nameState: "",
-        desc: "",
-        balance: "",
-        balanceState: "",
-        stockExchange: "",
-        stockExchangeState: "",
-      }
+        data: {
+          name: "",
+          desc: "",
+          stockExchange: "",
+          balance: "",
+        },
+        states: {
+          nameState: "",
+          stockExchangeState: "",
+          balanceState: ""
+        },
+        isValidated: undefined
+      },
     });
   };
+
   verifyWalletName(walletName) {
-    if (!this.state.sWalletNames.includes(walletName) || walletName == this.state.currName)
+    if (!this.state.sWalletNames.includes(walletName))
       return true
     return false
   }
-  verifyBalance(walletBalance) {
-    if (this.verifyLength(walletBalance, 1))
-      if (this.state.wallet.balanceCurr !== convertMaskedStringToFloat(walletBalance, this.state.currency))
-        return true
-    return false
-  }
-  // function that verifies if a string has a given length or not
-  verifyLength = (value, length) => {
-    if (value.length >= length) {
-      return true;
-    }
-    return false;
-  };
 
   onChange(event, stateName) {
     let newState = { wallet: this.state.wallet }
@@ -109,31 +112,34 @@ class ModalCreateWallet extends React.Component {
       newState.alertMsg = ""
     }
 
-    newState.wallet[stateName] = event.target.value
+    newState.wallet.data[stateName] = event.target.value
 
     switch (stateName) {
       case "name":
         if (this.verifyWalletName(event.target.value))
-          newState.wallet[stateName + "State"] = "has-success"
+          newState.wallet.states[stateName] = "has-success"
         else
-          newState.wallet[stateName + "State"] = "has-danger"
+          newState.wallet.states[stateName] = "has-danger"
         break;
       case "balance":
-        if (this.verifyBalance(event.target.value))
-          newState.wallet[stateName + "State"] = "has-success"
+        if (verifyLength(event.target.value, 1))
+          newState.wallet.states[stateName] = "has-success"
         else
-          newState.wallet[stateName + "State"] = "has-danger"
+          newState.wallet.states[stateName] = "has-danger"
         break;
       default:
         break;
     }
+
+    newState.wallet.isValidated = this.isValidated(newState.wallet)
 
     this.setState(newState)
   }
 
   async onSelectChange(fieldName, value) {
     let newState = { wallet: this.state.wallet }
-    newState.wallet[fieldName] = value
+
+    newState.wallet.data[fieldName] = value
 
     switch (fieldName) {
       case "stockExchange":
@@ -141,16 +147,18 @@ class ModalCreateWallet extends React.Component {
         let newCurrency = await this.props.managers.app.currencyRetrieve(value.currency_code)
 
         if (prevCurrency != newCurrency) {
-          let balance = convertMaskedStringToFloat(newState.wallet.balance, prevCurrency)
-          newState.wallet.balance = convertFloatToCurrency(balance, newCurrency)
+          let balance = convertMaskedStringToFloat(newState.wallet.data.balance, prevCurrency)
+          newState.wallet.data.balance = convertFloatToCurrency(balance, newCurrency)
         }
 
         newState.currency = newCurrency
-        newState.wallet[fieldName + "State"] = "has-success"
+        newState.wallet.states[fieldName] = "has-success"
         break;
       default:
         break;
     }
+
+    newState.wallet.isValidated = this.isValidated(newState.wallet)
 
     this.setState(newState)
   }
@@ -159,17 +167,17 @@ class ModalCreateWallet extends React.Component {
     e.preventDefault();
     this.setState({ isLoading: true })
 
-    let wallet = this.state.wallet
+    let { compId, wallet } = this.state
 
-    wallet = {
-      name: wallet.name,
-      desc: wallet.desc,
-      se_short: wallet.stockExchange.se_short,
-      balance: convertMaskedStringToFloat(wallet.balance, this.state.currency),
+    let data = {
+      name: wallet.data.name,
+      desc: wallet.data.desc,
+      se_short: wallet.data.stockExchange.se_short,
+      balance: convertMaskedStringToFloat(wallet.data.balance, this.state.currency),
       currency: this.state.currency.code
     };
 
-    let result = await this.props.managers.app.walletCreate(wallet)
+    let result = await this.props.managers.app.walletCreate(data)
 
     if (result.status == 201) {
       this.objectCreated()
@@ -178,7 +186,7 @@ class ModalCreateWallet extends React.Component {
       this.setState({
         isLoading: false,
         alertState: "has-danger",
-        alertMsg: await this.props.getHttpTranslation(result, this.state.compId, "wallet")
+        alertMsg: await this.props.getHttpTranslation(result, compId, "wallet")
       })
     }
   }
@@ -201,6 +209,13 @@ class ModalCreateWallet extends React.Component {
 
     this.clearInputFields()
     this.props.runItIfSuccess()
+  }
+
+  isValidated(obj) {
+    for (var state of Object.values(obj.states))
+      if (state != "has-success")
+        return false
+    return true
   }
 
   hideAlert() {
@@ -245,15 +260,15 @@ class ModalCreateWallet extends React.Component {
           </CardHeader>
           <CardBody>
             {/* Name */}
-            <FormGroup className={`has-label ${wallet.nameState}`}>
+            <FormGroup className={`has-label ${wallet.states.name}`}>
               <label>{getString(langId, compId, "input_name")} *</label>
               <Input
                 type="text"
                 name="name"
-                value={wallet.name}
+                value={wallet.data.name}
                 onChange={e => this.onChange(e, e.target.name)}
               />
-              {wallet.nameState === "has-danger" ? (
+              {wallet.states.name === "has-danger" ? (
                 <label className="error">
                   {getString(langId, compId, "error_name")}
                 </label>
@@ -265,31 +280,31 @@ class ModalCreateWallet extends React.Component {
               <Input
                 type="text"
                 name="desc"
-                value={wallet.desc}
+                value={wallet.data.desc}
                 onChange={e => this.onChange(e, e.target.name)}
               />
             </FormGroup>
             {/* Stock Exchange */}
-            <FormGroup className={`has-label ${wallet.stockExchangeState}`}>
+            <FormGroup className={`has-label ${wallet.states.stockExchange}`}>
               <label>{getString(langId, compId, "input_stockExchange")} *</label>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
                 name="stockExchange"
-                value={wallet.stockExchange}
+                value={wallet.data.stockExchange}
                 options={stockExchangeOptions}
                 onChange={value => this.onSelectChange("stockExchange", value)}
               />
             </FormGroup>
             {/* Balance */}
-            <FormGroup className={`has-label ${wallet.balanceState}`}>
+            <FormGroup className={`has-label ${wallet.states.balance}`}>
               <label>{getString(langId, compId, "input_balance")}</label>
               <CurrencyInput
                 className="form-control text-right"
                 placeholder={currency.symbol}
                 type="text"
                 name="balance"
-                value={wallet.balance}
+                value={wallet.data.balance}
                 onChange={e => this.onChange(e, e.target.name)}
                 maskOptions={{
                   prefix: currency.symbol + " ",
@@ -308,10 +323,7 @@ class ModalCreateWallet extends React.Component {
               data-dismiss="modal"
               type="submit"
               disabled={
-                !isLoading &&
-                  wallet.nameState === "has-success" &&
-                  wallet.stockExchangeState === "has-success" &&
-                  wallet.balanceState === "has-success" ?
+                !isLoading && wallet.isValidated ?
                   false : true
               }
               onClick={e => this.confirmClick(e)}

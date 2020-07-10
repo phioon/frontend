@@ -261,10 +261,8 @@ class Positions extends React.Component {
 
     if (result.status == 204)
       this.objectDeleted()
-    else {
+    else
       this.hideAlert()
-      this.notify(await this.props.getHttpTranslation(result, this.state.compId, "position"))
-    }
   }
   objectDeleted() {
     this.setState({

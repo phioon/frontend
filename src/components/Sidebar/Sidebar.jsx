@@ -181,10 +181,10 @@ class Sidebar extends React.Component {
           >
             <div className="logo-img">
               <img
-                alt={project.img.branding.icon.original.alt}
-                width={project.img.branding.icon.original.width}
-                height={project.img.branding.icon.original.heigth}
-                src={project.img.branding.icon.original.src}
+                alt={project.img.branding.avatar.original.alt}
+                width={project.img.branding.avatar.original.width}
+                height={project.img.branding.avatar.original.heigth}
+                src={project.img.branding.avatar.original.src}
               />
             </div>
           </a>
