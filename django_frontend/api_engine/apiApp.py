@@ -4,13 +4,22 @@ from api_engine.permissions import IsOwner
 from api_engine.serializers import CountrySerializer, CurrencySerializer, \
     SubscriptionSerializer, PositionTypeSerializer, WalletSerializer, PositionSerializer
 from app.models import Country, Currency, Subscription, PositionType, Wallet, Position
-from app.functions import generic
+from django_engine.functions import generic
 
 from datetime import datetime
 from django.utils.timezone import make_aware
 
 
 __apiKey__ = 'ycjOzOP5loHPPIbfMW6tA7AreqAlq0z4yqxStxk2B8Iwges581rK5V8kIgg4'
+
+
+# INIT
+def app_init(request, apiKey=None):
+    if apiKey == __apiKey__:
+        generic.app_initiator()
+        return HttpResponse()
+    else:
+        return HttpResponse(status=403)
 
 
 class CountryList(generics.ListAPIView):
@@ -79,12 +88,3 @@ class WalletList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-
-
-# INIT
-def app_init(request, apiKey=None):
-    if apiKey == __apiKey__:
-        generic.app_initiator()
-        return HttpResponse()
-    else:
-        return HttpResponse(status=403)
