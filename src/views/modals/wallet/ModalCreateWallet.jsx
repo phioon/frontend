@@ -79,24 +79,26 @@ class ModalCreateWallet extends React.Component {
     this.setState({ stockExchangeOptions })
   }
 
-  clearInputFields = () => {
-    this.setState({
-      wallet: {
-        data: {
-          name: "",
-          desc: "",
-          stockExchange: "",
-          balance: "",
-        },
-        states: {
-          nameState: "",
-          stockExchangeState: "",
-          balanceState: ""
-        },
-        isValidated: undefined
+  clearInputFields() {
+    let { wallet } = this.state
+
+    wallet = {
+      data: {
+        name: "",
+        desc: "",
+        stockExchange: "",
+        balance: ""
       },
-    });
-  };
+      states: {
+        name: "",
+        stockExchange: "",
+        balance: ""
+      },
+      isValidated: undefined
+    }
+
+    this.setState({ wallet })
+  }
 
   verifyWalletName(walletName) {
     if (!this.state.sWalletNames.includes(walletName))

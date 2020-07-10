@@ -100,6 +100,7 @@ class ModalOpenPosition extends React.Component {
     return null
   }
 
+
   clearInputFields = () => {
     let position = {
       data: {
@@ -116,12 +117,11 @@ class ModalOpenPosition extends React.Component {
         s_totalCost: 0.00,
       },
       states: {
-        startedOnState: "",
-        walletState: "",
-        assetState: "",
-        typeState: "",
-        amountState: "",
-        s_priceState: "",
+        wallet: "",
+        asset: "",
+        startedOn: "",
+        amount: "",
+        s_price: "",
       },
       isValidated: undefined
     }
