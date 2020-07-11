@@ -1,15 +1,9 @@
-from django.contrib.auth.models import User
 from app.models import Currency, Country, Subscription, PositionType
 
 
 def app_initiator():
-    user = User.objects.get(username='api')
-    if user is None:
-        User.objects.create_superuser(
-            username='api',
-            password='#P1q2w3e4r$Api',
-            email='support.cloud@phioon.com'
-        )
+    # Before execute this function:
+    #   1. Create superuser api
 
     currency = Currency()
     country = Country()

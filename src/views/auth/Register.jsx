@@ -18,16 +18,24 @@ import {
   InputGroupText,
   InputGroup,
   Label,
-  Modal,
   Row,
   Spinner
 } from "reactstrap";
 import Select from "react-select";
 
+import ModalUserCreated from "../../views/modals/auth/ModalUserCreated";
+
 // CORE
 import { project } from "../../core/projectData";
 import LabelAlert from "../../components/LabelAlert";
-import { orderByAsc } from "../../core/utils";
+import {
+  orderByAsc,
+
+  compare,
+  verifyEmail,
+  verifyLength,
+  verifyOnlyLetters
+} from "../../core/utils";
 // --------------------
 
 
@@ -40,7 +48,6 @@ class Register extends React.Component {
       langId: props.prefs.langId,
       isLoading: false,
 
-      modalNotice: false,
       firstname: "",
       lastname: "",
       email: "",
@@ -51,9 +58,12 @@ class Register extends React.Component {
 
       nationalities: [],
 
+      modal_userCreated_isOpen: false,
       alertState: null,
       alertMsg: ""
     };
+
+    this.toggleModal = this.toggleModal.bind(this)
   }
   static getDerivedStateFromProps(props, state) {
     if (props.prefs.langId !== state.langId)
@@ -116,41 +126,6 @@ class Register extends React.Component {
     });
   }
 
-  // function that returns true if value is email, false otherwise
-  verifyEmail = value => {
-    var emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (emailRex.test(value)) {
-      return true;
-    }
-    return false;
-  };
-  // function that verifies if a string has a given length or not
-  verifyLength = (value, length) => {
-    if (value.length >= length) {
-      return true;
-    }
-    return false;
-  };
-  // function that verifies if a string has only letters
-  verifyOnlyLetters = (value) => {
-    return /^[a-zA-Z- ]+$/.test(value);
-  }
-  // function that verifies if two strings are equal
-  compare = (string1, string2) => {
-    if (string1 === string2) {
-      return true;
-    }
-    return false;
-  };
-  // function that verifies if value contains only numbers
-  verifyNumber = value => {
-    var numberRex = new RegExp("^[0-9]+$");
-    if (numberRex.test(value)) {
-      return true;
-    }
-    return false;
-  };
-
   onChange = (event, stateName, type, stateNameEqualTo) => {
     if (this.state.labelAlertState !== null)
       this.setState({
@@ -166,28 +141,28 @@ class Register extends React.Component {
 
     switch (type) {
       case "firstname":
-        if (this.verifyLength(event.target.value, 3) && this.verifyOnlyLetters(event.target.value)) {
+        if (verifyLength(event.target.value, 3) && verifyOnlyLetters(event.target.value)) {
           this.setState({ [stateName + "State"]: "has-success" });
         } else {
           this.setState({ [stateName + "State"]: "has-danger" });
         }
         break;
       case "lastname":
-        if (this.verifyLength(event.target.value, 3) && this.verifyOnlyLetters(event.target.value)) {
+        if (verifyLength(event.target.value, 3) && verifyOnlyLetters(event.target.value)) {
           this.setState({ [stateName + "State"]: "has-success" });
         } else {
           this.setState({ [stateName + "State"]: "has-danger" });
         }
         break;
       case "email":
-        if (this.verifyEmail(event.target.value)) {
+        if (verifyEmail(event.target.value)) {
           this.setState({ [stateName + "State"]: "has-success" });
         } else {
           this.setState({ [stateName + "State"]: "has-danger" });
         }
         break;
       case "password":
-        if (this.verifyLength(event.target.value, 8)) {
+        if (verifyLength(event.target.value, 8)) {
           this.setState({ [stateName + "State"]: "has-success" });
         } else {
           this.setState({ [stateName + "State"]: "has-danger" });
@@ -195,7 +170,7 @@ class Register extends React.Component {
         break;
       case "equalTo":
         if (this.state[stateNameEqualTo + "State"] === "has-success") {
-          if (this.compare(event.target.value, this.state[stateNameEqualTo])) {
+          if (compare(event.target.value, this.state[stateNameEqualTo])) {
             this.setState({ [stateName + "State"]: "has-success" });
             this.setState({ [stateNameEqualTo + "State"]: "has-success" });
             this.setState({ [stateName + "Value"]: event.target.value });
@@ -244,7 +219,8 @@ class Register extends React.Component {
     let result = await this.props.managers.auth.userRegister(user)
 
     if (result.status == 200) {
-      this.setState({ modalNotice: true, isLoading: false });
+      this.setState({ isLoading: false });
+      this.toggleModal("userCreated")
       this.clearInputFields();
     }
     else {
@@ -290,6 +266,10 @@ class Register extends React.Component {
     }
   }
 
+  toggleModal(modalId) {
+    this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
+  };
+
   render() {
     let { getString } = this.props;
 
@@ -300,7 +280,6 @@ class Register extends React.Component {
       compId,
       isLoading,
 
-      modalNotice,
       firstname,
       firstnameState,
       lastname,
@@ -317,105 +296,19 @@ class Register extends React.Component {
 
       nationalities,
 
+      modal_userCreated_isOpen,
       alertState,
       alertMsg
     } = this.state;
 
     return (
       <div className="register-page">
-        <Modal isOpen={modalNotice} toggle={this.toggleModalNotice}>
-          <div className="modal-header">
-            <button
-              aria-hidden={true}
-              className="close"
-              data-dismiss="modal"
-              type="button"
-              onClick={this.toggleModalNotice}
-            >
-              <i className="nc-icon nc-simple-remove" />
-            </button>
-            <h5 className="modal-title" id="myModalLabel">
-              {getString(langId, compId, "modal_title")}
-            </h5>
-          </div>
-          <div className="modal-body">
-            <div className="instruction">
-              <Row>
-                <Col md="8">
-                  <strong>
-                    {getString(langId, compId, "modal_stepTitle1")}
-                  </strong>
-                  <p className="description">
-                    {getString(langId, compId, "modal_stepDesc1")}
-                  </p>
-                </Col>
-                <Col md="4">
-                  <div className="picture">
-                    <img
-                      alt="..."
-                      className="rounded img-raised"
-                      src={"static/app/assets/img/gerrit-vermeulen.jpg"}
-                    />
-                  </div>
-                </Col>
-              </Row>
-            </div>
-            <div className="instruction">
-              <Row>
-                <Col md="8">
-                  <strong>
-                    {getString(langId, compId, "modal_stepTitle2")}
-                  </strong>
-                  <p className="description">
-                    {getString(langId, compId, "modal_stepDesc2")}
-                  </p>
-                </Col>
-                <Col md="4">
-                  <div className="picture">
-                    <img
-                      alt="..."
-                      className="rounded img-raised"
-                      src={"static/app/assets/img/david-marcu.jpg"}
-                    />
-                  </div>
-                </Col>
-              </Row>
-            </div>
-            <div className="instruction">
-              <Row>
-                <Col md="8">
-                  <strong>
-                    {getString(langId, compId, "modal_stepTitle3")}
-                  </strong>
-                  <p className="description">
-                    {getString(langId, compId, "modal_stepDesc3")}
-                  </p>
-                </Col>
-                <Col md="4">
-                  <div className="picture">
-                    <img
-                      alt="..."
-                      className="rounded img-raised"
-                      src={"static/app/assets/img/joshua-earles.jpg"}
-                    />
-                  </div>
-                </Col>
-              </Row>
-            </div>
-            <p className="mt-3">{getString(langId, compId, "modal_footer")}</p>
-          </div>
-          <div className="modal-footer justify-content-center">
-            <Button
-              className="btn-round"
-              color="info"
-              data-dismiss="modal"
-              type="button"
-              onClick={this.toggleModalNotice}
-            >
-              {getString(langId, compId, "modal_btnOk")}
-            </Button>
-          </div>
-        </Modal>
+        <ModalUserCreated
+          {...this.props}
+          modalId="userCreated"
+          isOpen={modal_userCreated_isOpen}
+          toggleModal={this.toggleModal}
+        />
         <Container>
           <Row>
             <Col className="ml-auto" lg="5" md="5">
@@ -459,7 +352,7 @@ class Register extends React.Component {
                   <CardTitle tag="h4">
                     {getString(langId, compId, "card_header")}
                   </CardTitle>
-                  <div className="social">
+                  {/* <div className="social">
                     <Button className="btn-icon btn-round" color="twitter">
                       <i className="fa fa-twitter" />
                     </Button>
@@ -470,7 +363,7 @@ class Register extends React.Component {
                       <i className="fa fa-facebook-f" />
                     </Button>
                     <p className="card-description">{getString(langId, compId, "info_orBeCassical")}</p>
-                  </div>
+                  </div> */}
                 </CardHeader>
                 <CardBody>
                   <Form action="" className="form" method="">
@@ -617,7 +510,7 @@ class Register extends React.Component {
                     className="btn-round"
                     color="primary"
                     disabled={
-                      this.compare(password, confirmPassword) &&
+                      compare(password, confirmPassword) &&
                         this.state.cbTermsState === "has-success" &&
                         this.state.nationality !== null &&
                         this.state.confirmPasswordState === "has-success" &&
@@ -633,7 +526,6 @@ class Register extends React.Component {
                       <Spinner animation="border" size="sm" /> :
                       getString(langId, compId, "btn_createAccount")}
                   </Button>
-                  <br />
                   <LabelAlert alertState={alertState} alertMsg={alertMsg} />
                 </CardFooter>
               </Card>

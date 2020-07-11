@@ -167,11 +167,11 @@ LOGOUT_ON_PASSWORD_CHANGE = False
 # Email Configuration
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.zoho.eu'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'support.noreply@phioon.com'
-EMAIL_HOST_PASSWORD = '#P1q2w3e4r@Support.noreply'
+EMAIL_HOST_USER = 'noreply@phioon.com'
+EMAIL_HOST_PASSWORD = '#P1q2w3e4r$Noreply'
 DEFAULT_FROM_EMAIL = 'P H I O O N <support.noreply@phioon.com>'
 
 # Internationalization

@@ -104,6 +104,11 @@ p{
     font-size: $font-size-h6;
 }
 
+.text-default,
+a.text-default:focus, a.text-default:hover {
+  color: $brand-default !important;
+}
+
 .text-primary,
 a.text-primary:focus, a.text-primary:hover {
   color: $brand-primary !important;

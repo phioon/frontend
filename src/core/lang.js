@@ -20,7 +20,7 @@ const strings = {
   enUS: {
     generic: {
       label_commingsoon: "COMING SOON...",
-      label_loading: "Loading..."
+      label_loading: "Loading...",
     },
     appnavbar: {
       title_default: "Dashboard",
@@ -147,8 +147,9 @@ const strings = {
       card_header: "Login",
       input_email: "Email",
       input_password: "Password",
-      label_forgotPassword: "Forgot password",
-      btn_login: "Login"
+
+      btn_login: "Login",
+      btn_forgotPassword: "Forgot password"
     },
     measures: {
       currency: "Currency",
@@ -271,6 +272,17 @@ const strings = {
 
       btn_confirm: "Update",
     },
+    modalusercreated: {
+      title: "We are almost there...",
+      stepTitle1: "1. Confirm your email",
+      stepDesc1: "Within a few minutes, you will receive an email with an account activation link.",
+      stepTitle2: "2. Log in",
+      stepDesc2: "Once your account is activated, you can log in to the app.",
+      stepTitle3: "3. Enjoy it",
+      stepDesc3: "You are about to have access to the best investor advisory platform.",
+      footer: "If you have more questions, don't hesitate to contact us! It will be a pleasure to help you.",
+      btn_goToLogin: "Go to Login"
+    },
     monthLong: {
       "01": "January",
       "02": "February",
@@ -373,21 +385,7 @@ const strings = {
       checkbox_iAgreeToThe: "I agree to the",
       checkbox_privacyPolicy: "privacy policy.",
       btn_createAccount: "Create account",
-
-      modal_title: "We are almost there...",
-      modal_stepTitle1: "1. Confirm your email",
-      modal_stepDesc1:
-        "Within a few minutes, you will receive an email with an account activation link.",
-      modal_stepTitle2: "2. Log in",
-      modal_stepDesc2:
-        "Once your account is activated, you can log in to the app.",
-      modal_stepTitle3: "3. Enjoy it",
-      modal_stepDesc3:
-        "And raise your expectations! You are about to have access to the best investor advisory platform.",
-      modal_btnOk: "Ok",
-      modal_footer:
-        "If you have more questions, don't hesitate to contact us or send us a tweet @myTradeAdviser. We're here to help! ",
-
+      btn_forgotPassword: "Forgot password",
     },
     setupcard: {
       label_buy: "BUY",
@@ -442,7 +440,7 @@ const strings = {
       input_password: "New Password",
       input_confirmPassword: "Confim Password",
       btn_recover: "Change Password",
-      btn_login: "Go To Login",
+      btn_login: "Go to Login",
 
       alert_passwordReseted_title: "Your password has been changed!",
       alert_passwordReseted_text: "Now we can log in again. ;)",
@@ -573,7 +571,7 @@ const strings = {
   ptBR: {
     generic: {
       label_commingsoon: "EM BREVE...",
-      label_loading: "Carregando..."
+      label_loading: "Carregando...",
     },
     appnavbar: {
       title_default: "Dashboard",
@@ -700,8 +698,9 @@ const strings = {
       card_header: "Login",
       input_email: "E-mail",
       input_password: "Senha",
-      label_forgotPassword: "Esqueceu a Senha",
-      btn_login: "Login"
+
+      btn_login: "Login",
+      btn_forgotPassword: "Esqueceu a Senha",
     },
     measures: {
       currency: "Moeda",
@@ -825,6 +824,17 @@ const strings = {
 
       btn_confirm: "Criar",
     },
+    modalusercreated: {
+      title: "Estamos quase lá...",
+      stepTitle1: "1. Confirme seu e-mail",
+      stepDesc1: "Dentro de alguns minutos, você receberá um e-mail com um link de ativação da sua nova conta.",
+      stepTitle2: "2. Realize o login",
+      stepDesc2: "Com a conta ativada, você está liberado para logar em nossa plataforma.",
+      stepTitle3: "3. Aproveite",
+      stepDesc3: "Você está prestes a conhecer a melhor plataforma de assistência ao investidor.",
+      footer: "Se tiver alguma dúvida, entre em contato com a gente! Vai ser um prazer te ajudar.",
+      btn_goToLogin: "Ir para Login"
+    },
     monthLong: {
       "01": "Janeiro",
       "02": "Fevereiro",
@@ -926,20 +936,7 @@ const strings = {
       checkbox_iAgreeToThe: "Eu concordo com a",
       checkbox_privacyPolicy: "política de privacidade.",
       btn_createAccount: "Criar conta",
-
-      modal_title: "Estamos quase lá...",
-      modal_stepTitle1: "1. Confirme seu e-mail",
-      modal_stepDesc1:
-        "Dentro de alguns minutos, você receberá um e-mail com um link de ativação da sua nova conta.",
-      modal_stepTitle2: "2. Realize o login",
-      modal_stepDesc2:
-        "Com a conta ativada, você está liberado para logar em nossa plataforma.",
-      modal_stepTitle3: "3. Aproveite",
-      modal_stepDesc3:
-        "E crie expectativas! Você está prestes a conhecer a melhor plataforma de assistência para o investidor.",
-      modal_btnOk: "Ok",
-      modal_footer:
-        "Se tiver alguma dúvida, não se preocupe. Entre em contato conosco ou nos envie um twitter @myTradeAdviser. Estamos aqui para ajudar! ",
+      btn_forgotPassword: "Esqueceu a Senha",
     },
     setupcard: {
       label_buy: "COMPRA",

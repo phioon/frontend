@@ -286,6 +286,21 @@ export function percentage(v1, v2) {
 export function sum(v1, v2) {
   return Math.round((v1 + v2) * 100) / 100
 }
+
+// function that verifies if two strings are equal
+export function compare(string1, string2) {
+  if (string1 === string2) {
+    return true;
+  }
+  return false;
+};
+// function that returns true if value is email, false otherwise
+export function verifyEmail(value) {
+  var emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  if (emailRex.test(value))
+    return true;
+  return false;
+};
 // function that verifies if a number is greater than another number
 export function verifyGreaterThan(value, gt) {
   if (value > gt) {
@@ -300,6 +315,10 @@ export function verifyLength(value, length) {
   }
   return false;
 };
+// function that verifies if a string has only letters
+export function verifyOnlyLetters(value) {
+  return /^[a-zA-Z- ]+$/.test(value);
+}
 // function that verifies if number is a integer
 export function verifyIfInteger(value) {
   if (value % 1 == 0)

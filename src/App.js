@@ -196,6 +196,7 @@ class App extends React.Component {
 
       // Unauthorized
       else if (unauthorizedCodes.includes(rResult.response.status)) {
+        msg.color = "success"
         msg.text = getString(prefs.langId, "httptranslation", "general_unauthorizedCodes")
         this.setAuthStatus(await this.managers.auth.isUserAuthenticated())
       }

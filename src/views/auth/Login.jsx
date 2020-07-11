@@ -205,7 +205,7 @@ class Login extends React.Component {
                     <LabelAlert alertState={alertState} alertMsg={alertMsg} />
                     <br />
                     <Button className="btn-link btn-neutral" color="default" href="forgotpassword">
-                      {getString(langId, compId, "label_forgotPassword")}?
+                      {getString(langId, compId, "btn_forgotPassword")}?
                     </Button>
                   </CardFooter>
                 </Card>

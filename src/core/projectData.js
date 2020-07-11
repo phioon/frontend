@@ -72,5 +72,19 @@ export const project = {
         src: "/static/app/assets/img/bg/bg-app-light.jpg"
       },
     }
+  },
+  social: {
+    facebook: {
+      label: "P H I O O N",
+      href: "https://www.facebook.com/phioon"
+    },
+    instagram: {
+      label: "@phioon_br",
+      href: "https://www.instagram.com/phioon_br/"
+    },
+    twitter: {
+      label: "@phioon_br",
+      href: "https://twitter.com/phioon_br"
+    }
   }
 }

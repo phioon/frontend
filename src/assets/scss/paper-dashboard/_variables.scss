@@ -125,6 +125,7 @@ $bg-brown:              lighten($brown-color, 7%) !default;
 $bg-purple:             lighten($purple-color, 7%) !default;
 
 //     brand Colors
+$brand-default:              $default-color !default;
 $brand-primary:              $primary-color !default;
 $brand-info:                 $info-color !default;
 $brand-success:              $success-color !default;
