@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template import loader
+from rest_framework import status
+import smtplib
 
 
 # Function copied from class django.contrib.auth.forms.PasswordResetForm
@@ -21,4 +23,15 @@ def send_mail(subject_template_name, email_template_name, context, to_email,
         html_email = loader.render_to_string(html_email_template_name, context)
         email_message.attach_alternative(html_email, 'text/html')
 
-    email_message.send()
+    obj_res = {"status": status.HTTP_200_OK}
+
+    try:
+        email_message.send()
+    except smtplib.SMTPConnectError:
+        email_message.send()
+    except smtplib.SMTPServerDisconnected:
+        email_message.send()
+    except smtplib.SMTPException:
+        obj_res = {"status": status.HTTP_503_SERVICE_UNAVAILABLE}
+
+    return obj_res

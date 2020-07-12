@@ -185,10 +185,11 @@ class ModalCreateWallet extends React.Component {
       this.objectCreated()
     }
     else {
+      let msg = await this.props.getHttpTranslation(result, compId, "wallet")
       this.setState({
         isLoading: false,
         alertState: "has-danger",
-        alertMsg: await this.props.getHttpTranslation(result, compId, "wallet")
+        alertMsg: msg.text
       })
     }
   }

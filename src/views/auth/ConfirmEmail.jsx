@@ -81,14 +81,14 @@ class ConfirmEmail extends React.Component {
             // Something went wrong trying to update UserCustom
             let msg = await this.props.getHttpTranslation(result, compId, "user")
             alertState = "has-danger"
-            alertMsg = msg
+            alertMsg = msg.text
           }
         }
         else {
           // Token is invalid
           let msg = await this.props.getHttpTranslation(result, compId, "user")
           alertState = "has-danger"
-          alertMsg = msg
+          alertMsg = msg.text
         }
       }
       else {

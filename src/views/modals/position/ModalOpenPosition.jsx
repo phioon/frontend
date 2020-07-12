@@ -343,10 +343,11 @@ class ModalOpenPosition extends React.Component {
       this.objectCreated()
     }
     else {
+      let msg = await this.props.getHttpTranslation(result, compId, "position")
       this.setState({
         isLoading: false,
         alertState: "has-danger",
-        alertMsg: await this.props.getHttpTranslation(result, compId, "position")
+        alertMsg: msg.text
       })
     }
   }

@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+
 from django.core import exceptions
 
 from rest_framework import serializers
@@ -162,22 +164,24 @@ class RequestPasswordResetSerializer(rest_auth_serializers.PasswordResetSerializ
 
 
 class RequestEmailConfirmationSerializer(rest_auth_serializers.PasswordResetSerializer):
-    def get_email_options(self):
-        subject_template_name = 'emails/<langId>/confirm_email_subject.txt'
-        html_email_template_name = 'emails/<langId>/confirm_email_email.html'
+    email = serializers.EmailField()
 
-        user_email = self.validated_data['email']
-        userCustom = UserCustom.objects.get(user__username__exact=user_email)
-        pref_langId = userCustom.pref_langId
-
-        subject_template_name = subject_template_name.replace('<langId>', pref_langId)
-        html_email_template_name = html_email_template_name.replace('<langId>', pref_langId)
-
-        return {
-            'subject_template_name': subject_template_name,
-            'email_template_name': html_email_template_name,
-            'html_email_template_name': html_email_template_name,
-        }
+    # def get_email_options(self):
+    #     subject_template_name = 'emails/<langId>/email_confirmation_subject.txt'
+    #     html_email_template_name = 'emails/<langId>/email_confirmation_email.html'
+    #
+    #     user_email = self.validated_data['email']
+    #     userCustom = UserCustom.objects.get(user__username__exact=user_email)
+    #     pref_langId = userCustom.pref_langId
+    #
+    #     subject_template_name = subject_template_name.replace('<langId>', pref_langId)
+    #     html_email_template_name = html_email_template_name.replace('<langId>', pref_langId)
+    #
+    #     return {
+    #         'subject_template_name': subject_template_name,
+    #         'email_template_name': html_email_template_name,
+    #         'html_email_template_name': html_email_template_name,
+    #     }
 
 
 class ConfirmEmailSerializer(serializers.Serializer):

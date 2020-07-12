@@ -15,7 +15,6 @@ export function getString(langId, compId, strId) {
   }
 }
 
-
 const strings = {
   enUS: {
     generic: {
@@ -116,27 +115,31 @@ const strings = {
       allRightsReserved: "All rights reserved"
     },
     forgotpassword: {
-      card_header: "Recover Account",
+      card_header: "Recover Access",
       input_email: "Email",
       btn_recover: "Recover",
-      label_emailSent: "I've emailed you instructions for recovering your access again. Please, check if you received it. ;)"
+      label_emailSent: "I've emailed you instructions for recovering your access. Please, check if you received it. ;)"
     },
     httptranslation: {
       wallet_limitReached: "Need more wallets to manage your investments? Go premium and enjoy it! ;)",
 
       user_profileUpdated: "Profile updated!",
 
+      user_alreadyExists: "hmm... If I'm not wrong, I've seen you here. Did you forget your password?",
+      user_emailNotConfirmed: "Before we continue, I need you to confirm your email... Did you not receive the Confirmation Email yet?",
+      user_emailCouldNotBeSent: "Ok, good news is that your user has been created. Bad news, my team couldn't send you a confirmation email. I already asked them to handle it, so you should receive an email in a couple hours. ;)",
       user_amountOfSessions: "Ooops... Seems like the amount of sessions for this user is exceeded. Wait a few minutes and try again.",
       user_invalidCredentials: "Seems like your credentials are incorrect. Please, try again.",
       user_password_entirelyNumeric: "Your new password has only numbers. Please, try adding some letters.",
       user_password_tooSimilar: "Your new password is too similar to your personal data. Please, try a more secure combination.",
       user_tokenExpired: "Seems like this link has expired :( But don't worry! If you couldn't recover your access yet, please, proceed requesting a new one.",
-      user_tokenExpired_confirmEmail: "Seems like this link has expired :( But don't worry! Log into the app again and request a new link.",
+      user_tokenExpired_confirmEmail: "Seems like this link has expired :( But don't worry! You can request a new one on Login page. ;)",
 
       backend_serviceUnavailable: "Ooops... Sorry for that. :( My team asked for a couple minutes to solve an issue. I'll be working offline for a while. Requests may become slower.",
 
       general_unauthorizedCodes: "I noticed you were away for a while and I decided to log you off, just in case. ;) Let's get back to work?",
       general_internalErrorCodes: "Ooops... Sorry for that. :( Seems like my team had a hard time processing your request.",
+      general_noResponseReceived: "Ooops... Sorry for that. :( Seems like my team is out for lunch or they are ignoring me... I'll keep trying to reach them.",
       general_couldNotSendRequest: "I couldn't send your request. Check your internet connection and try again?",
     },
     languages: {
@@ -149,7 +152,10 @@ const strings = {
       input_password: "Password",
 
       btn_login: "Login",
-      btn_forgotPassword: "Forgot password"
+      btn_forgotPassword: "Forgot Password",
+      btn_resendEmail: "Resend Email",
+
+      label_emailSent: "I've emailed you instructions for confirming your email again. Please, check if you received it. ;)"
     },
     measures: {
       currency: "Currency",
@@ -360,10 +366,10 @@ const strings = {
       alert_username:
         "Ooops... A user with that email address already exists. Did you forget your password?",
 
-      error_enterValidEmail: "Here, we need a valid email.",
+      error_enterValidEmail: "Here, I need a valid email.",
       error_passwordLength: "It must have at least 8 characters.",
       error_passwordMatch: "Seems like password fields are not matching.",
-      error_acceptPrivacyPolicy: "To proceed, we need you to accept our privacy policy.",
+      error_acceptPrivacyPolicy: "To proceed, I need you to accept our Privacy Policy.",
 
       info_selectNationality: "Select one",
 
@@ -666,7 +672,7 @@ const strings = {
       allRightsReserved: "Todos os direitos reservados"
     },
     forgotpassword: {
-      card_header: "Recuperação de Conta",
+      card_header: "Recuperação de Acesso",
       input_email: "E-mail",
       btn_recover: "Recuperar",
       label_emailSent: "Envei um e-mail para você com instruções para recuperação de seu acesso. Dê uma olhada lá, por gentileza. ;)"
@@ -676,18 +682,22 @@ const strings = {
 
       user_profileUpdated: "Perfil atualizado!",
 
+      user_emailCouldNotBeSent: "Ok, a boa notícia é que seu usuário foi criado. Má notícia, meu time não está conseguindo te enviar o email de confirmação. Já pedi para darem uma olhada no seu caso, então você deve receber um email nas próximas horas. ;)",
+      user_emailNotConfirmed: "Antes de continuar, preciso que confirme seu e-mail... Ainda não recebeu o E-mail de Confirmação?",
+      user_alreadyExists: "hmm... Se não me engano, eu já te vi por aqui. Esqueceu a senha?",
       user_amountOfSessions: "Ooops... A quantidade de sessões para este usuário foi excedida. Aguarde alguns minutos e tente novamente.",
       user_invalidCredentials: "Parece que suas credenciais estão incorretas. Por favor, tente novamente.",
       user_password_entirelyNumeric: "Sua nova senha possui apenas numeros. Que tal uma combinação mais segura?",
       user_password_tooSimilar: "Parece que sua nova senha é muito similar à suas informações pessoais. Que tal tentar uma combinação mais segura?",
-      user_tokenExpired: "Vejo aqui que este link expirou :( Mas não se preocupe! Se você ainda não conseguiu recuperar seu acesso, basta solicitar um novo e-mail de Recupeção de Acesso.",
-      user_tokenExpired_confirmEmail: "Vejo aqui que este link expirou :( Mas não se preocupe! Logue novamente no app e solicite um novo link.",
+      user_tokenExpired: "hmm... Este link expirou :( Mas não se preocupe! Se você ainda não conseguiu recuperar seu acesso, basta solicitar um novo e-mail de Recupeção de Acesso.",
+      user_tokenExpired_confirmEmail: "hmm... Este link expirou :( Mas não se preocupe! Você pode solicitar um novo link na página de Login. ;)",
 
       backend_serviceUnavailable: "Ooops... Me perdoe. :( Meu time me pediu alguns minutos para resolver um probleminha. Vou trabalhar em modo offline por um tempo. Pode ser que isso deixe as coisas mais lentas.",
 
       general_successCodes: "Feito.",
       general_unauthorizedCodes: "Percebi que ficou um tempo fora e, por segurança, decidi deslogar seu usuário. ;) Vamos voltar aos trabalhos?",
       general_internalErrorCodes: "Ooops... Me perdoe. :( Parece que meu time teve dificuldade para processar sua requisição.",
+      general_noResponseReceived: "Ooops... Me perdoe. :( Parece que meu time saiu para comer algo ou estão me ignorando... Vou continuar tentando contata-los.",
       general_couldNotSendRequest: "Não estou conseguindo enviar sua requisição. Verifique sua conexão com a internet e tentar novamente?",
     },
     languages: {
@@ -701,6 +711,9 @@ const strings = {
 
       btn_login: "Login",
       btn_forgotPassword: "Esqueceu a Senha",
+      btn_resendEmail: "Reenviar E-mail",
+
+      label_emailSent: "Envei um e-mail para você com instruções para confirmação de seu e-mail. Dê uma olhada lá, por gentileza. ;)"
     },
     measures: {
       currency: "Moeda",
@@ -822,7 +835,7 @@ const strings = {
       alert_updated_title: "Atualizada!",
       alert_updated_text: "Sua Carteira foi atualizada com sucesso.",
 
-      btn_confirm: "Criar",
+      btn_confirm: "Atualizar",
     },
     modalusercreated: {
       title: "Estamos quase lá...",
@@ -905,18 +918,10 @@ const strings = {
       positions_delete_hint: "Deletar esta Posição."
     },
     register: {
-      alert_generalErrorTitle: "Algo deu errado...",
-      alert_tryAgain: "Ooops... Me perdoe. :( Poderia tentar novamente?",
-      alert_404or50X: "Ooops... Me perdoe. :( Parece que meu time teve dificuldade para processar sua requisição.",
-      alert_couldNotSendRequest: "Não estou conseguindo enviar sua requisição. Poderia verificar sua conexão com a internet e tentar novamente?",
-      alert_username:
-        "Ooops... Já existe um usuário registrado com este endereço de e-mail. Esqueceu sua senha?",
-
-      error_enterValidEmail:
-        "Aqui, precisamos de um e-mail válido.",
+      error_enterValidEmail: "Aqui, preciso de um e-mail válido.",
       error_passwordLength: "Precisa ser no minimo 8 caracteres.",
       error_passwordMatch: "Parece que os campos de senha não estão iguais.",
-      error_acceptPrivacyPolicy: "Para prosseguir, precisamos que aceite nossa Politica de Privacidade.",
+      error_acceptPrivacyPolicy: "Para prosseguir, preciso que aceite nossa Politica de Privacidade.",
 
       leftArea_infoTitle1: "Praticidade",
       leftArea_infoDesc1: "Pare de perder tempo todos os dias analisando gráficos de dezenas de ativos. Deixa isso com a gente.",
@@ -935,6 +940,7 @@ const strings = {
       input_nationality: "Nacionalidade",
       checkbox_iAgreeToThe: "Eu concordo com a",
       checkbox_privacyPolicy: "política de privacidade.",
+
       btn_createAccount: "Criar conta",
       btn_forgotPassword: "Esqueceu a Senha",
     },

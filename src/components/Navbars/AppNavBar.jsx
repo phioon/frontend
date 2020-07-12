@@ -210,7 +210,7 @@ class AppNavBar extends React.Component {
                     <i className="nc-icon nc-settings-gear-65" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-navbar" right tag="ul">
-                    <DropdownItem onClick={() => this.props.history.push('/admin/user-profile')}>
+                    <DropdownItem onClick={() => this.props.history.push('/app/userprofile')}>
                       {getString(langId, compId, "profile")}
                     </DropdownItem>
                     <DropdownItem onClick={() => e.preventDefault()}>

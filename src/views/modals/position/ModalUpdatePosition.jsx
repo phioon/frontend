@@ -486,10 +486,11 @@ class ModalUpdatePosition extends React.Component {
       // Send signal to sync dRaw for this asset.
     }
     else {
+      let msg = await this.props.getHttpTranslation(result, this.state.compId, "position")
       this.setState({
         isLoading: false,
         alertState: "has-danger",
-        alertMsg: await this.props.getHttpTranslation(result, this.state.compId, "position")
+        alertMsg: msg.text
       })
     }
   }

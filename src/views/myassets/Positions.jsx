@@ -207,9 +207,6 @@ class Positions extends React.Component {
 
       this.setState({ data })
     }
-    else
-      this.notify(await this.props.getHttpTranslation(positions, this.state.compId, "position"))
-
   }
 
   createClick() {

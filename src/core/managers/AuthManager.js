@@ -3,8 +3,9 @@ import TimeManager from "./TimeManager";
 import { customAxios, deepCloneObj, regularAxios } from "../utils";
 
 class AuthManager {
-  constructor(getHttpTranslation, setPrefs) {
+  constructor(getHttpTranslation, setAuthStatus, setPrefs) {
     this.getHttpTranslation = getHttpTranslation
+    this.setAuthStatus = setAuthStatus
     this.setPrefs = setPrefs
 
     this.sModule = "auth"
@@ -41,7 +42,9 @@ class AuthManager {
     if (!result.error) {
       result = result.data
       this.storePrefs(result.user)
-      return StorageManager.store(sKey, result)
+      StorageManager.store(sKey, result)
+      this.setAuthStatus(true)
+      return result
     }
 
     return result.error

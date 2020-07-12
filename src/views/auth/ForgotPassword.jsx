@@ -113,7 +113,7 @@ class ForgotPassword extends React.Component {
       this.setState({
         isLoading: false,
         alertState: "has-danger",
-        alertMsg: msg
+        alertMsg: msg.text
       })
     }
 

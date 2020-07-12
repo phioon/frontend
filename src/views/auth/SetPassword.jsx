@@ -85,7 +85,7 @@ class SetPassword extends React.Component {
         else {
           let msg = await this.props.getHttpTranslation(result, compId, "user")
           tokenAlertState = "has-danger"
-          tokenAlertMsg = msg
+          tokenAlertMsg = msg.text
         }
       }
       else {
@@ -190,7 +190,7 @@ class SetPassword extends React.Component {
       this.setState({
         isLoading: false,
         alertState: "has-danger",
-        alertMsg: msg
+        alertMsg: msg.text
       })
     }
 

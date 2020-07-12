@@ -132,10 +132,11 @@ class ModalUpdateWallet extends React.Component {
       this.objectUpdated()
     }
     else {
+      let msg = await this.props.getHttpTranslation(result, this.state.compId, "wallet")
       this.setState({
         isLoading: false,
         alertState: "has-danger",
-        alertMsg: await this.props.getHttpTranslation(result, this.state.compId, "wallet")
+        alertMsg: msg.text
       })
     }
   }

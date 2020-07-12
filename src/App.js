@@ -46,7 +46,7 @@ class App extends React.Component {
     this.setLangId = this.setLangId.bind(this)
     this.getHttpTranslation = this.getHttpTranslation.bind(this)
     this.managers = {
-      auth: new AuthManager(this.getHttpTranslation, this.setPrefs),
+      auth: new AuthManager(this.getHttpTranslation, this.setAuthStatus, this.setPrefs),
       app: new AppManager(this.getHttpTranslation),
       market: new MarketManager(this.getHttpTranslation)
     }
@@ -141,8 +141,9 @@ class App extends React.Component {
     let internalErrorCodes = [403, 404, 500, 503]
     let rData = null
     let msg = {
+      id: undefined,
       icon: "nc-icon nc-bell-55",
-      text: null,
+      text: undefined,
       color: "danger",
       autoDismiss: 7
     }
@@ -154,80 +155,103 @@ class App extends React.Component {
 
       if (model == "user") {
         if (context == "profileupdate")
-          msg.text = getString(prefs.langId, "httptranslation", model + "_profileUpdated")
+          msg.id = model + "_profileUpdated"
       }
     }
     else if (rResult.response) {
       rData = JSON.stringify(rResult.response.data)
       // Bad Request
       if (badRequestCodes.includes(rResult.response.status)) {
-
-        if (model == "user") {
-          if (rData.includes("Unable to log in with provided credentials"))
-            msg.text = getString(prefs.langId, "httptranslation", model + "_invalidCredentials")
-          else if (rData.includes("Maximum amount of tokens"))
-            msg.text = getString(prefs.langId, "httptranslation", model + "_amountOfSessions")
-          else if (rData.includes("entirely numeric"))
-            msg.text = getString(prefs.langId, "httptranslation", model + "_password_entirelyNumeric")
-          else if (rData.includes("password is too similar"))
-            msg.text = getString(prefs.langId, "httptranslation", model + "_password_tooSimilar")
+        switch (model) {
+          case "user":
+            switch (context) {
+              case "register":
+                if (rData.includes("username already exists"))
+                  msg.id = model + "_alreadyExists"
+              case "login":
+                if (rData.includes("Unable to log in with provided credentials"))
+                  msg.id = model + "_invalidCredentials"
+                else if (rData.includes("email not confirmed"))
+                  msg.id = model + "_emailNotConfirmed"
+                else if (rData.includes("Maximum amount of tokens"))
+                  msg.id = model + "_amountOfSessions"
+                else if (rData.includes("entirely numeric"))
+                  msg.id = model + "_password_entirelyNumeric"
+                else if (rData.includes("password is too similar"))
+                  msg.id = model + "_password_tooSimilar"
+              default:
+                break;
+            }
+            break;
+          case "wallet":
+            if (rData.includes("limit reached"))
+              msg.id = model + "_limitReached"
+            break
+          default:
+            break;
         }
-        else if (model == "wallet") {
-          if (rData.includes("limit reached"))
-            msg.text = getString(prefs.langId, "httptranslation", model + "_limitReached")
-        }
-        else
-          msg.text = rData
       }
 
       // Gone
       else if (goneCodes.includes(rResult.response.status)) {
-        if (model == "user") {
-          if (rData.includes("Token is expired")) {
-            if (context == "confirmemail")
-              msg.text = getString(prefs.langId, "httptranslation", model + "_tokenExpired_" + context)
-            else
-              msg.text = getString(prefs.langId, "httptranslation", model + "_tokenExpired")
-          }
+        switch (model) {
+          case "user":
+            if (rData.includes("Token is expired")) {
+              if (context == "confirmemail")
+                msg.id = model + "_tokenExpired_confirmEmail"
+              else
+                msg.id = model + "_tokenExpired"
+            }
+            break;
+          default:
+            break;
         }
-        else
-          msg.text = rData
       }
 
       // Unauthorized
       else if (unauthorizedCodes.includes(rResult.response.status)) {
         msg.color = "success"
-        msg.text = getString(prefs.langId, "httptranslation", "general_unauthorizedCodes")
+        msg.id = "general_unauthorizedCodes"
         this.setAuthStatus(await this.managers.auth.isUserAuthenticated())
       }
 
       // Internal errors
       else if (internalErrorCodes.includes(rResult.response.status)) {
-        if (rData.includes("Max retries exceeded"))
-          msg.text = getString(prefs.langId, "httptranslation", "backend_serviceUnavailable")
-        else
-          msg.text = getString(prefs.langId, "httptranslation", "general_internalErrorCodes")
+        switch (context) {
+          case "register":
+            if (rData.includes("email could not be sent"))
+              msg.id = model + "_emailCouldNotBeSent"
+            break;
+          default:
+            if (rData.includes("Max retries exceeded"))
+              msg.id = "backend_serviceUnavailable"
+            else
+              msg.id = "general_internalErrorCodes"
+            break;
+        }
       }
-
-      // Anything else
-      else
-        msg.text = rResult.response.data
     }
     else if (rResult.request) {
       // The request was made but no response was received
       // Send user to error page 5XX
-      msg.text = getString(prefs.langId, "httptranslation", "alert_404or50X")
+      msg.id = "general_noResponseReceived"
     }
     else {
       // Something happened in setting up the request that triggered an Error
       // Send user a notification/modal and ask to check their internet connection
-      msg.text = getString(prefs.langId, "httptranslation", "alert_couldNotSendRequest")
+      msg.id = "general_couldNotSendRequest"
     }
 
-    if (notify && msg.text)
+    if (msg.id)
+      msg.text = getString(prefs.langId, "httptranslation", msg.id)
+    else
+      msg.text = rData
+
+
+    if (notify && msg.id)
       this.notify("br", msg.color, msg.icon, msg.text, msg.autoDismiss)
 
-    return msg.text
+    return msg
   }
 
   render() {

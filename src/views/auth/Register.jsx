@@ -58,6 +58,7 @@ class Register extends React.Component {
 
       nationalities: [],
 
+      btnForgotPassword_isHidden: true,
       modal_userCreated_isOpen: false,
       alertState: null,
       alertMsg: ""
@@ -224,47 +225,15 @@ class Register extends React.Component {
       this.clearInputFields();
     }
     else {
-      this.setState({ isLoading: false })
-      this.handleAlerts(result)
+      let msg = await this.props.getHttpTranslation(result, this.state.compId, "user")
+      this.setState({
+        isLoading: false,
+        alertState: "has-danger",
+        forgotPassword_isHidden: msg.id == "user_alreadyExists" ? false : true,
+        alertMsg: msg.text
+      })
     }
   };
-  handleAlerts = err => {
-    if (err.response) {
-
-      // Request made and server responded
-      if ((err.response.status >= 500 && err.response.status <= 503) ||
-        err.response.status == 404) {
-        this.setState({
-          alertState: 'has-danger',
-          alertMsg: this.props.getString(this.state.langId, this.state.compId, 'alert_404or50X')
-        })
-      } else {
-        if (this.props.getString(this.state.langId, this.state.compId, ["alert_" + Object.keys(err.response.data)[0]])) {
-          this.setState({
-            alertState: 'has-danger',
-            alertMsg: this.props.getString(this.state.langId, this.state.compId, ["alert_" + Object.keys(err.response.data)[0]])
-          })
-        } else {
-          this.setState({
-            alertState: 'has-danger',
-            alertMsg: this.props.getString(this.state.langId, this.state.compId, "alert_tryAgain")
-          })
-        }
-      }
-    } else if (err.request) {
-      // The request was made but no response was received
-      this.setState({
-        alertState: 'has-danger',
-        alertMsg: this.props.getString(this.state.langId, this.state.compId, "alert_404or50X")
-      })
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      this.setState({
-        alertState: 'has-danger',
-        alertMsg: this.props.getString(this.state.langId, this.state.compId, "alert_couldNotSendRequest")
-      })
-    }
-  }
 
   toggleModal(modalId) {
     this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
@@ -296,6 +265,7 @@ class Register extends React.Component {
 
       nationalities,
 
+      btnForgotPassword_isHidden,
       modal_userCreated_isOpen,
       alertState,
       alertMsg
@@ -367,6 +337,7 @@ class Register extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <Form action="" className="form" method="">
+                    {/* First Name */}
                     <InputGroup className={`has-label ${firstnameState}`}>
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>
@@ -381,6 +352,7 @@ class Register extends React.Component {
                         onChange={e => this.onChange(e, e.target.name, "firstname")}
                       />
                     </InputGroup>
+                    {/* Last Name */}
                     <InputGroup className={`has-label ${lastnameState}`}>
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>
@@ -396,6 +368,7 @@ class Register extends React.Component {
                       />
                     </InputGroup>
                     <Row className="mt-4" />
+                    {/* Email */}
                     <InputGroup className={`has-label ${emailState}`}>
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>
@@ -409,13 +382,14 @@ class Register extends React.Component {
                         value={email}
                         onChange={e => this.onChange(e, e.target.name, "email")}
                       />
-                      {emailState === "has-danger" ? (
+                      {/* {emailState === "has-danger" ? (
                         <label className="error">
                           {getString(langId, compId, "error_enterValidEmail")}
                         </label>
-                      ) : null}
+                      ) : null} */}
                     </InputGroup>
                     <Row className="mt-4" />
+                    {/* Password */}
                     <InputGroup className={`has-label ${passwordState}`}>
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>
@@ -439,6 +413,7 @@ class Register extends React.Component {
                         </label>
                       ) : null}
                     </InputGroup>
+                    {/* Confirm Password */}
                     <InputGroup className={`has-label ${confirmPasswordState}`}>
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>
@@ -468,6 +443,7 @@ class Register extends React.Component {
                       ) : null}
                     </InputGroup>
                     <Row className="mt-4" />
+                    {/* Nationality */}
                     <Col md="100%" className="text-left">
                       <Select
                         className="react-select primary"
@@ -481,6 +457,7 @@ class Register extends React.Component {
                         placeholder={getString(langId, compId, "input_nationality")}
                       />
                     </Col>
+                    {/* Privacy Policy */}
                     <InputGroup className={`has-label ${cbTermsState}`}>
                       <FormGroup check className="text-left">
                         <Label check>
@@ -496,11 +473,11 @@ class Register extends React.Component {
                           </a>
                         </Label>
                       </FormGroup>
-                      {cbTermsState === "has-danger" ? (
+                      {/* {cbTermsState === "has-danger" ? (
                         <label className="error">
                           {getString(langId, compId, "error_acceptPrivacyPolicy")}
                         </label>
-                      ) : null}
+                      ) : <br />} */}
                     </InputGroup>
                   </Form>
                 </CardBody>
@@ -527,6 +504,13 @@ class Register extends React.Component {
                       getString(langId, compId, "btn_createAccount")}
                   </Button>
                   <LabelAlert alertState={alertState} alertMsg={alertMsg} />
+                  <br />
+                  {btnForgotPassword_isHidden ?
+                    null :
+                    <Button className="btn-link btn-neutral" color="default" href="forgotpassword">
+                      {getString(langId, compId, "btn_forgotPassword")}?
+                    </Button>
+                  }
                 </CardFooter>
               </Card>
             </Col>

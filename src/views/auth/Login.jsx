@@ -21,6 +21,8 @@ import {
 // CORE
 import LabelAlert from "../../components/LabelAlert";
 import { project } from "../../core/projectData";
+import { verifyEmail, verifyLength } from "../../core/utils";
+import { getString } from "../../core/lang";
 // --------------------
 
 class Login extends React.Component {
@@ -31,10 +33,12 @@ class Login extends React.Component {
       compId: this.constructor.name.toLowerCase(),
       langId: props.prefs.langId,
       isLoading: false,
+      resendEmail_isLoading: false,
 
       email: "",
       password: "",
 
+      btnSendConfirmation_isHidden: true,
       alertState: null,
       alertMsg: ""
     }
@@ -59,25 +63,10 @@ class Login extends React.Component {
     });
   };
 
-  // function that returns true if value is email, false otherwise
-  verifyEmail = value => {
-    var emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (emailRex.test(value)) {
-      return true;
-    }
-    return false;
-  };
-  // function that verifies if a string has a given length or not
-  verifyLength = (value, length) => {
-    if (value.length >= length) {
-      return true;
-    }
-    return false;
-  };
-
   onChange = (event, stateName, type) => {
     if (this.state.labelAlertState !== null)
       this.setState({
+        btnSendConfirmation_isHidden: true,
         alertState: null,
         alertMsg: ""
       })
@@ -90,14 +79,14 @@ class Login extends React.Component {
 
     switch (type) {
       case "email":
-        if (this.verifyEmail(event.target.value)) {
+        if (verifyEmail(event.target.value)) {
           this.setState({ [stateName + "State"]: "has-success" });
         } else {
           this.setState({ [stateName + "State"]: "has-danger" });
         }
         break;
       case "password":
-        if (this.verifyLength(event.target.value, 1)) {
+        if (verifyLength(event.target.value, 1)) {
           this.setState({ [stateName + "State"]: "has-success" });
         } else {
           this.setState({ [stateName + "State"]: "has-danger" });
@@ -120,25 +109,64 @@ class Login extends React.Component {
     let result = await this.props.managers.auth.userLogin(user)
 
     // When data is returned correctly from StorageManager, one of default properties is VERSION
-    if (result.version) {
-      this.props.setLangId(result.data.user.pref_langId)
-      this.setState({ isLoading: false })
-      this.props.setAuthStatus(true)
-    }
-    else {
+    if (!result.version) {
       this.clearInputFields();
       let msg = await this.props.getHttpTranslation(result, this.state.compId, "user")
+
       this.setState({
         isLoading: false,
+        btnSendConfirmation_isHidden: msg.id == "user_emailNotConfirmed" ? false : true,
         alertState: "has-danger",
-        alertMsg: msg
+        alertMsg: msg.text
+      })
+    }
+  }
+
+  async resendEmailClick(e) {
+    e.preventDefault()
+    let { langId, compId } = this.state
+    this.setState({ resendEmail_isLoading: true })
+
+    let user = {
+      email: this.state.email,
+    }
+
+    let result = await this.props.managers.auth.userRequestConfirmEmail(user)
+
+    if (result.status == 200) {
+      this.setState({
+        resendEmail_isLoading: false,
+        alertState: undefined,
+        alertMsg: getString(langId, compId, "label_emailSent")
+      })
+    }
+    else {
+      let msg = await this.props.getHttpTranslation(result, this.state.compId, "user")
+
+      this.setState({
+        resendEmail_isLoading: false,
+        alertState: "has-danger",
+        alertMsg: msg.text
       })
     }
   }
 
   render() {
     let { getString } = this.props;
-    let { langId, compId, isLoading, email, emailState, password, passwordState, alertState, alertMsg } = this.state;
+    let { langId,
+      compId,
+      isLoading,
+      resendEmail_isLoading,
+
+      email,
+      emailState,
+      password,
+      passwordState,
+
+      btnSendConfirmation_isHidden,
+      alertState,
+      alertMsg
+    } = this.state;
 
     return (
       <div className="login-page">
@@ -204,9 +232,21 @@ class Login extends React.Component {
                     <br />
                     <LabelAlert alertState={alertState} alertMsg={alertMsg} />
                     <br />
-                    <Button className="btn-link btn-neutral" color="default" href="forgotpassword">
-                      {getString(langId, compId, "btn_forgotPassword")}?
-                    </Button>
+                    {
+                      btnSendConfirmation_isHidden ?
+                        <Button className="btn-link btn-neutral" color="default" href="forgotpassword">
+                          {getString(langId, compId, "btn_forgotPassword")}?
+                        </Button> :
+                        <Button
+                          className="btn-link btn-neutral"
+                          color="default"
+                          onClick={e => this.resendEmailClick(e)}>
+                          {resendEmail_isLoading ?
+                            <Spinner animation="border" size="sm" /> :
+                            getString(langId, compId, "btn_resendEmail")
+                          }
+                        </Button>
+                    }
                   </CardFooter>
                 </Card>
               </Form>
