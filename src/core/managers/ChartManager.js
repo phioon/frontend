@@ -15,7 +15,24 @@ const colors = {
   hot: [],
   green: ["#196719", "#1e7b1e", "#239023", "#28a428", "#2db92d", "#32cd32", "#46d246", "#5bd75b", "#6fdc6f", "#84e184"],
   red: ["#800000", "#990000", "#b30000", "#cc0000", "#e60000", "#ff0000", "#ff1a1a", "#ff3333", "#ff4d4d", "#ff6666"],
-  default: ["#a49e93", "#51bcda", "#fbc658", "#47d147", "#5cd6d6", "#c178c1", "#dcb285", "#1F77D0", "#5e5e5e", "#cc0000"]
+  default: [
+    "#bcbdc0",  // Light Grey
+    "#51bcda",  // Light Blue
+    "#fbc658",  // Light Orange
+    "#5cd65c",  // Light Green
+    "#5cd6d6",  // Light Blue-Green
+    "#c178c1",  // Light Purple
+    "#dcb285",  // Light Brown
+    "#1F77D0",  // Blue
+    "#ff00ff",  // Pink
+    "#ffff66",  // Yellow
+    "#804000",  // Brown
+    "#00e6e6",  // Aqua
+    "#5e5e5e",  // Dark Grey
+    "#b30000",  // Dark Red
+    "#062229",  // Brand Dark
+    "#91c7b0",  // Brand Green
+  ]
 }
 
 class ChartManager {
