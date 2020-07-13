@@ -43,9 +43,9 @@ import ValidationForms from "views/forms/ValidationForms.jsx";
 import VectorMap from "views/maps/VectorMap.jsx";
 import Widgets from "views/Widgets.jsx";
 import Wizard from "views/forms/Wizard.jsx";
-import SwingTrade from "views/technicalanalysis/SwingTrade";
 import OpenPositions from "views/wallet/OpenPositions";
 import Positions from "views/myassets/Positions";
+import Suggestions from "views/technicalanalysis/Suggestions";
 import WalletOverview from "views/wallet/WalletOverview";
 import Wallets from "views/myassets/Wallets";
 
@@ -196,9 +196,9 @@ const routes = [
     views: [
       {
         sidebar: true,
-        path: "/analysis/swingtrade",
-        name: "swingtrade",
-        component: SwingTrade,
+        path: "/analysis/suggestions",
+        name: "suggestions",
+        component: Suggestions,
         layout: "/app"
       },
     ]

@@ -429,7 +429,7 @@ class Positions extends React.Component {
         </Row>
         <FixedButton
           {...this.props}
-          id="positions_newPosition"
+          id="newPosition"
           position="bottom"
           onClick={this.createClick}
           icon="fa fa-plus fa-2x"

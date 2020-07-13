@@ -532,6 +532,7 @@ class OpenPositions extends React.Component {
   render() {
     let { getString, prefs } = this.props;
     let {
+      compId,
       modal_filters_isOpen,
       modal_newPosition_isOpen,
       walletOptions,
@@ -624,7 +625,7 @@ class OpenPositions extends React.Component {
         </Row>
         <FixedFilter
           {...this.props}
-          id="openPositions_filters"
+          id={"filters"}
           modalId="filters"
           position="top"
           icon="fa fa-filter fa-2x"
@@ -635,7 +636,7 @@ class OpenPositions extends React.Component {
         />
         <FixedButton
           {...this.props}
-          id="openPositions_newPosition"
+          id={"newPosition"}
           position="bottom"
           icon="fa fa-plus fa-2x"
           onClick={this.createClick}

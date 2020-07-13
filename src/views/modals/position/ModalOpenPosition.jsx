@@ -508,6 +508,7 @@ class ModalOpenPosition extends React.Component {
                 value={position.data.asset}
                 options={assetOptions}
                 onChange={value => this.onSelectChange("asset", value)}
+                noOptionsMessage={() => getString(langId, compId, "input_asset_noOptions")}
               />
             </FormGroup>
             {/* Amount */}

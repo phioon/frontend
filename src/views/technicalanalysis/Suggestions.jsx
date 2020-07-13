@@ -11,9 +11,9 @@ import Skeleton from "react-loading-skeleton";
 
 import { getDistinctValuesFromList, retrieveObjFromObjList } from "../../core/utils";
 import SetupCard from "./SetupCard";
-import FixedFilter from "../../components/FixedPlugin/filters/SwingTrade";
+import FixedFilter from "../../components/FixedPlugin/filters/Suggestions";
 
-class SwingTrade extends React.Component {
+class Suggestions extends React.Component {
   constructor(props) {
     super(props);
 
@@ -418,7 +418,7 @@ class SwingTrade extends React.Component {
         </div>
         <FixedFilter
           {...this.props}
-          id="swingTrade_filters"
+          id={"filters"}
           modalId="filters"
           position="top"
           icon="fa fa-filter fa-2x"
@@ -432,9 +432,9 @@ class SwingTrade extends React.Component {
   }
 }
 
-export default SwingTrade;
+export default Suggestions;
 
-SwingTrade.propTypes = {
+Suggestions.propTypes = {
   managers: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,

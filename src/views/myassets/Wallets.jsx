@@ -319,7 +319,7 @@ class Wallets extends React.Component {
         </Row>
         <FixedButton
           {...this.props}
-          id="wallets_newWallet"
+          id="newWallet"
           position="bottom"
           onClick={this.createClick}
           icon="fa fa-plus fa-2x"

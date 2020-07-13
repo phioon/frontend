@@ -25,7 +25,7 @@ const strings = {
       title_default: "Dashboard",
       title_openpositions: "Open Positions",
       title_positions: "My Assets",
-      title_swingtrade: "Technical Analysis",
+      title_suggestions: "Technical Analysis",
       title_userprofile: "My Profile",
       title_walletoverview: "Overview",
       title_wallets: "My Assets",
@@ -102,11 +102,9 @@ const strings = {
       label_title: "Filters"
     },
     fixedplugin: {
-      positions_newPosition_hint: "Open a new Position.",
-      wallets_newWallet_hint: "Create a Wallet.",
-      openPositions_newPosition_hint: "Open a new Position.",
-      openPositions_filters_hint: "Try some filters.",
-      swingTrade_filters_hint: "Try some filters."
+      newWallet_hint: "Create a Wallet.",
+      newPosition_hint: "Open a new Position.",
+      filters_hint: "Try some filters.",
     },
     footer: {
       webSite: "WEBSITE",
@@ -199,6 +197,7 @@ const strings = {
       input_date: "Date",
       input_wallet: "Wallet",
       input_asset: "Asset",
+      input_asset_noOptions: "Firstly, select a Wallet.",
       input_amount: "Amount",
       input_price: "Price",
       input_cost: "Cost",
@@ -474,10 +473,8 @@ const strings = {
       walletmanager: "Manager",
 
       technicalAnalysis: "Technical Analysis",
-      swingtrade: "Swing Trade",
-      swingtradeMini: "ST",
-      timeline: "Timeline",
-      timelineMini: "TL",
+      suggestions: "Suggestions",
+      suggestionsMini: "S",
     },
     statusfilter: {
       label_title: "Status",
@@ -485,8 +482,8 @@ const strings = {
     stockexchangefilter: {
       label_title: "Stock Exchanges",
     },
-    swingtrade: {
-      title: "Swing Trade",
+    suggestions: {
+      title: "Suggestions",
       label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
       label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can look for the best opportunities there! ;)",
       label_noNews_p1: "Hmm... I do not see new opportunities over here.",
@@ -583,7 +580,7 @@ const strings = {
       title_default: "Dashboard",
       title_openpositions: "Posições Abertas",
       title_positions: "Meus Ativos",
-      title_swingtrade: "Análise Técnica",
+      title_suggestions: "Análise Técnica",
       title_userprofile: "Meu Perfil",
       title_walletoverview: "Visão Geral",
       title_wallets: "Meus Ativos",
@@ -659,11 +656,9 @@ const strings = {
       label_title: "Filtros"
     },
     fixedplugin: {
-      positions_newPosition_hint: "Abrir uma nova Posição.",
-      wallets_newWallet_hint: "Criar uma Carteira.",
-      openPositions_newPosition_hint: "Abrir uma nova Posição.",
-      openPositions_filters_hint: "Experimente alguns filtros.",
-      swingTrade_filters_hint: "Experimente alguns filtros.",
+      newWallet_hint: "Criar uma Carteira.",
+      newPosition_hint: "Abrir uma nova Posição.",
+      filters_hint: "Experimente alguns filtros.",
     },
     footer: {
       webSite: "WEBSITE",
@@ -755,6 +750,7 @@ const strings = {
       input_date: "Data",
       input_wallet: "Carteira",
       input_asset: "Ativo",
+      input_asset_noOptions: "Primeiramente, selecione a Carteira.",
       input_type: "Tipo",
       input_type_buy: "COMPRA",
       input_type_sell: "VENDA",
@@ -1025,10 +1021,8 @@ const strings = {
       walletmanager: "Manager",
 
       technicalAnalysis: "Análise Técnica",
-      swingtrade: "Swing Trade",
-      swingtradeMini: "ST",
-      timeline: "Linha do Tempo",
-      timelineMini: "LT",
+      suggestions: "Recomendações",
+      suggestionsMini: "R",
     },
     statusfilter: {
       label_title: "Status",
@@ -1036,8 +1030,8 @@ const strings = {
     stockexchangefilter: {
       label_title: "Bolsa de Valores",
     },
-    swingtrade: {
-      title: "Swing Trade",
+    suggestions: {
+      title: "Recomendações",
       label_noWallets_p1: "Hmm... Parece que você ainda tem Carteiras criadas por aqui... Que tal criar a primeira?",
       label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua para que eu possa procurar pelas melhores oportunidades lá! ;)",
       label_noNews_p1: "Hmm... Não estou encontrando novas oportunidades por aqui.",

@@ -15,13 +15,12 @@ import OpCost from "../../components/cards/measures/OpCost";
 import Profitability from "../../components/cards/measures/Profitability";
 import Winners from "../../components/cards/measures/Winners";
 // Charts
-import Diversification from "../../components/cards/charts/Diversification";
 import ProfitabilityOverTime from "../../components/cards/charts/ProfitabilityOverTime";
 import ProfitabilityRanking from "../../components/cards/charts/ProfitabilityRanking";
 
 import ChartManager from "../../core/managers/ChartManager"
 import ModalOpenPosition from "../modals/position/ModalOpenPosition";
-import { convertFloatToCurrency, convertFloatToPercentage, orderByAsc } from "../../core/utils";
+import { convertFloatToCurrency, convertFloatToPercentage } from "../../core/utils";
 
 
 class WalletOverview extends React.Component {
@@ -131,9 +130,6 @@ class WalletOverview extends React.Component {
     let measures = await this.handleMeasures(dimensions)
     let charts = this.handleCharts(measures)
 
-    console.log(measures)
-    console.log(charts)
-
     this.setState({ dimensions, measures, charts })
   }
 
@@ -193,8 +189,6 @@ class WalletOverview extends React.Component {
     for (var x = 0; x < positionsData.length; x++)
       if (!positionsDisabled.includes(x))
         tSelection.push(positionsData[x])
-
-    console.log(tSelection)
 
     // Raw Data for Charts
     measures.positions.rawData.selection = await this.props.managers.measure.rawData(tSelection, "none")
@@ -631,7 +625,6 @@ class WalletOverview extends React.Component {
     if (chart)
       charts[dimension][measure].chart = chart
 
-    console.log(charts)
     this.setState({ charts })
   }
   changeKpiFormat(e, dimension) {
@@ -677,7 +670,6 @@ class WalletOverview extends React.Component {
   render() {
     let { getString, prefs } = this.props;
     let {
-      langId,
       compId,
 
       modal_filters_isOpen,
@@ -780,7 +772,7 @@ class WalletOverview extends React.Component {
         </Row>
         <FixedFilter
           {...this.props}
-          id="openPositions_filters"
+          id={"filters"}
           modalId="filters"
           position="top"
           icon="fa fa-filter fa-2x"
@@ -791,7 +783,7 @@ class WalletOverview extends React.Component {
         />
         <FixedButton
           {...this.props}
-          id="openPositions_newPosition"
+          id={"newPosition"}
           position="bottom"
           icon="fa fa-plus fa-2x"
           onClick={this.createClick}

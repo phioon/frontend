@@ -108,8 +108,8 @@ class Login extends React.Component {
 
     let result = await this.props.managers.auth.userLogin(user)
 
-    // When data is returned correctly from StorageManager, one of default properties is VERSION
-    if (!result.version) {
+    // When data is returned correctly from StorageManager, one of default properties is USER
+    if (!result.user) {
       this.clearInputFields();
       let msg = await this.props.getHttpTranslation(result, this.state.compId, "user")
 
