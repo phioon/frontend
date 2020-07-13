@@ -21,7 +21,7 @@ class Currency (models.Model):
                       'decimal_symbol': ','})
         Currency.objects.update_or_create(
             code='USD',
-            defaults={'symbol': 'US$',
+            defaults={'symbol': '$',
                       'name': 'United States dollar',
                       'thousands_separator_symbol': ',',
                       'decimal_symbol': '.'})

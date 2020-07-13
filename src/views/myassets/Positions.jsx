@@ -128,6 +128,7 @@ class Positions extends React.Component {
         else
           obj.typeIsBuy = false
 
+        obj.total_opCost = this.props.managers.measure.opCost_currency([obj])
         obj.s_opCostPercent = Math.round(obj.s_operational_cost / obj.s_total_price * 100 * 100) / 100
         obj.e_opCostPercent = Math.round(obj.e_operational_cost / obj.e_total_price * 100 * 100) / 100
         obj.s_totalCost = obj.s_total_price + obj.s_operational_cost
@@ -153,6 +154,8 @@ class Positions extends React.Component {
           typeIsBuy: obj.typeIsBuy,
           type_label: obj.typeIsBuy ? getString(langId, compId, "item_buy") : getString(langId, compId, "item_sell"),
           amount: integerWithThousandsSeparator(obj.amount, obj.currency.thousands_separator_symbol),
+
+          total_opCost: convertFloatToCurrency(obj.total_opCost, obj.currency),
 
           s_price: convertFloatToCurrency(obj.s_unit_price, obj.currency),
           s_cost: convertFloatToCurrency(obj.s_total_price, obj.currency),
@@ -392,7 +395,7 @@ class Positions extends React.Component {
                     },
                     {
                       Header: getString(langId, compId, "header_opCost"),
-                      accessor: "s_opCost",
+                      accessor: "total_opCost",
                       width: 100,
                       className: "text-right"
                     },
@@ -418,7 +421,7 @@ class Positions extends React.Component {
                         getString(langId, compId, "table_noDataFound")
                   }
                   showPaginationBottom
-                  className="-striped -highlight info-pagination"
+                  className="-striped -highlight default-pagination"
                 />
               </CardBody>
             </Card>

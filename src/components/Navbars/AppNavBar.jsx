@@ -213,7 +213,7 @@ class AppNavBar extends React.Component {
                     <DropdownItem onClick={() => this.props.history.push('/app/userprofile')}>
                       {getString(langId, compId, "profile")}
                     </DropdownItem>
-                    <DropdownItem onClick={() => e.preventDefault()}>
+                    <DropdownItem onClick={e => e.preventDefault()}>
                       {getString(langId, compId, "settings")}
                     </DropdownItem>
                     <DropdownItem divider tag="li" />

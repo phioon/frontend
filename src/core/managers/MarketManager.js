@@ -114,6 +114,7 @@ class MarketManager {
     this.rQueue.splice(this.rQueue.indexOf(sKey), 1)
   }
 
+
   async assetList(syncFull = false, detailed = false, assets = [], stockExchange) {
     // syncFull is only triggered from WalletList
     // Client must pass 'assets' or 'stockExchange'. One of these 2 parameters are required.
@@ -126,9 +127,24 @@ class MarketManager {
     let wsInfo = this.getApi("wsAssets")
     let sData = {}
     let syncList = []
+    let ignoreAssets = []
     let result = null
 
-    if (!syncFull) {
+    if (syncFull) {
+      // syncFull must be used only with stockExchange.
+      // Here we'll bring from backend only a list of assets that we don't have stored yet.
+      if (stockExchange) {
+        assets = StorageManager.getItem(sKey)
+        delete assets.version                 // Removes first position (key 'version')
+
+        for (var [k, v] of Object.entries(assets))
+          if (v.data.stockExchange == stockExchange)
+            ignoreAssets.push(k)
+
+        assets = Object.keys(assets)
+      }
+    }
+    else {
       // StockExchange: Prepare list of assets to be used forward.
       if (stockExchange) {
         assets = StorageManager.getItem(sKey)
@@ -167,14 +183,17 @@ class MarketManager {
         }
     }
 
-    // console.log("syncList: " + syncList)
+    // console.log(`syncFull? ${syncFull} | detailed? ${detailed}`)
+    // console.log(`ignoreAssets: ${ignoreAssets}`)
+    // console.log(`syncList: ${syncList}`)
 
     if (syncFull || syncList.length > 0) {
       wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
       wsInfo.options.params = {
         detailed: detailed,
         stockExchange: stockExchange,
-        assets: syncList.join(',')
+        assets: syncList.join(','),
+        ignoreAssets: ignoreAssets.join(',')
       }
       result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
@@ -196,8 +215,6 @@ class MarketManager {
   offlineAssetList(assets) {
     const sKey = "assets"
     let sData = {}
-
-    // Continue it
 
     for (var a of assets)
       sData[a] = StorageManager.getItem(sKey, a)

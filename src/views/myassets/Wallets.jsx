@@ -311,7 +311,7 @@ class Wallets extends React.Component {
                         getString(langId, compId, "table_noDataFound")
                   }
                   showPaginationBottom
-                  className="-striped -highlight info-pagination"
+                  className="-striped -highlight default-pagination"
                 />
               </CardBody>
             </Card>
