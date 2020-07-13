@@ -362,12 +362,12 @@ class Positions extends React.Component {
                     {
                       Header: getString(langId, compId, "header_startedOn"),
                       accessor: "startedOn_label",
-                      width: 120
+                      // width: 120
                     },
                     {
                       Header: getString(langId, compId, "header_endedOn"),
                       accessor: "endedOn_label",
-                      width: 120
+                      // width: 120
                     },
                     {
                       Header: getString(langId, compId, "header_wallet"),
@@ -376,12 +376,12 @@ class Positions extends React.Component {
                     {
                       Header: getString(langId, compId, "header_asset"),
                       accessor: "asset_label",
-                      width: 110
+                      // width: 110
                     },
                     {
                       Header: getString(langId, compId, "header_type"),
                       accessor: "type_label",
-                      width: 90
+                      // width: 90
                     },
                     {
                       Header: getString(langId, compId, "header_amount"),
@@ -396,7 +396,7 @@ class Positions extends React.Component {
                     {
                       Header: getString(langId, compId, "header_opCost"),
                       accessor: "total_opCost",
-                      width: 100,
+                      // width: 100,
                       className: "text-right"
                     },
                     {
@@ -407,7 +407,7 @@ class Positions extends React.Component {
                     {
                       Header: getString(langId, compId, "header_actions"),
                       accessor: "actions",
-                      width: 120,
+                      // width: 120,
                       sortable: false,
                       filterable: false
                     }
