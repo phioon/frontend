@@ -48,7 +48,7 @@ const config = {
   market: {
     assets: {
       syncLimit: 7,
-      version: 0.09
+      version: 0.12
     },
     dSetups: {
       syncLimit: 0.07,

@@ -275,7 +275,7 @@ class Wallets extends React.Component {
               <CardBody>
                 <ReactTable
                   data={data}
-                  filterable
+                  filterable={data.length > 0 ? true : false}
                   columns={[
                     {
                       Header: getString(langId, compId, "header_name"),
@@ -297,7 +297,6 @@ class Wallets extends React.Component {
                     {
                       Header: getString(langId, compId, "header_actions"),
                       accessor: "actions",
-                      width: 120,
                       sortable: false,
                       filterable: false
                     }

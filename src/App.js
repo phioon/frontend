@@ -124,10 +124,8 @@ class App extends React.Component {
     let prefs = this.state.prefs
     let langList = getLangList()
 
-    if (prefs.langId !== newLangId && langList.includes(newLangId)) {
+    if (prefs.langId !== newLangId && langList.includes(newLangId))
       prefs.langId = newLangId
-      this.managers.auth.userUpdate({ pref_langId: newLangId })
-    }
 
     this.setState({ prefs })
   }
@@ -179,6 +177,10 @@ class App extends React.Component {
                   msg.id = model + "_password_entirelyNumeric"
                 else if (rData.includes("password is too similar"))
                   msg.id = model + "_password_tooSimilar"
+              case "setpassword":
+                if (rData.includes("password is entirely numeric"))
+                  msg.id = model + "_password_entirelyNumeric"
+                break;
               default:
                 break;
             }

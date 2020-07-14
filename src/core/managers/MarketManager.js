@@ -127,7 +127,7 @@ class MarketManager {
     let wsInfo = this.getApi("wsAssets")
     let sData = {}
     let syncList = []
-    let ignoreAssets = []
+    let cachedAssets = []
     let result = null
 
     if (syncFull) {
@@ -139,7 +139,7 @@ class MarketManager {
 
         for (var [k, v] of Object.entries(assets))
           if (v.data.stockExchange == stockExchange)
-            ignoreAssets.push(k)
+            cachedAssets.push(k)
 
         assets = Object.keys(assets)
       }
@@ -193,7 +193,7 @@ class MarketManager {
         detailed: detailed,
         stockExchange: stockExchange,
         assets: syncList.join(','),
-        ignoreAssets: ignoreAssets.join(',')
+        cachedAssets: cachedAssets.join(',')
       }
       result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 

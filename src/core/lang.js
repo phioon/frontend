@@ -33,7 +33,6 @@ const strings = {
       placeholder_search: "Search...",
 
       profile: "Profile",
-      settings: "Settings",
       logout: "Log out"
     },
     assetfilter: {
@@ -588,7 +587,6 @@ const strings = {
       placeholder_search: "Pesquisar...",
 
       profile: "Perfil",
-      settings: "Configurações",
       logout: "Sair"
     },
     assetfilter: {

@@ -56,11 +56,11 @@ def AssetList(request):
     detailed = request.query_params.get('detailed')
     stockExchange = request.query_params.get('stockExchange')
     assets = request.query_params.get('assets')
-    ignoreAssets = request.query_params.get('ignoreAssets')
+    cachedAssets = request.query_params.get('cachedAssets')
     params = {'detailed': detailed,
               'stockExchange': stockExchange,
               'assets': assets,
-              'ignoreAssets': ignoreAssets}
+              'cachedAssets': cachedAssets}
 
     try:
         r = requests.get(backendRequest,
