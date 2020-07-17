@@ -332,6 +332,7 @@
     }
     &[data-color="brand-dark"]{
       @include sidebar-color($brand-dark-color);
+      @include sidebar-text-color($white-color);
     }
     &[data-color="brand-grey"]{
       @include sidebar-color($brand-grey-color);

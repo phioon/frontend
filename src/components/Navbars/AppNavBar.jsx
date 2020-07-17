@@ -174,13 +174,7 @@ class AppNavBar extends React.Component {
                   </DropdownToggle>
                   <DropdownMenu aria-labelledby="dropdown_notifications" right>
                     <DropdownItem onClick={e => e.preventDefault()}>
-                      Action
-                    </DropdownItem>
-                    <DropdownItem onClick={e => e.preventDefault()}>
-                      Another action
-                    </DropdownItem>
-                    <DropdownItem onClick={e => e.preventDefault()}>
-                      Something else here
+                      {getString(langId, "generic", "label_commingSoon")}
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>

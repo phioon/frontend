@@ -332,7 +332,6 @@
     }
 
     // Active color changing
-
     &[data-active-color="primary"]{
         @include sidebar-active-color($primary-color);
     }

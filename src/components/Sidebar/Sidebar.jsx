@@ -15,14 +15,11 @@
 
 */
 import React from "react";
+import PropTypes from "prop-types";
 import { NavLink } from "react-router-dom";
 import { Nav, Collapse } from "reactstrap";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
-
-import avatar from "assets/img/faces/ayo-ogunseinde-2.jpg";
-
-import PropTypes from "prop-types";
 
 // CORE
 import { project } from "../../core/projectData";
@@ -209,16 +206,13 @@ class Sidebar extends React.Component {
         <div className="sidebar-wrapper" ref="sidebar">
           <div className="user">
             <div className="photo text-center centered">
-              {/* <img src={avatar} alt="Avatar" /> */}
               <span>{user && user.initials}</span>
             </div>
             <div className="info">
               <a
                 data-toggle="collapse"
                 aria-expanded={this.state.openAvatar}
-                onClick={() =>
-                  this.setState({ openAvatar: !this.state.openAvatar })
-                }
+                onClick={() => this.setState({ openAvatar: !this.state.openAvatar })}
               >
                 <span>
                   {user && `${user.first_name} ${user.last_name}`}

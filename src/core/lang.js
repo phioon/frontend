@@ -18,7 +18,7 @@ export function getString(langId, compId, strId) {
 const strings = {
   enUS: {
     generic: {
-      label_commingsoon: "COMING SOON...",
+      label_commingSoon: "COMING SOON...",
       label_loading: "Loading...",
     },
     appnavbar: {
@@ -465,8 +465,6 @@ const strings = {
       positions: "Positions",
       positionsMini: "P",
 
-      dashboard: "Dashboard",
-
       wallet: "Wallet",
       walletoverview: "Overview",
       walletoverviewMini: "O",
@@ -613,7 +611,7 @@ const strings = {
   },
   ptBR: {
     generic: {
-      label_commingsoon: "EM BREVE...",
+      label_commingSoon: "EM BREVE...",
       label_loading: "Carregando...",
     },
     appnavbar: {
@@ -929,7 +927,7 @@ const strings = {
       desc: "Uma Posição é composta de 2 Transações (Compra e Venda). Aqui, você pode inserir dados de uma nova Posição.",
 
       table_noDataFound: "hmm... Não encontrei nenhuma Posição com esses filtros. Será que perdi algo?",
-      table_emptyData: "Ainda não tem suas Posições aqui? Crie uma neste botão + do lado direito da tela. ;)",
+      table_emptyData: "Ainda não tem suas Posições aqui? Crie uma no botão à direita da tela. ;)",
 
       header_startedOn: "Início",
       header_endedOn: "Fim",
@@ -1053,8 +1051,6 @@ const strings = {
       positions: "Posições",
       positionsMini: "P",
 
-      dashboard: "Dashboard",
-
       wallet: "Carteira",
       walletoverview: "Visão Geral",
       walletoverviewMini: "VG",
@@ -1163,7 +1159,7 @@ const strings = {
       card_title: "Carteiras",
 
       table_noDataFound: "hmm... Não encontrei nenhuma Carteira com esses filtros. Será que perdi algo?",
-      table_emptyData: "Ainda não tem Carteiras aqui? Crie uma neste botão + do lado direito da tela. ;)",
+      table_emptyData: "Ainda não tem Carteiras aqui? Crie uma no botão à direita da tela. ;)",
 
       header_name: "Nome",
       header_balance: "Saldo",

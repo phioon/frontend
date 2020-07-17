@@ -30,7 +30,7 @@ class LockScreen extends React.Component {
               <CardHeader>
                 <img
                   alt="..."
-                  src={require("assets/img/faces/joe-gardner-2.jpg")}
+                // src={require("assets/img/faces/joe-gardner-2.jpg")}
                 />
               </CardHeader>
               <CardBody>
@@ -60,7 +60,7 @@ class LockScreen extends React.Component {
         <div
           className="full-page-background"
           style={{
-            backgroundImage: `url(${require("assets/img/bg/bruno-abatti.jpg")})`
+            // backgroundImage: `url(${require("assets/img/bg/bruno-abatti.jpg")})`
           }}
         />
       </div>

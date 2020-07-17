@@ -1,7 +1,7 @@
 import TimeManager from "./TimeManager";
 import MarketManager from "./MarketManager";
 
-import { orderByAsc, orderByDesc } from "../utils";
+import { orderByAsc } from "../utils";
 
 const config = {
   // syncLimit: Max time (in minutes) allowed to use stored data
@@ -10,27 +10,27 @@ const config = {
   app: {
     countries: {
       syncLimit: 8640,
-      version: 0.06
+      version: 0.01
     },
     currencies: {
       syncLimit: 8640,
-      version: 0.03
+      version: 0.01
     },
     subscriptions: {
       syncLimit: 8640,
-      version: 0.03
+      version: 0.01
     },
     positionTypes: {
       syncLimit: 8640,
-      version: 0.02
+      version: 0.01
     },
     positions: {
       syncLimit: 3,
-      version: 0.15
+      version: 0.01
     },
     wallets: {
       syncLimit: 3,
-      version: 0.04
+      version: 0.01
     },
   },
   auth: {
@@ -38,37 +38,37 @@ const config = {
       // 'syncLimit' could be the difference between TOKEN_TTL and MIN_REFRESH_INTERVAL (Django rest_framework),
       // but user is able to logout all devices.
       syncLimit: 0,
-      version: 0.05
+      version: 0.01
     },
     user_prefs: {
       syncLimit: 8640,
-      version: 0.03
+      version: 0.01
     }
   },
   market: {
     assets: {
       syncLimit: 7,
-      version: 0.13
+      version: 0.01
     },
     dSetups: {
-      syncLimit: 0.07,
-      version: 0.07
+      syncLimit: 7,
+      version: 0.01
     },
     dSetupSummary: {
-      syncLimit: 0.060,
-      version: 0.02
+      syncLimit: 60,
+      version: 0.01
     },
     dRaw: {
       syncLimit: 3,
-      version: 0.14
+      version: 0.01
     },
     stockExchanges: {
       syncLimit: 8640,
-      version: 0.13
+      version: 0.01
     },
     technicalConditions: {
       syncLimit: 8640,
-      version: 0.10
+      version: 0.01
     },
   }
 }

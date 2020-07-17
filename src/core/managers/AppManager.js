@@ -77,7 +77,7 @@ class AppManager {
     let waitedTime = 0
 
     while (this.rQueue.includes(sKey) && waitedTime <= waitTimeLimit) {
-      console.log(sKey + " waiting... rQueue: [" + this.rQueue + "]")
+      // console.log(sKey + " waiting... rQueue: [" + this.rQueue + "]")
       await sleep(waitTime)
       waitedTime += waitTime
     }

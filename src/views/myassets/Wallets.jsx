@@ -9,8 +9,9 @@ import {
   CardHeader,
   CardBody,
   CardTitle,
-  Row,
   Col,
+  Tooltip,
+  Row,
   UncontrolledTooltip
 } from "reactstrap";
 // react component for creating dynamic tables
@@ -322,6 +323,7 @@ class Wallets extends React.Component {
           position="bottom"
           onClick={this.createClick}
           icon="fa fa-plus fa-2x"
+          showTooltip={pageFirstLoading ? false : data.length == 0 ? true : false}
         />
       </div>
     )
