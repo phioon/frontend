@@ -33,7 +33,10 @@ class UserRegisterAPIView(generics.GenericAPIView):
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
         nationality = get_object_or_404(Country, pk=request.data['nationality'])
-        subscription = get_object_or_404(Subscription, name='basic')
+        subscription = get_object_or_404(Subscription, name='premium')
+
+        # Subscription will go back to 'basic'.
+        # Remember to remove subscription_expires_on !!
 
         if nationality:
             user = serializer.save()
@@ -44,6 +47,7 @@ class UserRegisterAPIView(generics.GenericAPIView):
                         user=user,
                         nationality=nationality,
                         subscription=subscription,
+                        subscription_expires_on='2020-12-31',
                         pref_currency=nationality.currency,
                         pref_langId=request.data['langId'])
                 except:

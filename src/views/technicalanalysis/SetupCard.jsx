@@ -376,7 +376,7 @@ class SetupCard extends React.Component {
               </TabPane>
               {/* Chart */}
               <TabPane className="text-center" tabId="chart" role="tabpanel">
-                <label>{getString(langId, "generic", "label_commingSoon")}</label>
+                <label>{getString(langId, "generic", "label_comingSoon")}</label>
               </TabPane>
             </TabContent>
           </div>

@@ -501,7 +501,6 @@ class OpenPositions extends React.Component {
   render() {
     let { getString, prefs } = this.props;
     let {
-      compId,
       modal_filters_isOpen,
       modal_newPosition_isOpen,
       walletOptions,
@@ -602,6 +601,7 @@ class OpenPositions extends React.Component {
           toggleModal={this.toggleModal}
           dimensions={dimensions}
           onSelectionChange={this.onSelectionChange}
+          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length <= 5 ? true : false}
         />
         <FixedButton
           {...this.props}
@@ -609,6 +609,7 @@ class OpenPositions extends React.Component {
           position="bottom"
           icon="fa fa-plus fa-2x"
           onClick={this.createClick}
+          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length <= 3 ? true : false}
         />
       </div >
     )

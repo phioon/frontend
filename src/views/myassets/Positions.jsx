@@ -427,6 +427,7 @@ class Positions extends React.Component {
           position="bottom"
           onClick={this.createClick}
           icon="fa fa-plus fa-2x"
+          showTooltip={pageFirstLoading ? false : data.length <= 3 ? true : false}
         />
       </div>
     )

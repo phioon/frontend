@@ -188,8 +188,6 @@ export function cumulativeAggr(rawData, aggrProps, mFields = []) {
   let keyField = aggrProps.keyField
   let previousKey = undefined
 
-  console.log(dimensionAsKey)
-
   // Raw data are expected to be ordered. (usually by date ASC)
   for (var [k, v] of Object.entries(dimensionAsKey)) {
     // For each TODAY's object...

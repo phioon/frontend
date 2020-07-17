@@ -18,7 +18,7 @@ export function getString(langId, compId, strId) {
 const strings = {
   enUS: {
     generic: {
-      label_commingSoon: "COMING SOON...",
+      label_comingSoon: "Coming Soon...",
       label_loading: "Loading...",
     },
     appnavbar: {
@@ -333,7 +333,7 @@ const strings = {
       desc: "A position is made of 2 transactions (Buy and Sell). Here, you can insert data related to a new position.",
 
       table_noDataFound: "hmm... I didn't find any Position with this filter. Did I miss something?! ",
-      table_emptyData: "Don't have your Positions here yet? Create it clicking on the button + on your right. ;)",
+      table_emptyData: "Don't have your Positions here yet? Create it clicking on the button at your right. ;)",
 
       header_startedOn: "Started On",
       header_endedOn: "Ended On",
@@ -588,7 +588,7 @@ const strings = {
     wallets: {
       card_title: "Wallets",
 
-      table_noDataFound: "Don't have a Wallet yet? Create it clicking on the button + on your right.",
+      table_noDataFound: "Don't have a Wallet yet? Create it clicking on the button at your right. ;)",
 
       header_name: "Name",
       header_balance: "Balance",
@@ -611,7 +611,7 @@ const strings = {
   },
   ptBR: {
     generic: {
-      label_commingSoon: "EM BREVE...",
+      label_comingSoon: "Em breve...",
       label_loading: "Carregando...",
     },
     appnavbar: {

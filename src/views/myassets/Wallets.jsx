@@ -57,7 +57,7 @@ class Wallets extends React.Component {
         isValidated: undefined,
       },
 
-      currency: { code: "USD", symbol: "$", thousands_separator_symbol: ",", decimal_symbol: "." },
+      currency: { code: "BRL", symbol: "R$", thousands_separator_symbol: ".", decimal_symbol: "," },
 
       modal_createWallet_isOpen: false,
       modal_updateWallet_isOpen: false,

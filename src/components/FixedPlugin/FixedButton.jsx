@@ -15,34 +15,46 @@ class FixedButton extends React.Component {
 
       isTooltipOpen: false,
     }
+
+    this.isBlinkingAllowed = true;
   }
   static getDerivedStateFromProps(props, state) {
     if (props.prefs.langId !== state.langId)
       return { langId: props.prefs.langId }
-    if (props.prefs.showTooltip !== state.showTooltip)
-      return { showTooltip: props.prefs.showTooltip }
     return null
   }
-  componentDidMount() {
-    this.startTooptip()
+  componentDidUpdate(prevProps) {
+    if (this.props.showTooltip !== prevProps.showTooltip)
+      this.blinkTooltip()
+  }
+  componentWillUnmount() {
+    this.isBlinkingAllowed = false
   }
 
-  async startTooptip() {
+  async blinkTooltip() {
     let { showTooltip } = this.props
 
     if (showTooltip) {
       let count = 1
-      while (count <= 2) {
+      let limit = 3
+
+      await sleep(1500)
+
+      while (count <= limit) {
         this.toggleTooltip()
-        await sleep(2000)
-        this.toggleTooltip()
+        await sleep(400)
+
+        if (count < limit)
+          this.toggleTooltip()
         count += 1
       }
+      await sleep(4000)
+      this.toggleTooltip()
     }
   }
-
   toggleTooltip() {
-    this.setState({ isTooltipOpen: !this.state.isTooltipOpen })
+    if (this.isBlinkingAllowed)
+      this.setState({ isTooltipOpen: !this.state.isTooltipOpen })
   }
 
   render() {

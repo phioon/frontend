@@ -11,14 +11,17 @@
 
 =========================================================
 */
-/*eslint-disable*/
+
 import React from "react";
 import { Container, Row } from "reactstrap";
 // used for making the prop types of this component
 import PropTypes from "prop-types";
 
+import { UncontrolledTooltip } from "reactstrap";
+
 // Core
 import { project } from "../../core/projectData";
+import { lang } from "moment";
 // --------------------
 
 class Footer extends React.Component {
@@ -54,14 +57,20 @@ class Footer extends React.Component {
                   </a>
                 </li>
                 <li>
-                  <a href="#dosomething">
+                  <a id="appStore" href="#comingsoon">
                     {getString(langId, compId, "appStore")}
                   </a>
+                  <UncontrolledTooltip target="appStore">
+                    {getString(langId, "generic", "label_comingSoon")}
+                  </UncontrolledTooltip>
                 </li>
                 <li>
-                  <a href="#dosomething">
+                  <a id="googlePlay" href="#comingsoon">
                     {getString(langId, compId, "googlePlay")}
                   </a>
+                  <UncontrolledTooltip target="googlePlay">
+                    {getString(langId, "generic", "label_comingSoon")}
+                  </UncontrolledTooltip>
                 </li>
               </ul>
             </nav>

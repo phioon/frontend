@@ -20,6 +20,7 @@ import ProfitabilityRanking from "../../components/cards/charts/ProfitabilityRan
 
 import ChartManager from "../../core/managers/ChartManager"
 import ModalOpenPosition from "../modals/position/ModalOpenPosition";
+import ModalCreateWallet from "../modals/wallet/ModalCreateWallet";
 
 
 class WalletOverview extends React.Component {
@@ -35,7 +36,8 @@ class WalletOverview extends React.Component {
       walletOptions: [],
 
       modal_filters_isOpen: false,
-      modal_newPosition_isOpen: false,
+      modal_openPosition_isOpen: false,
+      modal_createWallet_isOpen: false,
 
       pageFirstLoading: true,
 
@@ -101,7 +103,8 @@ class WalletOverview extends React.Component {
     this.onSelectionChange = this.onSelectionChange.bind(this)
     this.loadDimensionsAndMeasures = this.loadDimensionsAndMeasures.bind(this)
     this.toggleModal = this.toggleModal.bind(this);
-    this.createClick = this.createClick.bind(this);
+    this.createWallet = this.createWallet.bind(this);
+    this.openPosition = this.openPosition.bind(this);
   }
   static getDerivedStateFromProps(props, state) {
     if (props.prefs.langId !== state.langId)
@@ -605,9 +608,13 @@ class WalletOverview extends React.Component {
     return items
   }
 
-  createClick() {
-    this.toggleModal("newPosition")
+  createWallet() {
+    this.toggleModal("createWallet")
   }
+  openPosition() {
+    this.toggleModal("openPosition")
+  }
+
   toggleCollapseFilter(e, dimension) {
     e.preventDefault()
     this.setState({ [dimension + "Collapsed"]: !this.state[dimension + "Collapsed"] })
@@ -640,10 +647,10 @@ class WalletOverview extends React.Component {
   render() {
     let { getString, prefs } = this.props;
     let {
-      compId,
-
       modal_filters_isOpen,
-      modal_newPosition_isOpen,
+      modal_openPosition_isOpen,
+      modal_createWallet_isOpen,
+
       walletOptions,
       currency,
 
@@ -656,10 +663,19 @@ class WalletOverview extends React.Component {
 
     return (
       <div className="content">
+        <ModalCreateWallet
+          {...this.props}
+          modalId="createWallet"
+          isOpen={modal_createWallet_isOpen}
+          sWalletNames={[]}
+          currency={currency}
+          toggleModal={this.toggleModal}
+          runItIfSuccess={this.loadDimensionsAndMeasures}
+        />
         <ModalOpenPosition
           {...this.props}
-          modalId="newPosition"
-          isOpen={modal_newPosition_isOpen}
+          modalId="openPosition"
+          isOpen={modal_openPosition_isOpen}
           walletOptions={walletOptions}
           currency={currency}
           toggleModal={this.toggleModal}
@@ -750,13 +766,15 @@ class WalletOverview extends React.Component {
           toggleModal={this.toggleModal}
           dimensions={dimensions}
           onSelectionChange={this.onSelectionChange}
+          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length <= 5 ? true : false}
         />
         <FixedButton
           {...this.props}
-          id={"newPosition"}
+          id={dimensions.wallets.data.length == 0 ? "newWallet" : "newPosition"}
           position="bottom"
           icon="fa fa-plus fa-2x"
-          onClick={this.createClick}
+          onClick={dimensions.wallets.data.length == 0 ? this.createWallet : this.openPosition}
+          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length <= 3 ? true : false}
         />
       </div >
     )
