@@ -638,7 +638,7 @@ class UserProfile extends React.Component {
                 </CardBody>
                 <CardFooter>
                   <Row className="centered">
-                    <Col lg="2" md="3" sm="4" xs="6">
+                    <Col lg="3" md="4" sm="5" xs="6">
                       <Button
                         block
                         type="submit"
@@ -707,7 +707,7 @@ class UserProfile extends React.Component {
                 </CardBody>
                 <CardFooter>
                   <Row className="centered">
-                    <Col lg="2" md="3" sm="4" xs="6">
+                    <Col lg="3" md="4" sm="5" xs="6">
                       <Button
                         block
                         type="submit"
