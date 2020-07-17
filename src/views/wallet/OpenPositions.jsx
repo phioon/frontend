@@ -17,10 +17,8 @@ import OpCost from "../../components/cards/measures/OpCost";
 import ProfitabilityOverTime from "../../components/cards/charts/ProfitabilityOverTime";
 import Diversification from "../../components/cards/charts/Diversification";
 
-
 import ChartManager from "../../core/managers/ChartManager"
 import ModalOpenPosition from "../modals/position/ModalOpenPosition";
-import { convertFloatToCurrency, convertFloatToPercentage, orderByAsc } from "../../core/utils";
 
 
 class OpenPositions extends React.Component {
@@ -498,35 +496,6 @@ class OpenPositions extends React.Component {
 
     measures[dimension][mName].selectedKpiFormat = toTarget
     this.setState({ measures })
-  }
-
-  handleMeasurePresentation(measure) {
-    let format = measure.selectedKpiFormat
-    let kpiValue = measure[format] && measure[format].data
-    let strKpi = this.handleKpiPresentation(format, kpiValue)
-
-    return strKpi
-  }
-  handleKpiPresentation(format, kpiValue, includePlusMinus = false) {
-    let strKpi = ""
-    let currency = this.state.currency
-
-    if (includePlusMinus && kpiValue > 0)
-      strKpi += "+"
-
-    switch (format) {
-      case "currency":
-        strKpi += convertFloatToCurrency(kpiValue, currency)
-        break;
-      case "percentage":
-        strKpi += convertFloatToPercentage(kpiValue, currency.decimal_symbol)
-        break;
-      default:
-        strKpi += kpiValue
-        break;
-    }
-
-    return strKpi
   }
 
   render() {

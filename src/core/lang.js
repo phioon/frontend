@@ -182,6 +182,10 @@ const strings = {
 
       result_series_label: "Profitability over time",
 
+      totalVolume_kpi_label: "Total Volume",
+      totalVolume_title_hint: "Taking into account both open and closed Positions.",
+      totalVolume_currency_hint: "Sum of Volume of your operations.",
+
       winners_kpi_label: "Winners",
       winners_number_hint: "Amount of Positions with positive result.",
       winners_percentage_hint: "Winner Positions divided by the total amount of Positions."
@@ -412,7 +416,7 @@ const strings = {
 
       priceLimit_hint: "Price Limit suggested for this operation. It may be different connsidering your Risk Management.",
       stopLoss_hint: "Here is a safety spot where I believe price won't reach again. If it happens, leave the operation and wait for a new opportunity.",
-      target_hint: "It is a projection to estimate where price may reach.",
+      target_hint: "It is a projection to estimate where price may reach. Most of the time, I use Fibonacci sequence.",
       gainPercent_hint: "Price Suggested divided by Target.",
       lossPercent_hint: "Price Suggested divided by Stop Loss.",
       riskReward_hint: "Target divided by Stop Loss represents the correlation between Risk and Reward. The higher this number is, the better.",
@@ -481,6 +485,23 @@ const strings = {
     stockexchangefilter: {
       label_title: "Stock Exchanges",
     },
+    subscriptions: {
+      basic_label: "BASIC",
+      basic_desc_p1: "It's a great option if you are looking for basic functionalities.",
+      basic_desc_p2: "So, I prepared a bundle of basic features that I hope it will fit your needs.",
+      basic_desc_p3: "And it's for free! \\o/",
+
+      premium_label: "PREMIUM",
+      premium_desc_p1: "If you are looking for a more robust platform, I can show you our second option.",
+      premium_desc_p2: "Thank to AI technology, I could learn how to do things humans usually do, and one of them is Technical Analysis.",
+      premium_desc_p3: "",
+      premium_desc_p4: "I'm designed to help investors being more efficient and secure.",
+
+      platinum_label: "PLATINUM",
+      platinum_desc_p1: "I see... You are a big player, looking for a way to improve your results.",
+      platinum_desc_p2: "So, you need an intelligent platform for assets in the entire world",
+      platinum_desc_p3: "I'm designed to help investors being more efficient and secure."
+    },
     suggestions: {
       title: "Suggestions",
       label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
@@ -515,16 +536,36 @@ const strings = {
       title_personalData: "Personal Data",
       title_prefs: "Preferences",
 
+      label_joinedOn: "JOINED US ON",
+      label_subscription: "SUBSCRIPTION",
+      label_subscription_hint: "Your current plan.",
+      label_expiresOn: "EXPIRES ON",
+      label_expiresOn_hint: "It means your current subscription will last till this date.",
+      label_renewsOn: "RENEWS ON",
+      label_renewsOn_hint: "Probably, you will see a new transaction in your credit card on this date.",
+
+      label_insights: "Insights",
+      // Basic
+      label_positions: "POSITIONS",
+      label_positions_hint: "Amount of Positions managed.",
+      label_volume: "TOTAL VOLUME",
+      label_volume_hint: "Total volume negotiated. It includes both purchase and sale operations.",
+      label_result: "RESULT",
+      label_result_hint: "How much your money is earning.",
+      // Premium
+      label_suggestions: "Suggestions",
+      label_suggestions_hint: "Amount of suggestions since the date you joined us.",
+
       input_select: "Select...",
       input_email: "Email",
       input_firstName: "First Name",
       input_lastName: "Last Name",
       input_nationality: "Nationality",
       input_birthday: "Birthday",
-      input_birthday_hint: "I love to send people gifts on their birthdays... ;)",
+      input_birthday_hint: "I could send birthday gifts. Who knows...",
 
       input_currency: "Main Currency",
-      input_currency_hint: "Do you invest in different countries? If so, I can convert the currencies to this main one on dashboards and reports. ",
+      input_currency_hint: "Do you invest in different countries? If so, I could convert the currencies to your preferred one on dashboards and reports. ",
       input_language: "Language",
 
       btn_save: "Save"
@@ -735,6 +776,10 @@ const strings = {
       result_percentage_hint: "Ganhos/Perdas divididos pelo Valor Aplicado.",
 
       result_series_label: "Rentabilidade pelo tempo",
+
+      totalVolume_kpi_label: "Volume Total",
+      totalVolume_title_hint: "Considerando Posições abertas e fechadas.",
+      totalVolume_currency_hint: "Soma do Volume de suas Operações.",
 
       winners_kpi_label: "Vencedoras",
       winners_number_hint: "Quantidade de Posições vencedoras.",
@@ -959,7 +1004,7 @@ const strings = {
 
       priceLimit_hint: "Preço Limite sugerido para esta operação. Este pode mudar, considerando seu Gerenciamento de Risco.",
       stopLoss_hint: "Aqui é um ponto de segurança onde acredito que o Preço não alcance novamente. Se isso acontecer, saia da operação e aguarde uma nova oportunidade.",
-      target_hint: "Alvo é uma projeção para estimar onde o Preço pode chegar.",
+      target_hint: "Alvo é uma projeção para estimar onde o Preço pode chegar. Na maioria das vezes, utilizo sequência de Fibonacci.",
       gainPercent_hint: "Preço Limite dividido pelo Alvo.",
       lossPercent_hint: "Preço Limite dividido pelo Stop Loss.",
       riskReward_hint: "Alvo dividido pelo Stop Loss representa a relação Risco x Retorno da operação. Quanto maior este número, melhor.",
@@ -1063,13 +1108,33 @@ const strings = {
       title_personalData: "Dados Pessoais",
       title_prefs: "Preferências",
 
+      label_joinedOn: "MEMBRO DESDE",
+      label_subscription: "ASSINATURA",
+      label_subscription_hint: "Seu plano atual.",
+      label_expiresOn: "EXPIRA EM",
+      label_expiresOn_hint: "Sua assinatura permanecerá ativa até esta data.",
+      label_renewsOn: "RENOVAÇÃO EM",
+      label_renewsOn_hint: "Provavelmente, você verá uma nova transação em seu cartão de crédito nesta data.",
+
+      label_insights: "Insights",
+      // Basic
+      label_positions: "POSIÇÕES",
+      label_positions_hint: "Quantidade de Posições gerenciadas.",
+      label_volume: "VOLUME TOTAL",
+      label_volume_hint: "Volume total negociado. Inclui ambas operações de compra e venda.",
+      label_result: "RESULTADO",
+      label_result_hint: "O quanto seu dinheiro está rendendo.",
+      // Premium
+      label_suggestions: "RECOMENDAÇÕES",
+      label_suggestions_hint: "Quantidade de recomendações desde a data em que temos você como membro.",
+
       input_select: "Selecione...",
       input_email: "E-mail",
       input_firstName: "Primeiro Nome",
       input_lastName: "Último Nome",
       input_nationality: "Nacionalidade",
       input_birthday: "Data de Nascimento",
-      input_birthday_hint: "As vezes, gosto de enviar presentes de aniversário... ;)",
+      input_birthday_hint: "Eu poderia enviar presentes de aniversário. Quem sabe...",
 
       input_currency: "Moeda Principal",
       input_currency_hint: "Investe em diferentes países? Se sim, posso converter outras moedas para a de sua preferência em relatórios e dashboards. ",

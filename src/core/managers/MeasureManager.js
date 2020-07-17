@@ -1,10 +1,12 @@
-import AppManager from "./AppManager";
-import MarketManager from "./MarketManager";
 import TimeManager from "./TimeManager";
 
 import {
-  orderByAsc,
+  convertFloatToCurrency,
+  convertFloatToPercentage,
   getDistinctValuesFromList,
+  orderByAsc,
+  percentage,
+  round
 } from "../utils";
 
 
@@ -32,35 +34,53 @@ class MeasureManager {
   }
 
   // U T I L S
-  percentage(v1, v2, decimals) {
-    let result = 0
+  handleMeasurePresentation(measure, currency) {
+    let format = measure.format
+    let kpiValue = measure[format] && measure[format].data
+    let strKpi = this.handleKpiPresentation(format, kpiValue, currency)
 
-    if (v2 > 0) {
-      result = this.round(v1 / v2 * 100, decimals)
-    }
-
-    return result
+    return strKpi
   }
-  round(value, decimals) {
-    switch (decimals) {
-      case 0:
-        value = Math.round(value)
+  handleKpiPresentation(format, kpiValue, currency, includePlusMinus = false) {
+    let strKpi = ""
+
+    if (includePlusMinus && kpiValue > 0)
+      strKpi += "+"
+
+    switch (format) {
+      case "nominal_currency":
+        let suffix = ""
+
+        if (kpiValue > 1000000) {
+          kpiValue = round(kpiValue / 1000000, 0)
+          suffix = "M+"
+        }
+        else if (kpiValue > 1000) {
+          kpiValue = round(kpiValue / 1000, 0)
+          suffix = "K+"
+        }
+        else
+          kpiValue = round(kpiValue, 0)
+
+        strKpi += String(`${currency.symbol} ${kpiValue}${suffix}`)
         break;
-      case 2:
-        value = Math.round(value * 100) / 100
+      case "currency":
+        strKpi += convertFloatToCurrency(kpiValue, currency)
         break;
-      case 3:
-        value = Math.round(value * 1000) / 1000
+      case "nominal_percentage":
+        let value = round(kpiValue, 0)
+        strKpi += convertFloatToPercentage(value, currency.decimal_symbol)
+        break;
+      case "percentage":
+        strKpi += convertFloatToPercentage(kpiValue, currency.decimal_symbol)
         break;
       default:
-        value = Math.round(value * 10) / 10
+        strKpi += kpiValue
         break;
     }
 
-    return value
+    return strKpi
   }
-
-  // Selection
 
   opening_cost_currency(selection) {
     let cost = 0.00
@@ -68,7 +88,7 @@ class MeasureManager {
     for (var obj of selection)
       cost += obj.s_total_price
 
-    return this.round(cost, 2)
+    return round(cost, 2)
   }
   closing_cost_currency(selection) {
     let cost = 0.00
@@ -77,7 +97,7 @@ class MeasureManager {
       if (obj.ended_on)
         cost += obj.e_total_price
 
-    return this.round(cost, 2)
+    return round(cost, 2)
   }
   opCost_currency(selection, onlyHintId) {
     if (onlyHintId)
@@ -91,7 +111,7 @@ class MeasureManager {
         opCost += obj.e_operational_cost
     }
 
-    return this.round(opCost, 2)
+    return round(opCost, 2)
   }
   opCost_percentage(selection, onlyHintId) {
     if (onlyHintId)
@@ -100,7 +120,7 @@ class MeasureManager {
     let opCost = this.opCost_currency(selection)
     let totalCost = this.amountInvested_currency(selection)
 
-    return this.percentage(opCost, totalCost, 2)
+    return percentage(opCost, totalCost, 2)
   }
 
   result_currency_raw(type, amount, asset_price, totalCost) {
@@ -111,7 +131,7 @@ class MeasureManager {
     else
       result = totalCost - (amount * asset_price)
 
-    return this.round(result, 2)
+    return round(result, 2)
   }
 
   amountInvested_currency(selection, onlyHintId) {
@@ -120,7 +140,7 @@ class MeasureManager {
 
     let totalCost = this.opening_cost_currency(selection) + this.opCost_currency(selection)
 
-    return this.round(totalCost, 2)
+    return round(totalCost, 2)
   }
   async amountInvested_percentage(selection, onlyHintId) {
     if (onlyHintId)
@@ -129,7 +149,7 @@ class MeasureManager {
     let wBalance = await this.balance_currency(selection)
     let totalCost = this.amountInvested_currency(selection)
 
-    return this.percentage(totalCost, wBalance, 0)
+    return percentage(totalCost, wBalance, 0)
   }
 
   async balance_currency(selection) {
@@ -141,7 +161,7 @@ class MeasureManager {
       balance += wallet.balance
     }
 
-    return this.round(balance, 2)
+    return round(balance, 2)
   }
 
   closingVolume_currency(selection, onlyHintId) {
@@ -151,6 +171,15 @@ class MeasureManager {
     let closingVolume = this.closing_cost_currency(selection)
 
     return closingVolume
+  }
+  totalVolume_currency(selection, onlyHintId) {
+    if (onlyHintId)
+      return "totalVolume_currency_hint"
+
+    let totalVolume = this.opening_cost_currency(selection)
+    totalVolume += this.closing_cost_currency(selection)
+
+    return totalVolume
   }
 
   async result_currency(selection, onlyHintId) {
@@ -182,7 +211,7 @@ class MeasureManager {
     let result = await this.result_currency(selection)
     let totalCost = this.amountInvested_currency(selection)
 
-    return this.percentage(result, totalCost)
+    return percentage(result, totalCost)
   }
 
   async winners_number(selection, onlyHintId) {
@@ -206,7 +235,7 @@ class MeasureManager {
     let cPositions = selection.length
     let cWinners = await this.winners_number(selection)
 
-    return this.percentage(cWinners, cPositions)
+    return percentage(cWinners, cPositions)
   }
 
   // Raw Data
@@ -462,6 +491,20 @@ class MeasureManager {
       case "percentage":
         kpi[this.config.keys.strHintId] = await this.result_percentage(undefined, true)
         kpi[this.config.keys.strData] = await this.result_percentage(selection)
+        break;
+      default:
+        break;
+    }
+
+    return kpi
+  }
+  async totalVolumeAsKpi(selection, kpiFormat) {
+    let kpi = {}
+
+    switch (kpiFormat) {
+      case "currency":
+        kpi[this.config.keys.strHintId] = this.totalVolume_currency(undefined, true)
+        kpi[this.config.keys.strData] = this.totalVolume_currency(selection)
         break;
       default:
         break;

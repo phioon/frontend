@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.sites.shortcuts import get_current_site
 
 from django.core import exceptions
 
@@ -124,13 +123,15 @@ class UserSerializer(serializers.ModelSerializer):
     nationality = serializers.ReadOnlyField(source='userCustom.nationality.code')
     subscription = serializers.ReadOnlyField(source='userCustom.subscription.name')
     subscription_expires_on = serializers.ReadOnlyField(source='userCustom.subscription_expires_on')
+    subscription_renews_on = serializers.ReadOnlyField(source='userCustom.subscription_renews_on')
     pref_currency = serializers.ReadOnlyField(source='userCustom.pref_currency.code')
     pref_langId = serializers.ReadOnlyField(source='userCustom.pref_langId')
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name',
-                  'birthday', 'nationality', 'subscription', 'subscription_expires_on',
+        fields = ['date_joined', 'username', 'email', 'first_name', 'last_name',
+                  'birthday', 'nationality',
+                  'subscription', 'subscription_renews_on', 'subscription_expires_on',
                   'pref_langId', 'pref_currency']
         read_only_fields = ['username', 'email']
 

@@ -18,7 +18,7 @@ const config = {
     },
     subscriptions: {
       syncLimit: 8640,
-      version: 0.02
+      version: 0.03
     },
     positionTypes: {
       syncLimit: 8640,
@@ -48,7 +48,7 @@ const config = {
   market: {
     assets: {
       syncLimit: 7,
-      version: 0.12
+      version: 0.13
     },
     dSetups: {
       syncLimit: 0.07,

@@ -181,6 +181,15 @@ class AppManager {
     this.getHttpTranslation(result.error, "subscriptionlist", "subscription", true)
     return StorageManager.getItem(sKey)
   }
+  async subscriptionRetrieve(pk) {
+    let sItem = await this.subscriptionList()
+
+    if (sItem.data)
+      return retrieveObjFromObjList(sItem.data, "name", pk)
+
+    // Return it with http error details <result.error>
+    return sItem
+  }
 
   async positionList(syncFull = false) {
     const sKey = "positions"

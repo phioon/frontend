@@ -25,6 +25,8 @@ class Suggestions extends React.Component {
 
       pageFirstLoading: true,
 
+      redirectToUpgrade: false,
+
       cWallets: 0,
       dimensions: {
         assets: { data: [], items: [], selected: [], disabled: {} },
@@ -46,6 +48,11 @@ class Suggestions extends React.Component {
   }
   componentDidMount() {
     this.props.setNavbarTitleId("title_" + this.state.compId)
+
+    this.prepareRequirements()
+  }
+  async prepareRequirements() {
+    // Check User's subscription
 
     this.loadDimensionsAndCards()
   }

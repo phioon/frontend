@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardBody,
   CardFooter,
-  CardTitle,
   Col,
   FormGroup,
   Form,
@@ -16,12 +15,20 @@ import {
   Spinner,
   UncontrolledTooltip
 } from "reactstrap";
+import Skeleton from "react-loading-skeleton";
 // react plugin used to create datetimepicker
 import ReactDatetime from "react-datetime";
 import Select from "react-select";
 
-import { areObjsEqual, deepCloneObj } from "../../core/utils";
+import TimeManager from "../../core/managers/TimeManager";
 import { getLangList } from "../../core/lang";
+import {
+  areObjsEqual,
+  deepCloneObj,
+  getDistinctValuesFromList,
+  verifyLength,
+  verifyOnlyLetters
+} from "../../core/utils";
 
 class UserProfile extends React.Component {
   constructor(props) {
@@ -30,7 +37,9 @@ class UserProfile extends React.Component {
     this.state = {
       compId: this.constructor.name.toLowerCase(),
       langId: props.prefs.langId,
-      sendingEmail: false,
+      pageFirstLoading: true,
+
+      subscription: {},
 
       initial_personalData: {},
       personalData: {
@@ -38,6 +47,7 @@ class UserProfile extends React.Component {
           email: "",
           first_name: "",
           last_name: "",
+          initials: "",
           nationality: "",
           birthday: "",
         },
@@ -58,6 +68,22 @@ class UserProfile extends React.Component {
         isValidated: undefined
       },
 
+      measures: {
+        positions: {
+          amount: {},
+          amountInvested: { id: "amountInvested" },
+          result: { id: "result" },
+          winners: { id: "winners" },
+        }
+      },
+
+      insights: {
+        suggestions: {
+          amount: {}
+        }
+      },
+
+      currency: { code: "BRL", symbol: "R$", thousands_separator_symbol: ".", decimal_symbol: "," },
       currencies: [],
       languages: []
     }
@@ -72,16 +98,36 @@ class UserProfile extends React.Component {
     this.prepareRequirements()
   }
   async prepareRequirements() {
+    let { measures, insights, currency } = this.state
+
+    await this.prepareUserData()
+
+    currency = await this.props.managers.app.currencyRetrieve(this.props.prefs.currency)
+    measures = await this.prepareMeasures()
+
+    if (this.state.subscription.name != "basic")
+      insights = await this.prepareInsights()
+
+    this.setState({ pageFirstLoading: false, measures, insights, currency })
+  }
+  async prepareUserData() {
     let { getString, prefs: prefsFromProps } = this.props;
-    let { langId, personalData, prefs } = this.state;
+    let { langId, personalData, prefs, subscription } = this.state;
 
     let user = await this.props.managers.auth.storedUser()
     user = user.user
+    user.initials = `${user.first_name[0]}${user.last_name[0]}`
+    user.initials = user.initials
+
+    subscription = await this.props.managers.app.subscriptionRetrieve(user.subscription)
+    subscription.expiresOn = user.subscription_expires_on
+    subscription.renewsOn = user.subscription_renews_on
+    subscription.userJoinedOn = user.date_joined
 
     for (var [k, v] of Object.entries(user)) {
       if (Object.keys(personalData.data).includes(k))
         personalData.data[k] = v
-      else if (Object.keys(prefs).includes(k))
+      else if (Object.keys(prefs.data).includes(k))
         prefs.data[k] = v
     }
 
@@ -91,7 +137,7 @@ class UserProfile extends React.Component {
       if (prefsFromProps.currency == c.value)
         prefs.data.pref_currency = c
 
-    // Languagues
+    // Languages
     let langList = getLangList()
     let languages = []
     for (var id of langList) {
@@ -109,22 +155,48 @@ class UserProfile extends React.Component {
     let initial_prefs = deepCloneObj(prefs)
 
     this.setState({
+      subscription,
       initial_personalData, personalData,
       initial_prefs, prefs,
       currencies, languages,
     })
   }
+  async prepareMeasures() {
+    let { measures } = this.state
+    let selection = await this.props.managers.app.positionData()
 
-  // function that verifies if a string has a given length or not
-  verifyLength = (value, length) => {
-    if (value.length >= length) {
-      return true;
+    // Amount of Positions
+    measures.positions.amount.data = selection.length
+    // Amount Invested
+    measures.positions.amountInvested.currency = await this.props.managers.measure.totalVolumeAsKpi(selection, "currency")
+    // Result
+    measures.positions.result.percentage = await this.props.managers.measure.resultAsKpi(selection, "percentage")
+
+    return measures
+  }
+  async prepareInsights() {
+    let { subscription, insights } = this.state
+    insights.suggestions.amount.data = 0
+    let wallets = await this.props.managers.app.walletData()
+    let stockExchanges = getDistinctValuesFromList(wallets, "se_short")
+    let dSetups = []
+
+    let userJoinedOn = TimeManager.getMoment(subscription.userJoinedOn)
+
+    for (var se_short of stockExchanges) {
+      let ds = await this.props.managers.market.dSetupList(se_short)
+      if (ds.data)
+        dSetups = dSetups.concat(ds.data)
     }
-    return false;
-  };
-  // function that verifies if a string has only letters
-  verifyOnlyLetters = (value) => {
-    return /^[a-zA-Z]+$/.test(value);
+
+    for (var obj of dSetups) {
+      let startedOn = TimeManager.getMoment(obj.started_on)
+
+      if (startedOn.isSameOrAfter(userJoinedOn))
+        insights.suggestions.amount.data += 1
+    }
+
+    return insights
   }
 
   onChange(event, type, stateName) {
@@ -139,14 +211,22 @@ class UserProfile extends React.Component {
 
     switch (stateName) {
       case "first_name":
-        if (this.verifyLength(event.target.value, 3) && this.verifyOnlyLetters(event.target.value))
+        if (verifyLength(event.target.value, 3) && verifyOnlyLetters(event.target.value)) {
           newState[type].states[stateName] = "has-success";
+
+          newState[type].data.initials = `${event.target.value[0]}${newState[type].data.last_name[0]}`
+          newState[type].data.initials = newState[type].data.initials
+        }
         else
           newState[type].states[stateName] = "has-danger";
         break;
       case "last_name":
-        if (this.verifyLength(event.target.value, 3) && this.verifyOnlyLetters(event.target.value))
+        if (verifyLength(event.target.value, 3) && verifyOnlyLetters(event.target.value)) {
           newState[type].states[stateName] = "has-success";
+
+          newState[type].data.initials = `${newState[type].data.first_name[0]}${event.target.value[0]}`
+          newState[type].data.initials = newState[type].data.initials
+        }
         else
           newState[type].states[stateName] = "has-danger";
         break;
@@ -244,10 +324,17 @@ class UserProfile extends React.Component {
     let {
       langId,
       compId,
+      pageFirstLoading,
+
+      subscription,
 
       personalData,
       prefs,
 
+      measures,
+      insights,
+
+      currency,
       currencies,
       languages,
 
@@ -260,155 +347,201 @@ class UserProfile extends React.Component {
           {alert}
           <Row>
             <Col md="4">
+              {/* Subscription */}
               <Card className="card-user">
                 <div className="image">
                   <img
                     alt="..."
-                    src={"/static/app/assets/img/bg/damir-bosnjak.jpg"}
+                    src={"/static/app/assets/img/bg/bg-app-clean-reverse.jpg"}
                   />
+                  <div className={`subscription ${subscription.name}`}>{String(subscription.name).toUpperCase()}</div>
                 </div>
                 <CardBody>
                   <div className="author">
+                    {/* Avatar */}
+                    <a className="centered">
+                      <span className="avatar border-gray centered">
+                        <span color="primary">{String(personalData.data.initials).toUpperCase()}</span>
+                      </span>
+                    </a>
+                    {/* Full Name */}
                     <a href="" onClick={e => e.preventDefault()}>
-                      <img
-                        alt="..."
-                        className="avatar border-gray"
-                        src={"/static/app/assets/img/mike.jpg"}
-                      />
                       <h5 className="title">{personalData.data.first_name}{" "}{personalData.data.last_name}</h5>
                     </a>
-                    <p className="description">@chetfaker</p>
                   </div>
-                  <p className="description text-center">
-                    "I like the way you work it <br />
-                    No diggity <br />I wanna bag it up"
-                  </p>
+                  <br />
+                  <div>
+                    {/* Joined On */}
+                    <Row className="centered">
+                      <Col md="5" sm="5" xs="6" className="ml-auto mr-auto">
+                        <label>{getString(langId, compId, "label_joinedOn")}</label>
+                      </Col>
+                      <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
+                        <label>{TimeManager.getLocaleDateString(subscription.userJoinedOn)}</label>
+                      </Col>
+                    </Row>
+                    <br />
+                    {/* Subscription Label */}
+                    <Row className="centered">
+                      <Col md="5" sm="5" xs="6" className="ml-auto mr-auto">
+                        <label>
+                          {getString(langId, compId, "label_subscription")}
+                          {" "}
+                          <i id={"subscription_hint"} className="nc-icon nc-alert-circle-i" />
+                        </label>
+                        <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"subscription_hint"}>
+                          {getString(langId, compId, "label_subscription_hint")}
+                        </UncontrolledTooltip>
+                      </Col>
+                      <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
+                        <label>{subscription.label}</label>
+                      </Col>
+                    </Row>
+                    {/* Expires On */}
+                    {subscription.expiresOn ?
+                      <Row className="centered">
+                        <Col md="5" sm="5" xs="6" className="ml-auto mr-auto">
+                          <label>
+                            {getString(langId, compId, "label_expiresOn")}
+                            {" "}
+                            <i id={"label_expiresOn_hint"} className="nc-icon nc-alert-circle-i" />
+                          </label>
+                          <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"label_expiresOn_hint"}>
+                            {getString(langId, compId, "label_expiresOn_hint")}
+                          </UncontrolledTooltip>
+                        </Col>
+                        <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
+                          <label>{TimeManager.getLocaleDateString(subscription.expiresOn)}</label>
+                        </Col>
+                      </Row> :
+                      null
+                    }
+                    {/* Renews On */}
+                    {subscription.renewsOn ?
+                      <Row className="centered">
+                        <Col md="5" sm="5" xs="6" className="ml-auto mr-auto">
+                          <label>
+                            {getString(langId, compId, "label_renewsOn")}
+                            {" "}
+                            <i id={"label_renewsOn_hint"} className="nc-icon nc-alert-circle-i" />
+                          </label>
+                          <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"label_renewsOn_hint"}>
+                            {getString(langId, compId, "label_renewsOn_hint")}
+                          </UncontrolledTooltip>
+                        </Col>
+                        <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
+                          <label>{TimeManager.getLocaleDateString(subscription.renewsOn)}</label>
+                        </Col>
+                      </Row> :
+                      null
+                    }
+                  </div>
                 </CardBody>
                 <CardFooter>
                   <hr />
+                  {/* Insights */}
+                  <p className="description text-center">
+                    {subscription.label}
+                    {" "}
+                    {getString(langId, compId, "label_insights")}
+                  </p>
                   <div className="button-container">
+                    {/* Basic Insights */}
                     <Row>
-                      <Col className="ml-auto" lg="3" md="6" xs="6">
-                        <h5>
-                          12 <br />
-                          <small>Files</small>
-                        </h5>
+                      {/* # Positions */}
+                      <Col className="mr-auto" lg="5" md="5" xs="6">
+                        <h6>
+                          {pageFirstLoading ?
+                            <Skeleton /> :
+                            measures.positions.amount.data
+                          }
+                          <br />
+                          <small>{getString(langId, compId, "label_positions")}</small>
+                          <br />
+                          <i id={"positions_hint"} className="nc-icon nc-alert-circle-i" />
+                        </h6>
+                        <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"positions_hint"}>
+                          {getString(langId, compId, "label_positions_hint")}
+                        </UncontrolledTooltip>
                       </Col>
-                      <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
-                        <h5>
-                          2GB <br />
-                          <small>Used</small>
-                        </h5>
-                      </Col>
-                      <Col className="mr-auto" lg="3">
-                        <h5>
-                          24,6$ <br />
-                          <small>Spent</small>
-                        </h5>
+                      {/* Result */}
+                      <Col className="ml-auto" lg="5" md="5" xs="6">
+                        <h6>
+                          {pageFirstLoading ?
+                            <Skeleton /> :
+                            this.props.managers.measure.handleKpiPresentation("nominal_percentage", measures.positions.result.percentage.data, currency, true)
+                          }
+                          <br />
+                          <small>{getString(langId, compId, "label_result")}</small>
+                          <br />
+                          <i id={"result_hint"} className="nc-icon nc-alert-circle-i" />
+                          <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"result_hint"}>
+                            {getString(langId, compId, "label_result_hint")}
+                          </UncontrolledTooltip>
+                        </h6>
                       </Col>
                     </Row>
+                    <Row>
+                      {/* Volume */}
+                      <Col className="ml-auto mr-auto" lg="5" md="5" xs="6">
+                        <h6>
+                          {pageFirstLoading ?
+                            <Skeleton /> :
+                            this.props.managers.measure.handleKpiPresentation("nominal_currency", measures.positions.amountInvested.currency.data, currency)
+                          }
+                          <br />
+                          <small>{getString(langId, compId, "label_volume")}</small>
+                          <br />
+                          <i id={"volume_hint"} className="nc-icon nc-alert-circle-i" />
+                          <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"volume_hint"}>
+                            {getString(langId, compId, "label_volume_hint")}
+                          </UncontrolledTooltip>
+                        </h6>
+                      </Col>
+                    </Row>
+                    {subscription.name != "basic" &&
+                      <div>
+                        <Row>
+                          {/* Suggestions */}
+                          <Col className="mr-auto" lg="5" md="5" xs="6">
+                            <h6>
+                              {pageFirstLoading ?
+                                <Skeleton /> :
+                                insights.suggestions.amount.data
+                              }
+                              <br />
+                              <small>{getString(langId, compId, "label_suggestions")}</small>
+                              <br />
+                              <i id={"suggestions_hint"} className="nc-icon nc-alert-circle-i" />
+                            </h6>
+                            <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"suggestions_hint"}>
+                              {getString(langId, compId, "label_suggestions_hint")}
+                            </UncontrolledTooltip>
+                          </Col>
+                        </Row>
+                        {/* <br />
+                        <hr />
+                        <Row className="centered">
+                          <Col md="5" sm="5" xs="6" className="ml-auto mr-auto">
+                            <label>
+                              {getString(langId, compId, "label_favSetupName")}
+                              {" "}
+                              <i id={"favSetup_hint_"} className="nc-icon nc-alert-circle-i" />
+                            </label>
+                            <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"favSetup_hint_"}>
+                              {getString(langId, compId, "favSetup_hint")}
+                            </UncontrolledTooltip>
+                          </Col>
+                          <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
+                            <label>Bo: PV 72</label>
+                          </Col>
+                        </Row> */}
+                      </div>
+                    }
                   </div>
                 </CardFooter>
               </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle tag="h4">Team Members</CardTitle>
-                </CardHeader>
-                <CardBody>
-                  <ul className="list-unstyled team-members">
-                    <li>
-                      <Row>
-                        <Col md="2" xs="2">
-                          <div className="avatar">
-                            <img
-                              alt="..."
-                              className="img-circle img-no-padding img-responsive"
-                              src={"/static/assets/img/faces/ayo-ogunseinde-2.jpg"}
-                            />
-                          </div>
-                        </Col>
-                        <Col md="7" xs="7">
-                          DJ Khaled <br />
-                          <span className="text-muted">
-                            <small>Offline</small>
-                          </span>
-                        </Col>
-                        <Col className="text-right" md="3" xs="3">
-                          <Button
-                            className="btn-round btn-icon"
-                            color="success"
-                            outline
-                            size="sm"
-                          >
-                            <i className="fa fa-envelope" />
-                          </Button>
-                        </Col>
-                      </Row>
-                    </li>
-                    <li>
-                      <Row>
-                        <Col md="2" xs="2">
-                          <div className="avatar">
-                            <img
-                              alt="..."
-                              className="img-circle img-no-padding img-responsive"
-                              src={"/static/assets/img/faces/joe-gardner-2.jpg"}
-                            />
-                          </div>
-                        </Col>
-                        <Col md="7" xs="7">
-                          Creative Tim
-                          <br />
-                          <span className="text-success">
-                            <small>Available</small>
-                          </span>
-                        </Col>
-                        <Col className="text-right" md="3" xs="3">
-                          <Button
-                            className="btn-round btn-icon"
-                            color="success"
-                            outline
-                            size="sm"
-                          >
-                            <i className="fa fa-envelope" />
-                          </Button>
-                        </Col>
-                      </Row>
-                    </li>
-                    <li>
-                      <Row>
-                        <Col md="2" xs="2">
-                          <div className="avatar">
-                            <img
-                              alt="..."
-                              className="img-circle img-no-padding img-responsive"
-                              src={"/static/assets/img/faces/clem-onojeghuo-2.jpg"}
-                            />
-                          </div>
-                        </Col>
-                        <Col className="col-ms-7" xs="7">
-                          Flume <br />
-                          <span className="text-danger">
-                            <small>Busy</small>
-                          </span>
-                        </Col>
-                        <Col className="text-right" md="3" xs="3">
-                          <Button
-                            className="btn-round btn-icon"
-                            color="success"
-                            outline
-                            size="sm"
-                          >
-                            <i className="fa fa-envelope" />
-                          </Button>
-                        </Col>
-                      </Row>
-                    </li>
-                  </ul>
-                </CardBody>
-              </Card>
             </Col>
-            {/* Edit Profile */}
             <Col md="8">
               {/* Personal Data */}
               <Card>

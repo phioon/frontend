@@ -268,9 +268,6 @@ export function integerWithThousandsSeparator(integer, thousands_separator) {
     return null
 
   strInt = strInt.replace(/\B(?=(\d{3})+(?!\d))/g, thousands_separator)
-
-  // if (integer < 0)
-  //   result += "-"
   result += strInt
 
   return result
@@ -280,11 +277,37 @@ export function integerWithThousandsSeparator(integer, thousands_separator) {
 export function multiply(v1, v2) {
   return Math.round((v1 * v2) * 100) / 100
 }
-export function percentage(v1, v2) {
-  return v2 > 0 ? Math.round(v1 / v2 * 100 * 10) / 10 : 0
+export function percentage(v1, v2, decimals = 2) {
+  let result = 0
+
+  if (v2 > 0)
+    result = round(v1 / v2 * 100, decimals)
+
+  return result
 }
 export function sum(v1, v2) {
   return Math.round((v1 + v2) * 100) / 100
+}
+export function round(value, decimals) {
+  switch (decimals) {
+    case 0:
+      value = Math.round(value)
+      break;
+    case 2:
+      value = Math.round(value * 100) / 100
+      break;
+    case 3:
+      value = Math.round(value * 1000) / 1000
+      break;
+    case 4:
+      value = Math.round(value * 10000) / 10000
+      break;
+    default:
+      value = Math.round(value * 10) / 10
+      break;
+  }
+
+  return value
 }
 
 // function that verifies if two strings are equal

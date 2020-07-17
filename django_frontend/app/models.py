@@ -73,7 +73,7 @@ class Country (models.Model):
 
 class Subscription (models.Model):
     name = models.CharField(max_length=32, primary_key=True)
-    desc = models.CharField(max_length=512)
+    label = models.CharField(max_length=32)
 
     def __str__(self):
         return self.name
@@ -81,13 +81,13 @@ class Subscription (models.Model):
     def init(self):
         Subscription.objects.update_or_create(
             name='basic',
-            defaults={'desc': 'Basic Subscription'})
+            defaults={'label': 'Basic'})
         Subscription.objects.update_or_create(
             name='premium',
-            defaults={'desc': 'Premium Subscription'})
+            defaults={'label': 'Premium'})
         Subscription.objects.update_or_create(
             name='platinum',
-            defaults={'desc': 'Platinum Subscription'})
+            defaults={'label': 'Platinum'})
 
 
 class PositionType (models.Model):
@@ -114,8 +114,10 @@ class UserCustom (models.Model):
     user = models.OneToOneField(User, related_name='userCustom', on_delete=models.CASCADE)
     birthday = models.DateField(null=True)
     nationality = models.ForeignKey(Country, on_delete=models.DO_NOTHING)
+    # subscription
     subscription = models.ForeignKey(Subscription, on_delete=models.DO_NOTHING)
     subscription_expires_on = models.DateField(null=True, db_index=True)
+    subscription_renews_on = models.DateField(null=True, db_index=True)
     # prefs
     pref_langId = models.CharField(max_length=8)
     pref_currency = models.ForeignKey(Currency, on_delete=models.DO_NOTHING)

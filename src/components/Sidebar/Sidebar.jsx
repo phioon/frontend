@@ -36,6 +36,7 @@ class Sidebar extends React.Component {
     this.state = {
       langId: props.prefs.langId,
       compId: this.constructor.name.toLowerCase(),
+      user: undefined,
       userName: null,
 
       ...this.getCollapseStates(props.routes)
@@ -56,7 +57,11 @@ class Sidebar extends React.Component {
     }
 
     let sUser = this.props.managers.auth.storedUser()
-    this.setState({ userName: sUser.user.first_name + " " + sUser.user.last_name })
+    let user = sUser.user
+    user.initials = `${user.first_name[0]}${user.last_name[0]}`
+    user.initials = user.initials.toUpperCase()
+
+    this.setState({ user })
   }
   componentWillUnmount() {
     // we need to destroy the false scrollbar when we navigate
@@ -166,7 +171,7 @@ class Sidebar extends React.Component {
   };
   render() {
     let { getString } = this.props;
-    let { langId, compId, userName } = this.state;
+    let { langId, compId, user } = this.state;
 
     return (
       <div
@@ -203,8 +208,9 @@ class Sidebar extends React.Component {
 
         <div className="sidebar-wrapper" ref="sidebar">
           <div className="user">
-            <div className="photo">
-              <img src={avatar} alt="Avatar" />
+            <div className="photo text-center centered">
+              {/* <img src={avatar} alt="Avatar" /> */}
+              <span>{user && user.initials}</span>
             </div>
             <div className="info">
               <a
@@ -215,7 +221,7 @@ class Sidebar extends React.Component {
                 }
               >
                 <span>
-                  {userName}
+                  {user && `${user.first_name} ${user.last_name}`}
                   <b className="caret" />
                 </span>
               </a>

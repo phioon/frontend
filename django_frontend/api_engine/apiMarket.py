@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions
+from api_engine.permissions import IsPremium, IsPlatinum
 
 import json
 
@@ -15,7 +16,7 @@ __backendApiPass__ = '#P1q2w3e4r$Api'
 
 
 @api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsPremium])
 def TechnicalConditionList(request):
     backendRequest = __backendHost__ + '/api/market/technicalConditions/'
 
@@ -105,7 +106,7 @@ def D_RawList(request):
 
 
 @api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsPremium])
 def D_setupList(request):
     backendRequest = __backendHost__ + '/api/market/d/setups/'
 
@@ -129,7 +130,7 @@ def D_setupList(request):
 
 
 @api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([IsPremium])
 def D_setupSummaryList(request):
     backendRequest = __backendHost__ + '/api/market/d/setupSummary/'
 

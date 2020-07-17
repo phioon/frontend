@@ -365,6 +365,7 @@
         }
 
         .photo{
+            background-color: $brand-green-color;
             width: 34px;
             height: 34px;
             overflow: hidden;
@@ -375,7 +376,7 @@
             margin-left: 23px;
             @extend .animation-transition-general;
 
-            img{
+            img, span{
                 width: 100%;
             }
         }

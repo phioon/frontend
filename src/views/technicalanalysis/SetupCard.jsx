@@ -232,7 +232,7 @@ class SetupCard extends React.Component {
                       {" "}
                       <i id={"priceLimit_hint_" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"priceLimit_hint_" + setup.id}>
+                    <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"priceLimit_hint_" + setup.id}>
                       {getString(langId, compId, "priceLimit_hint")}
                     </UncontrolledTooltip>
                   </Col>
