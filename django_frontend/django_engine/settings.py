@@ -71,10 +71,10 @@ if os.getenv('GAE_APPLICATION', None):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'HOST': '/cloudsql/tradeadviser-prd:southamerica-east1:tradeadviser-pgsql',
+            'HOST': '/cloudsql/phioon:southamerica-east1:phioon-pgsql',
             'USER': 'frontend_prd',
             'NAME': 'frontend_prd',
-            'PASSWORD': '#P1q2w3e4r$Infr@',
+            'PASSWORD': '#P1q2w3e4r$Infra',
         }
     }
     # SECURITY WARNING: don't run with debug turned on in production!
@@ -90,11 +90,10 @@ elif '/prd/' in os.getcwd() or '\\prd\\' in os.getcwd():
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'HOST': '127.0.0.1',
-            'PORT': '5432',
-            # 'PORT': '5433',
+            'PORT': '5433',
             'USER': 'frontend_prd',
             'NAME': 'frontend_prd',
-            'PASSWORD': '#P1q2w3e4r$Infr@',
+            'PASSWORD': '#P1q2w3e4r$Infra',
         }
     }
     # SECURITY WARNING: don't run with debug turned on in production!

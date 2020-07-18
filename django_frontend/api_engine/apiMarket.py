@@ -9,8 +9,8 @@ import json
 from requests.auth import HTTPBasicAuth
 import requests
 
-# __backendHost__ = 'https://backend.phioon.com'
-__backendHost__ = 'http://127.0.0.1:8000'
+__backendHost__ = 'https://backend.phioon.com'
+# __backendHost__ = 'http://127.0.0.1:8000'
 __backendApiUser__ = 'frontend_api'
 __backendApiPass__ = '#P1q2w3e4r$Api'
 
