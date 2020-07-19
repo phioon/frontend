@@ -1,34 +1,58 @@
 import os
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# P H I O O N Variables
+# P H I O O N
+# Variables
 BACKEND_API_USER = 'frontend_api'
 BACKEND_API_PWD = '#P1q2w3e4r$Api'
 DB_DEFAULT = {
     'ENGINE': 'django.db.backends.postgresql',
-    'USER': 'frontend_prd',
-    'NAME': 'frontend_prd',
     'PASSWORD': '#P1q2w3e4r$Infra',
 }
 
 if os.getenv('GAE_APPLICATION', None):
-    BACKEND_HOSTNAME = 'https://backend.phioon.com'
-    DB_DEFAULT['DB_HOST'] = '/cloudsql/phioon:southamerica-east1:phioon-pgsql'
-else:
-    BACKEND_HOSTNAME = 'http://127.0.0.1:8000'
-    DB_DEFAULT['DB_HOST'] = '127.0.0.1'
-    DB_DEFAULT['DB_PORT'] = '5433'
-    
+    # [PRD] environment
+    DEBUG = False
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
+    BACKEND_HOSTNAME = 'https://backend.phioon.com'
+    DB_DEFAULT['HOST'] = '/cloudsql/phioon:southamerica-east1:phioon-pgsql'
+    DB_DEFAULT['NAME'] = 'backend_prd'
+    DB_DEFAULT['USER'] = 'backend_prd'
+else:
+    # [DEV] environment
+    DEBUG = True
+    ACCESS_PRD_DB = False                   # Set 'True' to access PRD data (remember to turn the proxy on)
+    REDIRECT_MARKET_API_TO_PRD = False      # Set 'True' to redirect market calls to PRD (assetList, StockExchangeList)
+
+    DB_DEFAULT['HOST'] = '127.0.0.1'
+
+    # Database
+    if ACCESS_PRD_DB:
+        # [PRD] (remember to turn the proxy on)
+        DB_DEFAULT['PORT'] = '5433'
+        DB_DEFAULT['NAME'] = 'backend_prd'
+        DB_DEFAULT['USER'] = 'backend_prd'
+    else:
+        # [DEV]
+        DB_DEFAULT['PORT'] = '5432'
+        DB_DEFAULT['NAME'] = 'backend_dev'
+        DB_DEFAULT['USER'] = 'backend_dev'
+
+    # Market API Requests
+    if REDIRECT_MARKET_API_TO_PRD:
+        # [PRD]
+        BACKEND_HOSTNAME = 'https://backend.phioon.com'
+    else:
+        # [DEV]
+        BACKEND_HOSTNAME = 'http://127.0.0.1:8000'
+# ----------
+
+ALLOWED_HOSTS = ['*']
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ')4@_i569!ci89zt71+#bp^9fa%c#2ce+&9izdqkn+7-h60=y2d'
-
-ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -79,22 +103,7 @@ WSGI_APPLICATION = 'django_engine.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 # [START db_setup]
-if os.getenv('GAE_APPLICATION', None):
-    # Running on production App Engine, so connect to Google Cloud SQL using
-    # the unix socket at /cloudsql/<your-cloudsql-connection string>
-    DATABASES = {'default': DB_DEFAULT}
-    # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = False
-else:
-    # Running locally so connect to either a local Postgres instance or connect to
-    # Cloud SQL via the proxy. To start the proxy via command line:
-    #
-    #     $ cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:5433
-    #
-    # See https://cloud.google.com/sql/docs/mysql-connect-proxy
-    DATABASES = {'default': DB_DEFAULT}
-    # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = True
+DATABASES = {'default': DB_DEFAULT}
 # [END db_setup]
 
 # Password Hashers
