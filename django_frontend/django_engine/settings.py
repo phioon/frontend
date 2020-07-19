@@ -15,8 +15,8 @@ if os.getenv('GAE_APPLICATION', None):
 
     BACKEND_HOSTNAME = 'https://backend.phioon.com'
     DB_DEFAULT['HOST'] = '/cloudsql/phioon:southamerica-east1:phioon-pgsql'
-    DB_DEFAULT['NAME'] = 'backend_prd'
-    DB_DEFAULT['USER'] = 'backend_prd'
+    DB_DEFAULT['NAME'] = 'frontend_prd'
+    DB_DEFAULT['USER'] = 'frontend_prd'
 else:
     # [DEV] environment
     DEBUG = True
@@ -29,13 +29,13 @@ else:
     if ACCESS_PRD_DB:
         # [PRD] (remember to turn the proxy on)
         DB_DEFAULT['PORT'] = '5433'
-        DB_DEFAULT['NAME'] = 'backend_prd'
-        DB_DEFAULT['USER'] = 'backend_prd'
+        DB_DEFAULT['NAME'] = 'frontend_prd'
+        DB_DEFAULT['USER'] = 'frontend_prd'
     else:
         # [DEV]
         DB_DEFAULT['PORT'] = '5432'
-        DB_DEFAULT['NAME'] = 'backend_dev'
-        DB_DEFAULT['USER'] = 'backend_dev'
+        DB_DEFAULT['NAME'] = 'frontend_dev'
+        DB_DEFAULT['USER'] = 'frontend_dev'
 
     # Market API Requests
     if REDIRECT_MARKET_API_TO_PRD:
