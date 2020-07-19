@@ -3,6 +3,25 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# P H I O O N Variables
+BACKEND_API_USER = 'frontend_api'
+BACKEND_API_PWD = '#P1q2w3e4r$Api'
+
+DB_DEFAULT = {
+    'ENGINE': 'django.db.backends.postgresql',
+    'USER': 'frontend_prd',
+    'NAME': 'frontend_prd',
+    'PASSWORD': '#P1q2w3e4r$Infra',
+}
+
+if os.getenv('GAE_APPLICATION', None):
+    BACKEND_HOSTNAME = 'https://backend.phioon.com'
+    DB_DEFAULT['DB_HOST'] = '/cloudsql/phioon:southamerica-east1:phioon-pgsql'
+else:
+    BACKEND_HOSTNAME = 'http://127.0.0.1:8000'
+    DB_DEFAULT['DB_HOST'] = '127.0.0.1'
+    DB_DEFAULT['DB_PORT'] = '5433'
+    
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -58,25 +77,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'django_engine.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 # [START db_setup]
 if os.getenv('GAE_APPLICATION', None):
     # Running on production App Engine, so connect to Google Cloud SQL using
     # the unix socket at /cloudsql/<your-cloudsql-connection string>
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'HOST': '/cloudsql/phioon:southamerica-east1:phioon-pgsql',
-            'USER': 'frontend_prd',
-            'NAME': 'frontend_prd',
-            'PASSWORD': '#P1q2w3e4r$Infra',
-        }
-    }
+    DATABASES = {'default': DB_DEFAULT}
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = False
 else:
@@ -86,16 +93,7 @@ else:
     #     $ cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:5433
     #
     # See https://cloud.google.com/sql/docs/mysql-connect-proxy
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'HOST': '127.0.0.1',
-            'PORT': '5433',
-            'USER': 'frontend_prd',
-            'NAME': 'frontend_prd',
-            'PASSWORD': '#P1q2w3e4r$Infra',
-        }
-    }
+    DATABASES = {'default': DB_DEFAULT}
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
 # [END db_setup]
