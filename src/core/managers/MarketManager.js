@@ -114,7 +114,6 @@ class MarketManager {
     this.rQueue.splice(this.rQueue.indexOf(sKey), 1)
   }
 
-
   async assetList(syncFull = false, detailed = false, assets = [], stockExchange) {
     // syncFull is only triggered from WalletList
     // Client must pass 'assets' or 'stockExchange'. One of these 2 parameters are required.
@@ -184,7 +183,7 @@ class MarketManager {
     }
 
     // console.log(`syncFull? ${syncFull} | detailed? ${detailed}`)
-    // console.log(`ignoreAssets: ${ignoreAssets}`)
+    // console.log(`cachedAssets: ${cachedAssets}`)
     // console.log(`syncList: ${syncList}`)
 
     if (syncFull || syncList.length > 0) {
