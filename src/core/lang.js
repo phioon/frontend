@@ -197,16 +197,21 @@ const strings = {
       input_type_buy: "BUY",
       input_type_sell: "SELL",
       input_select: "Select...",
-      input_date: "Date",
       input_wallet: "Wallet",
       input_asset: "Asset",
       input_asset_noOptions: "Firstly, select a Wallet.",
       input_amount: "Amount",
+      input_date: "Date",
+      input_date_hint: "When did this operation happen?",
       input_price: "Price",
+      input_price_hint: "In case operation was fractionated into different prices, what about we use average price?",
       input_cost: "Cost",
+      input_cost_hint: "Here, I multiply Amount by Price.",
       input_opCost: "Operational Cost",
+      input_opCost_hint: "Taxes, emoluments, fees... Any extra cost in this operation.",
       input_opCost_format: "Operational Cost format",
       input_totalCost: "Total Cost",
+      input_totalCost_hint: "Cost + Operational Cost",
 
       opCost_currency_hint: "Use Currency format for field Operational Cost.",
       opCost_percentage_hint: "Use Percentage format for field Operational Cost.",
@@ -226,17 +231,20 @@ const strings = {
       input_type_buy: "BUY",
       input_type_sell: "SELL",
       input_select: "Select...",
-      input_purchaseDate: "Purchase Date",
       input_wallet: "Wallet",
       input_asset: "Asset",
       input_amount: "Amount",
-      input_saleDate: "Sale Date",
+      input_purchaseDate: "Purchase Date",
       input_saleDate: "Sale Date",
       input_price: "Price",
+      input_price_hint: "In case operation was fractionated into different prices, what about we use average price?",
       input_cost: "Cost",
+      input_cost_hint: "Here, I multiply Amount by Price.",
       input_opCost: "Operational Cost",
+      input_opCost_hint: "Taxes, emoluments, fees... Any extra cost in this operation.",
       input_opCost_format: "Operational Cost format",
       input_totalCost: "Total Cost",
+      input_totalCost_hint: "Cost + Operational Cost",
 
       opCost_currency_hint: "Use Currency format for field Operational Cost.",
       opCost_percentage_hint: "Use Percentage format for field Operational Cost.",
@@ -250,12 +258,19 @@ const strings = {
       btn_confirm: "Update",
     },
     modalcreatewallet: {
-      title: "Create a Wallet",
+      title: "Create Wallet",
+      label_intro_p1: "I see you don't have a wallet yet...",
+      label_intro_p2: "What if we create your first wallet now? Then, we'll be able to open Positions, take a look at Technical Analysis, and so on!",
+
+      input_select: "Select...",
+
       input_name: "Name",
       input_description: "Description",
-      input_balance: "Initial Balance",
       input_currency: "Currency",
       input_stockExchange: "Stock Exchange",
+      input_stockExchange_hint: "I need to bind a wallet to a Stock Exchange.",
+      input_balance: "Initial Balance",
+      input_balance_hint: "How much money will we start with?",
 
       error_name: "It's important that Wallet's name is unique.",
 
@@ -269,9 +284,11 @@ const strings = {
 
       input_name: "Name",
       input_description: "Description",
-      input_balance: "Balance",
       input_currency: "Currency",
       input_stockExchange: "Stock Exchange",
+      input_stockExchange_hint: "This wallet is bound to a Stock Exchange and I can't unbound it. :/",
+      input_balance: "Balance",
+      input_balance_hint: "What is the current balance?",
 
       error_name: "It's important that Wallet's name is unique.",
 
@@ -788,7 +805,6 @@ const strings = {
       hint: "Uma posição é feita de 2 Transações: Abertura (ex. Compra) e Fechamento (ex. Venda). Nesse momento, apenas os dados da abertura são necessários.",
 
       input_select: "Selecione...",
-      input_date: "Data",
       input_wallet: "Carteira",
       input_asset: "Ativo",
       input_asset_noOptions: "Primeiramente, selecione a Carteira.",
@@ -796,11 +812,17 @@ const strings = {
       input_type_buy: "COMPRA",
       input_type_sell: "VENDA",
       input_amount: "Quantidade",
+      input_date: "Data",
+      input_date_hint: "Quando a operação foi realizada?",
       input_price: "Preço",
+      input_price_hint: "Caso a operação foi fracionada em diferentes preços, que tal usarmos preço médio?",
       input_cost: "Custo",
+      input_cost_hint: "Aqui, multiplico Quantidade pelo Preço. ",
       input_opCost: "Custo Operacional",
+      input_opCost_hint: "Impostos, emolumentos, taxas... Qualquer custo extra nesta operação.",
       input_opCost_format: "Formato de Custo Operacional",
       input_totalCost: "Custo Total",
+      input_totalCost_hint: "Custo + Custo Operacional",
 
       opCost_currency_hint: "Use formato de Moeda para o campo Custo Operacional.",
       opCost_percentage_hint: "Use formato de Porcentagem para o campo Custo Operacional.",
@@ -826,10 +848,14 @@ const strings = {
       input_purchaseDate: "Data da Compra",
       input_saleDate: "Data da Venda",
       input_price: "Preço",
+      input_price_hint: "Caso a operação foi fracionada em diferentes preços, que tal usarmos preço médio?",
       input_cost: "Custo",
+      input_cost_hint: "Aqui, multiplico Quantidade pelo Preço. ",
       input_opCost: "Custo Operacional",
+      input_opCost_hint: "Impostos, emolumentos, taxas... Qualquer custo extra nesta operação.",
       input_opCost_format: "Formato de Custo Operacional",
       input_totalCost: "Custo Total",
+      input_totalCost_hint: "Custo + Custo Operacional",
 
       opCost_currency_hint: "Use formato de Moeda para o campo Custo Operacional.",
       opCost_percentage_hint: "Use formato de Porcentagem para o campo Custo Operacional.",
@@ -843,15 +869,21 @@ const strings = {
       btn_confirm: "Atualizar",
     },
     modalcreatewallet: {
-      title: "Criar uma Carteira",
+      title: "Criar Carteira",
+      label_intro_p1: "Vejo que você ainda não tem carteiras por aqui...",
+      label_intro_p2: "Que tal criarmos sua primeira carteira? Assim, poderemos criar Posições, acessar Análises Técnicas, e muito mais!",
+
+      input_select: "Selecione...",
 
       input_name: "Nome",
       input_description: "Descrição",
-      input_balance: "Saldo Inicial",
       input_currency: "Moeda",
       input_stockExchange: "Bolsa de Valores",
+      input_stockExchange_hint: "Preciso vincular uma carteira à uma Bolsa de Valores.",
+      input_balance: "Saldo Inicial",
+      input_balance_hint: "Vamos começar com quanto?",
 
-      error_name: "É importante que o nome da Carteira seja único.",
+      error_name: "É importante que o nome da carteira seja único.",
 
       alert_created_title: "Criada!",
       alert_created_text: "Sua Carteira foi criada com sucesso.",
@@ -863,9 +895,11 @@ const strings = {
 
       input_name: "Nome",
       input_description: "Descrição",
-      input_balance: "Saldo",
       input_currency: "Moeda",
       input_stockExchange: "Bolsa de Valores",
+      input_stockExchange_hint: "Esta carteira está vinculada à uma Bolsa de Valores e eu não posso desvincula-la. :/",
+      input_balance: "Saldo",
+      input_balance_hint: "Qual o saldo atual da carteira?",
 
       error_name: "É importante que o nome da Carteira seja único.",
 
@@ -1122,7 +1156,7 @@ const strings = {
       label_result_hint: "O quanto seu dinheiro está rendendo.",
       // Premium
       label_suggestions: "RECOMENDAÇÕES",
-      label_suggestions_hint: "Quantidade de recomendações desde a data em que temos você como membro.",
+      label_suggestions_hint: "Quantidade de recomendações desde a data em que temos você com a gente.",
 
       input_select: "Selecione...",
       input_email: "E-mail",

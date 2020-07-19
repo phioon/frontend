@@ -14,10 +14,11 @@ import Profitability from "../../components/cards/measures/Profitability";
 import Winners from "../../components/cards/measures/Winners";
 import OpCost from "../../components/cards/measures/OpCost";
 // Charts
+import ChartManager from "../../core/managers/ChartManager"
 import ProfitabilityOverTime from "../../components/cards/charts/ProfitabilityOverTime";
 import Diversification from "../../components/cards/charts/Diversification";
 
-import ChartManager from "../../core/managers/ChartManager"
+import ModalCreateWallet from "../modals/wallet/ModalCreateWallet";
 import ModalOpenPosition from "../modals/position/ModalOpenPosition";
 
 
@@ -33,7 +34,8 @@ class OpenPositions extends React.Component {
       walletOptions: [],
 
       modal_filters_isOpen: false,
-      modal_newPosition_isOpen: false,
+      modal_createWallet_isOpen: false,
+      modal_openPosition_isOpen: false,
 
       pageFirstLoading: true,
 
@@ -86,7 +88,8 @@ class OpenPositions extends React.Component {
     this.onSelectionChange = this.onSelectionChange.bind(this)
     this.loadDimensionsAndMeasures = this.loadDimensionsAndMeasures.bind(this)
     this.toggleModal = this.toggleModal.bind(this);
-    this.createClick = this.createClick.bind(this);
+    this.createWallet = this.createWallet.bind(this);
+    this.openPosition = this.openPosition.bind(this);
   }
   static getDerivedStateFromProps(props, state) {
     if (props.prefs.langId !== state.langId)
@@ -476,8 +479,11 @@ class OpenPositions extends React.Component {
     this.setState({ dimensions, measures, charts })
   }
 
-  createClick() {
-    this.toggleModal("newPosition")
+  createWallet() {
+    this.toggleModal("createWallet")
+  }
+  openPosition() {
+    this.toggleModal("openPosition")
   }
   toggleCollapseFilter(e, dimension) {
     e.preventDefault()
@@ -502,7 +508,9 @@ class OpenPositions extends React.Component {
     let { getString, prefs } = this.props;
     let {
       modal_filters_isOpen,
-      modal_newPosition_isOpen,
+      modal_createWallet_isOpen,
+      modal_openPosition_isOpen,
+
       walletOptions,
       currency,
 
@@ -515,10 +523,19 @@ class OpenPositions extends React.Component {
 
     return (
       <div className="content">
+        <ModalCreateWallet
+          {...this.props}
+          modalId="createWallet"
+          isOpen={modal_createWallet_isOpen}
+          sWalletNames={[]}
+          currency={currency}
+          toggleModal={this.toggleModal}
+          runItIfSuccess={this.loadDimensionsAndMeasures}
+        />
         <ModalOpenPosition
           {...this.props}
-          modalId="newPosition"
-          isOpen={modal_newPosition_isOpen}
+          modalId="openPosition"
+          isOpen={modal_openPosition_isOpen}
           walletOptions={walletOptions}
           currency={currency}
           toggleModal={this.toggleModal}
@@ -601,15 +618,15 @@ class OpenPositions extends React.Component {
           toggleModal={this.toggleModal}
           dimensions={dimensions}
           onSelectionChange={this.onSelectionChange}
-          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length <= 5 ? true : false}
+          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length <= 2 ? true : false}
         />
         <FixedButton
           {...this.props}
           id={"newPosition"}
           position="bottom"
           icon="fa fa-plus fa-2x"
-          onClick={this.createClick}
-          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length <= 3 ? true : false}
+          onClick={dimensions.wallets.data.length == 0 ? this.createWallet : this.openPosition}
+          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length == 0 ? true : false}
         />
       </div >
     )
