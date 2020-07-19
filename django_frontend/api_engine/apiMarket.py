@@ -3,14 +3,16 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions
 from api_engine.permissions import IsPremium, IsPlatinum
-
-import json
-
 from requests.auth import HTTPBasicAuth
-import requests
 
-__backendHost__ = 'https://backend.phioon.com'
-# __backendHost__ = 'http://127.0.0.1:8000'
+import requests
+import json
+import os
+
+if os.getenv('GAE_APPLICATION', None):
+    __backendHost__ = 'https://backend.phioon.com'
+else:
+    __backendHost__ = 'http://127.0.0.1:8000'
 __backendApiUser__ = 'frontend_api'
 __backendApiPass__ = '#P1q2w3e4r$Api'
 
