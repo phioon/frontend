@@ -6,7 +6,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # P H I O O N Variables
 BACKEND_API_USER = 'frontend_api'
 BACKEND_API_PWD = '#P1q2w3e4r$Api'
-
 DB_DEFAULT = {
     'ENGINE': 'django.db.backends.postgresql',
     'USER': 'frontend_prd',
