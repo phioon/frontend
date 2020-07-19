@@ -41,20 +41,23 @@ class FixedButton extends React.Component {
       await sleep(1500)
 
       while (count <= limit) {
-        this.toggleTooltip()
+        this.setTooltipState(true)
         await sleep(400)
 
         if (count < limit)
-          this.toggleTooltip()
+          this.setTooltipState(false)
         count += 1
       }
       await sleep(4000)
-      this.toggleTooltip()
+      this.setTooltipState(false)
     }
   }
-  toggleTooltip() {
+  setTooltipState(isOpen) {
     if (this.isBlinkingAllowed)
-      this.setState({ isTooltipOpen: !this.state.isTooltipOpen })
+      this.setState({ isTooltipOpen: isOpen })
+  }
+  toggleTooltip() {
+    this.setState({ isTooltipOpen: !this.state.isTooltipOpen })
   }
 
   render() {

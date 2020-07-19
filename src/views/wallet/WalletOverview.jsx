@@ -15,12 +15,12 @@ import OpCost from "../../components/cards/measures/OpCost";
 import Profitability from "../../components/cards/measures/Profitability";
 import Winners from "../../components/cards/measures/Winners";
 // Charts
+import ChartManager from "../../core/managers/ChartManager"
 import ProfitabilityOverTime from "../../components/cards/charts/ProfitabilityOverTime";
 import ProfitabilityRanking from "../../components/cards/charts/ProfitabilityRanking";
 
-import ChartManager from "../../core/managers/ChartManager"
-import ModalOpenPosition from "../modals/position/ModalOpenPosition";
 import ModalCreateWallet from "../modals/wallet/ModalCreateWallet";
+import ModalOpenPosition from "../modals/position/ModalOpenPosition";
 
 
 class WalletOverview extends React.Component {
@@ -36,8 +36,8 @@ class WalletOverview extends React.Component {
       walletOptions: [],
 
       modal_filters_isOpen: false,
-      modal_openPosition_isOpen: false,
       modal_createWallet_isOpen: false,
+      modal_openPosition_isOpen: false,
 
       pageFirstLoading: true,
 
@@ -648,8 +648,8 @@ class WalletOverview extends React.Component {
     let { getString, prefs } = this.props;
     let {
       modal_filters_isOpen,
-      modal_openPosition_isOpen,
       modal_createWallet_isOpen,
+      modal_openPosition_isOpen,
 
       walletOptions,
       currency,
@@ -770,11 +770,11 @@ class WalletOverview extends React.Component {
         />
         <FixedButton
           {...this.props}
-          id={dimensions.wallets.data.length == 0 ? "newWallet" : "newPosition"}
+          id={"newPosition"}
           position="bottom"
           icon="fa fa-plus fa-2x"
           onClick={dimensions.wallets.data.length == 0 ? this.createWallet : this.openPosition}
-          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length <= 3 ? true : false}
+          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length == 0 ? true : false}
         />
       </div >
     )

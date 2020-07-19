@@ -11,6 +11,7 @@ import {
   Modal,
   Input,
   Spinner,
+  UncontrolledTooltip,
 } from "reactstrap";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
@@ -210,11 +211,12 @@ class ModalUpdateWallet extends React.Component {
             <h5 className="modal-title" id={modalId}>
               {getString(langId, compId, "title")}
             </h5>
+            <hr />
           </CardHeader>
           <CardBody>
             {/* Name */}
             <FormGroup className={`has-label ${wallet.states.name}`}>
-              <label>{getString(langId, compId, "input_name")} *</label>
+              <label>{getString(langId, compId, "input_name")}</label>
               <Input
                 type="text"
                 name="name"
@@ -239,7 +241,13 @@ class ModalUpdateWallet extends React.Component {
             </FormGroup>
             {/* Stock Exchange */}
             <FormGroup>
-              <label>{getString(langId, compId, "input_stockExchange")}</label>
+              <label>{getString(langId, compId, "input_stockExchange")}
+                {" "}
+                <i id={"input_stockExchange_hint"} className="nc-icon nc-alert-circle-i" />
+              </label>
+              <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_stockExchange_hint"}>
+                {getString(langId, compId, "input_stockExchange_hint")}
+              </UncontrolledTooltip>
               <Input
                 type="text"
                 name="stockExchange"
@@ -249,7 +257,13 @@ class ModalUpdateWallet extends React.Component {
             </FormGroup>
             {/* Balance */}
             <FormGroup className={`has-label ${wallet.states.balance}`}>
-              <label>{getString(langId, compId, "input_balance")}</label>
+              <label>{getString(langId, compId, "input_balance")}
+                {" "}
+                <i id={"input_balance_hint"} className="nc-icon nc-alert-circle-i" />
+              </label>
+              <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_balance_hint"}>
+                {getString(langId, compId, "input_balance_hint")}
+              </UncontrolledTooltip>
               <CurrencyInput
                 className="form-control text-right"
                 placeholder={currency.symbol}

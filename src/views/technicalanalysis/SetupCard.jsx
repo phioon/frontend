@@ -369,7 +369,7 @@ class SetupCard extends React.Component {
                   </Col>
                   <Col md="4" sm="6" className="ml-auto mr-auto text-right">
                     <label className="numbers">
-                      {TimeManager.getDateString(setup.last_ended_occurrence)}
+                      {TimeManager.getLocaleDateString(setup.last_ended_occurrence)}
                     </label>
                   </Col>
                 </Row>
@@ -385,7 +385,7 @@ class SetupCard extends React.Component {
           <h6 id={"startedOn_hint_" + setup.id} className="text-center">
             <i className="far fa-clock" />
             {" "}
-            {setup.started_on}
+            {TimeManager.getLocaleDateString(setup.started_on)}
           </h6>
           <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"startedOn_hint_" + setup.id}>
             {getString(langId, compId, "startedOn_hint")}
@@ -403,7 +403,7 @@ class SetupCard extends React.Component {
             </Col>
             <Col lg="6" md="6" sm="6" xs="6" className="text-right">
               <label id={"progressBar_end_" + setup.id}>
-                {setup.ended_on ? setup.ended_on : this.handleKpiPresentation("currency", setup.target)}
+                {setup.ended_on ? TimeManager.getLocaleDateString(setup.ended_on) : this.handleKpiPresentation("currency", setup.target)}
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top-end" target={"progressBar_end_" + setup.id}>
                 {setup.ended_on ?

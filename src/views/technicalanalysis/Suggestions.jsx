@@ -9,6 +9,7 @@ import {
 } from "reactstrap";
 import Skeleton from "react-loading-skeleton";
 
+import TimeManager from "../../core/managers/TimeManager";
 import { getDistinctValuesFromList, retrieveObjFromObjList } from "../../core/utils";
 import SetupCard from "./SetupCard";
 import FixedFilter from "../../components/FixedPlugin/filters/Suggestions";
@@ -143,8 +144,8 @@ class Suggestions extends React.Component {
       let currency = await this.props.managers.app.currencyRetrieve(se.currency_code)
       let ss = retrieveObjFromObjList(summaries, 'asset_setup', obj.asset_setup)
 
-      obj.started_on = obj.started_on.substring(0, 10)
-      obj.ended_on = obj.ended_on ? obj.ended_on.substring(0, 10) : obj.ended_on
+      obj.started_on = obj.started_on
+      obj.ended_on = obj.ended_on ? obj.ended_on : obj.ended_on
       obj.asset_label = assets[obj.asset_symbol].data.asset_label
       obj.asset_name = assets[obj.asset_symbol].data.asset_name
       obj.asset_price = assets[obj.asset_symbol].data.asset_price

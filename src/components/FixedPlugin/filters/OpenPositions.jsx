@@ -53,23 +53,26 @@ class FixedFilter extends Component {
       let count = 1
       let limit = 3
 
-      await sleep(10000)
+      await sleep(45000)
 
       while (count <= limit) {
-        this.toggleTooltip()
+        this.setTooltipState(true)
         await sleep(400)
 
         if (count < limit)
-          this.toggleTooltip()
+          this.setTooltipState(false)
         count += 1
       }
       await sleep(4000)
-      this.toggleTooltip()
+      this.setTooltipState(false)
     }
   }
-  toggleTooltip() {
+  setTooltipState(isOpen) {
     if (this.isBlinkingAllowed)
-      this.setState({ isTooltipOpen: !this.state.isTooltipOpen })
+      this.setState({ isTooltipOpen: isOpen })
+  }
+  toggleTooltip() {
+    this.setState({ isTooltipOpen: !this.state.isTooltipOpen })
   }
 
   renderTagFilters(props) {
