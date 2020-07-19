@@ -10,7 +10,6 @@ import {
   CardBody,
   CardTitle,
   Col,
-  Tooltip,
   Row,
   UncontrolledTooltip
 } from "reactstrap";
@@ -267,56 +266,70 @@ class Wallets extends React.Component {
           toggleModal={this.toggleModal}
           runItIfSuccess={this.prepareData}
         />
-        <Row>
-          <Col md="12">
-            <Card>
-              <CardHeader>
+        <Card>
+          <CardHeader>
+            <Row>
+              <Col>
                 <CardTitle tag="h4">{getString(langId, compId, "card_title")}</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <ReactTable
-                  data={data}
-                  filterable={data.length > 0 ? true : false}
-                  columns={[
-                    {
-                      Header: getString(langId, compId, "header_name"),
-                      accessor: "name"
-                    },
-                    {
-                      Header: getString(langId, compId, "header_desc"),
-                      accessor: "desc"
-                    },
-                    {
-                      Header: getString(langId, compId, "header_stockExchange"),
-                      accessor: "stockExchange",
-                    },
-                    {
-                      Header: getString(langId, compId, "header_balance"),
-                      accessor: "balance",
-                      className: "text-right"
-                    },
-                    {
-                      Header: getString(langId, compId, "header_actions"),
-                      accessor: "actions",
-                      sortable: false,
-                      filterable: false
-                    }
-                  ]}
-                  defaultPageSize={10}
-                  noDataText={
-                    pageFirstLoading ?
-                      getString(langId, "generic", "label_loading") :
-                      data.length == 0 ?
-                        getString(langId, compId, "table_emptyData") :
-                        getString(langId, compId, "table_noDataFound")
-                  }
-                  showPaginationBottom
-                  className="-striped -highlight default-pagination"
-                />
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
+              </Col>
+              <Col className="text-right">
+                <Button
+                  id="btn_newWallet"
+                  type="submit"
+                  className="btn-icon btn-round"
+                  color="success"
+                  onClick={this.createClick}
+                >
+                  <i className="nc-icon nc-simple-add" />
+                </Button>
+                <UncontrolledTooltip delay={{ show: 200 }} placement="left" target="btn_newWallet">
+                  {getString(langId, "fixedplugin", "newWallet_hint")}
+                </UncontrolledTooltip>
+              </Col>
+            </Row>
+          </CardHeader>
+          <CardBody>
+            <ReactTable
+              data={data}
+              filterable={data.length > 0 ? true : false}
+              columns={[
+                {
+                  Header: getString(langId, compId, "header_name"),
+                  accessor: "name"
+                },
+                {
+                  Header: getString(langId, compId, "header_desc"),
+                  accessor: "desc"
+                },
+                {
+                  Header: getString(langId, compId, "header_stockExchange"),
+                  accessor: "stockExchange",
+                },
+                {
+                  Header: getString(langId, compId, "header_balance"),
+                  accessor: "balance",
+                  className: "text-right"
+                },
+                {
+                  Header: getString(langId, compId, "header_actions"),
+                  accessor: "actions",
+                  sortable: false,
+                  filterable: false
+                }
+              ]}
+              defaultPageSize={10}
+              noDataText={
+                pageFirstLoading ?
+                  getString(langId, "generic", "label_loading") :
+                  data.length == 0 ?
+                    getString(langId, compId, "table_emptyData") :
+                    getString(langId, compId, "table_noDataFound")
+              }
+              showPaginationBottom
+              className="-striped -highlight default-pagination"
+            />
+          </CardBody>
+        </Card>
         <FixedButton
           {...this.props}
           id="newWallet"

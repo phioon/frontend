@@ -130,7 +130,7 @@ class AmountInvested extends Component {
               <div className="stats">
                 <i className="fa fa-wrench" />
                 {getString(langId, "measures", "label_format")}:
-                    </div>
+              </div>
             </Col>
             <Col className="text-right">
               <Button

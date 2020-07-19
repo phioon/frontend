@@ -11,6 +11,7 @@ import {
   Modal,
   Input,
   Spinner,
+  UncontrolledTooltip
 } from "reactstrap";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
@@ -22,7 +23,6 @@ import CurrencyInput from "../../../components/CurrencyInput";
 import {
   convertMaskedStringToFloat,
   convertFloatToCurrency,
-
   verifyLength
 } from "../../../core/utils";
 
@@ -38,7 +38,6 @@ class ModalCreateWallet extends React.Component {
       isLoading: false,
 
       stockExchangeOptions: [],
-      sWalletNames: props.sWalletNames,
       currency: props.currency,
 
       // Going to change wallet: {}?, remeber to check/update this.clearInputFields()
@@ -65,15 +64,14 @@ class ModalCreateWallet extends React.Component {
     if (props.prefs.langId !== state.langId)
       return { langId: props.prefs.langId }
     if (props.isOpen !== state.isOpen)
-      return {
-        isOpen: props.isOpen,
-        sWalletNames: props.sWalletNames,
-        currency: props.currency,
-      }
+      return { isOpen: props.isOpen }
 
     return null
   }
   async componentDidMount() {
+    this.prepareRequirements()
+  }
+  async prepareRequirements() {
     let stockExchangeOptions = await this.props.managers.market.stockExchangesForSelect()
 
     this.setState({ stockExchangeOptions })
@@ -101,7 +99,7 @@ class ModalCreateWallet extends React.Component {
   }
 
   verifyWalletName(walletName) {
-    if (!this.state.sWalletNames.includes(walletName))
+    if (!this.props.sWalletNames.includes(walletName))
       return true
     return false
   }
@@ -231,7 +229,8 @@ class ModalCreateWallet extends React.Component {
   render() {
     let { getString, modalId } = this.props;
     let {
-      langId, compId, isOpen, isLoading,
+      langId, compId, isOpen,
+      isLoading,
 
       currency,
       stockExchangeOptions,
@@ -260,11 +259,20 @@ class ModalCreateWallet extends React.Component {
             <h5 className="modal-title" id={modalId}>
               {getString(langId, compId, "title")}
             </h5>
+            <hr />
+            {this.props.sWalletNames.length == 0 &&
+              <label>
+                <p>{getString(langId, compId, "label_intro_p1")}</p>
+                <p>
+                  {getString(langId, compId, "label_intro_p2")}
+                </p>
+              </label>
+            }
           </CardHeader>
           <CardBody>
             {/* Name */}
             <FormGroup className={`has-label ${wallet.states.name}`}>
-              <label>{getString(langId, compId, "input_name")} *</label>
+              <label>{getString(langId, compId, "input_name")}</label>
               <Input
                 type="text"
                 name="name"
@@ -289,11 +297,18 @@ class ModalCreateWallet extends React.Component {
             </FormGroup>
             {/* Stock Exchange */}
             <FormGroup className={`has-label ${wallet.states.stockExchange}`}>
-              <label>{getString(langId, compId, "input_stockExchange")} *</label>
+              <label>{getString(langId, compId, "input_stockExchange")}
+                {" "}
+                <i id={"input_stockExchange_hint"} className="nc-icon nc-alert-circle-i" />
+              </label>
+              <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_stockExchange_hint"}>
+                {getString(langId, compId, "input_stockExchange_hint")}
+              </UncontrolledTooltip>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
                 name="stockExchange"
+                placeholder={getString(langId, compId, "input_select")}
                 value={wallet.data.stockExchange}
                 options={stockExchangeOptions}
                 onChange={value => this.onSelectChange("stockExchange", value)}
@@ -301,7 +316,13 @@ class ModalCreateWallet extends React.Component {
             </FormGroup>
             {/* Balance */}
             <FormGroup className={`has-label ${wallet.states.balance}`}>
-              <label>{getString(langId, compId, "input_balance")}</label>
+              <label>{getString(langId, compId, "input_balance")}
+                {" "}
+                <i id={"input_balance_hint"} className="nc-icon nc-alert-circle-i" />
+              </label>
+              <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_balance_hint"}>
+                {getString(langId, compId, "input_balance_hint")}
+              </UncontrolledTooltip>
               <CurrencyInput
                 className="form-control text-right"
                 placeholder={currency.symbol}

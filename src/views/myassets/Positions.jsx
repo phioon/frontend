@@ -19,12 +19,12 @@ import ReactTable from "react-table";
 import ReactBSAlert from "react-bootstrap-sweetalert";
 import FixedButton from "../../components/FixedPlugin/FixedButton";
 
+import ModalCreateWallet from "../modals/wallet/ModalCreateWallet";
 import ModalOpenPosition from "../modals/position/ModalOpenPosition";
 import ModalUpdatePosition from "../modals/position/ModalUpdatePosition";
 import {
   convertFloatToCurrency,
   convertFloatToPercentage,
-  deepCloneObj,
   integerWithThousandsSeparator,
   orderByDesc
 } from "../../core/utils";
@@ -38,8 +38,11 @@ class Positions extends React.Component {
     this.state = {
       compId: this.constructor.name.toLowerCase(),
       langId: props.prefs.langId,
-
       pageFirstLoading: true,
+
+      modal_createWallet_isOpen: false,
+      modal_openPosition_isOpen: false,
+      modal_updatePosition_isOpen: false,
 
       alert: null,
       data: [],
@@ -79,14 +82,13 @@ class Positions extends React.Component {
         isValidated: undefined
       },
 
-      currency: { code: "USD", symbol: "$", thousands_separator_symbol: ",", decimal_symbol: "." },
-      modal_openPosition_isOpen: false,
-      modal_updatePosition_isOpen: false,
+      currency: { code: "BRL", symbol: "R$", thousands_separator_symbol: ".", decimal_symbol: "," },
     }
 
     this.prepareData = this.prepareData.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
-    this.createClick = this.createClick.bind(this);
+    this.createWallet = this.createWallet.bind(this);
+    this.openPosition = this.openPosition.bind(this);
   }
   static getDerivedStateFromProps(props, state) {
     if (props.prefs.langId !== state.langId)
@@ -142,9 +144,9 @@ class Positions extends React.Component {
           key: key,
           id: obj.id,
           startedOn: TimeManager.getMoment(obj.started_on, false),
-          startedOn_label: obj.started_on.substring(0, 10),
+          startedOn_label: TimeManager.getLocaleDateString(obj.started_on),
           endedOn: obj.ended_on ? TimeManager.getMoment(obj.ended_on, false) : null,
-          endedOn_label: obj.ended_on ? TimeManager.getDateString(obj.ended_on) : null,
+          endedOn_label: obj.ended_on ? TimeManager.getLocaleDateString(obj.ended_on) : null,
           wallet: obj.wallet,
           wallet_label: obj.wallet.name,
           asset: obj.asset,
@@ -212,7 +214,10 @@ class Positions extends React.Component {
     }
   }
 
-  createClick() {
+  createWallet() {
+    this.toggleModal("createWallet")
+  }
+  openPosition() {
     this.toggleModal("openPosition")
   }
 
@@ -308,8 +313,11 @@ class Positions extends React.Component {
     let {
       langId,
       compId,
-
       pageFirstLoading,
+
+      modal_createWallet_isOpen,
+      modal_openPosition_isOpen,
+      modal_updatePosition_isOpen,
 
       alert,
 
@@ -318,16 +326,22 @@ class Positions extends React.Component {
       assetOptions,
 
       position,
-      currency,
-
-      modal_openPosition_isOpen,
-      modal_updatePosition_isOpen,
+      currency
     } = this.state;
 
     return (
       <div className="content">
         <NotificationAlert ref="notificationAlert" />
         {alert}
+        <ModalCreateWallet
+          {...this.props}
+          modalId="createWallet"
+          isOpen={modal_createWallet_isOpen}
+          sWalletNames={[]}
+          currency={currency}
+          toggleModal={this.toggleModal}
+          runItIfSuccess={this.prepareData}
+        />
         <ModalOpenPosition
           {...this.props}
           modalId="openPosition"
@@ -348,86 +362,100 @@ class Positions extends React.Component {
           toggleModal={this.toggleModal}
           runItIfSuccess={this.prepareData}
         />
-        <Row>
-          <Col md="12">
-            <Card>
-              <CardHeader>
+        <Card>
+          <CardHeader>
+            <Row>
+              <Col>
                 <CardTitle tag="h4">{getString(langId, compId, "card_title")}</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <ReactTable
-                  data={data}
-                  filterable={data.length > 0 ? true : false}
-                  columns={[
-                    {
-                      Header: getString(langId, compId, "header_startedOn"),
-                      accessor: "startedOn_label",
-                    },
-                    {
-                      Header: getString(langId, compId, "header_endedOn"),
-                      accessor: "endedOn_label",
-                    },
-                    {
-                      Header: getString(langId, compId, "header_wallet"),
-                      accessor: "wallet_label",
-                    },
-                    {
-                      Header: getString(langId, compId, "header_asset"),
-                      accessor: "asset_label",
-                    },
-                    {
-                      Header: getString(langId, compId, "header_type"),
-                      accessor: "type_label",
-                    },
-                    {
-                      Header: getString(langId, compId, "header_amount"),
-                      accessor: "amount",
-                      className: "text-right"
-                    },
-                    {
-                      Header: getString(langId, compId, "header_price"),
-                      accessor: "s_price",
-                      className: "text-right"
-                    },
-                    {
-                      Header: getString(langId, compId, "header_opCost"),
-                      accessor: "total_opCost",
-                      className: "text-right"
-                    },
-                    {
-                      Header: getString(langId, compId, "header_totalCost"),
-                      accessor: "s_totalCost",
-                      className: "text-right"
-                    },
-                    {
-                      Header: getString(langId, compId, "header_actions"),
-                      accessor: "actions",
-                      sortable: false,
-                      filterable: false
-                    }
-                  ]}
-                  defaultPageSize={10}
-                  noDataText={
-                    pageFirstLoading ?
-                      getString(langId, "generic", "label_loading") :
-                      data.length == 0 ?
-                        getString(langId, compId, "table_emptyData") :
-                        getString(langId, compId, "table_noDataFound")
-                  }
-                  showPaginationBottom
-                  className="-striped -highlight default-pagination"
-                />
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
+              </Col>
+              <Col className="text-right">
+                <Button
+                  id="btn_openPosition"
+                  type="submit"
+                  className="btn-icon btn-round"
+                  color="success"
+                  onClick={walletOptions.length == 0 ? this.createWallet : this.openPosition}
+                >
+                  <i className="nc-icon nc-simple-add" />
+                </Button>
+                <UncontrolledTooltip delay={{ show: 200 }} placement="left" target="btn_openPosition">
+                  {getString(langId, "fixedplugin", "newPosition_hint")}
+                </UncontrolledTooltip>
+              </Col>
+            </Row>
+          </CardHeader>
+          <CardBody>
+            <ReactTable
+              data={data}
+              filterable={data.length > 0 ? true : false}
+              columns={[
+                {
+                  Header: getString(langId, compId, "header_startedOn"),
+                  accessor: "startedOn_label",
+                },
+                {
+                  Header: getString(langId, compId, "header_endedOn"),
+                  accessor: "endedOn_label",
+                },
+                {
+                  Header: getString(langId, compId, "header_wallet"),
+                  accessor: "wallet_label",
+                },
+                {
+                  Header: getString(langId, compId, "header_asset"),
+                  accessor: "asset_label",
+                },
+                {
+                  Header: getString(langId, compId, "header_type"),
+                  accessor: "type_label",
+                },
+                {
+                  Header: getString(langId, compId, "header_amount"),
+                  accessor: "amount",
+                  className: "text-right"
+                },
+                {
+                  Header: getString(langId, compId, "header_price"),
+                  accessor: "s_price",
+                  className: "text-right"
+                },
+                {
+                  Header: getString(langId, compId, "header_opCost"),
+                  accessor: "total_opCost",
+                  className: "text-right"
+                },
+                {
+                  Header: getString(langId, compId, "header_totalCost"),
+                  accessor: "s_totalCost",
+                  className: "text-right"
+                },
+                {
+                  Header: getString(langId, compId, "header_actions"),
+                  accessor: "actions",
+                  sortable: false,
+                  filterable: false
+                }
+              ]}
+              defaultPageSize={10}
+              noDataText={
+                pageFirstLoading ?
+                  getString(langId, "generic", "label_loading") :
+                  data.length == 0 ?
+                    getString(langId, compId, "table_emptyData") :
+                    getString(langId, compId, "table_noDataFound")
+              }
+              showPaginationBottom
+              className="-striped -highlight default-pagination"
+            />
+          </CardBody>
+        </Card>
         <FixedButton
           {...this.props}
-          id="newPosition"
+          id={"newPosition"}
           position="bottom"
-          onClick={this.createClick}
           icon="fa fa-plus fa-2x"
-          showTooltip={pageFirstLoading ? false : data.length <= 2 ? true : false}
+          onClick={walletOptions.length == 0 ? this.createWallet : this.openPosition}
+          showTooltip={pageFirstLoading ? false : data.length == 0 ? true : false}
         />
       </div>
     )
