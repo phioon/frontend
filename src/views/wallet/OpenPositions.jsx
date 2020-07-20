@@ -618,7 +618,7 @@ class OpenPositions extends React.Component {
           toggleModal={this.toggleModal}
           dimensions={dimensions}
           onSelectionChange={this.onSelectionChange}
-          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length <= 2 ? true : false}
+          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length == 2 ? true : false}
         />
         <FixedButton
           {...this.props}
