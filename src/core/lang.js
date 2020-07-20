@@ -167,7 +167,7 @@ const strings = {
       amountInvested_alert_walletBallance: "Amount Invested is higher than Wallet's balance. Check wallet's balance to correct this metric.",
 
       closingVolume_kpi_label: "Closing Volume",
-      closingVolume_title_hint: "Taking into account only closed Positions.",
+      closingVolume_title_hint: "Taking into account only closed Positions, it's the sum of closing value. For example, for an PURCHASE operation, I'll sum up its sale's price.",
       closingVolume_currency_hint: "Sum of Closing Volume of your operations.",
 
       opCost_kpi_label: "Operational Cost",
@@ -343,7 +343,7 @@ const strings = {
       input_dateFrom: "From...",
       input_dateTo: "To...",
 
-      alert_timeInterval_noPositions: "Ops... I didn't find any Open Positions within this time interval. Would you like to try another one?",
+      alert_timeInterval_noPositions: "Ops... I didn't find any Position opened within this time interval. Would you like to try another one?",
     },
     positions: {
       card_title: "Positions",
@@ -777,7 +777,7 @@ const strings = {
       amountInvested_alert_walletBallance: "Valor Aplicado é maior que o Saldo da Carteira. Dê uma olhada no Saldo da Carteira para corrigir esta métrica.",
 
       closingVolume_kpi_label: "Vol. Fechamento",
-      closingVolume_title_hint: "Considerando apenas Posições fechadas.",
+      closingVolume_title_hint: "Considerando apenas as Posições fechadas, eu somo o valor de fechamento. Por exemplo, para uma operação de COMPRA, vou somar seu valor da venda.",
       closingVolume_currency_hint: "Soma do Volume de Fechamento de suas Operações.",
 
       opCost_kpi_label: "Custo Operacional",
@@ -954,7 +954,7 @@ const strings = {
       input_dateFrom: "A partir de...",
       input_dateTo: "Até...",
 
-      alert_timeInterval_noPositions: "Oops... Não encontrei Posições Abertas neste intervalo de tempo. Gostaria de tentar outro intervalo?",
+      alert_timeInterval_noPositions: "Oops... Não encontrei Posições que foram abertas neste intervalo de tempo. Gostaria de tentar outro intervalo?",
     },
     positions: {
       card_title: "Posições",
