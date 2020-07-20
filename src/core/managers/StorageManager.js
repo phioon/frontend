@@ -52,7 +52,7 @@ const config = {
     },
     dSetups: {
       syncLimit: 7,
-      version: 0.01
+      version: 0.02
     },
     dSetupSummary: {
       syncLimit: 60,
