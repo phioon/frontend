@@ -23,7 +23,7 @@ import LabelAlert from "../../components/LabelAlert";
 import { project } from "../../core/projectData";
 import { verifyEmail, verifyLength } from "../../core/utils";
 import { getString } from "../../core/lang";
-// --------------------
+// -------------------
 
 class Login extends React.Component {
   constructor(props) {
