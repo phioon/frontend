@@ -252,7 +252,7 @@ class AppManager {
     if (result.status == 201) {
       let syncFull = true
       await this.positionList(syncFull)
-      await this.walletList(syncFull)   // Not a backend operation.
+      await this.walletList(syncFull)
     }
 
     return result

@@ -136,7 +136,7 @@ class Suggestions extends React.Component {
     }
 
     let assets = getDistinctValuesFromList(dSetups.data, "asset_symbol")
-    assets = await this.props.managers.market.assetList(false, false, assets)
+    assets = await this.props.managers.market.assetList(false, assets)
 
     for (var obj of dSetups.data) {
       let tc = await this.props.managers.market.technicalConditionRetrieve(obj.tc_id)

@@ -190,7 +190,7 @@ class MeasureManager {
 
     if (selection.length > 0) {
       let assets = getDistinctValuesFromList(selection, "asset_symbol")
-      assets = await this.managers.market.assetList(false, true, assets)
+      assets = await this.managers.market.assetList(true, assets)
 
       for (var obj of selection) {
         let type = await this.managers.app.positionTypeRetrieve(obj.type)
@@ -242,7 +242,7 @@ class MeasureManager {
   async generateRawData(selection) {
     let rawData = []
     let assets = getDistinctValuesFromList(selection, "asset_symbol")
-    assets = await this.managers.market.assetList(false, true, assets)
+    assets = await this.managers.market.assetList(true, assets)
 
     for (var obj of selection) {
 
@@ -281,7 +281,7 @@ class MeasureManager {
   async generateDailyRawData(selection) {
     let rawData = []
     let assets = getDistinctValuesFromList(selection, "asset_symbol")
-    assets = await this.managers.market.assetList(false, true, assets)
+    assets = await this.managers.market.assetList(true, assets)
 
     for (var obj of selection) {
       let data = []
@@ -347,7 +347,7 @@ class MeasureManager {
   async generateMonthlyRawData(selection) {
     let rawData = []
     let assets = getDistinctValuesFromList(selection, "asset_symbol")
-    assets = await this.managers.market.assetList(false, true, assets)
+    assets = await this.managers.market.assetList(true, assets)
 
     for (var obj of selection) {
       let data = []

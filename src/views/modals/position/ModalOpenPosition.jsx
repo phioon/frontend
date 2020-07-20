@@ -1,8 +1,6 @@
 import React from "react";
 import classnames from "classnames";
 import PropTypes from "prop-types";
-// javascript plugin used to create scrollbars on windows
-import PerfectScrollbar from "perfect-scrollbar";
 // reactstrap components
 import {
   Button,

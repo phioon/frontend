@@ -84,9 +84,7 @@ class AppLayout extends React.Component {
     let assetsOpenPositions = getObjsFieldNull(positions.data, "ended_on")
     assetsOpenPositions = getDistinctValuesFromList(assetsOpenPositions, "asset_symbol")
     await this.props.managers.market.stockExchangeList()
-    await this.props.managers.market.assetList(false, detailed, assetsOpenPositions)
-    for (var se_short of stockExchanges)
-      await this.props.managers.market.assetList(true, false, [], se_short)
+    await this.props.managers.market.assetList(detailed, assetsOpenPositions)
 
     // Premium
     let sUser = this.props.managers.auth.storedUser()

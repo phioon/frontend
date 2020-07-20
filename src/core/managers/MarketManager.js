@@ -114,7 +114,7 @@ class MarketManager {
     this.rQueue.splice(this.rQueue.indexOf(sKey), 1)
   }
 
-  async assetList(syncFull = false, detailed = false, assets = [], stockExchange) {
+  async assetList(detailed = false, assets = [], stockExchange) {
     // syncFull is only triggered from WalletList
     // Client must pass 'assets' or 'stockExchange'. One of these 2 parameters are required.
     if (assets.length == 0 && !stockExchange)
@@ -126,73 +126,53 @@ class MarketManager {
     let wsInfo = this.getApi("wsAssets")
     let sData = {}
     let syncList = []
-    let cachedAssets = []
     let result = null
 
-    if (syncFull) {
-      // syncFull must be used only with stockExchange.
-      // Here we'll bring from backend only a list of assets that we don't have stored yet.
-      if (stockExchange) {
-        assets = StorageManager.getItem(sKey)
-        delete assets.version                 // Removes first position (key 'version')
+    // StockExchange: Prepare list of assets to be used forward.
+    if (stockExchange) {
+      assets = StorageManager.getItem(sKey)
+      delete assets.version                 // Removes first position (key 'version')
 
-        for (var [k, v] of Object.entries(assets))
-          if (v.data.stockExchange == stockExchange)
-            cachedAssets.push(k)
+      for (var [k, v] of Object.entries(assets))
+        if (v.data.stockExchange != stockExchange)
+          delete assets[k]
 
-        assets = Object.keys(assets)
-      }
+      assets = Object.keys(assets)
     }
-    else {
-      // StockExchange: Prepare list of assets to be used forward.
-      if (stockExchange) {
-        assets = StorageManager.getItem(sKey)
-        delete assets.version                 // Removes first position (key 'version')
 
-        for (var [k, v] of Object.entries(assets))
-          if (v.data.stockExchange != stockExchange)
-            delete assets[k]
+    // Assets
+    if (assets.length > 0)
+      for (var a of assets) {
+        result = StorageManager.isUpToDate(this.sModule, sKey, a)
 
-        assets = Object.keys(assets)
-      }
-
-      // Assets
-      if (assets.length > 0)
-        for (var a of assets) {
-          result = StorageManager.isUpToDate(this.sModule, sKey, a)
-
-          if (result) {                       // We have it cached and up to date?
-            if (detailed) {                   // Client is requesting detailed info?
-              if (result.data.asset_price && result.data.asset_lastTradeTime) {
-                // We have detailed info? ('asset_lastTradeTime' is a detailed info)
-                sData[a] = result             // Return it
-              }
-              else                            // We don't have it detailed
-                syncList.push(a)              // Insert Asset into syncList
+        if (result) {                       // We have it cached and up to date?
+          if (detailed) {                   // Client is requesting detailed info?
+            if (result.data.asset_price && result.data.asset_lastTradeTime) {
+              // We have detailed info? ('asset_lastTradeTime' is a detailed info)
+              sData[a] = result             // Return it
             }
-            else {                            // Client needs basic info only
-              if (result.data.asset_price)
-                sData[a] = result               // Return it
-              else
-                syncList.push(a)
-            }
+            else                            // We don't have it detailed
+              syncList.push(a)              // Insert Asset into syncList
           }
-          else
-            syncList.push(a)                  // Insert Asset into syncList
+          else {                            // Client needs basic info only
+            if (result.data.asset_price)
+              sData[a] = result               // Return it
+            else
+              syncList.push(a)
+          }
         }
-    }
+        else
+          syncList.push(a)                  // Insert Asset into syncList
+      }
 
-    // console.log(`syncFull? ${syncFull} | detailed? ${detailed}`)
-    // console.log(`cachedAssets: ${cachedAssets}`)
     // console.log(`syncList: ${syncList}`)
 
-    if (syncFull || syncList.length > 0) {
+    if (syncList.length > 0) {
       wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
       wsInfo.options.params = {
         detailed: detailed,
         stockExchange: stockExchange,
         assets: syncList.join(','),
-        cachedAssets: cachedAssets.join(',')
       }
       result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
@@ -220,25 +200,18 @@ class MarketManager {
     return sData
   }
   async assetRetrieve(pk, detailed = false) {
-    let sItem = await this.assetList(false, detailed, [pk])
+    let sItem = await this.assetList(detailed, [pk])
     return sItem[pk] ? sItem[pk].data : null
   }
-  async assetsForSelect(stockExchange) {
-    let sKey = "assets"
+  async assetsForSelect(se_short) {
     let options = []
 
-    let assets = StorageManager.getItem(sKey)
-    delete assets.version                       // Removes first position (key 'version')
+    let stockExchange = await this.stockExchangeRetrieve(se_short)
 
-    for (var [k, v] of Object.entries(assets))
-      if (v.data.stockExchange != stockExchange)
-        delete assets[k]
-
-
-    for (var obj of Object.values(assets)) {
+    for (var asset_symbol of stockExchange.assets) {
       let option = {
-        value: obj.data.asset_symbol,
-        label: obj.data.asset_label
+        value: asset_symbol,
+        label: asset_symbol.includes('.') ? asset_symbol.substring(0, asset_symbol.indexOf('.')) : asset_symbol
       }
       options.push(option)
     }
@@ -578,10 +551,6 @@ class MarketManager {
 
     if (!result.error) {
       result = result.data
-      // If it's time to sync Stock Exchanges send signal for Assets
-      // Maybe, in the future, when we'll have more Stock Exchanges, this part will require improvement.
-      for (var se of result)
-        await this.assetList(true, false, [], se.se_short)
 
       this.finishRequest(sKey)
       return StorageManager.store(sKey, result)

@@ -48,7 +48,7 @@ const config = {
   market: {
     assets: {
       syncLimit: 7,
-      version: 0.01
+      version: 0.02
     },
     dSetups: {
       syncLimit: 7,
@@ -64,7 +64,7 @@ const config = {
     },
     stockExchanges: {
       syncLimit: 8640,
-      version: 0.01
+      version: 0.02
     },
     technicalConditions: {
       syncLimit: 8640,
