@@ -27,6 +27,7 @@ urlpatterns += [
     path('auth/user/login/', apiAuth.LoginAPIView.as_view()),
     path('auth/user/logout/', knox_views.LogoutView.as_view(), name='knox_logout'),
     path('auth/user/logoutall/', knox_views.LogoutAllView.as_view(), name='knox_logoutall'),
+    path('auth/user/changepassword/', rest_auth_views.PasswordChangeView.as_view()),
     path('auth/user/request/passwordreset/', apiAuth.RequestPasswordResetView.as_view(), name='rest_password_reset'),
     path('auth/user/request/emailconfirmation/', apiAuth.RequestEmailConfirmationView.as_view(), name='rest_confirm_email'),
     path('auth/user/checkToken/<uidb64>/<token>/', apiAuth.CheckToken),

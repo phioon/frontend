@@ -167,23 +167,6 @@ class RequestPasswordResetSerializer(rest_auth_serializers.PasswordResetSerializ
 class RequestEmailConfirmationSerializer(rest_auth_serializers.PasswordResetSerializer):
     email = serializers.EmailField()
 
-    # def get_email_options(self):
-    #     subject_template_name = 'emails/<langId>/email_confirmation_subject.txt'
-    #     html_email_template_name = 'emails/<langId>/email_confirmation_email.html'
-    #
-    #     user_email = self.validated_data['email']
-    #     userCustom = UserCustom.objects.get(user__username__exact=user_email)
-    #     pref_langId = userCustom.pref_langId
-    #
-    #     subject_template_name = subject_template_name.replace('<langId>', pref_langId)
-    #     html_email_template_name = html_email_template_name.replace('<langId>', pref_langId)
-    #
-    #     return {
-    #         'subject_template_name': subject_template_name,
-    #         'email_template_name': html_email_template_name,
-    #         'html_email_template_name': html_email_template_name,
-    #     }
-
 
 class ConfirmEmailSerializer(serializers.Serializer):
     uid = serializers.CharField()

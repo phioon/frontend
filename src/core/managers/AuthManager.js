@@ -65,6 +65,14 @@ class AuthManager {
 
     return await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
   }
+  async userChangePassword(object) {
+    let wsInfo = this.getApi("wsUser")
+    wsInfo.request += "changepassword/"
+    wsInfo.method = "post"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+
+    return await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, object)
+  }
   async userRequestPasswordReset(user) {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "request/passwordreset/"

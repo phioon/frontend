@@ -128,6 +128,7 @@ const strings = {
       user_amountOfSessions: "Ooops... Seems like the amount of sessions for this user is exceeded. Wait a few minutes and try again.",
       user_invalidCredentials: "Seems like your credentials are incorrect. Please, try again.",
       user_password_entirelyNumeric: "Your new password has only numbers. Please, try adding some letters.",
+      user_password_invalid: "Seems like your current password is invalid. Please, try again.",
       user_password_tooSimilar: "Your new password is too similar to your personal data. Please, try a more secure combination.",
       user_tokenExpired: "Seems like this link has expired :( But don't worry! If you couldn't recover your access yet, please, proceed requesting a new one.",
       user_tokenExpired_confirmEmail: "Seems like this link has expired :( But don't worry! You can request a new one on Login page. ;)",
@@ -256,6 +257,18 @@ const strings = {
       alert_saleDateMissing: "Seems like you left the field 'Sale Date' empty. Anyhow, Position will be updated, but it will be considered 'open' until field 'Sale Date' is filled.",
 
       btn_confirm: "Update",
+    },
+    modalchangepassword: {
+      title: "Change Password",
+
+      input_currentPassword: "Current Password",
+      input_newPassword: "New Password",
+      input_confirmPassword: "Confirm Password",
+
+      alert_passwordChanged_title: "Password changed",
+      alert_passwordChanged_text: "Your password has been changed.",
+
+      btn_confirm: "Change"
     },
     modalcreatewallet: {
       title: "Create Wallet",
@@ -573,6 +586,7 @@ const strings = {
 
       input_select: "Select...",
       input_email: "Email",
+      btn_changePassword: "Change Password",
       input_firstName: "First Name",
       input_lastName: "Last Name",
       input_nationality: "Nationality",
@@ -738,6 +752,7 @@ const strings = {
       user_amountOfSessions: "Ooops... A quantidade de sessões para este usuário foi excedida. Aguarde alguns minutos e tente novamente.",
       user_invalidCredentials: "Parece que suas credenciais estão incorretas. Por favor, tente novamente.",
       user_password_entirelyNumeric: "Sua nova senha possui apenas numeros. Que tal uma combinação mais segura?",
+      user_password_invalid: "Parece que sua senha atual está incorreta. Por favor, tente novamente.",
       user_password_tooSimilar: "Parece que sua nova senha é muito similar à suas informações pessoais. Que tal tentar uma combinação mais segura?",
       user_tokenExpired: "hmm... Este link expirou :( Mas não se preocupe! Se você ainda não conseguiu recuperar seu acesso, basta solicitar um novo e-mail de Recupeção de Acesso.",
       user_tokenExpired_confirmEmail: "hmm... Este link expirou :( Mas não se preocupe! Você pode solicitar um novo link na página de Login. ;)",
@@ -868,6 +883,18 @@ const strings = {
       alert_saleDateMissing: "Vejo que deixou o campo 'Data da Venda' vazio. Tudo bem, vou atualizar a Posição com esses dados, mas vou considera-la como 'Aberta' até que o campo 'Data da Venda' esteja preenchido. ;)",
 
       btn_confirm: "Atualizar",
+    },
+    modalchangepassword: {
+      title: "Alterar Senha",
+
+      input_currentPassword: "Senha Atual",
+      input_newPassword: "Nova Senha",
+      input_confirmPassword: "Confirmar Senha",
+
+      alert_passwordChanged_title: "Senha alterada",
+      alert_passwordChanged_text: "Sua senha foi alterada.",
+
+      btn_confirm: "Alterar"
     },
     modalcreatewallet: {
       title: "Criar Carteira",
@@ -1161,6 +1188,7 @@ const strings = {
 
       input_select: "Selecione...",
       input_email: "E-mail",
+      btn_changePassword: "Alterar Senha",
       input_firstName: "Primeiro Nome",
       input_lastName: "Último Nome",
       input_nationality: "Nacionalidade",
