@@ -274,17 +274,14 @@ class Wallets extends React.Component {
               </Col>
               <Col className="text-right">
                 <Button
-                  id="btn_newWallet"
                   type="submit"
-                  className="btn-icon btn-round"
+                  className="btn-round"
+                  outline
                   color="success"
                   onClick={this.createClick}
                 >
-                  <i className="nc-icon nc-simple-add" />
+                  {getString(langId, compId, "btn_newWallet")}
                 </Button>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="left" target="btn_newWallet">
-                  {getString(langId, "fixedplugin", "newWallet_hint")}
-                </UncontrolledTooltip>
               </Col>
             </Row>
           </CardHeader>

@@ -85,6 +85,7 @@ class Positions extends React.Component {
       currency: { code: "BRL", symbol: "R$", thousands_separator_symbol: ".", decimal_symbol: "," },
     }
 
+    this.prepareRequirements = this.prepareRequirements.bind(this);
     this.prepareData = this.prepareData.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.createWallet = this.createWallet.bind(this);
@@ -340,7 +341,7 @@ class Positions extends React.Component {
           sWalletNames={[]}
           currency={currency}
           toggleModal={this.toggleModal}
-          runItIfSuccess={this.prepareData}
+          runItIfSuccess={this.prepareRequirements}
         />
         <ModalOpenPosition
           {...this.props}
@@ -370,17 +371,14 @@ class Positions extends React.Component {
               </Col>
               <Col className="text-right">
                 <Button
-                  id="btn_openPosition"
                   type="submit"
-                  className="btn-icon btn-round"
+                  className="btn-round"
+                  outline
                   color="success"
                   onClick={walletOptions.length == 0 ? this.createWallet : this.openPosition}
                 >
-                  <i className="nc-icon nc-simple-add" />
+                  {getString(langId, compId, "btn_newPosition")}
                 </Button>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="left" target="btn_openPosition">
-                  {getString(langId, "fixedplugin", "newPosition_hint")}
-                </UncontrolledTooltip>
               </Col>
             </Row>
           </CardHeader>

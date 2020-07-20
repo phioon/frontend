@@ -223,7 +223,7 @@ const strings = {
     },
     modalupdateposition: {
       title: "Update Position",
-      hint: "A Position is made of 2 Transactions: Buy and Sale. Here, you can update and/or close an Posiiton by letting us know the transactions details.",
+      label_intro_p1: "A Position is made of 2 Transactions: Buy and Sale. Here, you can update and/or close an Posiiton by letting us know the transactions details.",
 
       tab_purchaseInfo: "PURCHASE",
       tab_saleInfo: "SALE",
@@ -347,7 +347,7 @@ const strings = {
     },
     positions: {
       card_title: "Positions",
-      desc: "A position is made of 2 transactions (Buy and Sell). Here, you can insert data related to a new position.",
+      btn_newPosition: "New Position",
 
       table_noDataFound: "hmm... I didn't find any Position with this filter. Did I miss something?! ",
       table_emptyData: "Don't have your Positions here yet? Create it clicking on the button at your right. ;)",
@@ -604,6 +604,7 @@ const strings = {
     },
     wallets: {
       card_title: "Wallets",
+      btn_newWallet: "New Wallet",
 
       table_noDataFound: "Don't have a Wallet yet? Create it clicking on the button at your right. ;)",
 
@@ -834,7 +835,7 @@ const strings = {
     },
     modalupdateposition: {
       title: "Atualizar Posição",
-      desc: "Uma Posição é composta de 2 Transações: Compra e Venda. Aqui, você pode inserir e/ou fechar uma Posição. Basta nos passar os detalhes das Transações",
+      label_intro_p1: "Uma Posição é composta de 2 Transações: Compra e Venda. Aqui, você pode inserir e/ou fechar uma Posição. Basta nos passar os detalhes das Transações",
 
       tab_purchaseInfo: "COMPRA",
       tab_saleInfo: "VENDA",
@@ -958,7 +959,7 @@ const strings = {
     },
     positions: {
       card_title: "Posições",
-      desc: "Uma Posição é composta de 2 Transações (Compra e Venda). Aqui, você pode inserir dados de uma nova Posição.",
+      btn_newPosition: "Nova PosiÇão",
 
       table_noDataFound: "hmm... Não encontrei nenhuma Posição com esses filtros. Será que perdi algo?",
       table_emptyData: "Ainda não tem suas Posições aqui? Crie uma no botão à direita da tela. ;)",
@@ -1191,6 +1192,7 @@ const strings = {
     },
     wallets: {
       card_title: "Carteiras",
+      btn_newWallet: "Nova Carteira",
 
       table_noDataFound: "hmm... Não encontrei nenhuma Carteira com esses filtros. Será que perdi algo?",
       table_emptyData: "Ainda não tem Carteiras aqui? Crie uma no botão à direita da tela. ;)",
