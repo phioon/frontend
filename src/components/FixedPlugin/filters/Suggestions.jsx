@@ -110,12 +110,10 @@ class FixedFilter extends Component {
             </Row>
           </div>
         </div>
-        {
-          this.props.id ?
-            <UncontrolledTooltip delay={0} placement="left" target={this.props.id}>
-              {getString(langId, "fixedplugin", this.props.id + "_hint")}
-            </UncontrolledTooltip> :
-            null
+        {this.props.id &&
+          <UncontrolledTooltip delay={0} placement="left" target={this.props.id}>
+            {getString(langId, "fixedplugin", this.props.id + "_hint")}
+          </UncontrolledTooltip>
         }
       </div >
     );

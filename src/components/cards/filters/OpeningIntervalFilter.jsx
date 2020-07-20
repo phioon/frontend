@@ -46,26 +46,27 @@ class OpeningIntervalFilter extends Component {
 
     newState[fieldName] = value
 
-    if (value._isAMomentObject)
-      newState[fieldName + "State"] = "has-success"
-    else
-      newState[fieldName + "State"] = "has-danger"
-
     switch (fieldName) {
       case "dateFrom":
         dateFrom = value
         dateTo = dateTo ? dateTo : Moment()
 
-        if (value._isAMomentObject)
-          iSelected = this.getSelectedPositions(dateFrom, dateTo)
+        newState[fieldName + "State"] = ""
+        newState.openingInterval_alertState = ""
+        newState.openingInterval_alertMsg = ""
 
-        if (iSelected.length > 0) {
-          newState.openingInterval_alertState = ""
-          newState.openingInterval_alertMsg = ""
-        }
-        else {
-          newState.openingInterval_alertState = "has-danger"
-          newState.openingInterval_alertMsg = this.props.getString(langId, compId, "alert_timeInterval_noPositions")
+        if (value) {
+          if (value._isAMomentObject) {
+            newState[fieldName + "State"] = "has-success"
+            iSelected = this.getSelectedPositions(dateFrom, dateTo)
+          }
+          else
+            newState[fieldName + "State"] = "has-danger"
+
+          if (iSelected.length == 0) {
+            newState.openingInterval_alertState = "has-danger"
+            newState.openingInterval_alertMsg = this.props.getString(langId, compId, "alert_timeInterval_noPositions")
+          }
         }
 
         this.props.onSelectionChange(dimension.id, iSelected)
@@ -75,16 +76,22 @@ class OpeningIntervalFilter extends Component {
         dateFrom = dateFrom ? dateFrom : Moment("2001-01-01T00:00:00")
         dateTo = value
 
-        if (value._isAMomentObject)
-          iSelected = this.getSelectedPositions(dateFrom, dateTo)
+        newState[fieldName + "State"] = ""
+        newState.openingInterval_alertState = ""
+        newState.openingInterval_alertMsg = ""
 
-        if (iSelected.length > 0) {
-          newState.openingInterval_alertState = ""
-          newState.openingInterval_alertMsg = ""
-        }
-        else {
-          newState.openingInterval_alertState = "has-danger"
-          newState.openingInterval_alertMsg = this.props.getString(langId, compId, "alert_timeInterval_noPositions")
+        if (value) {
+          if (value._isAMomentObject) {
+            newState[fieldName + "State"] = "has-success"
+            iSelected = this.getSelectedPositions(dateFrom, dateTo)
+          }
+          else
+            newState[fieldName + "State"] = "has-danger"
+
+          if (iSelected.length == 0) {
+            newState.openingInterval_alertState = "has-danger"
+            newState.openingInterval_alertMsg = this.props.getString(langId, compId, "alert_timeInterval_noPositions")
+          }
         }
 
         this.props.onSelectionChange(dimension.id, iSelected)

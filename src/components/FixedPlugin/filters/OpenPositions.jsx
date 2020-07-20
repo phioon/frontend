@@ -139,12 +139,10 @@ class FixedFilter extends Component {
             </Row>
           </div>
         </div>
-        {
-          this.props.id ?
-            <Tooltip isOpen={isTooltipOpen} placement="left" target={this.props.id} toggle={() => this.toggleTooltip()}>
-              {getString(langId, "fixedplugin", this.props.id + "_hint")}
-            </Tooltip> :
-            null
+        {this.props.id &&
+          <Tooltip isOpen={isTooltipOpen} placement="left" target={this.props.id} toggle={() => this.toggleTooltip()}>
+            {getString(langId, "fixedplugin", this.props.id + "_hint")}
+          </Tooltip>
         }
       </div >
     );
