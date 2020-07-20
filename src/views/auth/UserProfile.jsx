@@ -554,11 +554,7 @@ class UserProfile extends React.Component {
                       {/* Email */}
                       <Col md="4">
                         <FormGroup>
-                          <Row>
-                            <Col md="4" xs="4">
-                              <label>{getString(langId, compId, "input_email")}</label>
-                            </Col>
-                          </Row>
+                          <label>{getString(langId, compId, "input_email")}</label>
                           <Input
                             type="email"
                             name="email"
