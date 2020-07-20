@@ -137,6 +137,7 @@ REST_FRAMEWORK = {
     ]
 }
 
+# DJANGO-REST-AUTH Configuration
 REST_AUTH_SERIALIZERS = {
     'PASSWORD_RESET_SERIALIZER': 'rest_auth.serializers.PasswordResetSerializer',
     'PASSWORD_RESET_CONFIRM_SERIALIZER ': 'rest_auth.serializers.PasswordResetConfirmSerializer',
