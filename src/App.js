@@ -182,6 +182,16 @@ class App extends React.Component {
               case "setpassword":
                 if (rData.includes("password is entirely numeric"))
                   msg.id = model + "_password_entirelyNumeric"
+                else if (rData.includes("password is too similar"))
+                  msg.id = model + "_password_tooSimilar"
+                break;
+              case "modalchangepassword":
+                if (rData.includes("password is entirely numeric"))
+                  msg.id = model + "_password_entirelyNumeric"
+                else if (rData.includes("password is too similar"))
+                  msg.id = model + "_password_tooSimilar"
+                else if (rData.includes("Invalid password"))
+                  msg.id = model + "_password_invalid"
                 break;
               default:
                 break;

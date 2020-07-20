@@ -20,6 +20,8 @@ import Skeleton from "react-loading-skeleton";
 import ReactDatetime from "react-datetime";
 import Select from "react-select";
 
+import ModalChangePassword from "../modals/auth/ModalChangePassword";
+
 import TimeManager from "../../core/managers/TimeManager";
 import { getLangList } from "../../core/lang";
 import {
@@ -38,6 +40,8 @@ class UserProfile extends React.Component {
       compId: this.constructor.name.toLowerCase(),
       langId: props.prefs.langId,
       pageFirstLoading: true,
+
+      modal_changePassword_isOpen: false,
 
       subscription: {},
 
@@ -87,6 +91,8 @@ class UserProfile extends React.Component {
       currencies: [],
       languages: []
     }
+
+    this.toggleModal = this.toggleModal.bind(this)
   }
   static getDerivedStateFromProps(props, state) {
     if (props.prefs.langId !== state.langId)
@@ -318,6 +324,9 @@ class UserProfile extends React.Component {
       alert: null
     });
   };
+  toggleModal(modalId) {
+    this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
+  };
 
   render() {
     let { getString } = this.props;
@@ -325,6 +334,8 @@ class UserProfile extends React.Component {
       langId,
       compId,
       pageFirstLoading,
+
+      modal_changePassword_isOpen,
 
       subscription,
 
@@ -344,6 +355,12 @@ class UserProfile extends React.Component {
     return (
       <>
         <div className="content">
+          <ModalChangePassword
+            {...this.props}
+            modalId="changePassword"
+            isOpen={modal_changePassword_isOpen}
+            toggleModal={this.toggleModal}
+          />
           {alert}
           <Row>
             <Col md="4">
@@ -563,6 +580,19 @@ class UserProfile extends React.Component {
                           />
                         </FormGroup>
                       </Col>
+                      {/* Change Password */}
+                      <Col md="4" className="centered">
+                        <Button
+                          className="btn-neutral"
+                          outline
+                          color="black"
+                          onClick={() => this.toggleModal("changePassword")}
+                        >
+                          {getString(langId, compId, "btn_changePassword")}
+                        </Button>
+                      </Col>
+                    </Row>
+                    <Row>
                       {/* First Name */}
                       <Col md="4">
                         <FormGroup className={`has-label ${personalData.states.first_name}`}>
