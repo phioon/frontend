@@ -64,7 +64,7 @@ const config = {
     },
     stockExchanges: {
       syncLimit: 8640,
-      version: 0.02
+      version: 0.03
     },
     technicalConditions: {
       syncLimit: 8640,
