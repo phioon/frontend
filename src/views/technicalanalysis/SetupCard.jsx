@@ -226,7 +226,7 @@ class SetupCard extends React.Component {
               <TabPane tabId="summary" role="tabpanel">
                 {/* Max/Min Price */}
                 <Row>
-                  <Col md="5" sm="6" className="ml-auto mr-auto">
+                  <Col md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {isPurchase ? getString(langId, compId, "label_maxPrice") : getString(langId, compId, "label_minPrice")}
                       {" "}
@@ -242,7 +242,7 @@ class SetupCard extends React.Component {
                 </Row>
                 {/* Stop Loss */}
                 <Row>
-                  <Col md="5" sm="6" className="ml-auto mr-auto">
+                  <Col md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {getString(langId, compId, "label_stopLoss")}
                       {" "}
@@ -258,7 +258,7 @@ class SetupCard extends React.Component {
                 </Row>
                 {/* Target */}
                 <Row>
-                  <Col md="5" sm="6" className="ml-auto mr-auto" >
+                  <Col md="6" sm="6" className="ml-auto mr-auto" >
                     <label>
                       {getString(langId, compId, "label_target")}
                       {" "}
@@ -274,7 +274,7 @@ class SetupCard extends React.Component {
                 </Row>
                 {/* Gain Percent / Loss Percent*/}
                 <Row>
-                  <Col md="5" sm="6" className="ml-auto mr-auto">
+                  <Col md="6" sm="6" className="ml-auto mr-auto">
                     <label className={setup.ended_on ? setup.is_success === false ? "text-danger" : "text-success" : null}>
                       {setup.is_success === false ?
                         getString(langId, compId, "label_lossPercent") :
@@ -301,7 +301,7 @@ class SetupCard extends React.Component {
                 </Row>
                 {/* Risk / Reward */}
                 <Row>
-                  <Col md="5" sm="6" className="ml-auto mr-auto">
+                  <Col md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {getString(langId, compId, "label_riskReward")}{" "}
                       <i id={"riskReward_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
@@ -324,7 +324,7 @@ class SetupCard extends React.Component {
                 <br />
                 {/* Success Rate */}
                 <Row>
-                  <Col md="5" sm="6" className="ml-auto mr-auto">
+                  <Col md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {getString(langId, compId, "label_successRate")}{" "}
                       <i id={"successRate_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
@@ -341,7 +341,7 @@ class SetupCard extends React.Component {
                 </Row>
                 {/* Occurrencies */}
                 <Row>
-                  <Col md="5" sm="6" className="ml-auto mr-auto">
+                  <Col md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {getString(langId, compId, "label_occurrencies")}{" "}
                       <i id={"occurrencies_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
@@ -358,7 +358,7 @@ class SetupCard extends React.Component {
                 </Row>
                 {/* Last Occurrence */}
                 <Row>
-                  <Col md="5" sm="6" className="ml-auto mr-auto">
+                  <Col md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {getString(langId, compId, "label_lastOccurrence")}{" "}
                       <i id={"lastOccurrence_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
@@ -369,7 +369,7 @@ class SetupCard extends React.Component {
                   </Col>
                   <Col md="4" sm="6" className="ml-auto mr-auto text-right">
                     <label className="numbers">
-                      {TimeManager.getLocaleDateString(setup.last_ended_occurrence)}
+                      {TimeManager.getLocaleDateString(setup.last_ended_occurrence, false)}
                     </label>
                   </Col>
                 </Row>
@@ -385,7 +385,7 @@ class SetupCard extends React.Component {
           <h6 id={"startedOn_hint_" + setup.id} className="text-center">
             <i className="far fa-clock" />
             {" "}
-            {TimeManager.getLocaleDateString(setup.started_on)}
+            {TimeManager.getLocaleDateString(setup.started_on, false)}
           </h6>
           <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"startedOn_hint_" + setup.id}>
             {getString(langId, compId, "startedOn_hint")}

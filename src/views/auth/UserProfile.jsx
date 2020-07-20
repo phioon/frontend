@@ -298,7 +298,7 @@ class UserProfile extends React.Component {
     for (let [k, v] of Object.entries(obj_data)) {
       if (typeof v === "object") {
         // Data from Selects {value: "", label: ""} must be readable for the API. So, just considers the field 'value'
-        obj_data[k] = v.value
+        obj_data[k] = v ? v.value : v
       }
     }
 
@@ -377,7 +377,7 @@ class UserProfile extends React.Component {
                         <label>{getString(langId, compId, "label_joinedOn")}</label>
                       </Col>
                       <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
-                        <label>{TimeManager.getLocaleDateString(subscription.userJoinedOn)}</label>
+                        <label>{TimeManager.getLocaleDateString(subscription.userJoinedOn, false)}</label>
                       </Col>
                     </Row>
                     <br />
@@ -411,7 +411,7 @@ class UserProfile extends React.Component {
                           </UncontrolledTooltip>
                         </Col>
                         <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
-                          <label>{TimeManager.getLocaleDateString(subscription.expiresOn)}</label>
+                          <label>{TimeManager.getLocaleDateString(subscription.expiresOn, false)}</label>
                         </Col>
                       </Row> :
                       null
@@ -430,7 +430,7 @@ class UserProfile extends React.Component {
                           </UncontrolledTooltip>
                         </Col>
                         <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
-                          <label>{TimeManager.getLocaleDateString(subscription.renewsOn)}</label>
+                          <label>{TimeManager.getLocaleDateString(subscription.renewsOn, false)}</label>
                         </Col>
                       </Row> :
                       null
@@ -595,8 +595,6 @@ class UserProfile extends React.Component {
                       </Col>
                     </Row>
                     <Row>
-                    </Row>
-                    <Row>
                       {/* Nationality */}
                       <Col md="4">
                         <FormGroup>
@@ -624,7 +622,7 @@ class UserProfile extends React.Component {
                               className: "form-control",
                               placeholder: this.props.getString(langId, compId, "input_select")
                             }}
-                            value={personalData.data.birthday}
+                            value={personalData.data.birthday && TimeManager.getLocaleDateString(personalData.data.birthday, false)}
                             onChange={value => this.onSelectChange("personalData", "birthday", value)}
                             isValidDate={this.isDateValid}
                             timeFormat={false}
