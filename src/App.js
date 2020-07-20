@@ -166,6 +166,7 @@ class App extends React.Component {
               case "register":
                 if (rData.includes("username already exists"))
                   msg.id = model + "_alreadyExists"
+                break;
               case "login":
                 if (rData.includes("Unable to log in with provided credentials"))
                   msg.id = model + "_invalidCredentials"
@@ -177,6 +178,7 @@ class App extends React.Component {
                   msg.id = model + "_password_entirelyNumeric"
                 else if (rData.includes("password is too similar"))
                   msg.id = model + "_password_tooSimilar"
+                break;
               case "setpassword":
                 if (rData.includes("password is entirely numeric"))
                   msg.id = model + "_password_entirelyNumeric"
