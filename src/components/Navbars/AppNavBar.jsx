@@ -39,7 +39,7 @@ class AppNavBar extends React.Component {
     return null
   }
   componentDidMount() {
-    window.addEventListener("resize", this.updateColor);
+    window.addEventListener("resize", this.updateColor());
 
     let langList = getLangList()
     this.setState({ langList })
@@ -73,14 +73,15 @@ class AppNavBar extends React.Component {
   // it also adds navbar-transparent class to the navbar when closed
   // and bg-white when opened
   toggleCollapse() {
-    let newState = {
-      collapseOpen: !this.state.collapseOpen
-    };
-    if (!this.state.collapseOpen) {
-      newState["color"] = "bg-white";
-    } else {
+    let { collapseOpen } = this.state;
+
+    let newState = { collapseOpen: !collapseOpen };
+
+    if (collapseOpen)
       newState["color"] = "navbar-transparent";
-    }
+    else
+      newState["color"] = "bg-white";
+
     this.setState(newState);
   };
 
@@ -94,11 +95,20 @@ class AppNavBar extends React.Component {
 
     return langList.map((langId, key) => {
       return (
-        <DropdownItem key={key} onClick={() => this.props.managers.auth.userUpdate({ pref_langId: langId })}>
+        <DropdownItem key={key} onClick={() => this.setLangId(langId)}>
           {getString(langId, "languages", langId)}
         </DropdownItem>
       )
     });
+  }
+  setLangId(langId) {
+    this.props.managers.auth.userUpdate({ pref_langId: langId })
+    this.toggleCollapse()
+  }
+
+  pushRouterHistory(path) {
+    this.props.history.push(path)
+    this.toggleCollapse()
   }
 
   render() {
@@ -153,7 +163,7 @@ class AppNavBar extends React.Component {
               // data-target="#navigation"
               data-toggle="collapse"
               type="button"
-              onClick={this.toggleCollapse}
+              onClick={() => this.toggleCollapse()}
             >
               <span className="navbar-toggler-bar navbar-kebab" />
               <span className="navbar-toggler-bar navbar-kebab" />
@@ -204,7 +214,7 @@ class AppNavBar extends React.Component {
                     <i className="nc-icon nc-settings-gear-65" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-navbar" right tag="ul">
-                    <DropdownItem onClick={() => this.props.history.push('/app/userprofile')}>
+                    <DropdownItem onClick={() => this.pushRouterHistory('/app/userprofile')}>
                       {getString(langId, compId, "profile")}
                     </DropdownItem>
                     <DropdownItem divider tag="li" />

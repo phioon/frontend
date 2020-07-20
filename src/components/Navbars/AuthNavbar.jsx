@@ -39,23 +39,36 @@ class AuthNavbar extends React.Component {
     return null
   }
   componentDidMount() {
-    window.addEventListener("resize", this.updateColor);
+    window.addEventListener("resize", this.updateColor());
 
     let langList = getLangList()
     this.setState({ langList })
   }
+  // function that adds color white/transparent to the navbar on resize (this is for the collapse)
+  updateColor() {
+    if (window.innerWidth < 993 && this.state.collapseOpen) {
+      this.setState({
+        color: "bg-white"
+      });
+    } else {
+      this.setState({
+        color: "navbar-transparent"
+      });
+    }
+  };
   // this function opens and closes the collapse on small devices
   // it also adds navbar-transparent class to the navbar when closed
   // ad bg-white when opened
-  toggleCollapse = () => {
-    let newState = {
-      collapseOpen: !this.state.collapseOpen
-    };
-    if (!this.state.collapseOpen) {
-      newState["color"] = "bg-white";
-    } else {
+  toggleCollapse() {
+    let { collapseOpen } = this.state;
+
+    let newState = { collapseOpen: !collapseOpen };
+
+    if (collapseOpen)
       newState["color"] = "navbar-transparent";
-    }
+    else
+      newState["color"] = "bg-white";
+
     this.setState(newState);
   };
 
@@ -64,11 +77,15 @@ class AuthNavbar extends React.Component {
 
     return langList.map((langId, key) => {
       return (
-        <DropdownItem key={key} onClick={() => this.props.setLangId(langId)}>
+        <DropdownItem key={key} onClick={() => this.setLangId(langId)}>
           {getString(langId, "languages", langId)}
         </DropdownItem>
       )
     });
+  }
+  setLangId(langId) {
+    this.props.setLangId(langId)
+    this.toggleCollapse()
   }
 
   render() {
@@ -98,7 +115,7 @@ class AuthNavbar extends React.Component {
             className="navbar-toggler"
             data-toggle="collapse"
             type="button"
-            onClick={this.toggleCollapse}
+            onClick={() => this.toggleCollapse()}
           >
             <span className="navbar-toggler-bar navbar-kebab" />
             <span className="navbar-toggler-bar navbar-kebab" />
@@ -126,13 +143,13 @@ class AuthNavbar extends React.Component {
                 </DropdownMenu>
               </UncontrolledDropdown>
               <NavItem>
-                <NavLink to="/auth/register" className="nav-link" replace>
+                <NavLink to="/auth/register" className="nav-link" onClick={() => this.toggleCollapse()} replace>
                   <i className="nc-icon nc-book-bookmark" />
                   {getString(langId, compId, "signUp")}
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink to="/auth/login" className="nav-link" replace>
+                <NavLink to="/auth/login" className="nav-link" onClick={() => this.toggleCollapse()} replace>
                   <i className="nc-icon nc-tap-01" />
                   {getString(langId, compId, "login")}
                 </NavLink>
