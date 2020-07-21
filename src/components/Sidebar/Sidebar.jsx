@@ -177,9 +177,7 @@ class Sidebar extends React.Component {
         data-active-color={this.props.activeColor}
       >
         <div className="logo">
-          <a
-            href={project.info.website} className="simple-text logo-mini" target="_blank"
-          >
+          <a href={project.info.website} className="simple-text logo-mini" target="_blank">
             <div className="logo-img">
               <img
                 alt={project.img.branding.avatar.original.alt}
