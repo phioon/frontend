@@ -371,7 +371,6 @@ class UserProfile extends React.Component {
                   <img
                     alt="..."
                     src={project.img.bg.app_clean_reverse.src}
-                  // src={"/static/app/assets/img/bg/bg-app-clean-reverse.jpg"}
                   />
                   <div className={`subscription ${subscription.name}`}>{String(subscription.name).toUpperCase()}</div>
                 </div>
