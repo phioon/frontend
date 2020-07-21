@@ -263,9 +263,7 @@ class ModalCreateWallet extends React.Component {
             {this.props.sWalletNames.length == 0 &&
               <label>
                 <p>{getString(langId, compId, "label_intro_p1")}</p>
-                <p>
-                  {getString(langId, compId, "label_intro_p2")}
-                </p>
+                <p>{getString(langId, compId, "label_intro_p2")}</p>
               </label>
             }
           </CardHeader>

@@ -127,7 +127,7 @@ const strings = {
       user_emailCouldNotBeSent: "Ok, good news is that your user has been created. Bad news, my team couldn't send you a confirmation email. I already asked them to handle it, so you should receive an email in a couple hours. ;)",
       user_amountOfSessions: "Ooops... Seems like the amount of sessions for this user is exceeded. Wait a few minutes and try again.",
       user_invalidCredentials: "Seems like your credentials are incorrect. Please, try again.",
-      user_password_entirelyNumeric: "Your new password has only numbers. Please, try adding some letters.",
+      user_password_entirelyNumeric: "Your new password has only numbers. Please, try a more secure combination.",
       user_password_invalid: "Seems like your current password is invalid. Please, try again.",
       user_password_tooSimilar: "Your new password is too similar to your personal data. Please, try a more secure combination.",
       user_tokenExpired: "Seems like this link has expired :( But don't worry! If you couldn't recover your access yet, please, proceed requesting a new one.",
@@ -260,6 +260,10 @@ const strings = {
     },
     modalchangepassword: {
       title: "Change Password",
+      label_intro_p1: "I know having a complex password may be difficult to remember later, but we are talking of your personal data here.",
+      label_intro_p2: "So, I'll ask you only 2 things for your new password:",
+      label_intro_p3: "1. At least 8 characters long.",
+      label_intro_p4: "2. Not entirely numeric.",
 
       input_currentPassword: "Current Password",
       input_newPassword: "New Password",
@@ -594,7 +598,7 @@ const strings = {
       input_birthday_hint: "I could send birthday gifts. Who knows...",
 
       input_currency: "Main Currency",
-      input_currency_hint: "Do you invest in different countries? If so, I could convert the currencies to your preferred one on dashboards and reports. ",
+      input_currency_hint: "Do you invest in different countries? I could convert the currencies to your preferred one on dashboards and reports. ",
       input_language: "Language",
 
       btn_save: "Save"
@@ -886,6 +890,10 @@ const strings = {
     },
     modalchangepassword: {
       title: "Alterar Senha",
+      label_intro_p1: "Eu entendo que uma senha complexa pode ser dificil de lembrar depois, mas estamos falando de seus dados pessoais aqui. ;)",
+      label_intro_p2: "Então, para sua nova senha, vou te pedir apenas 2 coisas:",
+      label_intro_p3: "1. Ao menos 8 caracteres",
+      label_intro_p4: "2. Não seja apenas números.",
 
       input_currentPassword: "Senha Atual",
       input_newPassword: "Nova Senha",
@@ -1196,7 +1204,7 @@ const strings = {
       input_birthday_hint: "Eu poderia enviar presentes de aniversário. Quem sabe...",
 
       input_currency: "Moeda Principal",
-      input_currency_hint: "Investe em diferentes países? Se sim, posso converter outras moedas para a de sua preferência em relatórios e dashboards. ",
+      input_currency_hint: "Investe em diferentes países? Posso converter outras moedas para a de sua preferência em relatórios e dashboards. ",
       input_language: "Língua",
 
       btn_save: "Salvar"

@@ -206,6 +206,18 @@ class ModalChangePassword extends React.Component {
               {getString(langId, compId, "title")}
             </h5>
             <hr />
+            <label>
+              <p>
+                {getString(langId, compId, "label_intro_p1")}
+                <br />
+                {getString(langId, compId, "label_intro_p2")}
+              </p>
+              <p>
+                {getString(langId, compId, "label_intro_p3")}
+                <br />
+                {getString(langId, compId, "label_intro_p4")}
+              </p>
+            </label>
           </CardHeader>
           <CardBody>
             {/* Old Password */}

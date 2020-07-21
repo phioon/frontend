@@ -569,7 +569,7 @@ class UserProfile extends React.Component {
                   <Form>
                     <Row>
                       {/* Email */}
-                      <Col md="4">
+                      <Col md="7" className="ml-auto">
                         <FormGroup>
                           <label>{getString(langId, compId, "input_email")}</label>
                           <Input
@@ -581,11 +581,10 @@ class UserProfile extends React.Component {
                         </FormGroup>
                       </Col>
                       {/* Change Password */}
-                      <Col md="4" className="centered">
+                      <Col md="3" className="mr-auto centered">
                         <Button
                           className="btn-neutral"
-                          outline
-                          color="black"
+                          // color="black"
                           onClick={() => this.toggleModal("changePassword")}
                         >
                           {getString(langId, compId, "btn_changePassword")}
@@ -594,7 +593,7 @@ class UserProfile extends React.Component {
                     </Row>
                     <Row>
                       {/* First Name */}
-                      <Col md="4">
+                      <Col md="5" className="ml-auto">
                         <FormGroup className={`has-label ${personalData.states.first_name}`}>
                           <label>{getString(langId, compId, "input_firstName")}</label>
                           <Input
@@ -607,7 +606,7 @@ class UserProfile extends React.Component {
                         </FormGroup>
                       </Col>
                       {/* Last Name */}
-                      <Col md="4">
+                      <Col md="5" className="mr-auto">
                         <FormGroup className={`has-label ${personalData.states.last_name}`}>
                           <label>{getString(langId, compId, "input_lastName")}</label>
                           <Input
@@ -622,7 +621,7 @@ class UserProfile extends React.Component {
                     </Row>
                     <Row>
                       {/* Nationality */}
-                      <Col md="4">
+                      <Col md="5" className="ml-auto">
                         <FormGroup>
                           <label>{getString(langId, compId, "input_nationality")}</label>
                           <Input
@@ -634,7 +633,7 @@ class UserProfile extends React.Component {
                         </FormGroup>
                       </Col>
                       {/* Birthday */}
-                      <Col md="4">
+                      <Col md="5" className="mr-auto">
                         <FormGroup className={`has-label ${personalData.states.birthday}`}>
                           <label>{getString(langId, compId, "input_birthday")}
                             {" "}
@@ -690,7 +689,7 @@ class UserProfile extends React.Component {
                   <Form>
                     <Row>
                       {/* Language */}
-                      <Col md="4">
+                      <Col md="5" className="ml-auto">
                         <FormGroup>
                           <label>{getString(langId, compId, "input_language")}</label>
                           <Select
@@ -705,7 +704,7 @@ class UserProfile extends React.Component {
                         </FormGroup>
                       </Col>
                       {/* Currency */}
-                      <Col md="3">
+                      <Col md="5" className="mr-auto">
                         <FormGroup>
                           <label>
                             {getString(langId, compId, "input_currency")}
