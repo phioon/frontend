@@ -31,6 +31,7 @@ import {
   verifyLength,
   verifyOnlyLetters
 } from "../../core/utils";
+import { project } from "../../core/projectData";
 
 class UserProfile extends React.Component {
   constructor(props) {
@@ -369,7 +370,8 @@ class UserProfile extends React.Component {
                 <div className="image">
                   <img
                     alt="..."
-                    src={"/static/app/assets/img/bg/bg-app-clean-reverse.jpg"}
+                    src={project.img.bg.app_clean_reverse.src}
+                  // src={"/static/app/assets/img/bg/bg-app-clean-reverse.jpg"}
                   />
                   <div className={`subscription ${subscription.name}`}>{String(subscription.name).toUpperCase()}</div>
                 </div>

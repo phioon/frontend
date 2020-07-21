@@ -84,6 +84,17 @@ class AppNavBar extends React.Component {
 
     this.setState(newState);
   };
+  setCollapse(value = false) {
+    let newState = { collapseOpen: value };
+
+    if (value)
+      newState["color"] = "bg-white";
+    else
+      newState["color"] = "navbar-transparent";
+
+
+    this.setState(newState);
+  };
 
   logoutClick() {
     this.props.managers.auth.userLogout()
@@ -103,12 +114,12 @@ class AppNavBar extends React.Component {
   }
   setLangId(langId) {
     this.props.managers.auth.userUpdate({ pref_langId: langId })
-    this.toggleCollapse()
+    this.setCollapse(false)
   }
 
   pushRouterHistory(path) {
     this.props.history.push(path)
-    this.toggleCollapse()
+    this.setCollapse(false)
   }
 
   render() {

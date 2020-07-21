@@ -14,13 +14,13 @@ export const project = {
           alt: "P H I O O N",
           width: 1080,
           heigth: 1080,
-          src: "/static/app/assets/img/branding/avatar/avatar_original.jpg"
+          src: "https://storage.googleapis.com/phioon-static/assets/img/branding/avatar/avatar_original.jpg"
         },
         green: {
           alt: "P H I O O N",
           width: 1080,
           heigth: 1080,
-          src: "/static/app/assets/img/branding/avatar/avatar_green.jpg"
+          src: "https://storage.googleapis.com/phioon-static/assets/img/branding/avatar/avatar_green.jpg"
         },
       },
       logo: {
@@ -28,19 +28,19 @@ export const project = {
           alt: "P H I O O N",
           width: 1945,
           heigth: 336,
-          src: "/static/app/assets/img/branding/logo/logo_original.png"
+          src: "https://storage.googleapis.com/phioon-static/assets/img/branding/logo/logo_original.png"
         },
         black: {
           alt: "P H I O O N",
           width: 1945,
           heigth: 336,
-          src: "/static/app/assets/img/branding/logo/logo_black.png"
+          src: "https://storage.googleapis.com/phioon-static/assets/img/branding/logo/logo_black.png"
         },
         white: {
           alt: "P H I O O N",
           width: 1945,
           heigth: 336,
-          src: "/static/app/assets/img/branding/logo/logo_white.png"
+          src: "https://storage.googleapis.com/phioon-static/assets/img/branding/logo/logo_white.png"
         }
       },
       icon: {
@@ -48,28 +48,34 @@ export const project = {
           alt: "P H I O O N",
           width: 1470,
           heigth: 1470,
-          src: "/static/app/assets/img/branding/icon/icon_original.png"
+          src: "https://storage.googleapis.com/phioon-static/assets/img/branding/icon/icon_original.png"
         },
         black: {
           alt: "P H I O O N",
           width: 1470,
           heigth: 1470,
-          src: "/static/app/assets/img/branding/icon/icon_black.png"
+          src: "https://storage.googleapis.com/phioon-static/assets/img/branding/icon/icon_black.png"
         },
         white: {
           alt: "P H I O O N",
           width: 1470,
           heigth: 1470,
-          src: "/static/app/assets/img/branding/icon/icon_white.png"
+          src: "https://storage.googleapis.com/phioon-static/assets/img/branding/icon/icon_white.png"
         }
       }
     },
     bg: {
-      app_dark: {
-        src: "/static/app/assets/img/bg/bg-app-dark.jpg"
+      app_clean: {
+        src: "https://storage.googleapis.com/phioon-static/assets/img/bg/bg-app-clean.jpg"
       },
-      app_ligth: {
-        src: "/static/app/assets/img/bg/bg-app-light.jpg"
+      app_clean_reverse: {
+        src: "https://storage.googleapis.com/phioon-static/assets/img/bg/bg-app-clean-reverse.jpg"
+      },
+      app_dark: {
+        src: "https://storage.googleapis.com/phioon-static/assets/img/bg/bg-app-dark.jpg"
+      },
+      app_light: {
+        src: "https://storage.googleapis.com/phioon-static/assets/img/bg/bg-app-light.jpg"
       },
     }
   },

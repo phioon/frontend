@@ -519,7 +519,7 @@ class Register extends React.Component {
         <div
           className="full-page-background"
           style={{
-            backgroundImage: `url(${project.img.bg.app_ligth.src})`
+            backgroundImage: `url(${project.img.bg.app_light.src})`
           }}
         />
       </div>

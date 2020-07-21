@@ -71,6 +71,18 @@ class AuthNavbar extends React.Component {
 
     this.setState(newState);
   };
+  setCollapse(value = false) {
+    let newState = { collapseOpen: value };
+
+    if (value)
+      newState["color"] = "bg-white";
+    else
+      newState["color"] = "navbar-transparent";
+
+
+    this.setState(newState);
+  };
+
 
   languageItems(langList) {
     let { getString } = this.props
@@ -85,7 +97,7 @@ class AuthNavbar extends React.Component {
   }
   setLangId(langId) {
     this.props.setLangId(langId)
-    this.toggleCollapse()
+    this.setCollapse(false)
   }
 
   render() {
@@ -143,13 +155,13 @@ class AuthNavbar extends React.Component {
                 </DropdownMenu>
               </UncontrolledDropdown>
               <NavItem>
-                <NavLink to="/auth/register" className="nav-link" onClick={() => this.toggleCollapse()} replace>
+                <NavLink to="/auth/register" className="nav-link" onClick={() => this.setCollapse(false)} replace>
                   <i className="nc-icon nc-book-bookmark" />
                   {getString(langId, compId, "signUp")}
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink to="/auth/login" className="nav-link" onClick={() => this.toggleCollapse()} replace>
+                <NavLink to="/auth/login" className="nav-link" onClick={() => this.setCollapse(false)} replace>
                   <i className="nc-icon nc-tap-01" />
                   {getString(langId, compId, "login")}
                 </NavLink>
