@@ -959,6 +959,10 @@ class ModalUpdatePosition extends React.Component {
               {getString(langId, compId, "title")}
             </h5>
             <hr />
+            <label>
+              <p>{getString(langId, compId, "label_intro_p1")}</p>
+              <p>{getString(langId, compId, "label_intro_p2")}</p>
+            </label>
           </CardHeader>
           <CardBody>
             {/* Type */}
@@ -1002,7 +1006,7 @@ class ModalUpdatePosition extends React.Component {
             <br />
             {/* Wallet */}
             <FormGroup className={`has-label ${position.states.wallet}`}>
-              <label>{getString(langId, compId, "input_wallet")} *</label>
+              <label>{getString(langId, compId, "input_wallet")}</label>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
@@ -1015,7 +1019,7 @@ class ModalUpdatePosition extends React.Component {
             </FormGroup>
             {/* Asset */}
             <FormGroup className={`has-label ${position.states.asset}`}>
-              <label>{getString(langId, compId, "input_asset")} *</label>
+              <label>{getString(langId, compId, "input_asset")}</label>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
@@ -1028,7 +1032,7 @@ class ModalUpdatePosition extends React.Component {
             </FormGroup>
             {/* Amount */}
             <FormGroup className={`has-label ${position.states.amount}`}>
-              <label>{getString(langId, compId, "input_amount")} *</label>
+              <label>{getString(langId, compId, "input_amount")}</label>
               <Input
                 type="number"
                 name="amount"
@@ -1047,10 +1051,7 @@ class ModalUpdatePosition extends React.Component {
                       className={activeNavId == "start" ? "active" : ""}
                       onClick={() => this.toggleNavLink("activeNavId", "start")}
                     >
-                      {position.data.typeIsBuy ?
-                        getString(langId, compId, "tab_purchaseInfo") :
-                        getString(langId, compId, "tab_saleInfo")
-                      }
+                      {getString(langId, compId, "tab_openingInfo")}
                     </NavLink>
                   </NavItem>
                   {/* END */}
@@ -1060,10 +1061,7 @@ class ModalUpdatePosition extends React.Component {
                       className={activeNavId == "end" ? "active" : ""}
                       onClick={() => this.toggleNavLink("activeNavId", "end")}
                     >
-                      {position.data.typeIsBuy ?
-                        getString(langId, compId, "tab_saleInfo") :
-                        getString(langId, compId, "tab_purchaseInfo")
-                      }
+                      {getString(langId, compId, "tab_closingInfo")}
                     </NavLink>
                   </NavItem>
                 </Nav>

@@ -224,11 +224,13 @@ const strings = {
     },
     modalupdateposition: {
       title: "Update Position",
-      label_intro_p1: "A Position is made of 2 Transactions: Buy and Sale. Here, you can update and/or close an Posiiton by letting us know the transactions details.",
+      label_intro_p1: "A Position is made of 2 events: Opening and Closing.",
+      label_intro_p2: "I understand that a Position is closed once the fields under CLOSING tab are filled. ;)",
 
-      tab_purchaseInfo: "PURCHASE",
-      tab_saleInfo: "SALE",
+      tab_openingInfo: "OPENING",
+      tab_closingInfo: "CLOSING",
 
+      input_type: "Type",
       input_type_buy: "BUY",
       input_type_sell: "SELL",
       input_select: "Select...",
@@ -854,11 +856,13 @@ const strings = {
     },
     modalupdateposition: {
       title: "Atualizar Posição",
-      label_intro_p1: "Uma Posição é composta de 2 Transações: Compra e Venda. Aqui, você pode inserir e/ou fechar uma Posição. Basta nos passar os detalhes das Transações",
+      label_intro_p1: "Uma posição possui 2 eventos: Abertura e Fechamento.",
+      label_intro_p2: "Eu entendo que uma Posição está fechada quando os campos da aba FECHAMENTO estão preenchidos. ;)",
 
-      tab_purchaseInfo: "COMPRA",
-      tab_saleInfo: "VENDA",
+      tab_openingInfo: "ABERTURA",
+      tab_closingInfo: "FECHAMENTO",
 
+      input_type: "Tipo",
       input_type_buy: "COMPRA",
       input_type_sell: "VENDA",
       input_select: "Selecione...",

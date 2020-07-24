@@ -7,12 +7,11 @@ from django_engine.wsgi import application
 # App Engine without additional configuration.
 # Alternatively, you can add a custom entrypoint field in your app.yaml:
 # entrypoint: gunicorn -b :$PORT mysite.wsgi
-"""
-try:
-    import googleclouddebugger
-    googleclouddebugger.enable()
-except ImportError:
-    pass
-"""
+
+# try:
+#     import googleclouddebugger
+#     googleclouddebugger.enable(breakpoint_enable_canary=False)
+# except ImportError:
+#     pass
 
 app = application

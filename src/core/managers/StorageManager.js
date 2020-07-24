@@ -25,11 +25,11 @@ const config = {
       version: 0.01
     },
     positions: {
-      syncLimit: 3,
+      syncLimit: 7,
       version: 0.01
     },
     wallets: {
-      syncLimit: 3,
+      syncLimit: 7,
       version: 0.01
     },
   },
@@ -48,7 +48,7 @@ const config = {
   market: {
     assets: {
       syncLimit: 7,
-      version: 0.02
+      version: 0.01
     },
     dSetups: {
       syncLimit: 7,
@@ -59,12 +59,12 @@ const config = {
       version: 0.01
     },
     dRaw: {
-      syncLimit: 3,
+      syncLimit: 10,
       version: 0.01
     },
     stockExchanges: {
       syncLimit: 8640,
-      version: 0.03
+      version: 0.01
     },
     technicalConditions: {
       syncLimit: 8640,
