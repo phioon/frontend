@@ -31,7 +31,7 @@ class Diversification extends Component {
 
       chart: props.chart,
       interval: "generic",
-      selected: "groupByAsset",
+      selected: "groupBySector",
 
       measures: props.measures,
 
@@ -90,7 +90,7 @@ class Diversification extends Component {
 
   render() {
     let { getString } = this.props;
-    let { langId, chart, interval, selected, measures, pageFirstLoading } = this.state;
+    let { langId, pageFirstLoading, chart, measures, interval, selected, } = this.state;
 
     return (
       <Card className="card-stats">
@@ -153,7 +153,6 @@ class Diversification extends Component {
                 color="primary"
                 size="sm"
                 type="button"
-                disabled
                 onClick={() => this.changeChart(undefined, "groupBySector")}
               >
                 {getString(langId, "charts", "label_sectors")}

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 
 import { Line } from "react-chartjs-2";
+
 import {
   Badge,
   Button,
@@ -57,6 +58,14 @@ class ProfitabilityOverTime extends Component {
       }
 
     return null
+  }
+  componentDidUpdate() {
+    let { pageFirstLoading, chart, interval } = this.state
+
+    // If user has less than 50 days of data, show daily interval 
+    if (pageFirstLoading && interval != "daily")
+      if (chart.daily.overall.data.labels && chart.daily.overall.data.labels.length <= 50)
+        this.changeChart("daily", undefined)
   }
 
   changeChart(interval, selected) {

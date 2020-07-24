@@ -247,25 +247,24 @@ class MeasureManager {
     for (var obj of selection) {
 
       let tWallet = await this.managers.app.walletRetrieve(obj.wallet)
-      let tStockExchange = await this.managers.market.stockExchangeRetrieve(tWallet.se_short)
-      let tCountry = await this.managers.app.countryRetrieve(tStockExchange.country_code)
-
       let tType = await this.managers.app.positionTypeRetrieve(obj.type)
       let totalCost = await this.amountInvested_currency([obj])
       let tResult_currency = await this.result_currency([obj])
 
       let asset_label = obj.asset_label
-      let country_code = tCountry.code
       let wallet_id = tWallet.id
       let wallet_name = tWallet.name
       let type_id = tType.id
       let type_name = tType.name
+      let country_code = assets[obj.asset_symbol].data.country_code
+      let sector_id = assets[obj.asset_symbol].data.sector_id
 
       rawData.push({
         wallet_id: wallet_id,
         wallet_name: wallet_name,
         asset_label: asset_label,
         country_code: country_code,
+        sector_id: sector_id,
         type_id: type_id,
         type_name: type_name,
         amount: obj.amount,

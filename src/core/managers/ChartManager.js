@@ -192,6 +192,7 @@ class ChartManager {
     for (var obj of aggrData)
       obj[chartProps.mField] = percentage(obj.tResult_currency__sum, obj.totalCost__sum)
 
+    // Ordering data...
     if (chartProps.isOrderByDesc)
       aggrData = orderByDesc(aggrData, chartProps.mField, true)
     else
@@ -241,6 +242,9 @@ class ChartManager {
     for (var obj of aggrData)
       obj[chartProps.mField] = percentage(obj.totalCost__sum, amountInvested_total)
 
+    // Ordering data...
+    aggrData = orderByDesc(aggrData, "amountInvested_percentage", true)
+
     let labels = getValueListFromObjList(aggrData, chartProps.xDimension)
     labels = this.translateLabels(langId, labels, chartProps.xDimension)
 
@@ -260,6 +264,7 @@ class ChartManager {
 
     switch (aggrProps.type) {
       case "cumulative":
+        // Used for WalletOverview
         aggrData = cumulativeAggr(rawData, aggrProps, mFields)
         break;
       default:
@@ -270,15 +275,17 @@ class ChartManager {
     for (var obj of aggrData)
       obj[chartProps.mField] = percentage(obj.tResult_currency__sum, obj.totalCost__sum)
 
+    let options = {}
+    if (chartProps.yDimension) {
+      aggrData = orderByAsc(aggrData, chartProps.yDimension)
+      options = this.getChartOptions("line", "right")
+    }
+    else
+      options = this.getChartOptions("line", undefined)
+
     let labels = getDistinctValuesFromList(aggrData, chartProps.xDimension)
     labels = this.translateLabels(langId, labels, chartProps.xDimension)
     let datasets = this.line_getDatasetsFromData(aggrData, chartProps)
-    let options = {}
-
-    if (chartProps.yDimension)
-      options = this.getChartOptions("line", "right")
-    else
-      options = this.getChartOptions("line", undefined)
 
     chart.data.labels = labels
     chart.data.datasets = datasets
@@ -367,7 +374,7 @@ class ChartManager {
               {
                 gridLines: {
                   drawBorder: false,
-                  zeroLineColor: "rgba(180,180,180,0.5)",
+                  zeroLineColor: "rgba(180,180,180,1)",
                   color: "rgba(200,200,200,0.5)"
                 },
                 ticks: {
@@ -461,6 +468,13 @@ class ChartManager {
           let month = yearMonth[1]
 
           labels[x] = String(year + "-" + getString(langId, "monthShort", month))
+        }
+        break;
+      case "sector_id":
+        let sector_id = ""
+        for (var x = 0; x < labels.length; x++) {
+          sector_id = String(labels[x]).toLowerCase()
+          labels[x] = String(getString(langId, "sectors", sector_id))
         }
         break;
       default:

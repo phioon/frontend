@@ -211,7 +211,6 @@ class OpenPositions extends React.Component {
     charts.positions.result.daily.overall.hintId = "result_overall_hint"
     // 1.1.2 Group By Asset
     aggrProps = {
-      type: undefined,
       action: "sum",
       toAggregate: ["date", "asset_label"]
     }
@@ -267,7 +266,6 @@ class OpenPositions extends React.Component {
     charts.positions.result.monthly.overall.hintId = "result_overall_hint"
     // // 1.2.2 Group By Asset
     aggrProps = {
-      type: undefined,
       action: "sum",
       toAggregate: ["month", "asset_label"]
     }
@@ -340,6 +338,20 @@ class OpenPositions extends React.Component {
     charts.positions.amountInvested.generic.groupByCountry.hintId = "amountInvested_groupByCountry_hint"
 
     // 2.1.3 Group By Sector
+    aggrProps = {
+      action: "sum",
+      toAggregate: ["sector_id"]
+    }
+    chartProps = {
+      xDimension: "sector_id",
+      colors: "default"
+    }
+    charts.positions.amountInvested.generic.groupBySector = ChartManager.polar_amountInvested(
+      langId,
+      measures.positions.rawData.selection,
+      aggrProps,
+      chartProps
+    )
     charts.positions.amountInvested.generic.groupBySector.hintId = "amountInvested_groupBySector_hint"
     // ----------------------------------------
 

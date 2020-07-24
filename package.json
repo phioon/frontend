@@ -50,10 +50,9 @@
     "react-chartjs-2": "2.7.6",
     "react-datetime": "2.16.3",
     "react-dom": "16.8.6",
-    "react-google-maps": "9.4.5",
     "react-jvectormap": "0.0.12",
-    "react-list-select": "^0.4.1",
-    "react-loading-skeleton": "^2.0.1",
+    "react-list-select": "0.4.1",
+    "react-loading-skeleton": "2.0.1",
     "react-loadingg": "1.7.1",
     "react-notification-alert": "0.0.12",
     "react-router-dom": "5.0.0",
@@ -65,7 +64,6 @@
     "text-mask-addons": "3.8.0"
   },
   "optionalDependencies": {
-    "@types/googlemaps": "3.36.2",
     "@types/markerclustererplus": "2.1.33",
     "@types/react": "16.8.19",
     "ajv": "6.10.0",
