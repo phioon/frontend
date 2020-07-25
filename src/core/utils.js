@@ -308,6 +308,7 @@ export function round(value, decimals) {
   return value
 }
 
+// Validators
 // function that verifies if two strings are equal
 export function compare(string1, string2) {
   if (string1 === string2) {

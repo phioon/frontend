@@ -62,7 +62,7 @@ class ModalOpenPosition extends React.Component {
           asset: null,
           amount: "",
 
-          startedOn: null,
+          startedOn: TimeManager.getLocaleString(undefined, false),
           s_price: 0.00,
           s_cost: 0.00,
           s_opCost: 0.00,
@@ -97,7 +97,6 @@ class ModalOpenPosition extends React.Component {
 
     return null
   }
-
 
   clearInputFields = () => {
     let position = {
@@ -528,6 +527,8 @@ class ModalOpenPosition extends React.Component {
                       className: "form-control",
                       placeholder: this.props.getString(langId, compId, "input_select")
                     }}
+                    dateFormat={true}
+                    timeFormat={true}
                     value={position.data.startedOn}
                     onChange={value => this.onSelectChange("startedOn", value)}
                     isValidDate={this.isDateValid}
