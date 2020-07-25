@@ -51,12 +51,13 @@ const config = {
       version: 0.01
     },
     dSetups: {
+      // Keep it the same syncLimit as Assets (setup.asset_price)
       syncLimit: 7,
-      version: 0.01
+      version: 0.03
     },
     dSetupSummary: {
       syncLimit: 60,
-      version: 0.01
+      version: 0.03
     },
     dRaw: {
       syncLimit: 10,

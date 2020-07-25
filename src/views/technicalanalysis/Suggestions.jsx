@@ -148,7 +148,6 @@ class Suggestions extends React.Component {
       obj.ended_on = obj.ended_on ? obj.ended_on : obj.ended_on
       obj.asset_label = assets[obj.asset_symbol].data.asset_label
       obj.asset_name = assets[obj.asset_symbol].data.asset_name
-      obj.asset_price = assets[obj.asset_symbol].data.asset_price
       obj.type = tc.type
       obj.currency = currency
       obj.tc_id = tc.id

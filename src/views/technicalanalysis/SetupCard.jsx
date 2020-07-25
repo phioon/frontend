@@ -92,14 +92,27 @@ class SetupCard extends React.Component {
     }
     else {
       // Open Position
-      if (setup.asset_price >= setup.target)
-        return getString(langId, compId, "label_gain")
-      else if (setup.asset_price > setup.max_price)
-        return this.handleKpiPresentation("currency", setup.asset_price)
-      else if (setup.asset_price > setup.stop_loss)
-        return getString(langId, compId, "label_buyingArea")
-      else if (setup.asset_price <= setup.stop_loss)
-        return getString(langId, compId, "label_loss")
+      if (setup.type == "purchase") {
+        if (setup.asset_price >= setup.target)
+          return getString(langId, compId, "label_gain")
+        else if (setup.asset_price > setup.max_price)
+          return this.handleKpiPresentation("currency", setup.asset_price)
+        else if (setup.asset_price > setup.stop_loss)
+          return getString(langId, compId, "label_buyingArea")
+        else if (setup.asset_price <= setup.stop_loss)
+          return getString(langId, compId, "label_loss")
+      }
+      else {
+        if (setup.asset_price <= setup.target)
+          return getString(langId, compId, "label_gain")
+        else if (setup.asset_price < setup.max_price)
+          return this.handleKpiPresentation("currency", setup.asset_price)
+        else if (setup.asset_price < setup.stop_loss)
+          return getString(langId, compId, "label_buyingArea")
+        else if (setup.asset_price >= setup.stop_loss)
+          return getString(langId, compId, "label_loss")
+      }
+
     }
   }
 
