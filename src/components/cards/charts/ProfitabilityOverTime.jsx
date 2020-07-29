@@ -20,6 +20,7 @@ import {
 } from "reactstrap";
 import Skeleton from "react-loading-skeleton";
 
+import ChartManager from "../../../core/managers/ChartManager";
 import { convertFloatToCurrency, convertFloatToPercentage, deepCloneObj } from "../../../core/utils";
 
 class ProfitabilityOverTime extends Component {
@@ -35,6 +36,8 @@ class ProfitabilityOverTime extends Component {
       selected: "overall",
 
       measures: props.measures,
+
+      dimensionsLimit: ChartManager.amountOfAvailableColors(),
 
       currency: props.currency,
     };
@@ -99,7 +102,7 @@ class ProfitabilityOverTime extends Component {
 
   render() {
     let { getString } = this.props;
-    let { langId, chart, interval, selected, measures, pageFirstLoading } = this.state;
+    let { langId, pageFirstLoading, chart, interval, selected, measures, dimensionsLimit } = this.state;
 
     return (
       <Card className="card-stats">
@@ -169,31 +172,54 @@ class ProfitabilityOverTime extends Component {
                     </div>
             </Col>
             <Col md="9" className="text-right">
-              <Button
-                className="btn-link"
-                color="primary"
-                id="result_groupByAsset"
-                size="sm"
-                type="button"
-                onClick={() => this.changeChart(undefined, "groupByAsset")}
-              >
-                {getString(langId, "charts", "label_assets")}
-              </Button>
+              <span id="result_groupByAsset">
+                <Button
+                  className="btn-link"
+                  color="primary"
+                  size="sm"
+                  type="button"
+                  onClick={() => this.changeChart(undefined, "groupByAsset")}
+                  disabled={
+                    chart.monthly.groupByAsset.data.datasets &&
+                      chart.monthly.groupByAsset.data.datasets.length < dimensionsLimit ?
+                      false :
+                      true
+                  }
+                >
+                  {getString(langId, "charts", "label_assets")}
+                </Button>
+              </span>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="result_groupByAsset">
-                {getString(langId, "charts", chart.daily.groupByAsset.hintId)}
+                {chart.monthly.groupByAsset.data.datasets &&
+                  chart.monthly.groupByAsset.data.datasets.length < dimensionsLimit ?
+                  getString(langId, "charts", chart.daily.groupByAsset.hintId) :
+                  getString(langId, "charts", "limitReached_asset_hint")
+                }
               </UncontrolledTooltip>
-              <Button
-                className="btn-link"
-                color="primary"
-                id="result_groupByWallet"
-                size="sm"
-                type="button"
-                onClick={() => this.changeChart(undefined, "groupByWallet")}
-              >
-                {getString(langId, "charts", "label_wallets")}
-              </Button>
+              <span id="result_groupByWallet">
+                <Button
+                  className="btn-link"
+                  color="primary"
+                  size="sm"
+                  type="button"
+                  onClick={() => this.changeChart(undefined, "groupByWallet")}
+                  disabled={
+                    chart.monthly.groupByWallet.data.datasets &&
+                      chart.monthly.groupByWallet.data.datasets.length < dimensionsLimit ?
+                      false :
+                      true
+                  }
+                >
+                  {getString(langId, "charts", "label_wallets")}
+                </Button>
+              </span>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="result_groupByWallet">
-                {getString(langId, "charts", chart.daily.groupByWallet.hintId)}
+                {
+                  chart.monthly.groupByWallet.data.datasets &&
+                    chart.monthly.groupByWallet.data.datasets.length < dimensionsLimit ?
+                    getString(langId, "charts", chart.daily.groupByWallet.hintId) :
+                    getString(langId, "charts", "limitReached_wallet_hint")
+                }
               </UncontrolledTooltip>
               <Button
                 className="btn-link"

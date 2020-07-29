@@ -51,16 +51,19 @@ const strings = {
 
       label_groupBy: "Group By",
       label_order: "Order by",
-      label_assets: "Assets",
-      label_countries: "Countries",
-      label_sectors: "Sectors",
-      label_wallets: "Wallets",
+      label_assets: "Asset",
+      label_countries: "Country",
+      label_sectors: "Sector",
+      label_wallets: "Wallet",
       label_overall: "Overall",
 
       dropdown_timeInterval_daily: "Daily",
       dropdown_timeInterval_monthly: "Monthly",
       dropdown_timeInterval_top5: "TOP 5",
       dropdown_timeInterval_top10: "TOP 10",
+
+      limitReached_asset_hint: "There are too many Assets on current selection. Try filtering it. ;)",
+      limitReached_wallet_hint: "There are too many Wallets on current selection. Try filtering it. ;)",
 
       amountInvested_groupByAsset_hint: "Investments grouped by Assets.",
       amountInvested_groupByCountry_hint: "Investments grouped by Countries.",
@@ -696,16 +699,19 @@ const strings = {
 
       label_groupBy: "Agrupar por",
       label_order: "Ordernar por",
-      label_assets: "Ativos",
-      label_countries: "Países",
-      label_sectors: "Setores",
-      label_wallets: "Carteiras",
+      label_assets: "Ativo",
+      label_countries: "País",
+      label_sectors: "Setor",
+      label_wallets: "Carteira",
       label_overall: "Geral",
 
       dropdown_timeInterval_daily: "Diário",
       dropdown_timeInterval_monthly: "Mensal",
       dropdown_timeInterval_top5: "TOP 5",
       dropdown_timeInterval_top10: "TOP 10",
+
+      limitReached_asset_hint: "Existem muitos Ativos na seleção atual. Experimente filtra-los. ;)",
+      limitReached_wallet_hint: "Existem muitas Carteiras na seleção atual. Experimente filtra-las. ;)",
 
       amountInvested_groupByAsset_hint: "Investimentos agrupados por Ativos.",
       amountInvested_groupByCountry_hint: "Investimentos agrupados por Paises",
@@ -1116,7 +1122,7 @@ const strings = {
 
       progressBar_stopLoss_hint: "Stop Loss",
       progressBar_target_hint: "Alvo",
-      progressBar_endedOn_hint: "Data de Conclusão da Operação.",
+      progressBar_endedOn_hint: "Data de conclusão da Operação.",
 
       nav_summary: "Resumo",
       nav_technicalCondition: "Condição Técnica",

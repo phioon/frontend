@@ -203,7 +203,7 @@ class MeasureManager {
       }
     }
 
-    return result
+    return round(result, 2)
   }
   async result_percentage(selection, onlyHintId) {
     if (onlyHintId)

@@ -36,6 +36,9 @@ const colors = {
 }
 
 class ChartManager {
+  static amountOfAvailableColors(category = "default") {
+    return colors[category].length
+  }
   static bar_getDatasetsFromData(data, chartProps) {
     let result = []
 

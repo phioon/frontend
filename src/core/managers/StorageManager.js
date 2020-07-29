@@ -48,20 +48,20 @@ const config = {
   market: {
     assets: {
       syncLimit: 7,
-      version: 0.01
+      version: 0.02
     },
     dSetups: {
       // Keep it the same syncLimit as Assets (setup.asset_price)
-      syncLimit: 7,
-      version: 0.03
+      syncLimit: 15,
+      version: 0.05
     },
     dSetupSummary: {
-      syncLimit: 60,
-      version: 0.03
+      syncLimit: 15,
+      version: 0.05
     },
     dRaw: {
       syncLimit: 10,
-      version: 0.01
+      version: 0.02
     },
     stockExchanges: {
       syncLimit: 8640,

@@ -55,18 +55,19 @@ class TimeManager {
   }
 
   static getLocaleDateString(timestamp, keepLocaltime = true) {
-    if (timestamp)
+    if (timestamp) {
+      // Removes 'Z' character, which indicates UTC timezone.
+      timestamp = String(timestamp).replace("Z", "")
       return Moment(timestamp).utc(keepLocaltime).toDate().toLocaleDateString()
+    }
     return Moment(new Date()).utc(keepLocaltime).toDate().toLocaleDateString()
   }
-  static getLocaleTimeString(timestamp, keepLocaltime = true) {
-    if (timestamp)
-      return Moment(timestamp).utc(keepLocaltime).toDate().toLocaleTimeString()
-    return Moment(new Date()).utc(keepLocaltime).toDate().toLocaleTimeString()
-  }
   static getLocaleString(timestamp, keepLocaltime = true) {
-    if (timestamp)
+    if (timestamp) {
+      // Removes 'Z' character, which indicates UTC timezone.
+      timestamp = String(timestamp).replace("Z", "")
       return Moment(timestamp).utc(keepLocaltime).toDate().toLocaleString()
+    }
     return Moment(new Date()).utc(keepLocaltime).toDate().toLocaleString()
   }
 
