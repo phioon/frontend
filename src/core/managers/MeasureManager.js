@@ -340,7 +340,7 @@ class MeasureManager {
       }
 
       if (!obj.ended_on &&
-        started_on < lastTradeDate &&
+        started_on <= lastTradeDate &&
         !getDistinctValuesFromList(data, "date").includes(lastTradeDate)) {
 
         let tResult_currency = this.result_currency_raw(tType, obj.amount, assets[obj.asset_symbol].data.asset_price, totalCost)

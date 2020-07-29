@@ -1099,7 +1099,7 @@ const strings = {
       financial_services: "Financeiro",
       healthcare: "Saúde",
       industrials: "Indústria",
-      real_estate: "Fundos Imobiliarios",
+      real_estate: "Imobiliário",
       technology: "Tecnologia",
       utilities: "Utilidades",
     },
