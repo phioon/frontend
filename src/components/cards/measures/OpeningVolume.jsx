@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { Button, Card, CardBody, CardTitle, CardFooter, Col, Row, UncontrolledTooltip } from "reactstrap";
 import Skeleton from "react-loading-skeleton";
 
-class OpCost extends Component {
+class OpeningVolume extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,7 +14,7 @@ class OpCost extends Component {
       pageFirstLoading: props.pageFirstLoading,
 
       measure: props.measure,
-      format: "percentage",
+      format: "currency",
 
       currency: props.currency,
     };
@@ -52,7 +52,7 @@ class OpCost extends Component {
           <Row>
             <Col md="3" xs="4">
               <div className="icon-big text-center">
-                <i className="nc-icon nc-settings text-danger" />
+                <i className="nc-icon nc-basket text-primary" />
               </div>
             </Col>
             <Col md="9" xs="8">
@@ -87,25 +87,9 @@ class OpCost extends Component {
               <div className="stats">
                 <i className="fa fa-wrench" />
                 {getString(langId, "measures", "label_format")}:
-              </div>
+                    </div>
             </Col>
             <Col className="text-right">
-              <Button
-                className="btn-icon btn-link"
-                color="primary"
-                id={measure.id + "__percentage"}
-                value="%"
-                size="sm"
-                type="button"
-                onClick={() => this.changeKpiFormat("percentage")}
-              >
-                %
-              </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "__percentage"}>
-                {measure.percentage &&
-                  getString(langId, "measures", measure.percentage.hintId)
-                }
-              </UncontrolledTooltip>
               <Button
                 className="btn-icon btn-link"
                 color="success"
@@ -129,9 +113,9 @@ class OpCost extends Component {
   }
 }
 
-export default OpCost;
+export default OpeningVolume;
 
-OpCost.propTypes = {
+OpeningVolume.propTypes = {
   getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
   managers: PropTypes.object.isRequired,

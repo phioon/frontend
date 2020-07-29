@@ -9,9 +9,10 @@ import FixedButton from "../../components/FixedPlugin/FixedButton";
 import FixedFilter from "../../components/FixedPlugin/filters/Overview";
 
 // Measures
-import AmountInvested from "../../components/cards/measures/AmountInvested";
+import AmountPositions from "../../components/cards/measures/AmountPositions";
 import ClosingVolume from "../../components/cards/measures/ClosingVolume";
 import OpCost from "../../components/cards/measures/OpCost";
+import OpeningVolume from "../../components/cards/measures/OpeningVolume";
 import Profitability from "../../components/cards/measures/Profitability";
 import Winners from "../../components/cards/measures/Winners";
 // Charts
@@ -54,9 +55,10 @@ class WalletOverview extends React.Component {
       measures: {
         positions: {
           rawData: { selection: [], daily: [], monthly: [] },
-          amountInvested: { id: "amountInvested" },
           closingVolume: { id: "closingVolume" },
+          count: { id: "count" },
           opCost: { id: "opCost" },
+          openingVolume: { id: "openingVolume" },
           result: { id: "result" },
           winners: { id: "winners" },
         }
@@ -196,14 +198,15 @@ class WalletOverview extends React.Component {
     measures.positions.rawData.selection = await this.props.managers.measure.rawData(tSelection, "none")
     measures.positions.rawData.daily = await this.props.managers.measure.rawData(tSelection, "daily")
     measures.positions.rawData.monthly = await this.props.managers.measure.rawData(tSelection, "monthly")
-    // Amount Invested
-    measures.positions.amountInvested.currency = await this.props.managers.measure.amountInvestedAsKpi(tSelection, "currency")
-    measures.positions.amountInvested.percentage = await this.props.managers.measure.amountInvestedAsKpi(tSelection, "percentage")
     // Closing Volume
     measures.positions.closingVolume.currency = await this.props.managers.measure.closingVolumeAsKpi(tSelection, "currency")
+    // Count
+    measures.positions.count.number = await this.props.managers.measure.countAsKpi(tSelection, "number")
     // Operational Cost
     measures.positions.opCost.currency = await this.props.managers.measure.opCostAsKpi(tSelection, "currency")
     measures.positions.opCost.percentage = await this.props.managers.measure.opCostAsKpi(tSelection, "percentage")
+    // Opening Volume
+    measures.positions.openingVolume.currency = await this.props.managers.measure.openingVolumeAsKpi(tSelection, "currency")
     // Result
     measures.positions.result.currency = await this.props.managers.measure.resultAsKpi(tSelection, "currency")
     measures.positions.result.percentage = await this.props.managers.measure.resultAsKpi(tSelection, "percentage")
@@ -645,7 +648,7 @@ class WalletOverview extends React.Component {
   }
 
   render() {
-    let { getString, prefs } = this.props;
+    let { getString, prefs, managers } = this.props;
     let {
       modal_filters_isOpen,
       modal_createWallet_isOpen,
@@ -682,22 +685,14 @@ class WalletOverview extends React.Component {
           runItIfSuccess={this.loadDimensionsAndMeasures}
         />
         {/* First Row */}
-        <Row>
+        <Row className="centered">
           <Col lg="3" md="6" sm="6">
-            <AmountInvested
+            <OpeningVolume
               getString={getString}
               prefs={prefs}
+              managers={managers}
               pageFirstLoading={pageFirstLoading}
-              measure={measures.positions.amountInvested}
-              currency={currency}
-            />
-          </Col>
-          <Col lg="3" md="6" sm="6">
-            <Profitability
-              getString={getString}
-              prefs={prefs}
-              pageFirstLoading={pageFirstLoading}
-              measure={measures.positions.result}
+              measure={measures.positions.openingVolume}
               currency={currency}
             />
           </Col>
@@ -705,8 +700,42 @@ class WalletOverview extends React.Component {
             <ClosingVolume
               getString={getString}
               prefs={prefs}
+              managers={managers}
               pageFirstLoading={pageFirstLoading}
               measure={measures.positions.closingVolume}
+              currency={currency}
+            />
+          </Col>
+          <Col lg="3" md="6" sm="6">
+            <OpCost
+              getString={getString}
+              prefs={prefs}
+              managers={managers}
+              pageFirstLoading={pageFirstLoading}
+              measure={measures.positions.opCost}
+              currency={currency}
+            />
+          </Col>
+          <Col lg="3" md="6" sm="6">
+            <Profitability
+              getString={getString}
+              prefs={prefs}
+              managers={managers}
+              pageFirstLoading={pageFirstLoading}
+              measure={measures.positions.result}
+              currency={currency}
+            />
+          </Col>
+        </Row>
+        {/* Second Row */}
+        <Row className="centered">
+          <Col lg="3" md="6" sm="6">
+            <AmountPositions
+              getString={getString}
+              prefs={prefs}
+              managers={managers}
+              pageFirstLoading={pageFirstLoading}
+              measure={measures.positions.count}
               currency={currency}
             />
           </Col>
@@ -714,20 +743,9 @@ class WalletOverview extends React.Component {
             <Winners
               getString={getString}
               prefs={prefs}
+              managers={managers}
               pageFirstLoading={pageFirstLoading}
               measure={measures.positions.winners}
-              currency={currency}
-            />
-          </Col>
-        </Row>
-        {/* Second Row */}
-        <Row>
-          <Col lg="3" md="6" sm="6">
-            <OpCost
-              getString={getString}
-              prefs={prefs}
-              pageFirstLoading={pageFirstLoading}
-              measure={measures.positions.opCost}
               currency={currency}
             />
           </Col>
@@ -787,5 +805,6 @@ WalletOverview.propTypes = {
   managers: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  managers: PropTypes.object.isRequired,
   setNavbarTitleId: PropTypes.func.isRequired
 }

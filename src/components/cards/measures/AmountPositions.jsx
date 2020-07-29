@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { Button, Card, CardBody, CardTitle, CardFooter, Col, Row, UncontrolledTooltip } from "reactstrap";
 import Skeleton from "react-loading-skeleton";
 
-class OpCost extends Component {
+class AmountPositions extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,7 +14,7 @@ class OpCost extends Component {
       pageFirstLoading: props.pageFirstLoading,
 
       measure: props.measure,
-      format: "percentage",
+      format: "number",
 
       currency: props.currency,
     };
@@ -52,7 +52,7 @@ class OpCost extends Component {
           <Row>
             <Col md="3" xs="4">
               <div className="icon-big text-center">
-                <i className="nc-icon nc-settings text-danger" />
+                <i className="nc-icon nc-tile-56 text-primary" />
               </div>
             </Col>
             <Col md="9" xs="8">
@@ -60,13 +60,7 @@ class OpCost extends Component {
                 <p className="card-category">
                   {pageFirstLoading ?
                     <Skeleton /> :
-                    <>
-                      {getString(langId, "measures", measure.id + "_kpi_label") + " "}
-                      <i id={measure.id + "_title_hint"} className="nc-icon nc-alert-circle-i" />
-                      <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={measure.id + "_title_hint"}>
-                        {getString(langId, "measures", measure.id + "_title_hint")}
-                      </UncontrolledTooltip>
-                    </>
+                    getString(langId, "measures", measure.id + "_kpi_label")
                   }
                 </p>
                 <CardTitle tag="p">
@@ -92,33 +86,17 @@ class OpCost extends Component {
             <Col className="text-right">
               <Button
                 className="btn-icon btn-link"
-                color="primary"
-                id={measure.id + "__percentage"}
-                value="%"
+                color="warning"
+                id={measure.id + "__number"}
                 size="sm"
                 type="button"
-                onClick={() => this.changeKpiFormat("percentage")}
+                onClick={() => this.changeKpiFormat("number")}
               >
-                %
+                #
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "__percentage"}>
-                {measure.percentage &&
-                  getString(langId, "measures", measure.percentage.hintId)
-                }
-              </UncontrolledTooltip>
-              <Button
-                className="btn-icon btn-link"
-                color="success"
-                id={measure.id + "__currency"}
-                size="sm"
-                type="button"
-                onClick={() => this.changeKpiFormat("currency")}
-              >
-                $
-              </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "__currency"}>
-                {measure.currency &&
-                  getString(langId, "measures", measure.currency.hintId)
+              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "__number"}>
+                {measure.number &&
+                  getString(langId, "measures", measure.number.hintId)
                 }
               </UncontrolledTooltip>
             </Col>
@@ -129,9 +107,9 @@ class OpCost extends Component {
   }
 }
 
-export default OpCost;
+export default AmountPositions;
 
-OpCost.propTypes = {
+AmountPositions.propTypes = {
   getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
   managers: PropTypes.object.isRequired,

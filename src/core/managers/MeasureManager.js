@@ -34,8 +34,7 @@ class MeasureManager {
   }
 
   // U T I L S
-  handleMeasurePresentation(measure, currency) {
-    let format = measure.format
+  handleMeasurePresentation(measure, format, currency) {
     let kpiValue = measure[format] && measure[format].data
     let strKpi = this.handleKpiPresentation(format, kpiValue, currency)
 
@@ -152,6 +151,15 @@ class MeasureManager {
     return percentage(totalCost, wBalance, 0)
   }
 
+  count_number(selection, onlyHintId) {
+    if (onlyHintId)
+      return "count_number_hint"
+
+    let count = selection.length
+
+    return count
+  }
+
   async balance_currency(selection) {
     let balance = 0.00
     let wallets = getDistinctValuesFromList(selection, "wallet")
@@ -180,6 +188,15 @@ class MeasureManager {
     totalVolume += this.closing_cost_currency(selection)
 
     return totalVolume
+  }
+
+  openingVolume_currency(selection, onlyHintId) {
+    if (onlyHintId)
+      return "openingVolume_currency_hint"
+
+    let openingVolume = this.opening_cost_currency(selection)
+
+    return openingVolume
   }
 
   async result_currency(selection, onlyHintId) {
@@ -448,6 +465,20 @@ class MeasureManager {
 
     return kpi
   }
+  async countAsKpi(selection, kpiFormat) {
+    let kpi = {}
+
+    switch (kpiFormat) {
+      case "number":
+        kpi[this.config.keys.strHintId] = this.count_number(undefined, true)
+        kpi[this.config.keys.strData] = this.count_number(selection)
+        break;
+      default:
+        break;
+    }
+
+    return kpi
+  }
   async closingVolumeAsKpi(selection, kpiFormat) {
     let kpi = {}
 
@@ -473,6 +504,20 @@ class MeasureManager {
       case "percentage":
         kpi[this.config.keys.strHintId] = await this.opCost_percentage(undefined, true)
         kpi[this.config.keys.strData] = await this.opCost_percentage(selection)
+      default:
+        break;
+    }
+
+    return kpi
+  }
+  async openingVolumeAsKpi(selection, kpiFormat) {
+    let kpi = {}
+
+    switch (kpiFormat) {
+      case "currency":
+        kpi[this.config.keys.strHintId] = this.openingVolume_currency(undefined, true)
+        kpi[this.config.keys.strData] = this.openingVolume_currency(selection)
+        break;
       default:
         break;
     }
@@ -511,7 +556,6 @@ class MeasureManager {
 
     return kpi
   }
-
   async winnersAsKpi(selection, kpiFormat) {
     let kpi = {}
 

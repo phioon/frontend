@@ -4,8 +4,6 @@ import PropTypes from "prop-types";
 import { Button, Card, CardBody, CardTitle, CardFooter, Col, Row, UncontrolledTooltip } from "reactstrap";
 import Skeleton from "react-loading-skeleton";
 
-import { convertFloatToCurrency, convertFloatToPercentage } from "../../../core/utils";
-
 class Winners extends Component {
   constructor(props) {
     super(props);
@@ -44,37 +42,9 @@ class Winners extends Component {
     this.setState({ format: newFormat })
   }
 
-  handleMeasurePresentation(measure, format) {
-    let kpiValue = measure[format] && measure[format].data
-    let strKpi = this.handleKpiPresentation(format, kpiValue)
-
-    return strKpi
-  }
-  handleKpiPresentation(format, kpiValue, includePlusMinus = false) {
-    let strKpi = ""
-    let currency = this.state.currency
-
-    if (includePlusMinus && kpiValue > 0)
-      strKpi += "+"
-
-    switch (format) {
-      case "currency":
-        strKpi += convertFloatToCurrency(kpiValue, currency)
-        break;
-      case "percentage":
-        strKpi += convertFloatToPercentage(kpiValue, currency.decimal_symbol)
-        break;
-      default:
-        strKpi += kpiValue
-        break;
-    }
-
-    return strKpi
-  }
-
   render() {
-    let { getString } = this.props;
-    let { langId, measure, format, pageFirstLoading } = this.state;
+    let { getString, managers } = this.props;
+    let { langId, pageFirstLoading, measure, format, currency } = this.state;
 
     return (
       <Card className="card-stats">
@@ -98,7 +68,7 @@ class Winners extends Component {
                     "text-danger" : "text-success"}>
                   {pageFirstLoading ?
                     <Skeleton /> :
-                    this.handleMeasurePresentation(measure, format)
+                    managers.measure.handleMeasurePresentation(measure, format, currency)
                   }
                 </CardTitle>
               </div>
@@ -160,6 +130,7 @@ export default Winners;
 Winners.propTypes = {
   getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  managers: PropTypes.object.isRequired,
   pageFirstLoading: PropTypes.bool.isRequired,
   measure: PropTypes.object.isRequired,
   currency: PropTypes.object.isRequired

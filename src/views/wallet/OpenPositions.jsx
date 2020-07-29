@@ -10,6 +10,7 @@ import FixedFilter from "../../components/FixedPlugin/filters/OpenPositions";
 
 // Measures
 import AmountInvested from "../../components/cards/measures/AmountInvested";
+import AmountPositions from "../../components/cards/measures/AmountPositions";
 import Profitability from "../../components/cards/measures/Profitability";
 import Winners from "../../components/cards/measures/Winners";
 import OpCost from "../../components/cards/measures/OpCost";
@@ -52,6 +53,7 @@ class OpenPositions extends React.Component {
         positions: {
           rawData: { selection: [], daily: [], monthly: [] },
           amountInvested: { id: "amountInvested" },
+          count: { id: "count" },
           opCost: { id: "opCost" },
           result: { id: "result" },
           winners: { id: "winners" },
@@ -171,6 +173,8 @@ class OpenPositions extends React.Component {
     // Amount Invested
     measures.positions.amountInvested.currency = await this.props.managers.measure.amountInvestedAsKpi(tSelection, "currency")
     measures.positions.amountInvested.percentage = await this.props.managers.measure.amountInvestedAsKpi(tSelection, "percentage")
+    // Count
+    measures.positions.count.number = await this.props.managers.measure.countAsKpi(tSelection, "number")
     // Operational Cost
     measures.positions.opCost.currency = await this.props.managers.measure.opCostAsKpi(tSelection, "currency")
     measures.positions.opCost.percentage = await this.props.managers.measure.opCostAsKpi(tSelection, "percentage")
@@ -517,7 +521,7 @@ class OpenPositions extends React.Component {
   }
 
   render() {
-    let { getString, prefs } = this.props;
+    let { getString, prefs, managers } = this.props;
     let {
       modal_filters_isOpen,
       modal_createWallet_isOpen,
@@ -554,13 +558,24 @@ class OpenPositions extends React.Component {
           runItIfSuccess={this.loadDimensionsAndMeasures}
         />
         {/* First Row */}
-        <Row>
+        <Row className="centered">
           <Col lg="3" md="6" sm="6">
             <AmountInvested
               getString={getString}
               prefs={prefs}
+              managers={managers}
               pageFirstLoading={pageFirstLoading}
               measure={measures.positions.amountInvested}
+              currency={currency}
+            />
+          </Col>
+          <Col lg="3" md="6" sm="6">
+            <OpCost
+              getString={getString}
+              prefs={prefs}
+              managers={managers}
+              pageFirstLoading={pageFirstLoading}
+              measure={measures.positions.opCost}
               currency={currency}
             />
           </Col>
@@ -568,8 +583,22 @@ class OpenPositions extends React.Component {
             <Profitability
               getString={getString}
               prefs={prefs}
+              managers={managers}
               pageFirstLoading={pageFirstLoading}
               measure={measures.positions.result}
+              currency={currency}
+            />
+          </Col>
+        </Row>
+        {/* Second Row */}
+        <Row className="centered">
+          <Col lg="3" md="6" sm="6">
+            <AmountPositions
+              getString={getString}
+              prefs={prefs}
+              managers={managers}
+              pageFirstLoading={pageFirstLoading}
+              measure={measures.positions.count}
               currency={currency}
             />
           </Col>
@@ -577,20 +606,9 @@ class OpenPositions extends React.Component {
             <Winners
               getString={getString}
               prefs={prefs}
+              managers={managers}
               pageFirstLoading={pageFirstLoading}
               measure={measures.positions.winners}
-              currency={currency}
-            />
-          </Col>
-        </Row>
-        {/* Second Row */}
-        <Row>
-          <Col lg="3" md="6" sm="6">
-            <OpCost
-              getString={getString}
-              prefs={prefs}
-              pageFirstLoading={pageFirstLoading}
-              measure={measures.positions.opCost}
               currency={currency}
             />
           </Col>
@@ -651,5 +669,6 @@ OpenPositions.propTypes = {
   managers: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  managers: PropTypes.object.isRequired,
   setNavbarTitleId: PropTypes.func.isRequired
 }

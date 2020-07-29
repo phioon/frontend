@@ -166,18 +166,25 @@ const strings = {
 
       amountInvested_kpi_label: "Amount Invested",
       amountInvested_title_hint: "Operational Costs included.",
-      amountInvested_currency_hint: "Amount invested of your operations.",
+      amountInvested_currency_hint: "Amount invested in your operations.",
       amountInvested_percentage_hint: "Amount Invested divided by wallet's balance.",
       amountInvested_alert_walletBallance: "Amount Invested is higher than Wallet's balance. Check wallet's balance to correct this metric.",
 
       closingVolume_kpi_label: "Closing Volume",
       closingVolume_title_hint: "Taking into account only closed Positions, it's the sum of closing value. For example, for an PURCHASE operation, I'll sum up its sale's price.",
-      closingVolume_currency_hint: "Sum of Closing Volume of your operations.",
+      closingVolume_currency_hint: "Closing Volume of your operations.",
+
+      count_kpi_label: "Positions",
+      count_number_hint: "Amount of Positions in current selection.",
 
       opCost_kpi_label: "Operational Cost",
-      opCost_title_hint: "Here, I'm including both opening and closing costs of a Position.",
+      opCost_title_hint: "Here, I'm including both opening and closing operational costs.",
       opCost_currency_hint: "Taxes, fees, comissions...",
       opCost_percentage_hint: "Operational Cost divided by Amount Invested.",
+
+      openingVolume_kpi_label: "Opening Volume",
+      openingVolume_title_hint: "Amount invested in your operations. Operational cost not included.",
+      openingVolume_currency_hint: "Opening Volume of your operations.",
 
       result_kpi_label: "Profitability",
       result_title_hint: "Net profit. That's right, I've already considered your Operational Cost.",
@@ -192,7 +199,7 @@ const strings = {
 
       winners_kpi_label: "Winners",
       winners_number_hint: "Amount of Positions with positive result.",
-      winners_percentage_hint: "Winner Positions divided by the total amount of Positions."
+      winners_percentage_hint: "Winner Positions divided by the amount of Positions."
     },
     modalopenposition: {
       title: "Open a new Position",
@@ -814,18 +821,25 @@ const strings = {
 
       amountInvested_kpi_label: "Valor Aplicado",
       amountInvested_title_hint: "Custo Operacional incluso.",
-      amountInvested_currency_hint: "Valor Aplicado de suas Operações.",
+      amountInvested_currency_hint: "Valor Aplicado em suas Operações.",
       amountInvested_percentage_hint: "Valor Aplicado dividido pelo Saldo da Carteira.",
       amountInvested_alert_walletBallance: "Valor Aplicado é maior que o Saldo da Carteira. Dê uma olhada no Saldo da Carteira para corrigir esta métrica.",
 
       closingVolume_kpi_label: "Vol. Fechamento",
-      closingVolume_title_hint: "Considerando apenas as Posições fechadas, eu somo o valor de fechamento. Por exemplo, para uma operação de COMPRA, vou somar seu valor da venda.",
-      closingVolume_currency_hint: "Soma do Volume de Fechamento de suas Operações.",
+      closingVolume_title_hint: "Considerando apenas as Posições fechadas, eu somo o valor de fechamento. Por exemplo, para uma operação de COMPRA, vou somar seu valor de venda.",
+      closingVolume_currency_hint: "Volume de Fechamento de suas Operações.",
+
+      count_kpi_label: "Posições",
+      count_number_hint: "Quantidade de Posições na seleção atual.",
 
       opCost_kpi_label: "Custo Operacional",
       opCost_title_hint: "Aqui, considero tanto os custos de abertura quanto de fechamento de uma Posição.",
       opCost_currency_hint: "Taxas, impostos, comissões, emolumentos...",
       opCost_percentage_hint: "Custo Operacional dividido pelo Valor Aplicado.",
+
+      openingVolume_kpi_label: "Vol. Abertura",
+      openingVolume_title_hint: "Valor aplicado em suas Operações. Custo operacional não incluso.",
+      openingVolume_currency_hint: "Volume de Abertura de suas operações.",
 
       result_kpi_label: "Rentabilidade",
       result_title_hint: "Rentabilidade liquida. Isso mesmo, já descontei seu Custo Operacional.",
@@ -839,8 +853,8 @@ const strings = {
       totalVolume_currency_hint: "Soma do Volume de suas Operações.",
 
       winners_kpi_label: "Vencedoras",
-      winners_number_hint: "Quantidade de Posições vencedoras.",
-      winners_percentage_hint: "Quantidade de Posições Vencedoras dividido pela quantidade total de Posições."
+      winners_number_hint: "Quantidade de Posições com resultado positivo.",
+      winners_percentage_hint: "Quantidade de Posições vencedoras dividido pela quantidade de Posições."
     },
     modalopenposition: {
       title: "Abrir nova Posição",
