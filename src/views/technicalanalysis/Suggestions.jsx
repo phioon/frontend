@@ -142,12 +142,13 @@ class Suggestions extends React.Component {
       let tc = await this.props.managers.market.technicalConditionRetrieve(obj.tc_id)
       let se = await this.props.managers.market.stockExchangeRetrieve(assets[obj.asset_symbol].data.stockExchange)
       let currency = await this.props.managers.app.currencyRetrieve(se.currency_code)
-      let ss = retrieveObjFromObjList(summaries, 'asset_setup', obj.asset_setup)
+      let ss = retrieveObjFromObjList(summaries, "asset_setup", obj.asset_setup)
 
       obj.started_on = obj.started_on
       obj.ended_on = obj.ended_on ? obj.ended_on : obj.ended_on
       obj.asset_label = assets[obj.asset_symbol].data.asset_label
       obj.asset_name = assets[obj.asset_symbol].data.asset_name
+      obj.asset_price = assets[obj.asset_symbol].data.asset_price
       obj.type = tc.type
       obj.currency = currency
       obj.tc_id = tc.id

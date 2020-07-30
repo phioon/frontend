@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions
 from api_engine.permissions import IsPremium, IsPlatinum
 from requests.auth import HTTPBasicAuth
+from django_engine import settings
 
 import requests
 import json
@@ -12,7 +13,10 @@ import os
 if os.getenv('GAE_APPLICATION', None):
     __backendHost__ = 'https://backend.phioon.com'
 else:
-    __backendHost__ = 'http://127.0.0.1:8000'
+    if settings.REDIRECT_MARKET_API_TO_PRD:
+        __backendHost__ = 'https://backend.phioon.com'
+    else:
+        __backendHost__ = 'http://127.0.0.1:8000'
 __backendApiUser__ = 'frontend_api'
 __backendApiPass__ = '#P1q2w3e4r$Api'
 

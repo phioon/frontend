@@ -757,7 +757,6 @@ class MarketManager {
       // console.log('se_endTime: ' + se_endTime.format())
       // console.log('mTime_weekDay: ' + mTime_weekDay)
 
-
       if ([1, 2, 3, 4, 5].includes(mTime_weekDay)) {
         // Last time it was modified was weekday
         let mAfterMarketCloses = TimeManager.timestampDiff(tz_mTime, se_endTime)
@@ -775,7 +774,6 @@ class MarketManager {
 
         if (TimeManager.timestampDiff(tz_mTime) > -syncToleranceWeekend)
           return true
-
       }
     }
 

@@ -79,8 +79,8 @@ class AppLayout extends React.Component {
       await this.props.managers.market.technicalConditionList()
 
       for (var se_short of stockExchanges) {
-        await this.props.managers.market.dSetupList(se_short)
         await this.props.managers.market.dSetupSummaryList(se_short)
+        await this.props.managers.market.dSetupList(se_short)
       }
     }
   }
