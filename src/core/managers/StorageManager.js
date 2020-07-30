@@ -29,7 +29,7 @@ const config = {
       version: 0.01
     },
     wallets: {
-      syncLimit: 10,
+      syncLimit: 60,
       version: 0.01
     },
   },

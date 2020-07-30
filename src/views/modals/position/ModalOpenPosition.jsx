@@ -62,7 +62,7 @@ class ModalOpenPosition extends React.Component {
           asset: null,
           amount: "",
 
-          startedOn: TimeManager.getMoment(undefined, true),
+          startedOn: null,
           s_price: 0.00,
           s_cost: 0.00,
           s_opCost: 0.00,
@@ -70,7 +70,7 @@ class ModalOpenPosition extends React.Component {
           s_totalCost: 0.00,
         },
         states: {
-          startedOn: "has-success",
+          startedOn: "",
           wallet: "",
           asset: "",
           type: "has-success",
@@ -106,7 +106,7 @@ class ModalOpenPosition extends React.Component {
         asset: null,
         amount: "",
 
-        startedOn: TimeManager.getMoment(undefined, true),
+        startedOn: null,
         s_price: 0.00,
         s_cost: 0.00,
         s_opCost: 0.00,
@@ -114,9 +114,9 @@ class ModalOpenPosition extends React.Component {
         s_totalCost: 0.00,
       },
       states: {
-        wallet: "has-success",
-        asset: "",
         startedOn: "",
+        wallet: "",
+        asset: "",
         amount: "",
         s_price: "",
       },

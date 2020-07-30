@@ -1,5 +1,4 @@
 import Moment from "moment-timezone";
-import { getString } from "../lang";
 
 class TimeManager {
   constructor() {
