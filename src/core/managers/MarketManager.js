@@ -645,7 +645,7 @@ class MarketManager {
       let stockExchanges = StorageManager.getData("stockExchanges")
       let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", asset.stockExchange)
 
-      let syncToleranceDaily = (1440 * 1) + (60 * 18)
+      let syncToleranceDaily = (1440 * 2) + (60 * 8)
       let syncToleranceWeekend = (1440 * 3) + (60 * 18)
 
       let tz = stockExchange.se_timezone
