@@ -4,7 +4,7 @@ import {
   convertFloatToCurrency,
   convertFloatToPercentage,
   getDistinctValuesFromList,
-  orderByAsc,
+  orderBy,
   percentage,
   round
 } from "../utils";
@@ -262,7 +262,6 @@ class MeasureManager {
     assets = await this.managers.market.assetList(true, assets)
 
     for (var obj of selection) {
-
       let tWallet = await this.managers.app.walletRetrieve(obj.wallet)
       let tType = await this.managers.app.positionTypeRetrieve(obj.type)
       let totalCost = await this.amountInvested_currency([obj])
@@ -357,7 +356,7 @@ class MeasureManager {
       rawData = rawData.concat(data)
     }
 
-    rawData = orderByAsc(rawData, "date")
+    rawData = orderBy(rawData, ["date"])
     return rawData
   }
   async generateMonthlyRawData(selection) {
@@ -439,7 +438,7 @@ class MeasureManager {
       rawData = rawData.concat(data)
     }
 
-    rawData = orderByAsc(rawData, "month")
+    rawData = orderBy(rawData, ["month"])
     return rawData
   }
   // --------------------

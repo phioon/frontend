@@ -4,9 +4,8 @@ import TimeManager from "./TimeManager";
 import {
   customAxios,
   deepCloneObj,
-  orderByAsc,
-  orderByDesc,
   joinObjLists,
+  orderBy,
   retrieveObjFromObjList,
   sleep
 } from "../utils";
@@ -156,7 +155,7 @@ class MarketManager {
           }
           else {                            // Client needs basic info only
             if (result.data.asset_price)
-              sData[a] = result               // Return it
+              sData[a] = result             // Return it
             else
               syncList.push(a)
           }
@@ -216,7 +215,7 @@ class MarketManager {
       options.push(option)
     }
 
-    options = orderByAsc(options, "label")
+    options = orderBy(options, ["label"])
     return options
   }
 
@@ -244,7 +243,7 @@ class MarketManager {
 
     if (!result.error) {
       result = result.data
-      result = orderByDesc(result, "started_on")
+      result = orderBy(result, ["-started_on"])
 
       this.finishRequest(sKey)
       return StorageManager.store(sKey, result, stockExchange)
@@ -273,7 +272,7 @@ class MarketManager {
     let dStockExchanges = "stockExchanges"
 
     if (sItem.data) {
-      sItem.data = orderByDesc(sItem.data, "started_on")
+      sItem.data = orderBy(sItem.data, ["-started_on"])
 
       for (var obj of sItem.data) {
         dimension.items.push(obj.id)
@@ -302,7 +301,7 @@ class MarketManager {
     let dSetups = "setups"
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "asset_label")
+      sItem.data = orderBy(sItem.data, ["asset_label"])
 
       for (var obj of sItem.data) {
         if (!assetAsKey[obj.asset_label]) {
@@ -338,7 +337,7 @@ class MarketManager {
     let dSetups = "setups"
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "asset_label")
+      sItem.data = orderBy(sItem.data, ["asset_label"])
 
       for (var obj of sItem.data) {
         if (!dateAsKey[obj.started_on]) {
@@ -374,7 +373,7 @@ class MarketManager {
     let dSetups = "setups"
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "asset_label")
+      sItem.data = orderBy(sItem.data, ["asset_label"])
 
       for (var obj of sItem.data) {
         obj.status = obj.ended_on ? 'closed' : 'open'
@@ -412,7 +411,7 @@ class MarketManager {
     let dSetups = "setups"
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "asset_label")
+      sItem.data = orderBy(sItem.data, ["asset_label"])
 
       for (var obj of sItem.data) {
         stockExchange = retrieveObjFromObjList(stockExchanges.data, "se_short", obj.se_short)
@@ -523,7 +522,7 @@ class MarketManager {
 
       if (sData)
         result = joinObjLists(result, sData, "d_datetime")
-      result = orderByDesc(result, "d_datetime")              // DESC order is used in MeasureManager
+      result = orderBy(result, ["-d_datetime"])              // DESC order is used in MeasureManager
 
       this.finishRequest(sKey)
       return StorageManager.store(sKey, result, asset)
@@ -574,7 +573,7 @@ class MarketManager {
     let options = []
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "se_name")
+      sItem.data = orderBy(sItem.data, ["se_name"])
 
       for (var obj of sItem.data) {
         let option = {
@@ -639,7 +638,7 @@ class MarketManager {
   }
 
   static isDRawCached(sData, dateFrom, dateTo) {
-    sData = orderByDesc(sData, "d_datetime")
+    sData = orderBy(sData, ["-d_datetime"])
 
     if (sData.length > 0 && dateFrom) {
       let asset = StorageManager.getData("assets", sData[0].asset_symbol)

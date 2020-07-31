@@ -29,7 +29,7 @@ import ModalUserCreated from "../../views/modals/auth/ModalUserCreated";
 import { project } from "../../core/projectData";
 import LabelAlert from "../../components/LabelAlert";
 import {
-  orderByAsc,
+  orderBy,
 
   compare,
   verifyEmail,
@@ -93,7 +93,7 @@ class Register extends React.Component {
       cList.data.forEach(obj => {
         nList.push({ value: obj.code, label: getString(langId, "countries", obj.code.toLowerCase()) })
       })
-      nList = orderByAsc(nList, "label")
+      nList = orderBy(nList, ["label"])
       this.setState({ nationalities: nList })
     }
   }

@@ -5,10 +5,10 @@ import {
   getDistinctValuesFromList,
   getValueListFromObjList,
   percentage,
-  orderByAsc,
-  orderByDesc
+  orderBy,
 } from "../utils";
 import { getString } from "../lang";
+import { data } from "jquery";
 
 const colors = {
   cold: [],
@@ -197,9 +197,9 @@ class ChartManager {
 
     // Ordering data...
     if (chartProps.isOrderByDesc)
-      aggrData = orderByDesc(aggrData, chartProps.mField, true)
+      aggrData = orderBy(aggrData, [String("-" + chartProps.mField)])
     else
-      aggrData = orderByAsc(aggrData, chartProps.mField, true)
+      aggrData = orderBy(aggrData, [chartProps.mField])
 
     let x = 0
     while (aggrData.length > chartProps.firstXrows) {
@@ -246,7 +246,7 @@ class ChartManager {
       obj[chartProps.mField] = percentage(obj.totalCost__sum, amountInvested_total)
 
     // Ordering data...
-    aggrData = orderByDesc(aggrData, "amountInvested_percentage", true)
+    aggrData = orderBy(aggrData, ["-amountInvested_percentage"])
 
     let labels = getValueListFromObjList(aggrData, chartProps.xDimension)
     labels = this.translateLabels(langId, labels, chartProps.xDimension)
@@ -279,16 +279,16 @@ class ChartManager {
       obj[chartProps.mField] = percentage(obj.tResult_currency__sum, obj.totalCost__sum)
 
     let options = {}
-    if (chartProps.yDimension) {
-      aggrData = orderByAsc(aggrData, chartProps.yDimension)
+    if (chartProps.yDimension)
       options = this.getChartOptions("line", "right")
-    }
     else
       options = this.getChartOptions("line", undefined)
 
     let labels = getDistinctValuesFromList(aggrData, chartProps.xDimension)
     labels = this.translateLabels(langId, labels, chartProps.xDimension)
+
     let datasets = this.line_getDatasetsFromData(aggrData, chartProps)
+    datasets = orderBy(datasets, ["label"])
 
     chart.data.labels = labels
     chart.data.datasets = datasets

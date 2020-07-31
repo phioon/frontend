@@ -348,31 +348,62 @@ export function verifyIfInteger(value) {
   return false;
 };
 
-export function orderByAsc(objList, field = "id", isNumber = false) {
-  if (isNumber)
-    return objList.sort(
-      (a, b) => (Number(a[field]) > Number(b[field])) ? 1
-        : ((Number(b[field]) > Number(a[field])) ? -1
-          : 0
-        ))
-  else
-    return objList.sort(
-      (a, b) => (String(a[field]).toLowerCase() > String(b[field]).toLowerCase()) ? 1
-        : ((String(b[field]).toLowerCase() > String(a[field]).toLowerCase()) ? -1
-          : 0
-        ))
+export function orderBy(objList, fields = ["id"]) {
+  return objList.sort(function (a, b) {
+    for (var field of fields) {
+      let orderType = "asc"
+      if (field.startsWith("-")) {
+        field = field.replace("-", "")
+        orderType = "desc"
+      }
+
+      let aValue = typeof a[field] == "string" ? String(a[field]).toLowerCase() : Number(a[field])
+      let bValue = typeof b[field] == "string" ? String(b[field]).toLowerCase() : Number(b[field])
+
+      if (orderType == "asc") {
+        // ASC
+        if (aValue > bValue)
+          return 1
+        else if (aValue < bValue)
+          return -1
+      }
+      else
+        // DESC
+        if (aValue < bValue)
+          return 1
+        else if (aValue > bValue)
+          return -1
+      // If aValue is equals to bValue, next field will try to solve it.
+    }
+    return 0
+  })
 }
-export function orderByDesc(objList, field = "id", isNumber = false) {
-  if (isNumber)
-    return objList.sort(
-      (a, b) => (Number(a[field]) < Number(b[field])) ? 1
-        : ((Number(b[field]) < Number(a[field])) ? -1
-          : 0
-        ))
-  else
-    return objList.sort(
-      (a, b) => (String(a[field]).toLowerCase() < String(b[field]).toLowerCase()) ? 1
-        : ((String(b[field]).toLowerCase() < String(a[field]).toLowerCase()) ? -1
-          : 0
-        ))
-}
+
+// export function orderByAsc(objList, field = "id", isNumber = false) {
+//   if (isNumber)
+//     return objList.sort(
+//       (a, b) => (Number(a[field]) > Number(b[field])) ? 1
+//         : ((Number(b[field]) > Number(a[field])) ? -1
+//           : 0
+//         ))
+//   else
+//     return objList.sort(
+//       (a, b) => (String(a[field]).toLowerCase() > String(b[field]).toLowerCase()) ? 1
+//         : ((String(b[field]).toLowerCase() > String(a[field]).toLowerCase()) ? -1
+//           : 0
+//         ))
+// }
+// export function orderByDesc(objList, field = "id", isNumber = false) {
+//   if (isNumber)
+//     return objList.sort(
+//       (a, b) => (Number(a[field]) < Number(b[field])) ? 1
+//         : ((Number(b[field]) < Number(a[field])) ? -1
+//           : 0
+//         ))
+//   else
+//     return objList.sort(
+//       (a, b) => (String(a[field]).toLowerCase() < String(b[field]).toLowerCase()) ? 1
+//         : ((String(b[field]).toLowerCase() < String(a[field]).toLowerCase()) ? -1
+//           : 0
+//         ))
+// }

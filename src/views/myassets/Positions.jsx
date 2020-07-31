@@ -26,7 +26,7 @@ import {
   convertFloatToCurrency,
   convertFloatToPercentage,
   integerWithThousandsSeparator,
-  orderByDesc
+  orderBy
 } from "../../core/utils";
 import TimeManager from "../../core/managers/TimeManager";
 import { getString } from "../../core/lang";
@@ -138,7 +138,7 @@ class Positions extends React.Component {
         obj.e_totalCost = obj.e_total_price + obj.e_operational_cost
       }
 
-      positions.data = orderByDesc(positions.data, "started_on")
+      positions.data = orderBy(positions.data, ["-started_on"])
 
       let data = positions.data.map((obj, key) => {
         return {

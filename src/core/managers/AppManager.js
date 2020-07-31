@@ -4,12 +4,11 @@ import TimeManager from "./TimeManager";
 import {
   customAxios,
   deepCloneObj,
-  regularAxios,
-  orderByAsc,
-  orderByDesc,
-  joinObjLists,
-  retrieveObjFromObjList,
   getObjsFieldNull,
+  joinObjLists,
+  orderBy,
+  regularAxios,
+  retrieveObjFromObjList,
   sleep
 } from "../utils";
 
@@ -148,7 +147,7 @@ class AppManager {
     let options = []
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "code")
+      sItem.data = orderBy(sItem.data, ["code"])
 
       for (var obj of sItem.data) {
         let option = {
@@ -223,7 +222,7 @@ class AppManager {
       if (!syncFull && sData)
         result = joinObjLists(sData, result)
 
-      result = orderByDesc(result, "last_modified")   // Don't change the order. It's used to define 'lastModifiedTime'.
+      result = orderBy(result, ["-last_modified"])   // Don't change the order. It's used to define 'lastModifiedTime'.
 
       this.finishRequest(sKey)
       return StorageManager.store(sKey, result)
@@ -319,7 +318,7 @@ class AppManager {
     let dWallets = "wallets"
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data)
+      sItem.data = orderBy(sItem.data)
 
       for (var obj of sItem.data) {
         dimension.items.push(obj.id)
@@ -351,7 +350,7 @@ class AppManager {
     let dWallets = "wallets"
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data)
+      sItem.data = orderBy(sItem.data)
 
       for (var obj of sItem.data) {
         obj.links = {}
@@ -380,7 +379,7 @@ class AppManager {
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "asset_label")
+      sItem.data = orderBy(sItem.data, ["asset_label"])
 
       for (var obj of sItem.data) {
         if (!assetAsKey[obj.asset_label]) {
@@ -416,7 +415,7 @@ class AppManager {
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "asset_label")
+      sItem.data = orderBy(sItem.data, ["asset_label"])
 
       for (var obj of sItem.data) {
         if (!assetAsKey[obj.asset_label]) {
@@ -453,7 +452,7 @@ class AppManager {
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderByDesc(sItem.data, "started_on")
+      sItem.data = orderBy(sItem.data, ["-started_on"])
 
       for (var obj of sItem.data) {
         let strDate = obj.started_on
@@ -490,7 +489,7 @@ class AppManager {
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderByDesc(sItem.data, "started_on")
+      sItem.data = orderBy(sItem.data, ["-started_on"])
 
       for (var obj of sItem.data) {
         let strDate = obj.started_on
@@ -525,7 +524,7 @@ class AppManager {
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderByDesc(sItem.data, "started_on")
+      sItem.data = orderBy(sItem.data, ["-started_on"])
 
       for (var obj of sItem.data) {
         let strDate = TimeManager.getYearMonthString(obj.started_on)
@@ -562,7 +561,7 @@ class AppManager {
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderByDesc(sItem.data, "started_on")
+      sItem.data = orderBy(sItem.data, ["-started_on"])
 
       for (var obj of sItem.data) {
         let strDate = TimeManager.getYearMonthString(obj.started_on)
@@ -600,7 +599,7 @@ class AppManager {
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "asset_label")
+      sItem.data = orderBy(sItem.data, ["asset_label"])
 
       for (var obj of sItem.data) {
         obj.status = obj.ended_on ? 'closed' : 'open'
@@ -674,7 +673,7 @@ class AppManager {
     let dPositions = "positions"
 
     if (sItem.data && sPositions.data) {
-      sItem.data = orderByAsc(sItem.data, "name")
+      sItem.data = orderBy(sItem.data, ["name"])
 
       for (var obj of sPositions.data) {
         if (!positionTypeAsKey[obj.type]) {
@@ -714,7 +713,7 @@ class AppManager {
     let options = []
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "name")
+      sItem.data = orderBy(sItem.data, ["name"])
 
       for (var obj of sItem.data) {
         let option = {
@@ -828,7 +827,7 @@ class AppManager {
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "name")
+      sItem.data = orderBy(sItem.data, ["name"])
 
       for (var obj of sItem.data) {
         dimension.items.push(obj.name)
@@ -852,7 +851,7 @@ class AppManager {
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "name")
+      sItem.data = orderBy(sItem.data, ["name"])
 
       for (var obj of sItem.data) {
         obj.value = obj.id
@@ -876,7 +875,7 @@ class AppManager {
     let options = []
 
     if (sItem.data) {
-      sItem.data = orderByAsc(sItem.data, "name")
+      sItem.data = orderBy(sItem.data, ["name"])
 
       for (var obj of sItem.data) {
         let option = {

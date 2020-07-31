@@ -1,8 +1,6 @@
 import TimeManager from "./TimeManager";
 import MarketManager from "./MarketManager";
 
-import { orderByAsc } from "../utils";
-
 const config = {
   // syncLimit: Max time (in minutes) allowed to use stored data
   // version: Every time data structure is updated in backend, version must be updated too.
@@ -250,23 +248,6 @@ class StorageManager {
         for (let [k1, v1] of Object.entries(v0))
           this.removeItem(k1)
       }
-    }
-  }
-  static orderDataByAsc(sKey, field, subKey) {
-    // NEED TO TEST
-    let sItem = this.getItem(sKey)
-
-    if (subKey) {
-      if (subKey in sItem && sItem[subKey].hasOwnProperty(field))
-        sItem[subKey][strData] = orderByAsc(sItem[subKey][strData], field)
-      else
-        return err404.message += sKey
-    }
-    else {
-      if (sItem.hasOwnProperty(field))
-        sItem[strData] = orderByAsc(sItem[strData], field)
-      else
-        return err404.message += sKey
     }
   }
   static isStorageDisabled() {

@@ -21,7 +21,7 @@ import FixedButton from "../../components/FixedPlugin/FixedButton";
 
 import ModalCreateWallet from "../modals/wallet/ModalCreateWallet";
 import ModalUpdateWallet from "../modals/wallet/ModalUpdateWallet";
-import { convertFloatToCurrency, getValueListFromObjList, orderByAsc } from "../../core/utils";
+import { convertFloatToCurrency, getValueListFromObjList, orderBy } from "../../core/utils";
 
 class Wallets extends React.Component {
   constructor(props) {
@@ -93,7 +93,7 @@ class Wallets extends React.Component {
         obj.currency = await this.props.managers.app.currencyRetrieve(obj.currency)
       }
 
-      wallets.data = orderByAsc(wallets.data, "name")
+      wallets.data = orderBy(wallets.data, ["name"])
 
       let data = wallets.data.map((obj, key) => {
         return {
