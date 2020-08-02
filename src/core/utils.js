@@ -1,37 +1,40 @@
 import axios from "axios";
+import { isAuthenticated } from "../App";
 
 export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function customAxios(method, url, headers, params, data) {
-  try {
-    const res = await axios({
+export async function httpRequest(method, url, headers, params, data) {
+  let result = { status: undefined }
+
+  if (headers.Authorization) {
+    // Authentication is needed
+    if ([true, undefined].includes(isAuthenticated)) {
+      // User is probably authenticated
+      result = axios({
+        method: method,
+        url: url,
+        headers: headers,
+        params: params,
+        data: data
+      }).then(res => res)
+        .catch(err => err)
+    }
+  }
+  else {
+    // No authentication is needed
+    result = axios({
       method: method,
       url: url,
       headers: headers,
       params: params,
       data: data
-    });
-    let successCodes = [200, 201, 202, 203, 204];
-    if (successCodes.includes(res.status))
-      return res;
-    // return res.data;
-    return { error: { status: res.status, statusText: res.statusText, responseURL: res.request.responseURL } };
+    }).then(res => res)
+      .catch(err => err)
   }
-  catch (err) {
-    return { error: err };
-  }
-}
-export async function regularAxios(method, url, headers, params, data) {
-  return axios({
-    method: method,
-    url: url,
-    headers: headers,
-    params: params,
-    data: data
-  }).then(res => res)
-    .catch(err => err)
+
+  return result
 }
 
 export function retrieveLessFields(objList, fieldList) {

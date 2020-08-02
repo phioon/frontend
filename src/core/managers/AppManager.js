@@ -2,12 +2,11 @@ import AuthManager from "./AuthManager";
 import StorageManager from "./StorageManager";
 import TimeManager from "./TimeManager";
 import {
-  customAxios,
   deepCloneObj,
   getObjsFieldNull,
+  httpRequest,
   joinObjLists,
   orderBy,
-  regularAxios,
   retrieveObjFromObjList,
   sleep
 } from "../utils";
@@ -95,15 +94,18 @@ class AppManager {
 
     let wsInfo = this.getApi("wsCountries")
     wsInfo.method = "get"
-    result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
-    if (!result.error) {
+    if (result.status == 200) {
       result = result.data
-      return StorageManager.store(sKey, result)
+      result = StorageManager.store(sKey, result)
+    }
+    else {
+      this.getHttpTranslation(result, "countrylist", "country", true)
+      result = StorageManager.getItem(sKey)
     }
 
-    this.getHttpTranslation(result.error, "countrylist", "country", true)
-    return StorageManager.getItem(sKey)
+    return result
   }
   async countryRetrieve(pk) {
     let sItem = await this.countryList()
@@ -124,17 +126,19 @@ class AppManager {
 
     let wsInfo = this.getApi("wsCurrencies")
     wsInfo.method = "get"
-    result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
-    if (!result.error) {
+    if (result.status == 200) {
       result = result.data
-      this.finishRequest(sKey)
-      return StorageManager.store(sKey, result)
+      result = StorageManager.store(sKey, result)
+    }
+    else {
+      this.getHttpTranslation(result, "currencylist", "currency", true)
+      result = StorageManager.getItem(sKey)
     }
 
     this.finishRequest(sKey)
-    this.getHttpTranslation(result.error, "currencylist", "currency", true)
-    return StorageManager.getItem(sKey)
+    return result
   }
   async currencyRetrieve(pk) {
     let sItem = await this.currencyList()
@@ -170,15 +174,18 @@ class AppManager {
 
     let wsInfo = this.getApi("wsSubscriptions")
     wsInfo.method = "get"
-    result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
-    if (!result.error) {
+    if (result.status == 200) {
       result = result.data
-      return StorageManager.store(sKey, result)
+      result = StorageManager.store(sKey, result)
+    }
+    else {
+      this.getHttpTranslation(result, "subscriptionlist", "subscription", true)
+      result = StorageManager.getItem(sKey)
     }
 
-    this.getHttpTranslation(result.error, "subscriptionlist", "subscription", true)
-    return StorageManager.getItem(sKey)
+    return result
   }
   async subscriptionRetrieve(pk) {
     let sItem = await this.subscriptionList()
@@ -214,23 +221,24 @@ class AppManager {
       dateFrom: lastModifiedTime
     }
 
-    result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
-    if (!result.error) {
+    if (result.status == 200) {
       result = result.data
 
       if (!syncFull && sData)
         result = joinObjLists(sData, result)
-
       result = orderBy(result, ["-last_modified"])   // Don't change the order. It's used to define 'lastModifiedTime'.
 
-      this.finishRequest(sKey)
-      return StorageManager.store(sKey, result)
+      result = StorageManager.store(sKey, result)
+    }
+    else {
+      this.getHttpTranslation(result, "positionlist", "position", true)
+      result = StorageManager.getItem(sKey)
     }
 
     this.finishRequest(sKey)
-    this.getHttpTranslation(result.error, "positionlist", "position", true)
-    return StorageManager.getItem(sKey)
+    return result
   }
   async positionData(syncFull = false) {
     let sItem = await this.positionList(syncFull)
@@ -238,7 +246,7 @@ class AppManager {
     if (sItem && sItem.data)
       return sItem.data
 
-    // Return it with http error details <result.error>
+    // Return it with http error details
     return sItem
   }
   async positionCreate(position) {
@@ -246,7 +254,7 @@ class AppManager {
     wsInfo.method = "post"
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
 
-    let result = await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, position)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, position)
 
     if (result.status == 201) {
       let syncFull = true
@@ -261,7 +269,7 @@ class AppManager {
     wsInfo.request += position.id + "/"
     wsInfo.method = "patch"
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
-    let result = await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, position)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, position)
 
     if (result.status == 200) {
       let syncFull = true
@@ -277,16 +285,16 @@ class AppManager {
     wsInfo.method = "delete"
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
 
-    let result = await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 204) {
       let syncFull = true
       await this.positionList(syncFull)
       this.walletList(syncFull)     //Backend operation (no await)
-      return result
     }
+    else
+      this.getHttpTranslation(result, "positiondelete", "position", true)
 
-    this.getHttpTranslation(result, "positiondelete", "position", true)
     return result
   }
 
@@ -304,7 +312,7 @@ class AppManager {
     if (sItem.data)
       return retrieveObjFromObjList(sItem.data, "id", pk)
 
-    // Return it with http error details <result.error>
+    // Return it with http error details
     return sItem
   }
   async positionAsDimension(onlyOpen = false) {
@@ -334,8 +342,6 @@ class AppManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -365,8 +371,6 @@ class AppManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -402,8 +406,6 @@ class AppManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -439,8 +441,6 @@ class AppManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -476,8 +476,6 @@ class AppManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -511,8 +509,6 @@ class AppManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -548,8 +544,6 @@ class AppManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -586,8 +580,6 @@ class AppManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -623,8 +615,6 @@ class AppManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -639,15 +629,16 @@ class AppManager {
 
     let wsInfo = this.getApi("wsPositionTypes")
     wsInfo.method = "get"
-    result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
-    if (!result.error) {
-      result = result.data
-      return StorageManager.store(sKey, result)
+    if (result.status == 200)
+      result = StorageManager.store(sKey, result.data)
+    else {
+      this.getHttpTranslation(result, "positiontypelist", "positionType", true)
+      result = StorageManager.getItem(sKey)
     }
 
-    this.getHttpTranslation(result.error, "positiontypelist", "positionType", true)
-    return StorageManager.getItem(sKey)
+    return result
   }
   async positionTypeData() {
     let sItem = await this.positionTypeList()
@@ -655,7 +646,7 @@ class AppManager {
     if (sItem && sItem.data)
       return sItem.data
 
-    // Return it with http error details <result.error>
+    // Return it with http error details
     return sItem
   }
   async positionTypeRetrieve(pk) {
@@ -703,8 +694,6 @@ class AppManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -748,16 +737,16 @@ class AppManager {
     let wsInfo = this.getApi("wsWallets")
     wsInfo.method = "get"
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
-    result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
-    if (!result.error) {
-      result = result.data
-      this.finishRequest(sKey)
-      return StorageManager.store(sKey, result)
+    if (result.status == 200)
+      result = StorageManager.store(sKey, result.data)
+    else {
+      this.getHttpTranslation(result.error, "walletlist", "wallet", true)
+      result = StorageManager.getItem(sKey)
     }
 
     this.finishRequest(sKey)
-    this.getHttpTranslation(result.error, "walletlist", "wallet", true)
     return StorageManager.getItem(sKey)
   }
   async walletData(syncFull = false) {
@@ -766,14 +755,14 @@ class AppManager {
     if (sItem && sItem.data)
       return sItem.data
 
-    // Return it with http error details <result.error>
+    // Return it with http error details
     return sItem
   }
   async walletCreate(wallet) {
     let wsInfo = this.getApi("wsWallets")
     wsInfo.method = "post"
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
-    let result = await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, wallet)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, wallet)
 
     if (result.status == 201) {
       let syncFull = true
@@ -793,7 +782,7 @@ class AppManager {
     wsInfo.request += wallet.id + "/"
     wsInfo.method = "patch"
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
-    let result = await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, wallet)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, wallet)
 
     if (result.status == 200) {
       let syncFull = true
@@ -808,7 +797,7 @@ class AppManager {
     wsInfo.method = "delete"
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
 
-    let result = await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 204) {
       let syncFull = true
@@ -839,8 +828,6 @@ class AppManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -865,8 +852,6 @@ class AppManager {
       }
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }

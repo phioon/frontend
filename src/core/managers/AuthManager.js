@@ -1,6 +1,6 @@
 import StorageManager from "./StorageManager";
 import TimeManager from "./TimeManager";
-import { customAxios, deepCloneObj, regularAxios } from "../utils";
+import { deepCloneObj, httpRequest } from "../utils";
 
 class AuthManager {
   constructor(getHttpTranslation, setAuthStatus, setPrefs) {
@@ -29,7 +29,7 @@ class AuthManager {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "register/"
     wsInfo.method = "post"
-    return await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, user)
+    return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, user)
   }
   async userLogin(user) {
     const sKey = "user"
@@ -37,9 +37,9 @@ class AuthManager {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "login/"
     wsInfo.method = "post"
-    let result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, user)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, user)
 
-    if (!result.error) {
+    if (result.status == 200) {
       result = result.data
       this.storePrefs(result.user)
       StorageManager.store(sKey, result)
@@ -47,7 +47,7 @@ class AuthManager {
       return result
     }
 
-    return result.error
+    return result
   }
   async userLogout() {
     const sKey = "user"
@@ -63,7 +63,7 @@ class AuthManager {
     StorageManager.removeData(sKey_wallets)
     StorageManager.removeData(sKey_positions)
 
-    return await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+    return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
   }
   async userChangePassword(object) {
     let wsInfo = this.getApi("wsUser")
@@ -71,42 +71,42 @@ class AuthManager {
     wsInfo.method = "post"
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
 
-    return await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, object)
+    return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, object)
   }
   async userRequestPasswordReset(user) {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "request/passwordreset/"
     wsInfo.method = "post"
 
-    return await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, user)
+    return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, user)
   }
   async userRequestConfirmEmail(user) {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "request/emailconfirmation/"
     wsInfo.method = "post"
 
-    return await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, user)
+    return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, user)
   }
   async checkToken(uidb64, token) {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "checkToken/" + uidb64 + "/" + token + "/"
     wsInfo.method = "get"
 
-    return await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+    return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
   }
   async userSetPasswordWithToken(object) {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "confirm/passwordreset/"
     wsInfo.method = "post"
 
-    return await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, object)
+    return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, object)
   }
   async userConfirmEmailWithToken(object) {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "confirm/email/"
     wsInfo.method = "post"
 
-    return await regularAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, object)
+    return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, object)
   }
 
   async userUpdate(user) {
@@ -136,7 +136,7 @@ class AuthManager {
       wsInfo.method = "patch"
       wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
 
-      result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_userCustom)
+      result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_userCustom)
 
       this.getHttpTranslation(result, "profileupdate", "user", true)
     }
@@ -148,9 +148,9 @@ class AuthManager {
       wsInfo.method = "patch"
       wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
 
-      result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_user)
+      result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_user)
 
-      if (!result.error) {
+      if (result.status == 200) {
         this.getHttpTranslation(result, "profileupdate", "user", true)
         result = result.data
 
@@ -160,7 +160,7 @@ class AuthManager {
         return StorageManager.store(sKey, sUser)
       }
       else
-        return result.error
+        return result
     }
     else
       return await this.userRetrieve()
@@ -178,9 +178,9 @@ class AuthManager {
       wsInfo.request += "retrieve/"
       wsInfo.method = "get"
       wsInfo.options.headers.Authorization = "token " + sToken
-      result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+      result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
-      if (!result.error) {
+      if (result.status == 200) {
         result = result.data
 
         let sData = StorageManager.getData(sKey)
