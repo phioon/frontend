@@ -108,6 +108,7 @@ class Register extends React.Component {
       emailState: "",
       password: "",
       passwordState: "",
+      confirmPassword: "",
       confirmPasswordState: "",
       nationality: null,
       cbTerms: false,

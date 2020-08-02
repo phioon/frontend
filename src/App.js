@@ -105,7 +105,7 @@ class App extends React.Component {
         newState.prefs = prefs
 
       newState.isAuthenticated = value
-      isAuthenticated = value                   // Global variable, so utils.httpRequest is aware of user authentication status
+      isAuthenticated = value                // Global variable that makes utils.httpRequest aware of user authentication status
     }
 
     this.setState(newState)
@@ -163,7 +163,7 @@ class App extends React.Component {
     }
     else if (rResult.response) {
       rData = JSON.stringify(rResult.response.data)
-      // Bad Request
+      // Bad Requests
       if (badRequestCodes.includes(rResult.response.status)) {
         switch (model) {
           case "user":
@@ -211,6 +211,19 @@ class App extends React.Component {
         }
       }
 
+      // Unauthorized
+      else if (unauthorizedCodes.includes(rResult.response.status)) {
+        msg.color = "success"
+        msg.id = "general_unauthorizedCodes"
+
+        let isUserAuthenticated = await this.managers.auth.isUserAuthenticated()
+
+        if (!isUserAuthenticated)
+          window.location.reload()
+
+        this.setAuthStatus(isUserAuthenticated)
+      }
+
       // Gone
       else if (goneCodes.includes(rResult.response.status)) {
         switch (model) {
@@ -227,14 +240,7 @@ class App extends React.Component {
         }
       }
 
-      // Unauthorized
-      else if (unauthorizedCodes.includes(rResult.response.status)) {
-        msg.color = "success"
-        msg.id = "general_unauthorizedCodes"
-        this.setAuthStatus(await this.managers.auth.isUserAuthenticated())
-      }
-
-      // Internal errors
+      // Internal Errors
       else if (internalErrorCodes.includes(rResult.response.status)) {
         switch (context) {
           case "register":
