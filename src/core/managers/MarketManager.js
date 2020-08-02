@@ -2,8 +2,8 @@ import AuthManager from "./AuthManager";
 import StorageManager from "./StorageManager";
 import TimeManager from "./TimeManager";
 import {
-  customAxios,
   deepCloneObj,
+  httpRequest,
   joinObjLists,
   orderBy,
   retrieveObjFromObjList,
@@ -173,20 +173,17 @@ class MarketManager {
         stockExchange: stockExchange,
         assets: syncList.join(','),
       }
-      result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+      result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
-      if (!result.error) {
-        result = result.data
-
-        for (let obj of result)
+      if (result.status == 200)
+        for (let obj of result.data)
           sData[obj.asset_symbol] = StorageManager.store(sKey, obj, obj.asset_symbol)
-      }
       else {
-        this.finishRequest(sKey)
-        this.getHttpTranslation(result.error, "assetList", "asset", true)
-        return this.offlineAssetList(assets)
+        this.getHttpTranslation(result, "assetList", "asset", true)
+        sData = this.offlineAssetList(assets)
       }
     }
+
     this.finishRequest(sKey)
     return sData
   }
@@ -239,19 +236,20 @@ class MarketManager {
     if (dateFrom)
       wsInfo.options.params.dateFrom = dateFrom
 
-    result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
-    if (!result.error) {
+    if (result.status == 200) {
       result = result.data
       result = orderBy(result, ["-started_on"])
-
-      this.finishRequest(sKey)
-      return StorageManager.store(sKey, result, stockExchange)
+      result = StorageManager.store(sKey, result, stockExchange)
+    }
+    else {
+      this.getHttpTranslation(result, "dSetupList", "dSetup", true)
+      result = StorageManager.getItem(sKey, stockExchange)
     }
 
     this.finishRequest(sKey)
-    this.getHttpTranslation(result.error, "dSetupList", "dSetup", true)
-    return StorageManager.getItem(sKey, stockExchange)
+    return result
   }
   async dSetupData(stockExchange, dateFrom) {
     let sItem = await this.dSetupList(stockExchange, dateFrom)
@@ -259,7 +257,7 @@ class MarketManager {
     if (sItem && sItem.data)
       return sItem.data
 
-    // Return it with http error details <result.error>
+    // Return it with http error details
     return sItem
   }
   async dSetupAsDimension(stockExchange) {
@@ -287,8 +285,6 @@ class MarketManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -324,8 +320,6 @@ class MarketManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -360,8 +354,6 @@ class MarketManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -397,8 +389,6 @@ class MarketManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -435,8 +425,6 @@ class MarketManager {
 
       dimension.data = data
     }
-    else if (sItem.error)
-      dimension.error = sItem.error
 
     return dimension
   }
@@ -460,18 +448,19 @@ class MarketManager {
       stockExchange: stockExchange
     }
 
-    result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
-    if (!result.error) {
+    if (result.status == 200) {
       result = result.data
-
-      this.finishRequest(sKey)
-      return StorageManager.store(sKey, result, stockExchange)
+      result = StorageManager.store(sKey, result, stockExchange)
+    }
+    else {
+      this.getHttpTranslation(result, "dSetupSummaryList", "dSetupSummary", true)
+      result = StorageManager.getItem(sKey, stockExchange)
     }
 
     this.finishRequest(sKey)
-    this.getHttpTranslation(result.error, "dSetupSummaryList", "dSetupSummary", true)
-    return StorageManager.getItem(sKey, stockExchange)
+    return result
   }
   async dSetupSummaryData(stockExchange) {
     let sItem = await this.dSetupSummaryList(stockExchange)
@@ -479,7 +468,7 @@ class MarketManager {
     if (sItem && sItem.data)
       return sItem.data
 
-    // Return it with http error details <result.error>
+    // Return it with http error details
     return sItem
   }
 
@@ -515,22 +504,24 @@ class MarketManager {
     if (dateTo)
       wsInfo.options.params.dateTo = dateTo
 
-    result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
-    if (!result.error) {
+    if (result.status == 200) {
       result = result.data
 
       if (sData)
         result = joinObjLists(result, sData, "d_datetime")
       result = orderBy(result, ["-d_datetime"])              // DESC order is used in MeasureManager
 
-      this.finishRequest(sKey)
-      return StorageManager.store(sKey, result, asset)
+      result = StorageManager.store(sKey, result, asset)
+    }
+    else {
+      this.getHttpTranslation(result.error, "dRawList", "dRaw", true)
+      result = StorageManager.getItem(sKey, asset)
     }
 
     this.finishRequest(sKey)
-    this.getHttpTranslation(result.error, "dRawList", "dRaw", true)
-    return StorageManager.getItem(sKey, asset)
+    return result
   }
 
   async stockExchangeList() {
@@ -546,18 +537,19 @@ class MarketManager {
     }
 
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
-    result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
-    if (!result.error) {
+    if (result.status == 200) {
       result = result.data
-
-      this.finishRequest(sKey)
-      return StorageManager.store(sKey, result)
+      result = StorageManager.store(sKey, result)
+    }
+    else {
+      this.getHttpTranslation(result, "stockExchangeList", "stockExchange", true)
+      result = StorageManager.getItem(sKey)
     }
 
     this.finishRequest(sKey)
-    this.getHttpTranslation(result.error, "stockExchangeList", "stockExchange", true)
-    return StorageManager.getItem(sKey)
+    return result
   }
   async stockExchangeRetrieve(pk) {
     let sItem = await this.stockExchangeList()
@@ -565,7 +557,7 @@ class MarketManager {
     if (sItem.data)
       return retrieveObjFromObjList(sItem.data, "se_short", pk)
 
-    // Return it with http error details <result.error>
+    // Return it with http error details
     return sItem
   }
   async stockExchangesForSelect() {
@@ -606,17 +598,19 @@ class MarketManager {
     }
 
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
-    result = await customAxios(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
-    if (!result.error) {
+    if (result.status == 200) {
       result = result.data
-
-      this.finishRequest(sKey)
-      return StorageManager.store(sKey, result)
+      result = StorageManager.store(sKey, result)
     }
+    else {
+      this.getHttpTranslation(result, "technicalConditionList", "technicalCondition", true)
+      result = StorageManager.getItem(sKey)
+    }
+
     this.finishRequest(sKey)
-    this.getHttpTranslation(result.error, "technicalConditionList", "technicalCondition", true)
-    return StorageManager.getItem(sKey)
+    return result
   }
   async technicalConditionData() {
     let sItem = await this.technicalConditionList()
@@ -624,7 +618,7 @@ class MarketManager {
     if (sItem && sItem.data)
       return sItem.data
 
-    // Return it with http error details <result.error>
+    // Return it with http error details
     return sItem
   }
   async technicalConditionRetrieve(pk) {

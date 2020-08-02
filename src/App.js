@@ -25,8 +25,8 @@ import AppManager from "./core/managers/AppManager";
 import MarketManager from "./core/managers/MarketManager";
 import MeasureManager from "./core/managers/MeasureManager";
 
+export var isAuthenticated = undefined
 const hist = createBrowserHistory();
-
 
 class App extends React.Component {
   constructor() {
@@ -96,14 +96,19 @@ class App extends React.Component {
 
   // Set user authentication status and Prefs
   setAuthStatus(value) {
+    let newState = {}
+
     if (this.state.isAuthenticated !== value) {
       let prefs = this.managers.auth.storedPrefs()
 
       if (prefs)
-        this.setState({ prefs, isAuthenticated: value })
-      else
-        this.setState({ isAuthenticated: value })
+        newState.prefs = prefs
+
+      newState.isAuthenticated = value
+      isAuthenticated = value                   // Global variable, so utils.httpRequest is aware of user authentication status
     }
+
+    this.setState(newState)
   }
   // Set Prefs
   setPrefs(obj_prefs) {
