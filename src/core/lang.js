@@ -406,6 +406,22 @@ const strings = {
       positions_edit_hint: "Edit this Position.",
       positions_delete_hint: "Delete this Position."
     },
+    privacypolicy: {
+      label_intro_p1: "We tried to keep this Policy as simple as possible. Anyway, in case of any question, feel free to contact us using our service channels.",
+      label_intro_p2: "PHIOON S.A.'s Privacy Policy was designed to reaffirm our commitment to security, privacy and transparency in the treatment of your information. In addition, it describes how your information is collected and processed when:",
+      label_intro_p2_1: "  . You download our app on your smartphone/tablet.",
+      label_intro_p2_2: "  . Access our websites.",
+      label_intro_p2_3: "  . Request or use our services.",
+      label_intro_p2_4: "  . Become a customer.",
+      label_intro_p2_5: "  . Contact us through our service channels.",
+      label_intro_p3: "These informations may refer to those which identifies You, whether for registration purposes, such as your name and e-mail address, or those which is necessary to provide PHIOON services efficiently and securely, such as your operation history on the financial market, your ID number to synchronize your operations with Stock Exchange's portal, among others. We may also collect and process location data to allow PHIOON to offer better services and ensure the security of your account.",
+      label_policy_1: "PHIOON collects and processes personal data for the following purposes: identification and authentication; enabling offers and services; planning and implementing new products; prevention of technical or security problems in the identification and authentication process; and improving our services.",
+      label_policy_2: "By accessing our websites, download the application or request and use PHIOON services, you expressly agree to the collection and processing of personal data necessary for the provision of better services. This consent may be revoked at any time through one of the available communication channels.",
+      label_policy_3: "We may also store and maintain information to ensure the safety and reliability of PHIOON's services, as well as to comply with legal requirements.",
+      label_policy_4: "You will be able to request the review and correction of your data free of charge and at any time. To do this, simply contact us through one of the available service channels. When ending your relationship with PHIOON, if you wish to delete your data, remember that PHIOON, in order to comply with legal obligations, will store certain data for the period and under the terms required by current legislation.",
+      label_policy_5: "PHIOON may use, format and publish testimonials related to PHIOON posted by You on profiles and public pages on social networks, together with your name and images (including profile photos), on websites, applications or institutional and advertising materials for marketing purposes related to PHIOON's services and products.",
+      label_policy_6: "PHIOON is always available to answer your questions and ensure your control over your data."
+    },
     register: {
       alert_generalErrorTitle: "Something went wrong...",
       alert_tryAgain: "Ooops... Sorry for that. :( Could you try again?",
@@ -586,9 +602,6 @@ const strings = {
       phibo_305_down_p1: "Price reached an important technical resistance after a retraction of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Down.",
       phibo_305_down_p2: "Resistance Lines are aligned down, increasing the probability of starting a Wave 3.",
       phibo_72_down_p1: "Price reached a technical resistance after a retraction of 21% from the recent bottom and drew a Pivot Down, increasing the probability of, at least, testing last bottom again.",
-    },
-    timeline: {
-      title: "Timeline",
     },
     userprofile: {
       title_personalData: "Personal Data",
@@ -1062,6 +1075,22 @@ const strings = {
       positions_edit_hint: "Editar esta Posição.",
       positions_delete_hint: "Deletar esta Posição."
     },
+    privacypolicy: {
+      label_intro_p1: "Tentamos deixar essa Política o mais simples possível. Mas caso ainda tenha dúvidas, vamos conversar pelos canais de atendimento.",
+      label_intro_p2: "A Política de Privacidade da PHIOON S.A. foi elaborada para reafirmar nosso compromisso com a segurança, privacidade e a transparência no tratamento das suas informações. Além disso, ela descreve como suas informações são coletadas e tratadas quando:",
+      label_intro_p2_1: "  . Você baixa nosso aplicativo em seu celular/tablet.",
+      label_intro_p2_2: "  . Acessa nossos websites",
+      label_intro_p2_3: "  . Solicita ou Usa nossos serviços",
+      label_intro_p2_4: "  . Se torna nosso cliente",
+      label_intro_p2_5: "  . Entra em contato com a gente pelos canais de atendimento",
+      label_intro_p3: "Essas informações podem se referir àquelas para identificar Você, seja para fins de cadastro, tais como seu nome e endereço de e-mail, ou ainda àquelas necessárias para prover os serviços do PHIOON de forma eficiente e segura, tais como seu histórico de operações no mercado financeiro, seu CPF para sincronizar suas operações com o portal CEI, dentre outras. Podemos também coletar e tratar dados locacionais para permitir ao PHIOON oferecer melhores serviços e garantir a segurança da sua conta.",
+      label_policy_1: "O PHIOON coleta e trata dados pessoais com os seguintes propósitos: identificação e autenticação; viabilização de ofertas e serviços; planejamento e implantação de novos produtos; prevenção de problemas técnicos ou de segurança nos processo de identificação e autenticação; e melhoria de nossos serviços.",
+      label_policy_2: "Ao acessar nossos websites, baixar o aplicativo ou solicitar e utilizar os serviços do PHIOON, Você concorda expressamente com a coleta e tratamento de dados pessoais necessários para o fornecimento de serviços melhores. A revogação deste consentimento poderá ser realizada a qualquer momento por meio dos canais de comunicação disponíveis do PHIOON.",
+      label_policy_3: "Podemos também armazenar e manter informações para garantir a segurança e a confiabilidade dos serviços do PHIOON, bem como para cumprir com determinações legais.",
+      label_policy_4: "Você poderá solicitar a revisão e correção de seus dados sem qualquer ônus e a qualquer tempo. Para isso, basta entrar em contato por meio de um dos canais de atendimento disponíveis. Ao terminar sua relação com o PHIOON, caso deseje excluir seus dados, lembre-se que o PHIOON, com o fim de cumprir com obrigações legais, armazenará determinados dados pelo período e nos termos que a legislação vigente aplicável exigir.",
+      label_policy_5: "O PHIOON poderá utilizar, formatar e divulgar depoimentos referentes ao PHIOON postados por Você em perfis e páginas públicas nas redes sociais, juntamente com seu nome e imagens (incluindo fotos de perfil), em websites, aplicativos ou materiais institucionais e publicitários para a divulgação dos serviços prestados pelo PHIOON.",
+      label_policy_6: "O PHIOON está sempre à disposição para esclarecer suas dúvidas e garantir seu controle sobre seus dados."
+    },
     register: {
       error_enterValidEmail: "Aqui, preciso de um e-mail válido.",
       error_passwordLength: "Precisa ser no minimo 8 caracteres.",
@@ -1218,9 +1247,6 @@ const strings = {
       phibo_305_down_p1: "Preço alcançou uma resistência técnica importante após retração de <fibo_pct_retraction>% da Onda 1 e confirmou um Pivô de Baixa.",
       phibo_305_down_p2: "Linhas de Resistência estão alinhadas para baixo, o que aumenta a probabilidade de início de onda 3.",
       phibo_72_down_p1: "Preço alcançou uma resistência técnica após retração de <fibo_pct_retraction>% da Onda 1 e confirmou um Pivô de Baixa, aumentando a probabilidade de, ao menos, o preço testar o fundo anterior novamente.",
-    },
-    timeline: {
-      title: "Linha do Tempo",
     },
     userprofile: {
       title_personalData: "Dados Pessoais",
