@@ -516,7 +516,7 @@ class MarketManager {
       result = StorageManager.store(sKey, result, asset)
     }
     else {
-      this.getHttpTranslation(result.error, "dRawList", "dRaw", true)
+      this.getHttpTranslation(result, "dRawList", "dRaw", true)
       result = StorageManager.getItem(sKey, asset)
     }
 
@@ -627,7 +627,7 @@ class MarketManager {
     if (sItem.data)
       return retrieveObjFromObjList(sItem.data, "id", pk)
 
-    // Return it with http error details <result.error>
+    // Return it with http error details
     return sItem
   }
 

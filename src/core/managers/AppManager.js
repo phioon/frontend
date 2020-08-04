@@ -193,7 +193,7 @@ class AppManager {
     if (sItem.data)
       return retrieveObjFromObjList(sItem.data, "name", pk)
 
-    // Return it with http error details <result.error>
+    // Return it with http error details
     return sItem
   }
 
@@ -742,7 +742,7 @@ class AppManager {
     if (result.status == 200)
       result = StorageManager.store(sKey, result.data)
     else {
-      this.getHttpTranslation(result.error, "walletlist", "wallet", true)
+      this.getHttpTranslation(result, "walletlist", "wallet", true)
       result = StorageManager.getItem(sKey)
     }
 
