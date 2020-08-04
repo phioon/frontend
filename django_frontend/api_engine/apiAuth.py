@@ -47,7 +47,7 @@ class UserRegisterAPIView(generics.GenericAPIView):
                         user=user,
                         nationality=nationality,
                         subscription=subscription,
-                        subscription_expires_on='2020-12-31',
+                        subscription_expires_on='2020-10-31',
                         pref_currency=nationality.currency,
                         pref_langId=request.data['langId'])
                 except:

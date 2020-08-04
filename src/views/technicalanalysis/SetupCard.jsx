@@ -352,6 +352,25 @@ class SetupCard extends React.Component {
                     </label>
                   </Col>
                 </Row>
+                {/* Estimated Time */}
+                <Row>
+                  <Col md="6" sm="6" className="ml-auto mr-auto">
+                    <label>
+                      {getString(langId, compId, "label_estimatedTime")}{" "}
+                      <i id={"estimatedTime_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
+                    </label>
+                    <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"estimatedTime_hint" + setup.id}>
+                      {getString(langId, compId, "estimatedTime_hint")}
+                    </UncontrolledTooltip>
+                  </Col>
+                  <Col md="4" sm="6" className="ml-auto mr-auto text-right">
+                    <label className="numbers">
+                      {setup.avg_duration_gain}
+                      {" "}
+                      {getString(langId, "generic", "label_days")}
+                    </label>
+                  </Col>
+                </Row>
                 {/* Occurrencies */}
                 <Row>
                   <Col md="6" sm="6" className="ml-auto mr-auto">

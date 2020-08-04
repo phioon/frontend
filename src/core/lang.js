@@ -20,6 +20,8 @@ const strings = {
     generic: {
       label_comingSoon: "Coming Soon...",
       label_loading: "Loading...",
+
+      label_days: "days",
     },
     appnavbar: {
       title_default: "Dashboard",
@@ -467,6 +469,7 @@ const strings = {
       financial_services: "Financial",
       healthcare: "Healthcare",
       industrials: "Industrials",
+      investment_funds: "Investment Funds",
       real_estate: "Real Estate",
       technology: "Technology",
       utilities: "Utilities",
@@ -485,6 +488,7 @@ const strings = {
       label_occurrencies: "OCCURRENCIES",
       label_successRate: "SUCCESS RATE",
       label_lastOccurrence: "LAST OCCURRENCE",
+      label_estimatedTime: "ESTIMATED TIME",
 
       label_gain: "GAIN !  \\o/",
       label_loss: ":( I hope you're already out.",
@@ -498,8 +502,9 @@ const strings = {
       riskReward_hint: "Target divided by Stop Loss represents the correlation between Risk and Reward. The higher this number is, the better.",
       startedOn_hint: "Operation started on:",
 
-      occurrencies_hint: "Amount of times this Technical Condition occurred for this Asset in the last 4 years.",
       successRate_hint: "Setup's success rate for this Asset in the last 4 years.",
+      estimatedTime_hint: "Based on its history, that's an estimative of how long it may take to reach the target.",
+      occurrencies_hint: "Amount of times this Technical Condition occurred for this Asset in the last 4 years.",
       lastOccurrence_hint: "Last time this Technical Condition occurred for this Asset.",
 
       progressBar_stopLoss_hint: "Stop Loss",
@@ -603,6 +608,9 @@ const strings = {
       phibo_305_down_p2: "Resistance Lines are aligned down, increasing the probability of starting a Wave 3.",
       phibo_72_down_p1: "Price reached a technical resistance after a retraction of 21% from the recent bottom and drew a Pivot Down, increasing the probability of, at least, testing last bottom again.",
     },
+    termsofuse: {
+      label_intro_p1: "",
+    },
     userprofile: {
       title_personalData: "Personal Data",
       title_prefs: "Preferences",
@@ -688,6 +696,8 @@ const strings = {
     generic: {
       label_comingSoon: "Em breve...",
       label_loading: "Carregando...",
+
+      label_days: "dias",
     },
     appnavbar: {
       title_default: "Dashboard",
@@ -785,7 +795,7 @@ const strings = {
       card_header: "Recuperação de Acesso",
       input_email: "E-mail",
       btn_recover: "Recuperar",
-      label_emailSent: "Envei um e-mail para você com instruções para recuperação de seu acesso. Dê uma olhada lá, por gentileza. ;)"
+      label_emailSent: "Envei um e-mail para você com instruções para recuperar seu acesso. Dê uma olhada lá, por gentileza. ;)"
     },
     httptranslation: {
       wallet_limitReached: "Precisa de mais carteiras para gerenciar seus investimentos? Atualize seu plano e aproveite! ;)",
@@ -1128,6 +1138,7 @@ const strings = {
       financial_services: "Financeiro",
       healthcare: "Saúde",
       industrials: "Indústria",
+      investment_funds: "Fundos de Investimento",
       real_estate: "Imobiliário",
       technology: "Tecnologia",
       utilities: "Utilidades",
@@ -1146,6 +1157,7 @@ const strings = {
       label_occurrencies: "OCORRÊNCIAS",
       label_successRate: "TAXA DE SUCESSO",
       label_lastOccurrence: "ÚLTIMA OCORRÊNCIA",
+      label_estimatedTime: "PRAZO ESTIMADO",
 
       label_gain: "GAIN !  \\o/",
       label_loss: ":( Espero que já tenha saído.",
@@ -1159,8 +1171,9 @@ const strings = {
       riskReward_hint: "Alvo dividido pelo Stop Loss representa a relação Risco x Retorno da operação. Quanto maior este número, melhor.",
       startedOn_hint: "Data de Início da Operação.",
 
-      occurrencies_hint: "Quantidade de vezes em que esta Condição Técnica aconteceu para este Ativo nos últimos 4 anos.",
       successRate_hint: "Taxa de Sucesso deste Setup para este Ativo nos últimos 4 anos.",
+      estimatedTime_hint: "Baseado em seu histórico, esta é uma previsão estimada para que o papel alcance o alvo.",
+      occurrencies_hint: "Quantidade de vezes em que esta Condição Técnica aconteceu para este Ativo nos últimos 4 anos.",
       lastOccurrence_hint: "Última vez em que esta Condição Técnica aconteceu para este Ativo.",
 
       progressBar_stopLoss_hint: "Stop Loss",
