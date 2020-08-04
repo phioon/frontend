@@ -60,27 +60,28 @@ class AppLayout extends React.Component {
     let syncFull = true
     let detailed = true
     // App
-    let positions = await this.props.managers.app.positionList(syncFull)  // Keep it the first one to be called
     let wallets = await this.props.managers.app.walletList(syncFull)
-    await this.props.managers.app.countryList()
-    await this.props.managers.app.currencyList()
-    await this.props.managers.app.subscriptionList()
-    await this.props.managers.app.positionTypeList()
+    let positions = await this.props.managers.app.positionList(syncFull)
+    this.props.managers.app.countryList()                                 // async call
+    this.props.managers.app.currencyList()                                // async call
+    this.props.managers.app.subscriptionList()                            // async call
+    this.props.managers.app.positionTypeList()                            // async call
     // Market
     let stockExchanges = getDistinctValuesFromList(wallets.data, "se_short")
     let assetsOpenPositions = getObjsFieldNull(positions.data, "ended_on")
     assetsOpenPositions = getDistinctValuesFromList(assetsOpenPositions, "asset_symbol")
-    await this.props.managers.market.stockExchangeList()
-    await this.props.managers.market.assetList(detailed, assetsOpenPositions)
+
+    this.props.managers.market.stockExchangeList()                        // async call
+    this.props.managers.market.assetList(detailed, assetsOpenPositions)   // async call
 
     // Premium
     let sUser = this.props.managers.auth.storedUser()
     if (sUser.user.subscription != "basic") {
-      await this.props.managers.market.technicalConditionList()
+      this.props.managers.market.technicalConditionList()                 // async call
 
       for (var se_short of stockExchanges) {
-        await this.props.managers.market.dSetupSummaryList(se_short)
-        await this.props.managers.market.dSetupList(se_short)
+        this.props.managers.market.dSetupSummaryList(se_short)            // async call
+        this.props.managers.market.dSetupList(se_short)                   // async call
       }
     }
   }

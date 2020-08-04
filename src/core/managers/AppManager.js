@@ -747,7 +747,7 @@ class AppManager {
     }
 
     this.finishRequest(sKey)
-    return StorageManager.getItem(sKey)
+    return result
   }
   async walletData(syncFull = false) {
     let sItem = await this.walletList(syncFull)

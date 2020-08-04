@@ -66,8 +66,8 @@ class ProfitabilityOverTime extends Component {
     let { pageFirstLoading, chart, interval } = this.state
 
     // If user has less than 50 days of data, show daily interval 
-    if (pageFirstLoading && interval != "daily")
-      if (chart.daily.overall.data.labels && chart.daily.overall.data.labels.length <= 50)
+    if (!pageFirstLoading && interval != "daily")
+      if (chart.daily.overall.data.labels.length <= 50)
         this.changeChart("daily", undefined)
   }
 

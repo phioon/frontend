@@ -40,7 +40,8 @@ class WalletOverview extends React.Component {
       modal_createWallet_isOpen: false,
       modal_openPosition_isOpen: false,
 
-      pageFirstLoading: true,
+      measureFirstLoading: true,
+      chartFirstLoading: true,
 
       dimensions: {
         assets: { data: [], items: [], selected: [], disabled: {} },
@@ -119,22 +120,20 @@ class WalletOverview extends React.Component {
   }
 
   async prepareRequirements() {
-    let walletOptions = await this.props.managers.app.walletsForSelect()
     let currency = await this.props.managers.app.currencyRetrieve(this.props.prefs.currency)
+    let walletOptions = await this.props.managers.app.walletsForSelect()
 
     this.setState({ walletOptions, currency })
 
     await this.loadDimensionsAndMeasures()
-
-    this.setState({ pageFirstLoading: false })
   }
   async loadDimensionsAndMeasures() {
-
     let dimensions = await this.prepareDimensions()
     let measures = await this.handleMeasures(dimensions)
-    let charts = this.handleCharts(measures)
+    this.setState({ dimensions, measures, measureFirstLoading: false })
 
-    this.setState({ dimensions, measures, charts })
+    let charts = await this.handleCharts(dimensions, measures)
+    this.setState({ charts, chartFirstLoading: false })
   }
 
   async prepareDimensions() {
@@ -189,38 +188,46 @@ class WalletOverview extends React.Component {
     // POSITIONS
     let positionsData = dimensions.positions.data
     let positionsDisabled = [].concat.apply([], Object.values(dimensions.positions.disabled))
-    let tSelection = []
+    let selection = []
     for (var x = 0; x < positionsData.length; x++)
       if (!positionsDisabled.includes(x))
-        tSelection.push(positionsData[x])
+        selection.push(positionsData[x])
 
-    // Raw Data for Charts
-    measures.positions.rawData.selection = await this.props.managers.measure.rawData(tSelection, "none")
-    measures.positions.rawData.daily = await this.props.managers.measure.rawData(tSelection, "daily")
-    measures.positions.rawData.monthly = await this.props.managers.measure.rawData(tSelection, "monthly")
     // Closing Volume
-    measures.positions.closingVolume.currency = await this.props.managers.measure.closingVolumeAsKpi(tSelection, "currency")
+    measures.positions.closingVolume.currency = await this.props.managers.measure.closingVolumeAsKpi(selection, "currency")
     // Count
-    measures.positions.count.number = await this.props.managers.measure.countAsKpi(tSelection, "number")
+    measures.positions.count.number = await this.props.managers.measure.countAsKpi(selection, "number")
     // Operational Cost
-    measures.positions.opCost.currency = await this.props.managers.measure.opCostAsKpi(tSelection, "currency")
-    measures.positions.opCost.percentage = await this.props.managers.measure.opCostAsKpi(tSelection, "percentage")
+    measures.positions.opCost.currency = await this.props.managers.measure.opCostAsKpi(selection, "currency")
+    measures.positions.opCost.percentage = await this.props.managers.measure.opCostAsKpi(selection, "percentage")
     // Opening Volume
-    measures.positions.openingVolume.currency = await this.props.managers.measure.openingVolumeAsKpi(tSelection, "currency")
+    measures.positions.openingVolume.currency = await this.props.managers.measure.openingVolumeAsKpi(selection, "currency")
     // Result
-    measures.positions.result.currency = await this.props.managers.measure.resultAsKpi(tSelection, "currency")
-    measures.positions.result.percentage = await this.props.managers.measure.resultAsKpi(tSelection, "percentage")
+    measures.positions.result.currency = await this.props.managers.measure.resultAsKpi(selection, "currency")
+    measures.positions.result.percentage = await this.props.managers.measure.resultAsKpi(selection, "percentage")
     // Winners
-    measures.positions.winners.number = await this.props.managers.measure.winnersAsKpi(tSelection, "number")
-    measures.positions.winners.percentage = await this.props.managers.measure.winnersAsKpi(tSelection, "percentage")
+    measures.positions.winners.number = await this.props.managers.measure.winnersAsKpi(selection, "number")
+    measures.positions.winners.percentage = await this.props.managers.measure.winnersAsKpi(selection, "percentage")
 
     return measures
   }
 
-  handleCharts(measures) {
+  async handleCharts(dimensions, measures) {
     let { langId, charts } = this.state
-
     let aggrProps, chartProps = {}
+
+    // POSITIONS
+    let positionsData = dimensions.positions.data
+    let positionsDisabled = [].concat.apply([], Object.values(dimensions.positions.disabled))
+    let selection = []
+    for (var x = 0; x < positionsData.length; x++)
+      if (!positionsDisabled.includes(x))
+        selection.push(positionsData[x])
+
+    // Raw Data for Charts
+    measures.positions.rawData.selection = await this.props.managers.measure.rawData(selection, "none")
+    measures.positions.rawData.daily = await this.props.managers.measure.rawData(selection, "daily")
+    measures.positions.rawData.monthly = await this.props.managers.measure.rawData(selection, "monthly")
 
     // 1 Result
     // 1.1 Daily
@@ -595,10 +602,10 @@ class WalletOverview extends React.Component {
 
     // Recalculate measures
     let measures = await this.handleMeasures(dimensions)
+    this.setState({ dimensions, measures })
 
-    let charts = this.handleCharts(measures)
-
-    this.setState({ dimensions, measures, charts })
+    let charts = await this.handleCharts(dimensions, measures)
+    this.setState({ charts })
   }
 
   translateItems(items) {
@@ -657,7 +664,8 @@ class WalletOverview extends React.Component {
       walletOptions,
       currency,
 
-      pageFirstLoading,
+      measureFirstLoading,
+      chartFirstLoading,
 
       dimensions,
       measures,
@@ -691,7 +699,7 @@ class WalletOverview extends React.Component {
               getString={getString}
               prefs={prefs}
               managers={managers}
-              pageFirstLoading={pageFirstLoading}
+              pageFirstLoading={measureFirstLoading}
               measure={measures.positions.openingVolume}
               currency={currency}
             />
@@ -701,7 +709,7 @@ class WalletOverview extends React.Component {
               getString={getString}
               prefs={prefs}
               managers={managers}
-              pageFirstLoading={pageFirstLoading}
+              pageFirstLoading={measureFirstLoading}
               measure={measures.positions.closingVolume}
               currency={currency}
             />
@@ -711,7 +719,7 @@ class WalletOverview extends React.Component {
               getString={getString}
               prefs={prefs}
               managers={managers}
-              pageFirstLoading={pageFirstLoading}
+              pageFirstLoading={measureFirstLoading}
               measure={measures.positions.opCost}
               currency={currency}
             />
@@ -721,7 +729,7 @@ class WalletOverview extends React.Component {
               getString={getString}
               prefs={prefs}
               managers={managers}
-              pageFirstLoading={pageFirstLoading}
+              pageFirstLoading={measureFirstLoading}
               measure={measures.positions.result}
               currency={currency}
             />
@@ -734,7 +742,7 @@ class WalletOverview extends React.Component {
               getString={getString}
               prefs={prefs}
               managers={managers}
-              pageFirstLoading={pageFirstLoading}
+              pageFirstLoading={measureFirstLoading}
               measure={measures.positions.count}
               currency={currency}
             />
@@ -744,7 +752,7 @@ class WalletOverview extends React.Component {
               getString={getString}
               prefs={prefs}
               managers={managers}
-              pageFirstLoading={pageFirstLoading}
+              pageFirstLoading={measureFirstLoading}
               measure={measures.positions.winners}
               currency={currency}
             />
@@ -757,7 +765,7 @@ class WalletOverview extends React.Component {
             <ProfitabilityOverTime
               getString={getString}
               prefs={prefs}
-              pageFirstLoading={pageFirstLoading}
+              pageFirstLoading={chartFirstLoading}
               chart={charts.positions.result}
               measures={measures}
               currency={currency}
@@ -768,7 +776,7 @@ class WalletOverview extends React.Component {
             <ProfitabilityRanking
               getString={getString}
               prefs={prefs}
-              pageFirstLoading={pageFirstLoading}
+              pageFirstLoading={chartFirstLoading}
               chart={charts.positions.resultRanking}
               currency={currency}
             />
@@ -784,7 +792,7 @@ class WalletOverview extends React.Component {
           toggleModal={this.toggleModal}
           dimensions={dimensions}
           onSelectionChange={this.onSelectionChange}
-          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length == 2 ? true : false}
+          showTooltip={measureFirstLoading ? false : dimensions.positions.data.length == 2 ? true : false}
         />
         <FixedButton
           {...this.props}
@@ -792,7 +800,7 @@ class WalletOverview extends React.Component {
           position="bottom"
           icon="fa fa-plus fa-2x"
           onClick={dimensions.wallets.data.length == 0 ? this.createWallet : this.openPosition}
-          showTooltip={pageFirstLoading ? false : dimensions.positions.data.length == 0 ? true : false}
+          showTooltip={measureFirstLoading ? false : dimensions.positions.data.length == 0 ? true : false}
         />
       </div >
     )

@@ -292,7 +292,7 @@ class App extends React.Component {
                 typeof isAuthenticated === 'undefined' ?
                   <LoopCircleLoading color='#4f4f4f' /> :
                   isAuthenticated ?
-                    <Redirect to="/app/wallet/overview" /> :
+                    <Redirect to="/app/wallet/openpositions" /> :
                     <AuthLayout {...props}
                       managers={this.managers}
                       getString={getString}
