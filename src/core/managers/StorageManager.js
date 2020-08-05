@@ -48,6 +48,10 @@ const config = {
       syncLimit: 10,
       version: 0.03
     },
+    dRaw: {
+      syncLimit: 60,
+      version: 0.02
+    },
     dSetups: {
       // Keep it the same syncLimit as Assets (setup.asset_price)
       syncLimit: 10,
@@ -56,10 +60,6 @@ const config = {
     dSetupSummary: {
       syncLimit: 60,
       version: 0.05
-    },
-    dRaw: {
-      syncLimit: 60,
-      version: 0.02
     },
     stockExchanges: {
       syncLimit: 8640,
