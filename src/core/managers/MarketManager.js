@@ -30,6 +30,34 @@ class MarketManager {
         method: "get",
         request: "/api/market/assets/"
       },
+      wsEma: {
+        options: {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "token "
+          },
+          params: {
+            stockExchange: undefined,
+            dateFrom: undefined
+          },
+        },
+        method: "get",
+        request: "/api/market/<timeInterval>/ema/latest"
+      },
+      wsPhibo: {
+        options: {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "token "
+          },
+          params: {
+            stockExchange: undefined,
+            dateFrom: undefined
+          },
+        },
+        method: "get",
+        request: "/api/market/<timeInterval>/phibo/latest"
+      },
       wsSetups: {
         options: {
           headers: {
@@ -214,6 +242,74 @@ class MarketManager {
 
     options = orderBy(options, ["label"])
     return options
+  }
+
+  async dEmaList(stockExchange) {
+    const sKey = "dEma"
+    await this.startRequest(sKey)
+
+    let wsInfo = this.getApi("wsEma")
+    let result = StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
+
+    if (result) {
+      this.finishRequest(sKey)
+      return result
+    }
+
+    wsInfo.request = wsInfo.request.replace("<timeInterval>", "d")
+    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.params = {
+      stockExchange: stockExchange
+    }
+
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+
+    if (result.status == 200) {
+      result = result.data
+      result = orderBy(result, ["-started_on"])
+      result = StorageManager.store(sKey, result, stockExchange)
+    }
+    else {
+      this.getHttpTranslation(result, "dEmaList", "dEma", true)
+      result = StorageManager.getItem(sKey, stockExchange)
+    }
+
+    this.finishRequest(sKey)
+    return result
+  }
+
+  async dPhiboList(stockExchange) {
+    const sKey = "dPhibo"
+    await this.startRequest(sKey)
+
+    let wsInfo = this.getApi("wsPhibo")
+    let result = StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
+
+    if (result) {
+      this.finishRequest(sKey)
+      return result
+    }
+
+    wsInfo.request = wsInfo.request.replace("<timeInterval>", "d")
+    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.params = {
+      stockExchange: stockExchange
+    }
+
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+
+    if (result.status == 200) {
+      result = result.data
+      result = orderBy(result, ["-started_on"])
+      result = StorageManager.store(sKey, result, stockExchange)
+    }
+    else {
+      this.getHttpTranslation(result, "dPhiboList", "dPhibo", true)
+      result = StorageManager.getItem(sKey, stockExchange)
+    }
+
+    this.finishRequest(sKey)
+    return result
   }
 
   async dSetupList(stockExchange, dateFrom) {

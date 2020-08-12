@@ -22,7 +22,7 @@ __backendApiPass__ = '#P1q2w3e4r$Api'
 
 
 @api_view(['GET'])
-@permission_classes([IsPremium])
+@permission_classes([IsPremium, IsPlatinum])
 def TechnicalConditionList(request):
     backendRequest = __backendHost__ + '/api/market/technicalConditions/'
 
@@ -63,11 +63,9 @@ def AssetList(request):
     detailed = request.query_params.get('detailed')
     stockExchange = request.query_params.get('stockExchange')
     assets = request.query_params.get('assets')
-    cachedAssets = request.query_params.get('cachedAssets')
     params = {'detailed': detailed,
               'stockExchange': stockExchange,
-              'assets': assets,
-              'cachedAssets': cachedAssets}
+              'assets': assets}
 
     try:
         r = requests.get(backendRequest,
@@ -83,6 +81,7 @@ def AssetList(request):
     return Response(json.loads(r.text))
 
 
+# Based on Daily chart
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def D_RawList(request):
@@ -112,7 +111,7 @@ def D_RawList(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsPremium])
+@permission_classes([IsPremium, IsPlatinum])
 def D_setupList(request):
     backendRequest = __backendHost__ + '/api/market/d/setups/'
 
@@ -136,7 +135,7 @@ def D_setupList(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsPremium])
+@permission_classes([IsPremium, IsPlatinum])
 def D_setupSummaryList(request):
     backendRequest = __backendHost__ + '/api/market/d/setupSummary/'
 

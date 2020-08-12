@@ -48,13 +48,20 @@ const config = {
       syncLimit: 10,
       version: 0.03
     },
+    dEma: {
+      syncLimit: 60,
+      version: 0.01
+    },
+    dPhibo: {
+      syncLimit: 60,
+      version: 0.01
+    },
     dRaw: {
       syncLimit: 60,
       version: 0.02
     },
     dSetups: {
-      // Keep it the same syncLimit as Assets (setup.asset_price)
-      syncLimit: 10,
+      syncLimit: 60,
       version: 0.06
     },
     dSetupSummary: {

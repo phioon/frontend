@@ -494,7 +494,7 @@ class ModalUpdatePosition extends React.Component {
     });
 
     // Send MarketManager a signal to sync this asset.
-    this.props.managers.market.dRawList(true, position.data.asset.value, position.data.started_on, position.data.ended_on)
+    this.props.managers.market.dRawList(false, position.data.asset.value, position.data.started_on, position.data.ended_on)
 
     this.props.runItIfSuccess()
   }

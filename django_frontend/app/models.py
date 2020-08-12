@@ -160,3 +160,14 @@ class Position (models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+
+class Setup (models.Model):
+    create_time = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    filter = models.TextField()
+
+    def __str__(self):
+        return str(self.pk)
