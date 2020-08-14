@@ -58,7 +58,7 @@ const config = {
     },
     dRaw: {
       syncLimit: 60,
-      version: 0.02
+      version: 0.03
     },
     dSetups: {
       syncLimit: 60,
