@@ -206,7 +206,7 @@ class SetPassword extends React.Component {
           style={{ display: "block", marginTop: "-100px" }}
           title={this.props.getString(this.state.langId, this.state.compId, "alert_passwordReseted_title")}
           onConfirm={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
         >
           {this.props.getString(this.state.langId, this.state.compId, "alert_passwordReseted_text")}
         </ReactBSAlert>

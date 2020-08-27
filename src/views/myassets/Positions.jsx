@@ -251,7 +251,7 @@ class Positions extends React.Component {
           title={this.props.getString(this.state.langId, this.state.compId, "alert_confirming_title")}
           onConfirm={() => this.deleteObject(obj)}
           onCancel={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
           cancelBtnBsStyle="danger"
           confirmBtnText={this.props.getString(this.state.langId, this.state.compId, "btn_alert_confirm")}
           cancelBtnText={this.props.getString(this.state.langId, this.state.compId, "btn_alert_cancel")}
@@ -278,7 +278,7 @@ class Positions extends React.Component {
           style={{ display: "block", marginTop: "-100px" }}
           title={this.props.getString(this.state.langId, this.state.compId, "alert_deleted_title")}
           onConfirm={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
         >
           {this.props.getString(this.state.langId, this.state.compId, "alert_deleted_text")}
         </ReactBSAlert>

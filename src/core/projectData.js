@@ -85,12 +85,12 @@ export const project = {
       href: "https://www.facebook.com/phioon"
     },
     instagram: {
-      label: "@phioon_br",
-      href: "https://www.instagram.com/phioon_br/"
+      label: "@phioon_app",
+      href: "https://www.instagram.com/phioon_app/"
     },
     twitter: {
-      label: "@phioon_br",
-      href: "https://twitter.com/phioon_br"
+      label: "@phioon_app",
+      href: "https://twitter.com/phioon_app"
     }
   }
 }

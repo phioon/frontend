@@ -137,7 +137,7 @@ class AppNavBar extends React.Component {
               <div className="navbar-minimize">
                 <Button
                   className="btn-icon btn-round"
-                  color="default"
+                  color="primary-dark"
                   id="minimizeSidebar"
                   onClick={this.props.handleMiniClick}
                 >

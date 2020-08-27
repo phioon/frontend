@@ -98,7 +98,7 @@ class Diversification extends Component {
           <Row>
             <Col md="12">
               <div className="pull-right">
-                <Badge color="info" pill>
+                <Badge color="primary" pill>
                   {this.handleKpiPresentation("percentage",
                     measures.positions.result.percentage && measures.positions.result.percentage.data,
                     true

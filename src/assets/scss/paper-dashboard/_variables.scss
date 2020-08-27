@@ -56,11 +56,11 @@ $transparent-bg:             transparent !default;
 
 $placeholder-gray:           rgba(210, 210, 210, 1)  !default;
 
-// $default-color:              #66615B !default;
-$default-color:              $brand-dark-color !default;
+$default-color:              #66615B !default;
+// $default-color:              $brand-petro-color !default;
 $default-bg:                 #66615B !default;
-$default-states-color:       $brand-dark-color !default;
-// $default-states-color:       #403D39 !default;
+// $default-states-color:       $brand-dark-color !default;
+$default-states-color:       #403D39 !default;
 
 $smoke-bg:                   #F5F5F5 !default;
 $pale-bg:                    #FFFCF5 !default;
@@ -70,6 +70,9 @@ $default-body-bg:            #f4f3ef !default;
 // $primary-color:              #51cbce !default;
 $primary-color:              lighten($brand-petro-color, 10%) !default;
 $primary-states-color:       darken($primary-color, 10%) !default;
+
+$primary-dark-color:         $brand-dark-color !default;
+$primary-dark-states-color:  darken($primary-dark-color, 10%) !default;
 
 // $success-color:              #6bd098 !default;
 $success-color:              $brand-green-color !default;

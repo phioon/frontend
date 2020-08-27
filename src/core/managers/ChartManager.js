@@ -8,7 +8,6 @@ import {
   orderBy,
 } from "../utils";
 import { getString } from "../lang";
-import { data } from "jquery";
 
 const colors = {
   cold: [],

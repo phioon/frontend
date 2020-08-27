@@ -486,7 +486,7 @@ class ModalUpdatePosition extends React.Component {
           style={{ display: "block", marginTop: "-100px" }}
           title={this.props.getString(this.state.langId, this.state.compId, "alert_updated_title")}
           onConfirm={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
         >
           {this.props.getString(this.state.langId, this.state.compId, "alert_updated_text")}
         </ReactBSAlert>
@@ -944,7 +944,7 @@ class ModalUpdatePosition extends React.Component {
     return (
       <Modal isOpen={isOpen} size="md" toggle={() => this.props.toggleModal(modalId)}>
         {alert}
-        <Card>
+        <Card className="card-plain">
           <CardHeader className="modal-header">
             <button
               aria-hidden={true}
