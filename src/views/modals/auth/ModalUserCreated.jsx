@@ -110,7 +110,7 @@ class ModalUserCreated extends React.Component {
         <div className="modal-footer justify-content-center">
           <Button
             className="btn-round"
-            color="info"
+            color="primary"
             data-dismiss="modal"
             type="button"
             onClick={() => this.setState({ redirectToLogin: true })}

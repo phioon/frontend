@@ -3,7 +3,7 @@
   box-shadow: 0 6px 10px -4px rgba(0, 0, 0, 0.15);
   background-color: #FFFFFF;
   color: $card-black-color;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   position: relative;
   border: 0 none;
 
@@ -128,10 +128,10 @@
         border-radius: 0;
 
 
-        .card-body{
-            padding-left: 5px;
-            padding-right: 5px;
-        }
+        // .card-body{
+        //     padding-left: 5px;
+        //     padding-right: 5px;
+        // }
 
         img{
             border-radius: $border-radius-extreme;

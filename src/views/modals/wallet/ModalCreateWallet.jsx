@@ -77,7 +77,7 @@ class ModalCreateWallet extends React.Component {
     this.setState({ stockExchangeOptions })
   }
 
-  clearInputFields() {
+  fakeUnmount() {
     let { wallet } = this.state
 
     wallet = {
@@ -201,14 +201,14 @@ class ModalCreateWallet extends React.Component {
           style={{ display: "block", marginTop: "-100px" }}
           title={this.props.getString(this.state.langId, this.state.compId, "alert_created_title")}
           onConfirm={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
         >
           {this.props.getString(this.state.langId, this.state.compId, "alert_created_text")}
         </ReactBSAlert>
       )
     });
 
-    this.clearInputFields()
+    this.fakeUnmount()
     this.props.runItIfSuccess()
   }
 
@@ -245,7 +245,7 @@ class ModalCreateWallet extends React.Component {
     return (
       <Modal isOpen={isOpen} toggle={() => this.props.toggleModal(modalId)}>
         {alert}
-        <Card>
+        <Card className="card-plain">
           <CardHeader className="modal-header">
             <button
               aria-hidden={true}

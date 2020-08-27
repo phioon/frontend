@@ -21,7 +21,7 @@ class SweetAlert extends React.Component {
           title={msg}
           onConfirm={() => this.hideAlert()}
           onCancel={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
         />
       )
     });
@@ -34,7 +34,7 @@ class SweetAlert extends React.Component {
           title={title}
           onConfirm={() => this.hideAlert()}
           onCancel={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
         >
           {msg}
         </ReactBSAlert>
@@ -50,7 +50,7 @@ class SweetAlert extends React.Component {
           title={title}
           onConfirm={() => this.hideAlert()}
           onCancel={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
         >
           {msg}
         </ReactBSAlert>
@@ -65,7 +65,7 @@ class SweetAlert extends React.Component {
           title={title}
           onConfirm={() => this.hideAlert()}
           onCancel={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
         >
           You can use <b>bold</b> text,{" "}
           <a href="https://mytradeadviser.com/">links</a> and other HTML tags
@@ -82,7 +82,7 @@ class SweetAlert extends React.Component {
           title={title}
           onConfirm={() => this.successDelete()}
           onCancel={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
           cancelBtnBsStyle="danger"
           confirmBtnText={confirmBtnText}
           cancelBtnText={cancelBtnText}
@@ -107,7 +107,7 @@ class SweetAlert extends React.Component {
           title={title}
           onConfirm={() => this.successDelete()}
           onCancel={() => this.cancelDetele()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
           cancelBtnBsStyle="danger"
           confirmBtnText={confirmBtnText}
           cancelBtnText={cancelBtnText}
@@ -143,7 +143,7 @@ class SweetAlert extends React.Component {
           title={title}
           onConfirm={e => this.inputConfirmAlert(e)}
           onCancel={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
           cancelBtnBsStyle="danger"
         />
       )
@@ -161,7 +161,7 @@ class SweetAlert extends React.Component {
           style={{ display: "block", marginTop: "-100px" }}
           onConfirm={() => this.hideAlert()}
           onCancel={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
           title={
             <p>
               You entered: <b>{inputValue}</b>
@@ -180,7 +180,7 @@ class SweetAlert extends React.Component {
           title={title}
           onConfirm={() => this.hideAlert()}
           onCancel={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
         >
           {msg}
         </ReactBSAlert>
@@ -196,7 +196,7 @@ class SweetAlert extends React.Component {
           title={title}
           onConfirm={() => this.hideAlert()}
           onCancel={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
         >
           {msg}
         </ReactBSAlert>

@@ -20,8 +20,8 @@ class AppLayout extends React.Component {
       langId: props.langId,
       navbarTitleId: "title_default",
 
-      backgroundColor: "brand-dark",
-      activeColor: "brand-green",
+      backgroundColor: "primary-dark",
+      activeColor: "success",
       sidebarMini: false,
     };
 

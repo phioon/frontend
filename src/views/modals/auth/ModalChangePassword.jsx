@@ -160,7 +160,7 @@ class ModalChangePassword extends React.Component {
           style={{ display: "block", marginTop: "-100px" }}
           title={this.props.getString(this.state.langId, this.state.compId, "alert_passwordChanged_title")}
           onConfirm={() => this.hideAlert()}
-          confirmBtnBsStyle="info"
+          confirmBtnBsStyle="primary"
         >
           {this.props.getString(this.state.langId, this.state.compId, "alert_passwordChanged_text")}
         </ReactBSAlert>
@@ -191,7 +191,7 @@ class ModalChangePassword extends React.Component {
     return (
       <Modal isOpen={isOpen} toggle={() => this.props.toggleModal(modalId)}>
         {alert}
-        <Card>
+        <Card className="card-plain">
           <CardHeader className="modal-header">
             <button
               aria-hidden={true}

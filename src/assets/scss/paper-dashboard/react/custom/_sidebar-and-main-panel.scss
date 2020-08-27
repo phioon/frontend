@@ -330,27 +330,17 @@
     &[data-color="brown"]{
       @include sidebar-color($default-color);
     }
-    &[data-color="brand-dark"]{
-      @include sidebar-color($brand-dark-color);
+    &[data-color="primary-dark"]{
+      @include sidebar-color($primary-dark-color);
       @include sidebar-text-color($white-color);
-    }
-    &[data-color="brand-grey"]{
-      @include sidebar-color($brand-grey-color);
     }
 
     // Active color changing
-
-    &[data-active-color="brand-petro"]{
-      @include sidebar-active-color($brand-petro-color);
-    }
-    &[data-active-color="brand-green"]{
-      @include sidebar-active-color($brand-green-color);
-    }
-    &[data-active-color="brand-grey"]{
-      @include sidebar-active-color($brand-grey-color);
-    }
     &[data-active-color="primary"]{
         @include sidebar-active-color($primary-color);
+    }
+    &[data-active-color="primary-dark"]{
+      @include sidebar-active-color($primary-dark-color);
     }
     &[data-active-color="info"]{
         @include sidebar-active-color($info-color);
