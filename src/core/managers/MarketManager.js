@@ -174,7 +174,7 @@ class MarketManager {
 
         if (result) {                       // We have it cached and up to date?
           if (detailed) {                   // Client is requesting detailed info?
-            if (result.data.asset_price && result.data.asset_lastTradeTime) {
+            if (result.data.asset_price && result.data.sector_id) {
               // We have detailed info? ('asset_lastTradeTime' is a detailed info)
               sData[a] = result             // Return it
             }

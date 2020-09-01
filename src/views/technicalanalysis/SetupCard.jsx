@@ -457,7 +457,7 @@ class SetupCard extends React.Component {
             </Col>
             <Col className="text-right">
               <label id={"progressBar_end_" + setup.id}>
-                {setup.ended_on ? TimeManager.getLocaleDateString(setup.ended_on) : this.handleKpiPresentation("currency", setup.target)}
+                {setup.ended_on ? setup.ended_on : this.handleKpiPresentation("currency", setup.target)}
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top-end" target={"progressBar_end_" + setup.id}>
                 {setup.ended_on ?
