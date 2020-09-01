@@ -199,7 +199,6 @@ class Sidebar extends React.Component {
             />
           </a>
         </div>
-
         <div className="sidebar-wrapper" ref="sidebar">
           <div className="user">
             <div className="photo text-center centered">

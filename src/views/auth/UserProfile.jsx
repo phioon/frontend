@@ -364,7 +364,7 @@ class UserProfile extends React.Component {
           />
           {alert}
           <Row>
-            <Col md="4">
+            <Col lg="4" md="5">
               {/* Subscription */}
               <Card className="card-user">
                 <div className="image">
@@ -390,18 +390,18 @@ class UserProfile extends React.Component {
                   <br />
                   <div>
                     {/* Joined On */}
-                    <Row className="centered">
-                      <Col md="5" sm="5" xs="6" className="ml-auto mr-auto">
+                    <Row className="justify-content-center">
+                      <Col md="7" sm="7" xs="7">
                         <label>{getString(langId, compId, "label_joinedOn")}</label>
                       </Col>
-                      <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
+                      <Col md="5" sm="5" xs="5" className="text-right">
                         <label>{TimeManager.getLocaleDateString(subscription.userJoinedOn, false)}</label>
                       </Col>
                     </Row>
                     <br />
                     {/* Subscription Label */}
-                    <Row className="centered">
-                      <Col md="5" sm="5" xs="6" className="ml-auto mr-auto">
+                    <Row className="justify-content-center">
+                      <Col md="7" sm="7" xs="7">
                         <label>
                           {getString(langId, compId, "label_subscription")}
                           {" "}
@@ -411,14 +411,14 @@ class UserProfile extends React.Component {
                           {getString(langId, compId, "label_subscription_hint")}
                         </UncontrolledTooltip>
                       </Col>
-                      <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
+                      <Col md="5" sm="5" xs="5" className="text-right">
                         <label>{subscription.label}</label>
                       </Col>
                     </Row>
                     {/* Expires On */}
-                    {subscription.expiresOn ?
-                      <Row className="centered">
-                        <Col md="5" sm="5" xs="6" className="ml-auto mr-auto">
+                    {subscription.expiresOn &&
+                      <Row className="justify-content-center">
+                        <Col md="7" sm="7" xs="7">
                           <label>
                             {getString(langId, compId, "label_expiresOn")}
                             {" "}
@@ -428,16 +428,15 @@ class UserProfile extends React.Component {
                             {getString(langId, compId, "label_expiresOn_hint")}
                           </UncontrolledTooltip>
                         </Col>
-                        <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
+                        <Col md="5" sm="5" xs="5" className="text-right">
                           <label>{TimeManager.getLocaleDateString(subscription.expiresOn, false)}</label>
                         </Col>
-                      </Row> :
-                      null
+                      </Row>
                     }
                     {/* Renews On */}
-                    {subscription.renewsOn ?
-                      <Row className="centered">
-                        <Col md="5" sm="5" xs="6" className="ml-auto mr-auto">
+                    {subscription.renewsOn &&
+                      <Row className="justify-content-center">
+                        <Col md="7" sm="7" xs="7">
                           <label>
                             {getString(langId, compId, "label_renewsOn")}
                             {" "}
@@ -447,11 +446,10 @@ class UserProfile extends React.Component {
                             {getString(langId, compId, "label_renewsOn_hint")}
                           </UncontrolledTooltip>
                         </Col>
-                        <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
+                        <Col md="5" sm="5" xs="5" className="text-right">
                           <label>{TimeManager.getLocaleDateString(subscription.renewsOn, false)}</label>
                         </Col>
-                      </Row> :
-                      null
+                      </Row>
                     }
                   </div>
                 </CardBody>
@@ -463,11 +461,11 @@ class UserProfile extends React.Component {
                     {" "}
                     {getString(langId, compId, "label_insights")}
                   </p>
-                  <div className="button-container">
+                  <div className="text-center">
                     {/* Basic Insights */}
                     <Row>
                       {/* # Positions */}
-                      <Col className="mr-auto" lg="5" md="5" xs="6">
+                      <Col lg="6" md="6" sm="6" xs="6">
                         <h6>
                           {pageFirstLoading ?
                             <Skeleton /> :
@@ -483,7 +481,7 @@ class UserProfile extends React.Component {
                         </UncontrolledTooltip>
                       </Col>
                       {/* Result */}
-                      <Col className="ml-auto" lg="5" md="5" xs="6">
+                      <Col lg="6" md="6" sm="6" xs="6">
                         <h6>
                           {pageFirstLoading ?
                             <Skeleton /> :
@@ -498,10 +496,8 @@ class UserProfile extends React.Component {
                           </UncontrolledTooltip>
                         </h6>
                       </Col>
-                    </Row>
-                    <Row>
                       {/* Volume */}
-                      <Col className="ml-auto mr-auto" lg="5" md="5" xs="6">
+                      <Col lg="6" md="6" sm="6" xs="6">
                         <h6>
                           {pageFirstLoading ?
                             <Skeleton /> :
@@ -516,51 +512,30 @@ class UserProfile extends React.Component {
                           </UncontrolledTooltip>
                         </h6>
                       </Col>
+                      {/* Suggestions */}
+                      {subscription.name != "basic" &&
+                        <Col lg="6" md="6" sm="6" xs="6">
+                          <h6>
+                            {pageFirstLoading ?
+                              <Skeleton /> :
+                              insights.suggestions.amount.data
+                            }
+                            <br />
+                            <small>{getString(langId, compId, "label_suggestions")}</small>
+                            <br />
+                            <i id={"suggestions_hint"} className="nc-icon nc-alert-circle-i" />
+                          </h6>
+                          <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"suggestions_hint"}>
+                            {getString(langId, compId, "label_suggestions_hint")}
+                          </UncontrolledTooltip>
+                        </Col>
+                      }
                     </Row>
-                    {subscription.name != "basic" &&
-                      <div>
-                        <Row>
-                          {/* Suggestions */}
-                          <Col className="mr-auto" lg="5" md="5" xs="6">
-                            <h6>
-                              {pageFirstLoading ?
-                                <Skeleton /> :
-                                insights.suggestions.amount.data
-                              }
-                              <br />
-                              <small>{getString(langId, compId, "label_suggestions")}</small>
-                              <br />
-                              <i id={"suggestions_hint"} className="nc-icon nc-alert-circle-i" />
-                            </h6>
-                            <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"suggestions_hint"}>
-                              {getString(langId, compId, "label_suggestions_hint")}
-                            </UncontrolledTooltip>
-                          </Col>
-                        </Row>
-                        {/* <br />
-                        <hr />
-                        <Row className="centered">
-                          <Col md="5" sm="5" xs="6" className="ml-auto mr-auto">
-                            <label>
-                              {getString(langId, compId, "label_favSetupName")}
-                              {" "}
-                              <i id={"favSetup_hint_"} className="nc-icon nc-alert-circle-i" />
-                            </label>
-                            <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"favSetup_hint_"}>
-                              {getString(langId, compId, "favSetup_hint")}
-                            </UncontrolledTooltip>
-                          </Col>
-                          <Col md="4" sm="4" xs="5" className="ml-auto mr-auto text-right">
-                            <label>Bo: PV 72</label>
-                          </Col>
-                        </Row> */}
-                      </div>
-                    }
                   </div>
                 </CardFooter>
               </Card>
             </Col>
-            <Col md="8">
+            <Col lg="8" md="7">
               {/* Personal Data */}
               <Card>
                 <CardHeader>
@@ -568,9 +543,9 @@ class UserProfile extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <Form>
-                    <Row>
+                    <Row className="justify-content-center">
                       {/* Email */}
-                      <Col md="7" className="ml-auto">
+                      <Col md="8" sm="8" xs="8">
                         <FormGroup>
                           <label>{getString(langId, compId, "input_email")}</label>
                           <Input
@@ -582,7 +557,7 @@ class UserProfile extends React.Component {
                         </FormGroup>
                       </Col>
                       {/* Change Password */}
-                      <Col md="3" className="mr-auto centered">
+                      <Col md="4" sm="4" xs="4" className="centered">
                         <Button
                           className="btn-neutral"
                           // color="black"
@@ -594,7 +569,7 @@ class UserProfile extends React.Component {
                     </Row>
                     <Row>
                       {/* First Name */}
-                      <Col md="5" className="ml-auto">
+                      <Col md="6">
                         <FormGroup className={`has-label ${personalData.states.first_name}`}>
                           <label>{getString(langId, compId, "input_firstName")}</label>
                           <Input
@@ -607,7 +582,7 @@ class UserProfile extends React.Component {
                         </FormGroup>
                       </Col>
                       {/* Last Name */}
-                      <Col md="5" className="mr-auto">
+                      <Col md="6">
                         <FormGroup className={`has-label ${personalData.states.last_name}`}>
                           <label>{getString(langId, compId, "input_lastName")}</label>
                           <Input
@@ -622,7 +597,7 @@ class UserProfile extends React.Component {
                     </Row>
                     <Row>
                       {/* Nationality */}
-                      <Col md="5" className="ml-auto">
+                      <Col md="6">
                         <FormGroup>
                           <label>{getString(langId, compId, "input_nationality")}</label>
                           <Input
@@ -634,7 +609,7 @@ class UserProfile extends React.Component {
                         </FormGroup>
                       </Col>
                       {/* Birthday */}
-                      <Col md="5" className="mr-auto">
+                      <Col md="6">
                         <FormGroup className={`has-label ${personalData.states.birthday}`}>
                           <label>{getString(langId, compId, "input_birthday")}
                             {" "}
@@ -662,7 +637,7 @@ class UserProfile extends React.Component {
                 </CardBody>
                 <CardFooter>
                   <Row className="centered">
-                    <Col lg="3" md="4" sm="5" xs="6">
+                    <Col lg="4" md="4" sm="6" xs="6">
                       <Button
                         block
                         type="submit"
@@ -688,9 +663,9 @@ class UserProfile extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <Form>
-                    <Row>
+                    <Row className="justify-content-center">
                       {/* Language */}
-                      <Col md="5" className="ml-auto">
+                      <Col md="6">
                         <FormGroup>
                           <label>{getString(langId, compId, "input_language")}</label>
                           <Select
@@ -705,7 +680,7 @@ class UserProfile extends React.Component {
                         </FormGroup>
                       </Col>
                       {/* Currency */}
-                      <Col md="5" className="mr-auto">
+                      <Col md="6">
                         <FormGroup>
                           <label>
                             {getString(langId, compId, "input_currency")}
@@ -731,7 +706,7 @@ class UserProfile extends React.Component {
                 </CardBody>
                 <CardFooter>
                   <Row className="centered">
-                    <Col lg="3" md="4" sm="5" xs="6">
+                    <Col lg="4" md="4" sm="6" xs="6">
                       <Button
                         block
                         type="submit"

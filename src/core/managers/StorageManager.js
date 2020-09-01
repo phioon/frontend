@@ -58,15 +58,15 @@ const config = {
     },
     dRaw: {
       syncLimit: 60,
-      version: 0.03
+      version: 0.04
     },
     dSetups: {
       syncLimit: 60,
-      version: 0.06
+      version: 0.07
     },
     dSetupSummary: {
       syncLimit: 60,
-      version: 0.05
+      version: 0.06
     },
     stockExchanges: {
       syncLimit: 8640,

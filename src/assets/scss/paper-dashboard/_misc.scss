@@ -72,7 +72,11 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 .pull-right{
   float: right;
 }
-
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .offline-doc {
   .navbar.navbar-transparent{

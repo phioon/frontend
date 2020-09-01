@@ -566,9 +566,9 @@ class OpenPositions extends React.Component {
           toggleModal={this.toggleModal}
           runItIfSuccess={this.loadDimensionsAndMeasures}
         />
-        {/* First Row */}
-        <Row className="centered">
-          <Col lg="3" md="6" sm="6">
+        {/* Measures */}
+        <Row className="justify-content-center">
+          <Col xl="3" lg="4" md="6" sm="6">
             <AmountInvested
               getString={getString}
               prefs={prefs}
@@ -578,7 +578,7 @@ class OpenPositions extends React.Component {
               currency={currency}
             />
           </Col>
-          <Col lg="3" md="6" sm="6">
+          <Col xl="3" lg="4" md="6" sm="6">
             <OpCost
               getString={getString}
               prefs={prefs}
@@ -588,7 +588,7 @@ class OpenPositions extends React.Component {
               currency={currency}
             />
           </Col>
-          <Col lg="3" md="6" sm="6">
+          <Col xl="3" lg="4" md="6" sm="6">
             <Profitability
               getString={getString}
               prefs={prefs}
@@ -598,10 +598,7 @@ class OpenPositions extends React.Component {
               currency={currency}
             />
           </Col>
-        </Row>
-        {/* Second Row */}
-        <Row className="centered">
-          <Col lg="3" md="6" sm="6">
+          <Col xl="3" lg="4" md="6" sm="6">
             <AmountPositions
               getString={getString}
               prefs={prefs}
@@ -611,7 +608,7 @@ class OpenPositions extends React.Component {
               currency={currency}
             />
           </Col>
-          <Col lg="3" md="6" sm="6">
+          <Col xl="3" lg="4" md="6" sm="6">
             <Winners
               getString={getString}
               prefs={prefs}
@@ -622,10 +619,10 @@ class OpenPositions extends React.Component {
             />
           </Col>
         </Row>
-        {/* Third Row */}
+        {/* Charts */}
         <Row>
           {/* Profitability Over Time */}
-          <Col md="6">
+          <Col xl="6">
             <ProfitabilityOverTime
               getString={getString}
               prefs={prefs}
@@ -636,7 +633,7 @@ class OpenPositions extends React.Component {
             />
           </Col>
           {/* Diversification */}
-          <Col md="6">
+          <Col xl="6">
             <Diversification
               getString={getString}
               prefs={prefs}

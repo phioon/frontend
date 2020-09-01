@@ -140,10 +140,10 @@ const strings = {
 
       backend_serviceUnavailable: "Ooops... Sorry for that. :( My team asked for a couple minutes to solve an issue. I'll be working offline for a while. Requests may become slower.",
 
-      general_unauthorizedCodes: "I noticed you were away for a while and I decided to log you off, just in case. ;) Let's get back to work?",
+      general_unauthorizedCodes: "I noticed you were away for a while and, for your own security, I decided to log you off. ;) Let's get back to work?",
       general_internalErrorCodes: "Ooops... Sorry for that. :( Seems like my team had a hard time processing your request.",
-      general_noResponseReceived: "Ooops... Sorry for that. :( Seems like my team is out for lunch or they are ignoring me... I'll keep trying to reach them.",
-      general_couldNotSendRequest: "I couldn't send your request. Check your internet connection and try again?",
+      general_noResponseReceived: "Ooops... Sorry for that. :( Seems like my team is out for lunch or they are just ignoring me... I'll keep trying to reach them.",
+      general_couldNotSendRequest: "I couldn't send your request. Could you check your internet connection and try again?",
     },
     languages: {
       enUS: "English",
@@ -494,6 +494,9 @@ const strings = {
       label_loss: ":( I hope you're already out.",
       label_buyingArea: "Time to Buy !",
 
+      label_notAvailableData: "...",
+      notAvailableData_hint: "I don't have enough data to calculate this metric. :/",
+
       priceLimit_hint: "Price Limit suggested for this operation. It may be different connsidering your Risk Management.",
       stopLoss_hint: "Here is a safety spot where I believe price won't reach again. If it happens, leave the operation and wait for a new opportunity.",
       target_hint: "It is a projection to estimate where price may reach. Most of the time, I use Fibonacci sequence.",
@@ -596,17 +599,17 @@ const strings = {
       "btl_ema_7__trend_ema_144+": "Price is getting more support and starting an upward trend. Moving Averages 34, 144 and 610 are aligned up and Price is breaking above EMA 34. Gains may vary between 7% and 23%.",
       "btl_ema_0__trend_ema_610-": "Price is getting more resistance and starting an downward trend. Moving Averages 34, 144 and 610 are aligned down and Price is breaking bellow EMA 34. Gains may vary between 7% and 16%'.",
       "btl_ema_0__trend_ema_144-": "Price is getting more resistance and starting an downward trend. Moving Averages 34, 144 and 610 are aligned down and Price is breaking bellow EMA 34. Gains may vary between 7% and 16%.",
-      phibo_1292_up_p1: "Price reached a key technical support after a retraction of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Up.",
+      phibo_1292_up_p1: "Price reached a key technical support after a retracement of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Up.",
       phibo_1292_up_p2: "Support Lines are aligned up, increasing the probability of starting a long Wave 3.",
-      phibo_305_up_p1: "Price reached an important technical support after a retraction of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Up.",
+      phibo_305_up_p1: "Price reached an important technical support after a retracement of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Up.",
       phibo_305_up_p2: "Support Lines are aligned up, increasing the probability of starting a Wave 3.",
-      phibo_72_up_p1: "Price reached a technical support after a retraction of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Up, increasing the probability of, at least, testing last top again.",
+      phibo_72_up_p1: "Price reached a technical support after a retracement of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Up, increasing the probability of, at least, testing last top again.",
 
-      phibo_1292_down_p1: "Price reached a key technical resistance after a retraction of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Down.",
+      phibo_1292_down_p1: "Price reached a key technical resistance after a retracement of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Down.",
       phibo_1292_down_p2: "Resistance Lines are aligned down, increasing the probability of starting a long Wave 3.",
-      phibo_305_down_p1: "Price reached an important technical resistance after a retraction of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Down.",
+      phibo_305_down_p1: "Price reached an important technical resistance after a retracement of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Down.",
       phibo_305_down_p2: "Resistance Lines are aligned down, increasing the probability of starting a Wave 3.",
-      phibo_72_down_p1: "Price reached a technical resistance after a retraction of 21% from the recent bottom and drew a Pivot Down, increasing the probability of, at least, testing last bottom again.",
+      phibo_72_down_p1: "Price reached a technical resistance after a retracement of 21% from the recent bottom and drew a Pivot Down, increasing the probability of, at least, testing last bottom again.",
     },
     termsofuse: {
       label_intro_p1: "",
@@ -819,7 +822,7 @@ const strings = {
       general_unauthorizedCodes: "Percebi que ficou um tempo fora e, por segurança, decidi deslogar seu usuário. ;) Vamos voltar aos trabalhos?",
       general_internalErrorCodes: "Ooops... Me perdoe. :( Parece que meu time teve dificuldade para processar sua requisição.",
       general_noResponseReceived: "Ooops... Me perdoe. :( Parece que meu time saiu para comer algo ou estão me ignorando... Vou continuar tentando contata-los.",
-      general_couldNotSendRequest: "Não estou conseguindo enviar sua requisição. Verifique sua conexão com a internet e tentar novamente?",
+      general_couldNotSendRequest: "Não estou conseguindo enviar sua requisição. Poderia verificar sua conexão com a internet e tentar novamente?",
     },
     languages: {
       enUS: "English",
@@ -1162,6 +1165,9 @@ const strings = {
       label_gain: "GAIN !  \\o/",
       label_loss: ":( Espero que já tenha saído.",
       label_buyingArea: "Hora de comprar !",
+
+      label_notAvailableData: "...",
+      notAvailableData_hint: "Não tenho dados suficientes para calcular esta métrica. :/",
 
       priceLimit_hint: "Preço Limite sugerido para esta operação. Este pode mudar, considerando seu Gerenciamento de Risco.",
       stopLoss_hint: "Aqui é um ponto de segurança onde acredito que o Preço não alcance novamente. Se isso acontecer, saia da operação e aguarde uma nova oportunidade.",

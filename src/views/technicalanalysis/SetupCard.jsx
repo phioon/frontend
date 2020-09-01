@@ -170,13 +170,13 @@ class SetupCard extends React.Component {
         <div className="timeline-panel">
           <div className="timeline-heading">
             <Row>
-              <Col lg="6" md="6" sm="6" xs="6">
+              <Col>
                 <h5 id={"asset_name_" + setup.id}>{setup.asset_label}</h5>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="top-start" target={"asset_name_" + setup.id}>
                   {setup.asset_name}
                 </UncontrolledTooltip>
               </Col>
-              <Col lg="6" md="6" sm="6" xs="6" className="text-right">
+              <Col className="text-right">
                 <label className={isPurchase ? "text-success" : "text-danger"}>
                   {isPurchase ? getString(langId, compId, "label_buy") : getString(langId, compId, "label_sell")}
                 </label>
@@ -238,8 +238,8 @@ class SetupCard extends React.Component {
               {/* Summary */}
               <TabPane tabId="summary" role="tabpanel">
                 {/* Max/Min Price */}
-                <Row>
-                  <Col md="6" sm="6" className="ml-auto mr-auto">
+                <Row className="justify-content-center">
+                  <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {isPurchase ? getString(langId, compId, "label_maxPrice") : getString(langId, compId, "label_minPrice")}
                       {" "}
@@ -249,13 +249,13 @@ class SetupCard extends React.Component {
                       {getString(langId, compId, "priceLimit_hint")}
                     </UncontrolledTooltip>
                   </Col>
-                  <Col md="4" sm="6" className="ml-auto mr-auto text-right">
+                  <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
                     <label className="numbers">{this.handleKpiPresentation("currency", setup.max_price)}</label>
                   </Col>
                 </Row>
                 {/* Stop Loss */}
                 <Row>
-                  <Col md="6" sm="6" className="ml-auto mr-auto">
+                  <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {getString(langId, compId, "label_stopLoss")}
                       {" "}
@@ -265,13 +265,13 @@ class SetupCard extends React.Component {
                       {getString(langId, compId, "stopLoss_hint")}
                     </UncontrolledTooltip>
                   </Col>
-                  <Col md="4" sm="6" className="ml-auto mr-auto text-right">
+                  <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
                     <label className="numbers">{this.handleKpiPresentation("currency", setup.stop_loss)}</label>
                   </Col>
                 </Row>
                 {/* Target */}
                 <Row>
-                  <Col md="6" sm="6" className="ml-auto mr-auto" >
+                  <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto" >
                     <label>
                       {getString(langId, compId, "label_target")}
                       {" "}
@@ -281,13 +281,13 @@ class SetupCard extends React.Component {
                       {getString(langId, compId, "target_hint")}
                     </UncontrolledTooltip>
                   </Col>
-                  <Col md="4" sm="6" className="ml-auto mr-auto text-right">
+                  <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
                     <label className="numbers">{this.handleKpiPresentation("currency", setup.target)}</label>
                   </Col>
                 </Row>
                 {/* Gain Percent / Loss Percent*/}
                 <Row>
-                  <Col md="6" sm="6" className="ml-auto mr-auto">
+                  <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label className={setup.ended_on ? setup.is_success === false ? "text-danger" : "text-success" : null}>
                       {setup.is_success === false ?
                         getString(langId, compId, "label_lossPercent") :
@@ -303,7 +303,7 @@ class SetupCard extends React.Component {
                       }
                     </UncontrolledTooltip>
                   </Col>
-                  <Col md="4" sm="6" className="ml-auto mr-auto text-right">
+                  <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
                     <label className={"numbers " + (setup.ended_on ? setup.is_success === false ? "text-danger" : "text-success" : null)}>
                       {setup.is_success === false ?
                         this.handleKpiPresentation("percentage", setup.loss_percent) :
@@ -314,7 +314,7 @@ class SetupCard extends React.Component {
                 </Row>
                 {/* Risk / Reward */}
                 <Row>
-                  <Col md="6" sm="6" className="ml-auto mr-auto">
+                  <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {getString(langId, compId, "label_riskReward")}{" "}
                       <i id={"riskReward_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
@@ -323,7 +323,7 @@ class SetupCard extends React.Component {
                       {getString(langId, compId, "riskReward_hint")}
                     </UncontrolledTooltip>
                   </Col>
-                  <Col md="4" sm="6" className="ml-auto mr-auto text-right">
+                  <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
                     <label className="numbers">{setup.risk_reward}</label>
                   </Col>
                 </Row>
@@ -337,24 +337,32 @@ class SetupCard extends React.Component {
                 <br />
                 {/* Success Rate */}
                 <Row>
-                  <Col md="6" sm="6" className="ml-auto mr-auto">
+                  <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {getString(langId, compId, "label_successRate")}{" "}
                       <i id={"successRate_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"successRate_hint" + setup.id}>
+                    <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"successRate_hint" + setup.id}>
                       {getString(langId, compId, "successRate_hint")}
                     </UncontrolledTooltip>
                   </Col>
-                  <Col md="4" sm="6" className="ml-auto mr-auto text-right">
-                    <label className="numbers">
-                      {this.handleKpiPresentation("percentage", setup.success_rate)}
+                  <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
+                    <label id={"successRate_value_hint" + setup.id} className="numbers">
+                      {setup.success_rate ?
+                        this.handleKpiPresentation("percentage", setup.success_rate) :
+                        getString(langId, compId, "label_notAvailableData")
+                      }
                     </label>
+                    {!setup.success_rate &&
+                      <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"successRate_value_hint" + setup.id}>
+                        {getString(langId, compId, "notAvailableData_hint")}
+                      </UncontrolledTooltip>
+                    }
                   </Col>
                 </Row>
                 {/* Estimated Time */}
                 <Row>
-                  <Col md="6" sm="6" className="ml-auto mr-auto">
+                  <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {getString(langId, compId, "label_estimatedTime")}{" "}
                       <i id={"estimatedTime_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
@@ -363,17 +371,23 @@ class SetupCard extends React.Component {
                       {getString(langId, compId, "estimatedTime_hint")}
                     </UncontrolledTooltip>
                   </Col>
-                  <Col md="4" sm="6" className="ml-auto mr-auto text-right">
-                    <label className="numbers">
-                      {setup.avg_duration_gain}
-                      {" "}
-                      {getString(langId, "generic", "label_days")}
+                  <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
+                    <label id={"estimatedTime_value_hint" + setup.id} className="numbers">
+                      {setup.avg_duration_gain ?
+                        setup.avg_duration_gain + " " + getString(langId, "generic", "label_days") :
+                        getString(langId, compId, "label_notAvailableData")
+                      }
                     </label>
+                    {!setup.avg_duration_gain &&
+                      <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"estimatedTime_value_hint" + setup.id}>
+                        {getString(langId, compId, "notAvailableData_hint")}
+                      </UncontrolledTooltip>
+                    }
                   </Col>
                 </Row>
                 {/* Occurrencies */}
                 <Row>
-                  <Col md="6" sm="6" className="ml-auto mr-auto">
+                  <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {getString(langId, compId, "label_occurrencies")}{" "}
                       <i id={"occurrencies_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
@@ -382,7 +396,7 @@ class SetupCard extends React.Component {
                       {getString(langId, compId, "occurrencies_hint")}
                     </UncontrolledTooltip>
                   </Col>
-                  <Col md="4" sm="6" className="ml-auto mr-auto text-right">
+                  <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
                     <label className="numbers">
                       {setup.occurrencies}
                     </label>
@@ -390,7 +404,7 @@ class SetupCard extends React.Component {
                 </Row>
                 {/* Last Occurrence */}
                 <Row>
-                  <Col md="6" sm="6" className="ml-auto mr-auto">
+                  <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
                       {getString(langId, compId, "label_lastOccurrence")}{" "}
                       <i id={"lastOccurrence_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
@@ -399,10 +413,18 @@ class SetupCard extends React.Component {
                       {getString(langId, compId, "lastOccurrence_hint")}
                     </UncontrolledTooltip>
                   </Col>
-                  <Col md="4" sm="6" className="ml-auto mr-auto text-right">
-                    <label className="numbers">
-                      {TimeManager.getLocaleDateString(setup.last_ended_occurrence, false)}
+                  <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
+                    <label id={"lastOccurrence_value_hint" + setup.id} className="numbers">
+                      {setup.last_ended_occurrence ?
+                        TimeManager.getLocaleDateString(setup.last_ended_occurrence, false) :
+                        getString(langId, compId, "label_notAvailableData")
+                      }
                     </label>
+                    {!setup.last_ended_occurrence &&
+                      <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"lastOccurrence_value_hint" + setup.id}>
+                        {getString(langId, compId, "notAvailableData_hint")}
+                      </UncontrolledTooltip>
+                    }
                   </Col>
                 </Row>
               </TabPane>
@@ -425,7 +447,7 @@ class SetupCard extends React.Component {
           <br />
           {/* Data above Progress Bar */}
           <Row>
-            <Col lg="6" md="6" sm="6" xs="6">
+            <Col>
               <label id={"progressBar_start_" + setup.id}>
                 {this.handleKpiPresentation("currency", setup.stop_loss)}
               </label>
@@ -433,7 +455,7 @@ class SetupCard extends React.Component {
                 {getString(langId, compId, "progressBar_stopLoss_hint")}
               </UncontrolledTooltip>
             </Col>
-            <Col lg="6" md="6" sm="6" xs="6" className="text-right">
+            <Col className="text-right">
               <label id={"progressBar_end_" + setup.id}>
                 {setup.ended_on ? TimeManager.getLocaleDateString(setup.ended_on) : this.handleKpiPresentation("currency", setup.target)}
               </label>
@@ -446,24 +468,20 @@ class SetupCard extends React.Component {
             </Col>
           </Row>
           {/* Progress Bar */}
-          <Row>
-            <Col>
-              <Progress
-                className={setup.ended_on ? "" : "text-right"}
-                animated={setup.ended_on ? false : true}
-                color={this.progressColor(setup)}
-                value={
-                  setup.ended_on ?
-                    setup.delta.stopLoss_target :
-                    setup.delta.stopLoss_assetPrice
-                }
-                max={setup.delta.stopLoss_target}>
-                {this.progressText(setup)}
-              </Progress>
-            </Col>
-          </Row>
+          <Progress
+            className={setup.ended_on ? "" : "text-right"}
+            animated={setup.ended_on ? false : true}
+            color={this.progressColor(setup)}
+            value={
+              setup.ended_on ?
+                setup.delta.stopLoss_target :
+                setup.delta.stopLoss_assetPrice
+            }
+            max={setup.delta.stopLoss_target}>
+            {this.progressText(setup)}
+          </Progress>
         </div>
-      </li>
+      </li >
     )
   }
 }

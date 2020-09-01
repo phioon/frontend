@@ -61,6 +61,8 @@ class Suggestions extends React.Component {
     let dimensions = await this.prepareDimensions()
     dimensions.setups = await this.prepareCards(dimensions.setups)
 
+    // console.log(dimensions)
+
     this.setState({ dimensions, pageFirstLoading: false })
   }
   async prepareDimensions() {
@@ -348,7 +350,7 @@ class Suggestions extends React.Component {
 
           {pageFirstLoading ?
             <Row>
-              <Col md="12">
+              <Col>
                 <Card className="card-timeline card-plain">
                   <CardBody>
                     <ul className="timeline">
@@ -370,15 +372,15 @@ class Suggestions extends React.Component {
             cWallets == 0 ?
               // No wallets
               <Row>
-                <Col md="col-md-6 ml-auto mr-auto">
+                <Col>
                   <Card className="card-stats">
                     <Row>
-                      <Col md="2" xs="3" className="centered">
+                      <Col xl="2" lg="2" md="3" xs="3" className="centered">
                         <div className="icon-big text-center">
                           <i className="nc-icon nc-alert-circle-i text-warning" />
                         </div>
                       </Col>
-                      <Col md="10" xs="9">
+                      <Col xl="10" lg="10" md="9" xs="9">
                         <br />
                         <p className="card-description">{getString(langId, compId, "label_noWallets_p1")}</p>
                         <p className="card-description">{getString(langId, compId, "label_noWallets_p2")}</p>
@@ -390,19 +392,18 @@ class Suggestions extends React.Component {
               dimensions.setups.data.length == 0 ?
                 // Empty Setups
                 <Row>
-                  <Col md="col-md-6 ml-auto mr-auto">
+                  <Col>
                     <Card className="card-stats">
                       <Row>
-                        <Col md="2" xs="3" className="centered">
+                        <Col xl="2" lg="2" md="3" xs="4" className="centered">
                           <div className="icon-big text-center">
                             <i className="nc-icon nc-zoom-split text-warning" />
                           </div>
                         </Col>
-                        <Col md="10" xs="9">
+                        <Col xl="10" lg="10" md="9" xs="8">
                           <br />
-                          <p className="card-description">
-                            {getString(langId, compId, "label_noNews")}
-                          </p>
+                          <p className="card-description">{getString(langId, compId, "label_noNews_p1")}</p>
+                          <p className="card-description">{getString(langId, compId, "label_noNews_p2")}</p>
                         </Col>
                       </Row>
                     </Card>
@@ -411,7 +412,7 @@ class Suggestions extends React.Component {
                 :
                 // Setups
                 <Row>
-                  <Col md="12">
+                  <Col>
                     <Card className="card-timeline card-plain">
                       <CardBody>
                         <ul className="timeline">

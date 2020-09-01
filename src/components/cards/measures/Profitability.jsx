@@ -50,12 +50,12 @@ class Profitability extends Component {
       <Card className="card-stats">
         <CardBody>
           <Row>
-            <Col md="3" xs="4">
+            <Col xl="2" lg="2" md="3" xs="4">
               <div className="icon-big text-center">
                 <i className="nc-icon nc-money-coins text-success" />
               </div>
             </Col>
-            <Col md="9" xs="8">
+            <Col xl="10" lg="10" md="9" xs="8">
               <div className="numbers">
                 <p id="" className="card-category">
                   {pageFirstLoading ?
@@ -86,10 +86,10 @@ class Profitability extends Component {
           <hr />
           <Row>
             <Col>
-              <div className="stats">
+              <label className="stats">
                 <i className="fa fa-wrench" />
                 {getString(langId, "measures", "label_format")}:
-                    </div>
+              </label>
             </Col>
             <Col className="text-right">
               <Button

@@ -108,7 +108,7 @@ class ProfitabilityOverTime extends Component {
       <Card className="card-stats">
         <CardHeader>
           <Row>
-            <Col lg="6" md="6" sm="6" xs="6">
+            <Col>
               <UncontrolledDropdown>
                 <DropdownToggle
                   caret
@@ -134,7 +134,7 @@ class ProfitabilityOverTime extends Component {
                 </DropdownMenu>
               </UncontrolledDropdown>
             </Col>
-            <Col lg="6" md="6" sm="6" xs="6">
+            <Col>
               <div className="pull-right">
                 <Badge color={(measures.positions.result.percentage &&
                   measures.positions.result.percentage.data < 0 ?
@@ -165,13 +165,13 @@ class ProfitabilityOverTime extends Component {
         <CardFooter>
           <hr />
           <Row>
-            <Col md="3">
-              <div className="stats">
+            <Col xl="4" md="4">
+              <label className="stats">
                 <i className="fa fa-cube" />
                 {getString(langId, "charts", "label_groupBy")}:
-                    </div>
+              </label>
             </Col>
-            <Col md="9" className="text-right">
+            <Col className="text-right">
               <span id="result_groupByAsset">
                 <Button
                   className="btn-link"

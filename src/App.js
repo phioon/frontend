@@ -258,12 +258,10 @@ class App extends React.Component {
     }
     else if (rResult.request) {
       // The request was made but no response was received
-      // Send user to error page 5XX
-      msg.id = "general_noResponseReceived"
+      msg.id = "general_couldNotSendRequest"
     }
     else {
       // Something happened in setting up the request that triggered an Error
-      // Send user a notification/modal and ask to check their internet connection
       msg.id = "general_couldNotSendRequest"
     }
 
