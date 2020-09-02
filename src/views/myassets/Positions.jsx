@@ -26,7 +26,9 @@ import {
   convertFloatToCurrency,
   convertFloatToPercentage,
   integerWithThousandsSeparator,
-  orderBy
+  orderBy,
+  percentage,
+  round
 } from "../../core/utils";
 import TimeManager from "../../core/managers/TimeManager";
 import { getString } from "../../core/lang";
@@ -132,10 +134,10 @@ class Positions extends React.Component {
           obj.typeIsBuy = false
 
         obj.total_opCost = this.props.managers.measure.opCost_currency([obj])
-        obj.s_opCostPercent = Math.round(obj.s_operational_cost / obj.s_total_price * 100 * 100) / 100
-        obj.e_opCostPercent = Math.round(obj.e_operational_cost / obj.e_total_price * 100 * 100) / 100
-        obj.s_totalCost = obj.s_total_price + obj.s_operational_cost
-        obj.e_totalCost = obj.e_total_price + obj.e_operational_cost
+        obj.s_opCostPercent = percentage(obj.s_operational_cost, obj.s_total_price, 2)
+        obj.e_opCostPercent = percentage(obj.e_operational_cost, obj.e_total_price, 2)
+        obj.s_totalCost = round(obj.s_total_price + obj.s_operational_cost, 2)
+        obj.e_totalCost = round(obj.e_total_price + obj.e_operational_cost, 2)
       }
 
       positions.data = orderBy(positions.data, ["-started_on"])
