@@ -7,6 +7,7 @@ import TagsInput from "react-tagsinput";
 // react plugin used to create datetimepicker
 import ReactDatetime from "react-datetime";
 import LabelAlert from "../../LabelAlert";
+import TimeManager from "../../../core/managers/TimeManager";
 
 class OpeningIntervalFilter extends Component {
   constructor(props) {
@@ -48,9 +49,6 @@ class OpeningIntervalFilter extends Component {
 
     switch (fieldName) {
       case "dateFrom":
-        dateFrom = value
-        dateTo = dateTo ? dateTo : Moment()
-
         newState[fieldName + "State"] = ""
         newState.openingInterval_alertState = ""
         newState.openingInterval_alertMsg = ""
@@ -58,6 +56,10 @@ class OpeningIntervalFilter extends Component {
         if (value) {
           if (value._isAMomentObject) {
             newState[fieldName + "State"] = "has-success"
+
+            dateFrom = value.utc(true)
+            dateTo = dateTo ? dateTo : Moment()
+
             iSelected = this.getSelectedPositions(dateFrom, dateTo)
           }
           else
@@ -73,9 +75,6 @@ class OpeningIntervalFilter extends Component {
         break;
 
       case "dateTo":
-        dateFrom = dateFrom ? dateFrom : Moment("2001-01-01T00:00:00")
-        dateTo = value
-
         newState[fieldName + "State"] = ""
         newState.openingInterval_alertState = ""
         newState.openingInterval_alertMsg = ""
@@ -83,6 +82,10 @@ class OpeningIntervalFilter extends Component {
         if (value) {
           if (value._isAMomentObject) {
             newState[fieldName + "State"] = "has-success"
+
+            dateFrom = dateFrom ? dateFrom : Moment("2001-01-01T00:00:00Z")
+            dateTo = value.utc(true)
+
             iSelected = this.getSelectedPositions(dateFrom, dateTo)
           }
           else
@@ -188,6 +191,7 @@ class OpeningIntervalFilter extends Component {
                 className: "form-control",
                 placeholder: this.props.getString(langId, compId, "input_dateFrom")
               }}
+              locale={getString(langId, "locales", langId)}
               value={dateFrom}
               onChange={value => this.onSelectChange("dateFrom", value)}
               isValidDate={value => this.isDateValid("dateFrom", value)}
@@ -200,6 +204,7 @@ class OpeningIntervalFilter extends Component {
                 className: "form-control",
                 placeholder: this.props.getString(langId, compId, "input_dateTo")
               }}
+              locale={getString(langId, "locales", langId)}
               value={dateTo}
               onChange={value => this.onSelectChange("dateTo", value)}
               isValidDate={value => this.isDateValid("dateTo", value)}

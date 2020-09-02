@@ -149,6 +149,10 @@ const strings = {
       enUS: "English",
       ptBR: "Português (Brasil)",
     },
+    locales: {
+      enUS: "en-us",
+      ptBR: "pt-br",
+    },
     login: {
       card_header: "Login",
       input_email: "Email",
@@ -827,6 +831,10 @@ const strings = {
     languages: {
       enUS: "English",
       ptBR: "Português (Brasil)",
+    },
+    locales: {
+      enUS: "en-us",
+      ptBR: "pt-br",
     },
     login: {
       card_header: "Login",

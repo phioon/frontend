@@ -183,8 +183,6 @@ class Suggestions extends React.Component {
       obj.success_rate = ss.success_rate
     }
 
-    console.log(dSetups)
-
     return dSetups
   }
 

@@ -623,6 +623,7 @@ class UserProfile extends React.Component {
                               className: "form-control",
                               placeholder: this.props.getString(langId, compId, "input_select")
                             }}
+                            locale={getString(langId, "locales", langId)}
                             value={personalData.data.birthday && TimeManager.getLocaleDateString(personalData.data.birthday, false)}
                             onChange={value => this.onSelectChange("personalData", "birthday", value)}
                             isValidDate={this.isDateValid}

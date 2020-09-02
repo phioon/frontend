@@ -563,6 +563,7 @@ class ModalUpdatePosition extends React.Component {
                   className: "form-control",
                   placeholder: getString(langId, compId, "input_select")
                 }}
+                locale={getString(langId, "locales", langId)}
                 value={position.data.startedOn}
                 onChange={value => this.onSelectChange("startedOn", value)}
                 isValidDate={value => this.isDateValid("startedOn", value)}
@@ -748,6 +749,7 @@ class ModalUpdatePosition extends React.Component {
                   className: "form-control",
                   placeholder: getString(langId, compId, "input_select")
                 }}
+                locale={getString(langId, "locales", langId)}
                 value={position.data.endedOn}
                 onChange={value => this.onSelectChange("endedOn", value)}
                 isValidDate={value => this.isDateValid("endedOn", value)}

@@ -185,6 +185,7 @@ class SetupIntervalFilter extends Component {
                 className: "form-control",
                 placeholder: this.props.getString(langId, compId, "input_dateFrom")
               }}
+              locale={getString(langId, "locales", langId)}
               value={dateFrom}
               onChange={value => this.onSelectChange("dateFrom", value)}
               isValidDate={value => this.isDateValid("dateFrom", value)}
@@ -197,6 +198,7 @@ class SetupIntervalFilter extends Component {
                 className: "form-control",
                 placeholder: this.props.getString(langId, compId, "input_dateTo")
               }}
+              locale={getString(langId, "locales", langId)}
               value={dateTo}
               onChange={value => this.onSelectChange("dateTo", value)}
               isValidDate={value => this.isDateValid("dateTo", value)}
