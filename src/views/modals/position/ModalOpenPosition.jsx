@@ -70,7 +70,7 @@ class ModalOpenPosition extends React.Component {
           s_totalCost: 0.00,
         },
         states: {
-          startedOn: "",
+          startedOn: "has-success",
           wallet: "",
           asset: "",
           type: "has-success",
