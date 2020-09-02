@@ -435,6 +435,11 @@ class Positions extends React.Component {
                 }
               ]}
               defaultPageSize={10}
+              previousText={getString(langId, "reacttable", "label_previous")}
+              nextText={getString(langId, "reacttable", "label_next")}
+              pageText={getString(langId, "reacttable", "label_page")}
+              ofText={getString(langId, "reacttable", "label_of")}
+              rowsText={getString(langId, "reacttable", "label_rows")}
               noDataText={
                 pageFirstLoading ?
                   getString(langId, "generic", "label_loading") :

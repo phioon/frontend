@@ -428,6 +428,13 @@ const strings = {
       label_policy_5: "PHIOON may use, format and publish testimonials related to PHIOON posted by You on profiles and public pages on social networks, together with your name and images (including profile photos), on websites, applications or institutional and advertising materials for marketing purposes related to PHIOON's services and products.",
       label_policy_6: "PHIOON is always available to answer your questions and ensure your control over your data."
     },
+    reacttable: {
+      label_previous: "Previous",
+      label_next: "Next",
+      label_page: "Page",
+      label_of: "of",
+      label_rows: "rows",
+    },
     register: {
       alert_generalErrorTitle: "Something went wrong...",
       alert_tryAgain: "Ooops... Sorry for that. :( Could you try again?",
@@ -1111,6 +1118,13 @@ const strings = {
       label_policy_4: "Você poderá solicitar a revisão e correção de seus dados sem qualquer ônus e a qualquer tempo. Para isso, basta entrar em contato por meio de um dos canais de atendimento disponíveis. Ao terminar sua relação com o PHIOON, caso deseje excluir seus dados, lembre-se que o PHIOON, com o fim de cumprir com obrigações legais, armazenará determinados dados pelo período e nos termos que a legislação vigente aplicável exigir.",
       label_policy_5: "O PHIOON poderá utilizar, formatar e divulgar depoimentos referentes ao PHIOON postados por Você em perfis e páginas públicas nas redes sociais, juntamente com seu nome e imagens (incluindo fotos de perfil), em websites, aplicativos ou materiais institucionais e publicitários para a divulgação dos serviços prestados pelo PHIOON.",
       label_policy_6: "O PHIOON está sempre à disposição para esclarecer suas dúvidas e garantir seu controle sobre seus dados."
+    },
+    reacttable: {
+      label_previous: "Anterior",
+      label_next: "Próxima",
+      label_page: "Página",
+      label_of: "de",
+      label_rows: "linhas",
     },
     register: {
       error_enterValidEmail: "Aqui, preciso de um e-mail válido.",
