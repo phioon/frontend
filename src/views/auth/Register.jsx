@@ -383,11 +383,6 @@ class Register extends React.Component {
                         value={email}
                         onChange={e => this.onChange(e, e.target.name, "email")}
                       />
-                      {/* {emailState === "has-danger" ? (
-                        <label className="error">
-                          {getString(langId, compId, "error_enterValidEmail")}
-                        </label>
-                      ) : null} */}
                     </InputGroup>
                     <Row className="mt-4" />
                     {/* Password */}

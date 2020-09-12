@@ -306,7 +306,7 @@ class ModalCreateWallet extends React.Component {
                 className="react-select"
                 classNamePrefix="react-select"
                 name="stockExchange"
-                placeholder={getString(langId, compId, "input_select")}
+                placeholder={getString(langId, "generic", "input_select")}
                 value={wallet.data.stockExchange}
                 options={stockExchangeOptions}
                 onChange={value => this.onSelectChange("stockExchange", value)}

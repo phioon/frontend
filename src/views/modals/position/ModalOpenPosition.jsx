@@ -436,7 +436,7 @@ class ModalOpenPosition extends React.Component {
           <CardBody>
             {/* Type */}
             <Row className="justify-content-center">
-              <Col className="col-md-3">
+              <Col md="3" xs="5">
                 <div
                   className={classnames("card-choice", { active: position.data.typeIsBuy })}
                   // data-toggle="wizard-checkbox"
@@ -454,7 +454,7 @@ class ModalOpenPosition extends React.Component {
                   <label>{getString(langId, compId, "input_type_buy")}</label>
                 </div>
               </Col>
-              <Col className="col-md-3">
+              <Col md="3" xs="5">
                 <div
                   className={classnames("card-choice", { active: !position.data.typeIsBuy })}
                   // data-toggle="wizard-checkbox"
@@ -479,7 +479,7 @@ class ModalOpenPosition extends React.Component {
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
-                placeholder={getString(langId, compId, "input_select")}
+                placeholder={getString(langId, "generic", "input_select")}
                 name="wallet"
                 value={position.data.wallet}
                 options={walletOptions}
@@ -492,7 +492,7 @@ class ModalOpenPosition extends React.Component {
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
-                placeholder={getString(langId, compId, "input_select")}
+                placeholder={getString(langId, "generic", "input_select")}
                 name="asset"
                 value={position.data.asset}
                 options={assetOptions}
@@ -525,7 +525,7 @@ class ModalOpenPosition extends React.Component {
                   <ReactDatetime
                     inputProps={{
                       className: "form-control",
-                      placeholder: this.props.getString(langId, compId, "input_select")
+                      placeholder: this.props.getString(langId, "generic", "input_select")
                     }}
                     dateFormat={true}
                     timeFormat={true}

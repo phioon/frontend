@@ -13,7 +13,7 @@ from django.utils.encoding import force_text
 from django.utils import timezone
 from datetime import datetime
 
-from app.models import Country, Currency, Subscription, Position, PositionType, UserCustom, Wallet
+from app.models import Country, Currency, Strategy, Subscription, Position, PositionType, UserCustom, Wallet
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -62,6 +62,16 @@ class PositionTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PositionType
+        fields = '__all__'
+
+
+class StrategySerializer(serializers.ModelSerializer):
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    owner_first_name = serializers.ReadOnlyField(source='owner.first_name')
+    owner_last_name = serializers.ReadOnlyField(source='owner.last_name')
+
+    class Meta:
+        model = Strategy
         fields = '__all__'
 
 

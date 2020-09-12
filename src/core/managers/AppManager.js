@@ -57,6 +57,15 @@ class AppManager {
         },
         request: "/api/app/positions/"
       },
+      wsStrategies: {
+        options: {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": ""
+          }
+        },
+        request: "/api/app/strategies/"
+      },
       wsWallets: {
         options: {
           headers: {
@@ -85,6 +94,7 @@ class AppManager {
     this.rQueue.splice(this.rQueue.indexOf(sKey), 1)
   }
 
+  // Country
   async countryList() {
     const sKey = "countries"
     let result = StorageManager.isUpToDate(this.sModule, sKey)
@@ -114,6 +124,7 @@ class AppManager {
     return country
   }
 
+  // Currency
   async currencyList() {
     const sKey = "currencies"
     await this.startRequest(sKey)
@@ -165,6 +176,7 @@ class AppManager {
     return options
   }
 
+  // Subscription
   async subscriptionList() {
     const sKey = "subscriptions"
     let result = StorageManager.isUpToDate(this.sModule, sKey)
@@ -197,6 +209,8 @@ class AppManager {
     return sItem
   }
 
+  // Position
+  // .. Data
   async positionList(syncFull = false) {
     const sKey = "positions"
     await this.startRequest(sKey)
@@ -240,6 +254,14 @@ class AppManager {
     this.finishRequest(sKey)
     return result
   }
+  async positionListOnlyOpen() {
+    let sItem = await this.positionList()
+
+    if (sItem.data)
+      sItem.data = getObjsFieldNull(sItem.data, "ended_on")
+
+    return sItem
+  }
   async positionData(syncFull = false) {
     let sItem = await this.positionList(syncFull)
 
@@ -258,8 +280,8 @@ class AppManager {
 
     if (result.status == 201) {
       let syncFull = true
+      this.walletList(syncFull)           // async call
       await this.positionList(syncFull)
-      await this.walletList(syncFull)
     }
 
     return result
@@ -273,8 +295,8 @@ class AppManager {
 
     if (result.status == 200) {
       let syncFull = true
+      this.walletList(syncFull)               // async call
       await this.positionList(syncFull)
-      this.walletList(syncFull)       //Backend operation (no await)
     }
 
     return result
@@ -289,22 +311,13 @@ class AppManager {
 
     if (result.status == 204) {
       let syncFull = true
+      this.walletList(syncFull)     // async call
       await this.positionList(syncFull)
-      this.walletList(syncFull)     //Backend operation (no await)
     }
     else
       this.getHttpTranslation(result, "positiondelete", "position", true)
 
     return result
-  }
-
-  async positionListOnlyOpen() {
-    let sItem = await this.positionList()
-
-    if (sItem.data)
-      sItem.data = getObjsFieldNull(sItem.data, "ended_on")
-
-    return sItem
   }
   async positionRetrieve(pk) {
     let sItem = await this.positionList()
@@ -315,6 +328,8 @@ class AppManager {
     // Return it with http error details
     return sItem
   }
+
+  // .. Dimensions
   async positionAsDimension(onlyOpen = false) {
     let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
     let dimension = { id: "positions", data: [], items: [], selected: [], disabled: {} }
@@ -374,7 +389,6 @@ class AppManager {
 
     return dimension
   }
-  // Generated from Positions
   async assetAsDimension(onlyOpen = false) {
     let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
     let dimension = { id: "assets", data: [], items: [], selected: [], disabled: {} }
@@ -618,8 +632,8 @@ class AppManager {
 
     return dimension
   }
-  // --------------------
 
+  // Position Type
   async positionTypeList() {
     const sKey = "positionTypes"
     let result = StorageManager.isUpToDate(this.sModule, sKey)
@@ -721,6 +735,8 @@ class AppManager {
     return options
   }
 
+  // Wallet
+  // .. Data
   async walletList(syncFull = false) {
     const sKey = "wallets"
     await this.startRequest(sKey)
@@ -801,14 +817,15 @@ class AppManager {
 
     if (result.status == 204) {
       let syncFull = true
+      this.positionList(syncFull)         // async call
       await this.walletList(syncFull)
-      this.positionList(syncFull)    //Backend operation (no await)
-      return result
     }
+    else
+      this.getHttpTranslation(result, "walletdelete", "wallet", true)
 
-    this.getHttpTranslation(result, "walletdelete", "wallet", true)
     return result
   }
+  // .. Dimensions
   async walletAsDimension() {
     let sItem = await this.walletList()
     let dimension = { id: "wallets", data: [], items: [], selected: [], disabled: {} }
@@ -881,6 +898,91 @@ class AppManager {
     }
 
     return options
+  }
+  // --------------------
+
+  // Strategy
+  async strategyList(syncFull = false) {
+    const sKey = "strategies"
+    await this.startRequest(sKey)
+    let result = null
+
+    if (!syncFull) {
+      result = StorageManager.isUpToDate(this.sModule, sKey)
+      if (result) {
+        this.finishRequest(sKey)
+        return result
+      }
+    }
+
+    let wsInfo = this.getApi("wsStrategies")
+    wsInfo.method = "get"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status == 200)
+      result = StorageManager.store(sKey, result.data)
+    else {
+      this.getHttpTranslation(result, "strategylist", "strategy", true)
+      result = StorageManager.getItem(sKey)
+    }
+
+    this.finishRequest(sKey)
+    return result
+  }
+  async strategyData(syncFull = false) {
+    let sItem = await this.strategyList(syncFull)
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
+  }
+  async strategyCreate(strategy) {
+    let wsInfo = this.getApi("wsStrategies")
+    wsInfo.method = "post"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
+
+    if (result.status == 201) {
+      let syncFull = true
+      await this.strategyList(syncFull)
+    }
+
+    return result
+  }
+  async strategyUpdate(strategy) {
+    let wsInfo = this.getApi("wsStrategies")
+    wsInfo.request += strategy.id + "/"
+    wsInfo.method = "patch"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
+
+    if (result.status == 200) {
+      let syncFull = true
+      await this.strategyList(syncFull)
+    }
+
+    return result
+  }
+  async strategyDelete(pk) {
+    var wsInfo = this.getApi("wsStrategies")
+    wsInfo.request += pk + "/"
+    wsInfo.method = "delete"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status == 204) {
+      let syncFull = true
+      await this.strategyList(syncFull)
+    }
+    else
+      this.getHttpTranslation(result, "strategydelete", "strategy", true)
+
+    return result
   }
 
   getApi(apiId) {

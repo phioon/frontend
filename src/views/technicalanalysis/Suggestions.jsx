@@ -295,8 +295,6 @@ class Suggestions extends React.Component {
   }
 
   TimelineItems(dSetups) {
-    let { prefs } = this.props
-
     // SETUPS
     let setupsData = dSetups.data
     let setupsDisabled = [].concat.apply([], Object.values(dSetups.disabled))
@@ -313,7 +311,6 @@ class Suggestions extends React.Component {
         <SetupCard
           {...this.props}
           key={setup.id}
-          prefs={prefs}
           setup={setup}
           isPurchase={setup.type == "purchase" ? true : false}
         />

@@ -141,7 +141,7 @@ class Wallet (models.Model):
 class Position (models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
     wallet = models.ForeignKey(Wallet, related_name='positions', on_delete=models.CASCADE)
     type = models.ForeignKey(PositionType, on_delete=models.DO_NOTHING)
     asset_label = models.CharField(max_length=32)
@@ -162,12 +162,18 @@ class Position (models.Model):
         return str(self.pk)
 
 
-class Setup (models.Model):
+class Strategy (models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    filter = models.TextField()
+    owner = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
+    name = models.CharField(max_length=32)
+    desc = models.CharField(max_length=128, blank=True)
+
+    is_public = models.BooleanField(default=True, verbose_name='Is it public for other users?')
+    is_dynamic = models.BooleanField(default=False, verbose_name='Is it possible to apply the same rule for more'
+                                                                 'than one time interval (s, d, 60m, 30m)')
+    rules = models.TextField()
 
     def __str__(self):
         return str(self.pk)

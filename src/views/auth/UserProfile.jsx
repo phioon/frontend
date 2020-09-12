@@ -372,7 +372,7 @@ class UserProfile extends React.Component {
                     alt="..."
                     src={project.img.bg.app_clean_reverse.src}
                   />
-                  <div className={`subscription ${subscription.name}`}>{String(subscription.name).toUpperCase()}</div>
+                  <div className="subscription">{String(subscription.name).toUpperCase()}</div>
                 </div>
                 <CardBody>
                   <div className="author">
@@ -646,7 +646,7 @@ class UserProfile extends React.Component {
                           <ReactDatetime
                             inputProps={{
                               className: "form-control",
-                              placeholder: this.props.getString(langId, compId, "input_select")
+                              placeholder: this.props.getString(langId, "generic", "input_select")
                             }}
                             value={personalData.data.birthday && TimeManager.getLocaleDateString(personalData.data.birthday, false)}
                             onChange={value => this.onSelectChange("personalData", "birthday", value)}
@@ -700,7 +700,7 @@ class UserProfile extends React.Component {
                             value={prefs.data.pref_langId}
                             onChange={value => this.onSelectChange("prefs", "pref_langId", value)}
                             options={languages}
-                            placeholder={getString(langId, compId, "input_select")}
+                            placeholder={getString(langId, "generic", "input_select")}
                           />
                         </FormGroup>
                       </Col>
@@ -722,7 +722,7 @@ class UserProfile extends React.Component {
                             value={prefs.data.pref_currency}
                             onChange={value => this.onSelectChange("prefs", "pref_currency", value)}
                             options={currencies}
-                            placeholder={getString(langId, compId, "input_select")}
+                            placeholder={getString(langId, "generic", "input_select")}
                           />
                         </FormGroup>
                       </Col>

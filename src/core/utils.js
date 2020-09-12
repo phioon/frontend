@@ -50,10 +50,34 @@ export function retrieveLessFields(objList, fieldList) {
   return result
 }
 export function retrieveObjFromObjList(objList, keyField = "id", value) {
+  // Return the first occurrence found
   for (var obj of objList)
     if (obj[keyField] == value)
       return obj
   return null
+}
+export function applyFilterToObjList(objList, filters = { field: undefined }) {
+  // Filter object and return only the matching occurrencies
+  let data = []
+
+  for (var obj of objList) {
+    let push = undefined
+
+    // Apply filter
+    for (var [k, v] of Object.entries(filters))
+      // Object 'filters' is not empty
+      if (obj[k] == v)
+        push = true
+      else {
+        push = false
+        break;        // Leaves this FOR iteration and check next 'obj'
+      }
+
+    if (push)
+      data.push(obj)
+  }
+
+  return data
 }
 export function getDistinctValuesFromList(objList, field) {
   let distinctList = []
@@ -125,6 +149,25 @@ export function joinObjLists(objList0, objList1, keyField = "id") {
 
   return objList0
 }
+
+function arrayMoveMutate(array, from, to) {
+  const startIndex = from < 0 ? array.length + from : from;
+
+  if (startIndex >= 0 && startIndex < array.length) {
+    const endIndex = to < 0 ? array.length + to : to;
+
+    const [item] = array.splice(from, 1);
+    array.splice(endIndex, 0, item);
+  }
+
+  return array
+};
+export function arrayMove(array, from, to) {
+  array = [...array];
+  array = arrayMoveMutate(array, from, to);
+
+  return array;
+};
 
 export function getFieldAsKey(objList, keyField) {
   let objDict = {}
@@ -334,9 +377,14 @@ export function verifyGreaterThan(value, gt) {
   return false;
 };
 // function that verifies if a string has a given length or not
-export function verifyLength(value, length) {
-  if (value.length >= length) {
-    return true;
+export function verifyLength(value, minLen, maxLen = undefined) {
+  if (value.length >= minLen) {
+    if (maxLen) {
+      if (value.length <= maxLen)
+        return true
+    }
+    else
+      return true;
   }
   return false;
 };

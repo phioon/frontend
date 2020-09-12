@@ -62,6 +62,7 @@ class AppLayout extends React.Component {
     // App
     let wallets = await this.props.managers.app.walletList(syncFull)
     let positions = await this.props.managers.app.positionList(syncFull)
+    this.props.managers.app.strategyList(syncFull)
     this.props.managers.app.countryList()                                 // async call
     this.props.managers.app.currencyList()                                // async call
     this.props.managers.app.subscriptionList()                            // async call
@@ -71,6 +72,7 @@ class AppLayout extends React.Component {
     let assetsOpenPositions = getObjsFieldNull(positions.data, "ended_on")
     assetsOpenPositions = getDistinctValuesFromList(assetsOpenPositions, "asset_symbol")
 
+    this.props.managers.market.indicatorList()                            // async call
     this.props.managers.market.stockExchangeList()                        // async call
     this.props.managers.market.assetList(detailed, assetsOpenPositions)   // async call
 

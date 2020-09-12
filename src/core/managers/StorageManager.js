@@ -14,10 +14,6 @@ const config = {
       syncLimit: 8640,
       version: 0.01
     },
-    subscriptions: {
-      syncLimit: 8640,
-      version: 0.01
-    },
     positionTypes: {
       syncLimit: 8640,
       version: 0.01
@@ -26,10 +22,18 @@ const config = {
       syncLimit: 10,
       version: 0.01
     },
-    wallets: {
-      syncLimit: 60,
+    strategies: {
+      syncLimit: 8640,
+      version: 0.03
+    },
+    subscriptions: {
+      syncLimit: 8640,
       version: 0.01
     },
+    wallets: {
+      syncLimit: 8640,
+      version: 0.01
+    }
   },
   auth: {
     user: {
@@ -48,17 +52,25 @@ const config = {
       syncLimit: 10,
       version: 0.03
     },
+    indicators: {
+      syncLimit: 8460,
+      version: 0.15
+    },
     dEma: {
-      syncLimit: 60,
+      syncLimit: 0.060,
       version: 0.01
     },
     dPhibo: {
-      syncLimit: 60,
+      syncLimit: 0.060,
       version: 0.01
     },
     dRaw: {
       syncLimit: 60,
       version: 0.02
+    },
+    dRoc: {
+      syncLimit: 0.060,
+      version: 0.01
     },
     dSetups: {
       syncLimit: 60,
@@ -76,7 +88,7 @@ const config = {
       syncLimit: 8640,
       version: 0.01
     },
-  }
+  },
 }
 let memData = {}
 const strVersion = "version";              // It goes into each sKey

@@ -22,7 +22,7 @@ __backendApiPass__ = '#P1q2w3e4r$Api'
 
 
 @api_view(['GET'])
-@permission_classes([IsPremium, IsPlatinum])
+@permission_classes([IsPremium | IsPlatinum, ])
 def TechnicalConditionList(request):
     backendRequest = __backendHost__ + '/api/market/technicalConditions/'
 
@@ -81,6 +81,23 @@ def AssetList(request):
     return Response(json.loads(r.text))
 
 
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def IndicatorList(request):
+    backendRequest = __backendHost__ + '/api/market/indicators/'
+
+    try:
+        r = requests.get(backendRequest,
+                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__))
+    except requests.exceptions.Timeout:
+        r = requests.get(backendRequest,
+                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__))
+    except requests.exceptions.RequestException as ex:
+        obj_res = {'message': str(ex)}
+        return Response(obj_res, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    return Response(json.loads(r.text))
+
+
 # Based on Daily chart
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
@@ -111,7 +128,79 @@ def D_RawList(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsPremium, IsPlatinum])
+@permission_classes([permissions.IsAuthenticated])
+def D_RawLatestList(request):
+    backendRequest = __backendHost__ + '/api/market/d/raw/latest/'
+
+    stockExchange = request.query_params.get('stockExchange')
+    assets = request.query_params.get('assets')
+    params = {'stockExchange': stockExchange,
+              'assets': assets}
+
+    try:
+        r = requests.get(backendRequest,
+                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         params=params)
+    except requests.exceptions.Timeout:
+        r = requests.get(backendRequest,
+                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         params=params)
+    except requests.exceptions.RequestException as ex:
+        obj_res = {'message': str(ex)}
+        return Response(obj_res, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    return Response(json.loads(r.text))
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def D_PhiboLatestList(request):
+    backendRequest = __backendHost__ + '/api/market/d/phibo/latest/'
+
+    stockExchange = request.query_params.get('stockExchange')
+    assets = request.query_params.get('assets')
+    params = {'stockExchange': stockExchange,
+              'assets': assets}
+
+    try:
+        r = requests.get(backendRequest,
+                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         params=params)
+    except requests.exceptions.Timeout:
+        r = requests.get(backendRequest,
+                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         params=params)
+    except requests.exceptions.RequestException as ex:
+        obj_res = {'message': str(ex)}
+        return Response(obj_res, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    return Response(json.loads(r.text))
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def D_EmaLatestList(request):
+    backendRequest = __backendHost__ + '/api/market/d/ema/latest/'
+
+    stockExchange = request.query_params.get('stockExchange')
+    assets = request.query_params.get('assets')
+    params = {'stockExchange': stockExchange,
+              'assets': assets}
+
+    try:
+        r = requests.get(backendRequest,
+                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         params=params)
+    except requests.exceptions.Timeout:
+        r = requests.get(backendRequest,
+                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         params=params)
+    except requests.exceptions.RequestException as ex:
+        obj_res = {'message': str(ex)}
+        return Response(obj_res, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    return Response(json.loads(r.text))
+
+
+@api_view(['GET'])
+@permission_classes([IsPremium | IsPlatinum, ])
 def D_setupList(request):
     backendRequest = __backendHost__ + '/api/market/d/setups/'
 
@@ -135,7 +224,7 @@ def D_setupList(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsPremium, IsPlatinum])
+@permission_classes([IsPremium | IsPlatinum, ])
 def D_setupSummaryList(request):
     backendRequest = __backendHost__ + '/api/market/d/setupSummary/'
 

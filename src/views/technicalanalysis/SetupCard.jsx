@@ -231,10 +231,7 @@ class SetupCard extends React.Component {
                 </Nav>
               </div>
             </div>
-            <TabContent
-              id="my-tab-content"
-              activeTab={activeNavId}
-            >
+            <TabContent id={"tab-content_" + setup.id} activeTab={activeNavId}>
               {/* Summary */}
               <TabPane tabId="summary" role="tabpanel">
                 {/* Max/Min Price */}
@@ -471,4 +468,9 @@ class SetupCard extends React.Component {
 export default SetupCard;
 
 SetupCard.propTypes = {
+  managers: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
+  prefs: PropTypes.object.isRequired,
+  setup: PropTypes.object.isRequired,
+  isPurchase: PropTypes.bool.isRequired
 }

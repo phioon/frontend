@@ -21,6 +21,7 @@ import Register from "views/auth/Register.jsx";
 import UserProfile from "views/auth/UserProfile.jsx";
 
 // App
+import Strategies from "views/myassets/Strategies";
 import OpenPositions from "views/wallet/OpenPositions";
 import Positions from "views/myassets/Positions";
 import Suggestions from "views/technicalanalysis/Suggestions";
@@ -129,6 +130,13 @@ const routes = [
         path: "/myassets/positions",
         name: "positions",
         component: Positions,
+        layout: "/app"
+      },
+      {
+        sidebar: true,
+        path: "/myassets/strategies",
+        name: "strategies",
+        component: Strategies,
         layout: "/app"
       },
     ]

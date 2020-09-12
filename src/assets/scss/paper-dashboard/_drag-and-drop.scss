@@ -1,0 +1,7 @@
+.drop-area{
+    min-height: 18em;
+    
+    &.dash-zone {
+        outline: 2.5px dashed $default-color;
+    }
+}
