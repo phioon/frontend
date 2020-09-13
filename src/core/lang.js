@@ -332,66 +332,6 @@ const strings = {
 
       btn_confirm: "Change"
     },
-    modalstrategy: {
-      title_create: "Create Strategy",
-      title_update: "Update Strategy",
-      label_intro_p1: "A Strategy is a set of rules/filters that can be applied to the relation between Price and Indicators.",
-      label_intro_p2: "Once created, it can be applied to any time interval, unless you force it on Advanced mode.",
-
-      label_workspaces: "Workspaces",
-
-      label_basic: "Basic",
-      label_transition: "Transition",
-      label_basic_intro_p1: "Click or move the following indicators into the Workspace desired...",
-      label_basic_intro_p2: "Then, reorder them accordingly to the way they should appear on a chart.",
-      label_basic_intro_p3: "For now, don't worry about Time Interval (weekly, daily or hourly). You'll be able to choose it later.",
-
-      label_advanced: "Advanced",
-      label_advanced_intro_p1: "Is there something you couldn't do on Basic mode? No problem, you can aggregate the best of both modes...",
-
-      input_name: "Name",
-      input_logic: "Logic",
-      label_logic_dynamic: "Dynamic",
-      label_logic_static: "Static",
-      input_logic_hint: "A Dynamic Strategy means it can be applied to any Time Interval. In other hand, a Static one is limited to the specified intervals.",
-      input_description: "Description",
-      label_description_placeholder: "Explaining a Strategy may help other people understand how it works...",
-      input_public: "Public",
-      input_public_hint: "Other users can see this strategy.",
-      input_private: "Private",
-      input_private_hint: "Only you can see this strategy.",
-      input_buy: "Buy",
-      input_buy_hint: "It's a Purchase Strategy.",
-      input_sell: "Sell",
-      input_sell_hint: "It's a Sale Strategy.",
-
-      label_basic_0: "Now",
-      label_basic_0_intro: "How indicators should be aligned now?",
-      label_basic_1: "Before",
-      label_basic_1_intro: "How indicators should be aligned on the previous candle?",
-      label_optional: "(optional)",
-      btn_goToRules_hint: "See rules...",
-      btn_goToExplainer_hint: "See explanation...",
-
-      title_wsDestination_add: "Add",
-      title_wsDestination_to: "to",
-      input_wsDestination: "Workspace",
-      input_wsDestination_hint: "Where would you like to send this Indicator to?",
-
-      alert_updated_title: "Updated!",
-      alert_updated_text: "Your Strategy has been updated.",
-
-      alert_created_title: "Created!",
-      alert_created_text_p1: "Your Strategy has been created.",
-      alert_created_text_p2: "Now, you can run it and see the results! ;) ",
-
-      error_name: "hmm... What if we keep it unique and its length up to 24 characters?",
-      error_desc: "It seems too long... Please, try to keep it lesser than 1024 characters.",
-
-      btn_add: "Add",
-      btn_create: "Create",
-      btn_update: "Update"
-    },
     modalcreatewallet: {
       title: "Create Wallet",
       label_intro_p1: "I see you don't have a wallet yet...",
@@ -443,6 +383,65 @@ const strings = {
 
       btn_add: "Add",
       btn_save: "Save",
+    },
+    modalstrategy: {
+      title_create: "Create Strategy",
+      title_update: "Update Strategy",
+      label_intro_p1: "A Strategy is a set of rules/filters that can be applied to the relation between Price and Indicators.",
+      label_intro_p2: "Once created, it can be applied to any time interval, unless you force it on the advanced workspace.",
+
+      label_workspaces: "Workspaces",
+
+      label_basic: "Basic",
+      label_transition: "Transition",
+      label_basic_intro_p1: "Click or move the following indicators into the Workspace desired...",
+      label_basic_intro_p2: "Then, reorder them accordingly to the way they should appear on a chart.",
+
+      label_advanced: "Advanced",
+      label_advanced_intro_p1: "Is there something you couldn't do on Basic mode? No problem, you can aggregate the best of both modes...",
+
+      input_name: "Name",
+      input_logic: "Logic",
+      label_logic_dynamic: "Dynamic",
+      label_logic_static: "Static",
+      input_logic_hint: "A Dynamic strategy can be applied to any Time Interval. In other hand, a Static one is limited to the specified intervals.",
+      input_description: "Description",
+      label_description_placeholder: "Explaining a Strategy may help other people understand how it works...",
+      input_public: "Public",
+      input_public_hint: "Other users can see this strategy.",
+      input_private: "Private",
+      input_private_hint: "Only you can see this strategy.",
+      input_buy: "Buy",
+      input_buy_hint: "It's a Purchase Strategy.",
+      input_sell: "Sell",
+      input_sell_hint: "It's a Sale Strategy.",
+
+      label_basic_0: "Now",
+      label_basic_0_intro: "How indicators should be aligned now?",
+      label_basic_1: "Before",
+      label_basic_1_intro: "How indicators should be aligned on the previous candle?",
+      label_optional: "(optional)",
+      btn_goToRules_hint: "See rules...",
+      btn_goToExplainer_hint: "See explanation...",
+
+      title_wsDestination_add: "Add",
+      title_wsDestination_to: "to",
+      input_wsDestination: "Workspace",
+      input_wsDestination_hint: "Where would you like to send this Indicator to?",
+
+      alert_updated_title: "Updated!",
+      alert_updated_text: "Your Strategy has been updated.",
+
+      alert_created_title: "Created!",
+      alert_created_text_p1: "Your Strategy has been created.",
+      alert_created_text_p2: "Now, you can run it and see the results! ;) ",
+
+      error_name: "hmm... What if we keep it unique and its length up to 24 characters?",
+      error_desc: "It seems too long... Please, try to keep it lesser than 1024 characters.",
+
+      btn_add: "Add",
+      btn_create: "Create",
+      btn_update: "Update"
     },
     modalupdatewallet: {
       title: "Update Wallet",
@@ -1183,6 +1182,96 @@ const strings = {
 
       btn_confirm: "Criar",
     },
+    modalmovingavgdetail: {
+      title: "Média Móvel",
+
+      label_ema: "Exponencial",
+
+      input_type: "Tipo",
+      input_type_hint: "Estamos falando de qual média móvel?",
+      input_periods: "Períodos",
+      input_periods_hint: "Quantidade de períodos considerados para calcular esta média móvel.",
+      input_periods_noOptions: "Primeiro, selecione o Tipo.",
+
+      btn_add: "Adicionar",
+      btn_save: "Salvar",
+    },
+    modalquotedetail: {
+      title: "Cotação",
+
+      input_type: "Cotação",
+      input_type_hint: "Qual valor de cotação estamos procurando?",
+
+      btn_add: "Adicionar",
+      btn_save: "Salvar",
+    },
+    modalphibodetail: {
+      title: "Phibo PVPC",
+
+      input_type: "Indicador",
+      input_type_hint: "De qual linha Phibo PVPC estamos falando?",
+
+      btn_add: "Adicionar",
+      btn_save: "Salvar",
+    },
+    modalstrategy: {
+      title_create: "Criar Estratégia",
+      title_update: "Atualizar Estratégia",
+      label_intro_p1: "Uma Estratégia é um conjunto de regras/filtros que pode ser aplicado à relação entre Preço e Indicadores.",
+      label_intro_p2: "Uma vez criada, ela pode ser aplicada à qualquer tempo gráfico, a menos que você force isso na área avançada.",
+
+      label_workspaces: "Áreas de Trabalho",
+
+      label_basic: "Básica",
+      label_transition: "Transição",
+      label_basic_intro_p1: "Clique ou mova os seguintes indicadores para a Área de Trabalho desejada...",
+      label_basic_intro_p2: "Depois, realinhe os indicadores da forma como eles deveriam aparecer em um gráfico.",
+
+      label_advanced: "Avançada",
+      label_advanced_intro_p1: "As outras Áreas de Trabalho não foram suficientes? Sem problemas, é possível aproveitar o melhor de cada uma delas...",
+
+      input_name: "Nome",
+      input_logic: "Lógica",
+      label_logic_dynamic: "Dinâmica",
+      label_logic_static: "Estática",
+      input_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico. Por outro lado, a Estática é limitada à intervalos específicos.",
+      input_description: "Descrição",
+      label_description_placeholder: "Explicar uma Estratégia pode ajudar outras pessoas a entender como ela funciona...",
+      input_public: "Pública",
+      input_public_hint: "Outros usuários podem ver esta estratégia.",
+      input_private: "Privada",
+      input_private_hint: "Apenas você pode ver esta estratégia.",
+      input_buy: "Compra",
+      input_buy_hint: "Estratégia de Compra.",
+      input_sell: "Venda",
+      input_sell_hint: "Estratégia de Venda.",
+
+      label_basic_0: "Agora",
+      label_basic_0_intro: "Como os indicadores deveriam estar alinhados agora?",
+      label_basic_1: "Antes",
+      label_basic_1_intro: "Como os indicadores deveriam estar alinhados no candle anterior?",
+      btn_goToRules_hint: "Ver regras...",
+      btn_goToExplainer_hint: "Ver explicação...",
+
+      title_wsDestination_add: "Adicionar",
+      title_wsDestination_to: "em",
+      input_wsDestination: "Área de Trabalho",
+      input_wsDestination_hint: "Para onde vamos mandar este indicador?",
+
+      alert_updated_title: "Atualizada!",
+      alert_updated_text: "Sua Estratégia foi atualizada com sucesso.",
+
+      alert_created_title: "Criada!",
+      alert_created_text_p1: "Sua Estratégia foi criada com sucesso.",
+      alert_created_text_p2: "Agora, você pode executa-la e ver os resultados! ;)",
+
+      error_name: "hmm... E se, além de mantermos o nome único, seu tamanho ser menor que 24 caracteres?",
+      error_desc: "Descrição muito longa... Tente mante-la com no máximo 1024 caracteres.",
+
+      btn_add: "Adicionar",
+      btn_create: "Criar",
+      btn_update: "Atualizar"
+    },
     modalupdatewallet: {
       title: "Atualizar Carteira",
 
@@ -1426,6 +1515,42 @@ const strings = {
     statusfilter: {
       label_title: "Status",
     },
+    strategies: {
+      card_title: "Estratégias",
+      btn_newStrategy: "Nova Estratégia",
+
+      btn_alert_cancel: "Cancelar",
+      btn_alert_confirm: "Confirmar",
+      alert_confirming_title: "Você tem certeza?",
+      alert_confirming_text: "Uma vez removida, não é possível recupera-la.",
+      alert_deleted_title: "Removida!",
+      alert_deleted_text: "Sua Estratégia foi removida com sucesso.",
+
+      wallets_edit_hint: "Editar esta Estratégia.",
+      wallets_delete_hint: "Deletar esta Estratégia."
+    },
+    strategycard: {
+      label_public: "Pública",
+      label_public_hint: "Outros usuários podem ver esta estratégia.",
+      label_private: "Privada",
+      label_private_hint: "Apenas você pode ver esta estratégia.",
+
+      icon_type_buy_hint: "Estratégia de Compra.",
+      icon_type_sell_hint: "Estratégia de Venda.",
+
+
+      label_author: "AUTOR",
+      label_createdOn: "CRIADO EM",
+
+      label_logic: "LÓGICA",
+      label_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico. Por outro lado, a Estática é limitada à intervalos específicos.",
+      label_dynamic: "Dinâmica",
+      label_static: "Estática",
+
+      label_actions: "Ações",
+      btn_update_hint: "Atualizar esta Estratégia.",
+      btn_delete_hint: "Deletar esta Estratégia.",
+    },
     stockexchangefilter: {
       label_title: "Bolsa de Valores",
     },
@@ -1530,7 +1655,6 @@ const strings = {
       btn_alert_confirm: "Confirmar",
       alert_confirming_title: "Você tem certeza?",
       alert_confirming_text: "Posições relacionadas a esta Carteira também serão removidas.",
-      alert_confirming_footer: "Uma vez removida, não é possível recupera-la.",
       alert_deleted_title: "Removida!",
       alert_deleted_text: "Sua Carteira foi removida com sucesso.",
 
