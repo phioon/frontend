@@ -404,7 +404,7 @@ const strings = {
       input_logic: "Logic",
       label_logic_dynamic: "Dynamic",
       label_logic_static: "Static",
-      input_logic_hint: "A Dynamic strategy can be applied to any Time Interval. In other hand, a Static one is limited to the specified intervals.",
+      input_logic_hint: "A Dynamic Strategy can be applied to any time interval (d, m60). It can become a Static one if the time interval is set in one of its rules.",
       input_description: "Description",
       label_description_placeholder: "Explaining a Strategy may help other people understand how it works...",
       input_public: "Public",
@@ -436,7 +436,7 @@ const strings = {
       alert_created_text_p1: "Your Strategy has been created.",
       alert_created_text_p2: "Now, you can run it and see the results! ;) ",
 
-      error_name: "hmm... What if we keep it unique and its length up to 24 characters?",
+      error_name: "It's important that the name is less than 32 characters and unique between your Strategies.",
       error_desc: "It seems too long... Please, try to keep it lesser than 1024 characters.",
 
       btn_add: "Add",
@@ -729,7 +729,7 @@ const strings = {
       label_createdOn: "CREATED ON",
 
       label_logic: "LOGIC",
-      label_logic_hint: "A Dynamic Strategy can be applied to any Time Interval. A Static one is limited to the specified intervals.",
+      label_logic_hint: "A Dynamic Strategy can be applied to any time interval (d, m60). It can become a Static one if the time interval is set in one of its rules.",
       label_dynamic: "Dynamic",
       label_static: "Static",
 
@@ -1234,7 +1234,7 @@ const strings = {
       input_logic: "Lógica",
       label_logic_dynamic: "Dinâmica",
       label_logic_static: "Estática",
-      input_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico. Por outro lado, a Estática é limitada à intervalos específicos.",
+      input_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico. Ela pode se tornar Estática caso o tempo gráfico seja configurado em uma de suas regras.",
       input_description: "Descrição",
       label_description_placeholder: "Explicar uma Estratégia pode ajudar outras pessoas a entender como ela funciona...",
       input_public: "Pública",
@@ -1265,7 +1265,7 @@ const strings = {
       alert_created_text_p1: "Sua Estratégia foi criada com sucesso.",
       alert_created_text_p2: "Agora, você pode executa-la e ver os resultados! ;)",
 
-      error_name: "hmm... E se, além de mantermos o nome único, seu tamanho ser menor que 24 caracteres?",
+      error_name: "É importante que o nome seja menor que 32 caracteres e único entre as suas Estratégias.",
       error_desc: "Descrição muito longa... Tente mante-la com no máximo 1024 caracteres.",
 
       btn_add: "Adicionar",
@@ -1543,7 +1543,7 @@ const strings = {
       label_createdOn: "CRIADO EM",
 
       label_logic: "LÓGICA",
-      label_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico. Por outro lado, a Estática é limitada à intervalos específicos.",
+      label_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico. Ela pode se tornar Estática caso o tempo gráfico seja configurado em uma de suas regras.",
       label_dynamic: "Dinâmica",
       label_static: "Estática",
 

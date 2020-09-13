@@ -56,8 +56,8 @@ class StrategyCard extends React.Component {
     return (
 
       <Card className="card-summary">
+        {/* Name */}
         <CardHeader>
-          {/* Name */}
           <h6 className="card-category text-center">{strategy.name}</h6>
         </CardHeader>
         <CardBody>

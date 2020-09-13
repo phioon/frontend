@@ -149,7 +149,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserCustomSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCustom
-        fields = '__all__'
+        fields = ['birthday', 'nationality', 'pref_langId', 'pref_currency']
 
 
 class RequestPasswordResetSerializer(rest_auth_serializers.PasswordResetSerializer):
