@@ -5,7 +5,7 @@
     height: 10px;
     opacity: 0.25;
     margin-right: 15px;
-    cursor: move;
+    cursor: grab;
     background: -webkit-linear-gradient(
       top,
       #000,
@@ -37,6 +37,7 @@
   .sortable-item {
     display: flex;
     align-items: center;
+    cursor: grab;
     line-height: 2.8em;
     z-index: 99999999;
     box-shadow: 0px 0.5px rgba(0, 0, 0, 0.2);

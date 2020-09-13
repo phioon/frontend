@@ -71,12 +71,14 @@ class ModalStrategy extends React.Component {
         data: {
           name: "",
           desc: "",
+          type: "buy",
           isPublic: true,
           isDynamic: undefined,
           rules: "",
         },
         states: {
           name: "",
+          desc: "has-success",
         },
         workspaces: [
           {
@@ -99,6 +101,7 @@ class ModalStrategy extends React.Component {
             type: "advanced",
             id: "advanced",
             showExplainer: false,
+            isDisabled: true,
           }
         ],
         isValidated: undefined
@@ -137,18 +140,22 @@ class ModalStrategy extends React.Component {
   fakeUnmount() {
     let newState = { strategy: this.state.strategy }
 
+    newState.activeWsMode = "basic"
+
     newState.strategy = {
       initial: {},
       patch: {},
       data: {
         name: "",
         desc: "",
+        type: "buy",
         isPublic: true,
         isDynamic: undefined,
         rules: "",
       },
       states: {
         name: "",
+        desc: "has-success",
       },
       workspaces: [
         {
@@ -171,6 +178,7 @@ class ModalStrategy extends React.Component {
           type: "advanced",
           id: "advanced",
           showExplainer: false,
+          isDisabled: true,
         }
       ],
       isValidated: undefined
@@ -244,19 +252,21 @@ class ModalStrategy extends React.Component {
         strategy = this.onWSCommit("add", ws.id, item)
       }
 
-      console.log(rules)
+      // console.log(rules)
     }
 
     // Data
     strategy.data.id = objData.id
     strategy.data.name = objData.name
     strategy.data.desc = objData.desc
+    strategy.data.type = objData.type
     strategy.data.isDynamic = objData.isDynamic
     strategy.data.isPublic = objData.isPublic
     // Initial
     strategy.initial = deepCloneObj(strategy.data)
     // States
-    strategy.states.name = 'has-success'
+    strategy.states.name = "has-success"
+    strategy.states.desc = "has-success"
 
     return strategy
   }
@@ -264,7 +274,7 @@ class ModalStrategy extends React.Component {
   verifyStrategyName(name) {
     let isValidated = false
 
-    if (verifyLength(name, 1, 24)) {
+    if (verifyLength(name, 1, 32)) {
       isValidated = true
       if (name == this.state.strategy.initial.name)
         isValidated = true
@@ -291,6 +301,12 @@ class ModalStrategy extends React.Component {
     switch (stateName) {
       case "name":
         if (this.verifyStrategyName(value))
+          newState.strategy.states[stateName] = "has-success"
+        else
+          newState.strategy.states[stateName] = "has-danger"
+        break;
+      case "desc":
+        if (verifyLength(value, 0, 1020))
           newState.strategy.states[stateName] = "has-success"
         else
           newState.strategy.states[stateName] = "has-danger"
@@ -598,6 +614,12 @@ class ModalStrategy extends React.Component {
         switch (action) {
           case "add":
             ws = this.addIndicatorIntoWS(ws, item)
+
+            if (ws.id == "basic_1")
+              this.toggleNavLink("activeWsMode", "transition")
+            else if (ws.id == "advanced")
+              this.toggleNavLink("activeWsMode", "advanced")
+
             break;
           case "update":
             ws = this.saveIndicatorOnWS(ws, prevItemId, item)
@@ -686,7 +708,7 @@ class ModalStrategy extends React.Component {
     ws.items = items
 
     return ws
-  };
+  }
 
   isValidated(obj) {
     if (Object.values(obj.states).length > 1) {
@@ -730,10 +752,10 @@ class ModalStrategy extends React.Component {
     let object = {
       name: strategy.data.name,
       desc: strategy.data.desc,
+      type: strategy.data.type,
       is_public: strategy.data.isPublic,
       is_dynamic: strategy.data.isDynamic,
       rules: strategy.data.rules
-      // rules: this.props.managers.strategy.jsonRulesAsString(strategy.workspaces)
     }
 
     let result = await this.props.managers.app.strategyCreate(object)
@@ -757,9 +779,19 @@ class ModalStrategy extends React.Component {
 
     for (var [k, v] of Object.entries(strategy.patch))
       if (strategy.initial[k] != v)
-        object[k] = v
+        switch (k) {
+          case "isDynamic":
+            object.is_dynamic = v
+            break;
+          case "isPublic":
+            object.is_public = v
+            break;
+          default:
+            object[k] = v
+            break;
+        }
 
-    console.log(object)
+    // console.log(object)
 
     let result = await this.props.managers.app.strategyUpdate(object)
 
@@ -818,9 +850,6 @@ class ModalStrategy extends React.Component {
   };
   toggleNavLink(navId, value) {
     this.setState({ [navId]: value })
-  }
-  toggleWS(wsId) {
-
   }
   hideAlert() {
     this.fakeUnmount()
@@ -979,6 +1008,49 @@ class ModalStrategy extends React.Component {
             <hr />
           </CardHeader>
           <CardBody>
+            {/* Type */}
+            <Row className="justify-content-center">
+              <Col md="3" xs="5">
+                <div
+                  className={classnames("card-choice", { active: strategy.data.type == "buy" })}
+                  onClick={() => this.onChoiceChange("type", "buy")}
+                >
+                  <input
+                    id="buy"
+                    name="type"
+                    type="radio"
+                    defaultChecked={strategy.data.isPublic}
+                  />
+                  <div id="radio_buy" className="icon mm">
+                    <i className="nc-icon nc-spaceship mm" />
+                  </div>
+                  <label>{getString(langId, compId, "input_buy")}</label>
+                </div>
+                <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_buy"}>
+                  {getString(langId, compId, "input_buy_hint")}
+                </UncontrolledTooltip>
+              </Col>
+              <Col md="3" xs="5">
+                <div
+                  className={classnames("card-choice", { active: strategy.data.type == "sell" })}
+                  onClick={() => this.onChoiceChange("type", "sell")}
+                >
+                  <input
+                    id="sell"
+                    name="type"
+                    type="radio"
+                  />
+                  <div id="radio_sell" className="icon mm">
+                    <i className="nc-icon nc-spaceship fa-rotate-90 mm" />
+                  </div>
+                  <label>{getString(langId, compId, "input_sell")}</label>
+                </div>
+                <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_sell"}>
+                  {getString(langId, compId, "input_sell_hint")}
+                </UncontrolledTooltip>
+              </Col>
+            </Row>
+            <br />
             {/* Visibility */}
             <Row className="justify-content-center">
               <Col md="3" xs="5">
@@ -1022,7 +1094,7 @@ class ModalStrategy extends React.Component {
               </Col>
             </Row>
             <br />
-            {/* Name and Type */}
+            {/* Name and Logic */}
             <Row>
               {/* Name*/}
               <Col lg="9" xs="8">
@@ -1041,38 +1113,44 @@ class ModalStrategy extends React.Component {
                   }
                 </FormGroup>
               </Col>
-              {/* Type */}
+              {/* Logic Type */}
               <Col lg="3" xs="4">
                 <FormGroup>
                   <label>
-                    {getString(langId, compId, "input_type")}
+                    {getString(langId, compId, "input_logic")}
                     {" "}
-                    <i id={"input_type_hint"} className="nc-icon nc-alert-circle-i" />
+                    <i id={"input_logic_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
-                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_type_hint"}>
-                    {getString(langId, compId, "input_type_hint")}
+                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_logic_hint"}>
+                    {getString(langId, compId, "input_logic_hint")}
                   </UncontrolledTooltip>
                   <Input
                     type="text"
                     name="isDynamic"
                     disabled
                     value={strategy.data.isDynamic ?
-                      getString(langId, compId, "label_type_dynamic") :
-                      getString(langId, compId, "label_type_static")
+                      getString(langId, compId, "label_logic_dynamic") :
+                      getString(langId, compId, "label_logic_static")
                     }
                   />
                 </FormGroup>
               </Col>
             </Row>
             {/* Description*/}
-            <FormGroup>
+            <FormGroup className={`has-label ${strategy.states.desc}`}>
               <label>{getString(langId, compId, "input_description")}</label>
               <Input
                 type="textarea"
                 name="desc"
                 value={strategy.data.desc}
+                placeholder={getString(langId, compId, "label_description_placeholder")}
                 onChange={e => this.onChange(e.target.value, e.target.name)}
               />
+              {strategy.states.desc == "has-danger" &&
+                <label className="error">
+                  {getString(langId, compId, "error_desc")}
+                </label>
+              }
             </FormGroup>
             <br />
             {/* Workspaces */}

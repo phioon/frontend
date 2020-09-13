@@ -167,12 +167,12 @@ class Strategy (models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     owner = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
-    name = models.CharField(max_length=32)
-    desc = models.CharField(max_length=128, blank=True)
+    name = models.CharField(max_length=64)
+    desc = models.CharField(max_length=1024, blank=True)
+    type = models.CharField(max_length=8, verbose_name='buy or sell')
 
-    is_public = models.BooleanField(default=True, verbose_name='Is it public for other users?')
-    is_dynamic = models.BooleanField(default=False, verbose_name='Is it possible to apply the same rule for more'
-                                                                 'than one time interval (s, d, 60m, 30m)')
+    is_public = models.BooleanField(default=True, verbose_name='Visibility')
+    is_dynamic = models.BooleanField(default=False, verbose_name='Logic type')
     rules = models.TextField()
 
     def __str__(self):

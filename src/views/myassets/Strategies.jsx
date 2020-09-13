@@ -72,13 +72,13 @@ class Strategies extends React.Component {
   renderStrategies(strategies) {
     return strategies.map((strategy) => {
       return (
-        <Col key={strategy.id} lg="6" md="12">
+        <Col key={strategy.id} lg="4" md="6">
           <StrategyCard
             {...this.props}
             strategy={strategy}
             onClick={this.onClick}
           />
-        </Col >
+        </Col>
       )
     })
   }
@@ -107,6 +107,7 @@ class Strategies extends React.Component {
       id: obj.id,
       name: obj.name,
       desc: obj.desc,
+      type: obj.type,
       isDynamic: obj.is_dynamic,
       isPublic: obj.is_public,
       rules: obj.rules
