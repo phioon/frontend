@@ -29,7 +29,7 @@ const strings = {
       title_default: "Dashboard",
       title_openpositions: "Open Positions",
       title_positions: "My Assets",
-      title_strategies: "My Assets",
+      title_strategies: "Technical Analysis",
       title_suggestions: "Technical Analysis",
       title_userprofile: "My Profile",
       title_walletoverview: "Overview",
@@ -130,7 +130,8 @@ const strings = {
 
       user_profileUpdated: "Profile updated!",
 
-      user_alreadyExists: "hmm... If I'm not wrong, I've seen you here. Did you forget your password?",
+      user_emailAlreadyExists: "hmm... If I'm not wrong, I've seen your email here before. Did you forget your password?",
+      user_usernameAlreadyExists: "hmm... This username is taken already... Let's try another one.",
       user_emailNotConfirmed: "Before we continue, I need you to confirm your email... Did you not receive the Confirmation Email yet?",
       user_emailCouldNotBeSent: "Ok, good news is that your user has been created. Bad news, my team couldn't send you a confirmation email. I already asked them to handle it, so you should receive an email in a couple hours. ;)",
       user_amountOfSessions: "Ooops... Seems like the amount of sessions for this user is exceeded. Wait a few minutes and try again.",
@@ -197,7 +198,7 @@ const strings = {
     },
     login: {
       card_header: "Login",
-      input_email: "Email",
+      input_email: "Username or email",
       input_password: "Password",
 
       btn_login: "Login",
@@ -436,8 +437,8 @@ const strings = {
       alert_created_text_p1: "Your Strategy has been created.",
       alert_created_text_p2: "Now, you can run it and see the results! ;) ",
 
-      error_name: "It's important that the name is less than 32 characters and unique between your Strategies.",
-      error_desc: "It seems too long... Please, try to keep it lesser than 1024 characters.",
+      error_name: "It's important that the name is less than 24 characters and unique between your Strategies.",
+      error_desc: "It seems too long... Please, try to keep it lesser than 1000 characters.",
 
       btn_add: "Add",
       btn_create: "Create",
@@ -565,8 +566,8 @@ const strings = {
         "Ooops... A user with that email address already exists. Did you forget your password?",
 
       error_enterValidEmail: "Here, I need a valid email.",
+      error_username_minReq: "It can have letters, numbers and few special characters like: '_' and '.'",
       error_passwordLength: "It must have at least 8 characters.",
-      error_passwordMatch: "Seems like password fields are not matching.",
       error_acceptPrivacyPolicy: "To proceed, I need you to accept our Privacy Policy.",
 
       info_selectNationality: "Select one",
@@ -580,9 +581,9 @@ const strings = {
 
       card_header: "Create your account",
       info_orBeCassical: "or be classical",
-      input_firstName: "First Name",
-      input_lastName: "Last Name",
+      input_fullName: "Full Name",
       input_email: "Email",
+      input_username: "Username",
       input_password: "Password",
       input_confirmPassword: "Confirm Password",
       input_nationality: "Nationality",
@@ -706,15 +707,19 @@ const strings = {
       card_title: "Strategies",
       btn_newStrategy: "New Strategy",
 
+      card_selection_title: "Context",
+
+      input_timeInterval: "Interval",
+      input_timeInterval_hint: "",
+      input_stockExchange: "Stock Exchange",
+      input_stockExchange_hint: "",
+
       btn_alert_cancel: "Cancel",
       btn_alert_confirm: "Confirm",
       alert_confirming_title: "Are you sure?",
       alert_confirming_text: "Once deleted, it's not possible to recover it back.",
       alert_deleted_title: "Deleted!",
       alert_deleted_text: "Your Strategy has been deleted.",
-
-      wallets_edit_hint: "Edit this Strategy.",
-      wallets_delete_hint: "Delete this Strategy."
     },
     strategycard: {
       label_public: "Public",
@@ -736,6 +741,44 @@ const strings = {
       label_actions: "Actions",
       btn_update_hint: "Update this Strategy.",
       btn_delete_hint: "Delete this Strategy.",
+    },
+    strategycardmini: {
+      label_public: "Public",
+      label_public_hint: "Other users can see this strategy.",
+      label_private: "Private",
+      label_private_hint: "Only you can see this strategy.",
+
+      icon_type_buy_hint: "It's a Purchase Strategy.",
+      icon_type_sell_hint: "It's a Sale Strategy.",
+
+      label_author: "AUTHOR",
+      label_createdOn: "CREATED ON",
+
+      label_logic: "LOGIC",
+      label_logic_hint: "A Dynamic Strategy can be applied to any time interval (d, m60). It can become a Static one if the time interval is set in one of its rules.",
+      label_dynamic: "Dynamic",
+      label_static: "Static",
+
+      label_actions: "Actions",
+      btn_run_hint: "See results.",
+      btn_view_hint: "View Strategy.",
+      btn_update_hint: "Update Strategy.",
+      btn_delete_hint: "Delete Strategy.",
+    },
+    strategyresults: {
+      card_title: "Results",
+      card_subtitle: "Strategy:",
+      badge_strategy: "Run a Strategy",
+
+      header_asset: "Asset",
+      header_name: "Name",
+      header_quote: "Quote",
+      header_volume: "Volume Avg.",
+      header_lastTradeTime: "Last trade time",
+
+      table_firstLoad: "Run a Strategy and let's see what I can do... ;)",
+      table_emptyData: "Right now, there are no assets matching the selected Strategy.",
+      table_noDataFound: "hmm... Did I miss something?! Please, check your filters. ;)"
     },
     subscriptions: {
       basic_label: "BASIC",
@@ -877,7 +920,7 @@ const strings = {
       title_default: "Dashboard",
       title_openpositions: "Posições Abertas",
       title_positions: "Meus Ativos",
-      title_strategies: "Meus Ativos",
+      title_strategies: "Análise Técnica",
       title_suggestions: "Análise Técnica",
       title_userprofile: "Meu Perfil",
       title_walletoverview: "Visão Geral",
@@ -977,9 +1020,10 @@ const strings = {
 
       user_profileUpdated: "Perfil atualizado!",
 
+      user_emailAlreadyExists: "hmm... Se não me engano, eu já vi seu email por aqui antes. Esqueceu a senha?",
+      user_usernameAlreadyExists: "hmm... This username is taken already... Let's try another one.",
       user_emailCouldNotBeSent: "Ok, a boa notícia é que seu usuário foi criado. Má notícia, meu time não está conseguindo te enviar o email de confirmação. Já pedi para darem uma olhada no seu caso, então você deve receber um email nas próximas horas. ;)",
       user_emailNotConfirmed: "Antes de continuar, preciso que confirme seu e-mail... Ainda não recebeu o E-mail de Confirmação?",
-      user_alreadyExists: "hmm... Se não me engano, eu já te vi por aqui. Esqueceu a senha?",
       user_amountOfSessions: "Ooops... A quantidade de sessões para este usuário foi excedida. Aguarde alguns minutos e tente novamente.",
       user_invalidCredentials: "Parece que suas credenciais estão incorretas. Por favor, tente novamente.",
       user_password_entirelyNumeric: "Sua nova senha possui apenas numeros. Que tal uma combinação mais segura?",
@@ -1002,7 +1046,7 @@ const strings = {
     },
     login: {
       card_header: "Login",
-      input_email: "E-mail",
+      input_email: "Usuário ou e-mail",
       input_password: "Senha",
 
       btn_login: "Login",
@@ -1388,8 +1432,8 @@ const strings = {
     },
     register: {
       error_enterValidEmail: "Aqui, preciso de um e-mail válido.",
+      error_username_minReq: "Pode conter letras, números and alguns caracteres especiais como: '_' e '.'",
       error_passwordLength: "Precisa ser no minimo 8 caracteres.",
-      error_passwordMatch: "Parece que os campos de senha não estão iguais.",
       error_acceptPrivacyPolicy: "Para prosseguir, preciso que aceite nossa Politica de Privacidade.",
 
       leftArea_infoTitle1: "Praticidade",
@@ -1401,9 +1445,9 @@ const strings = {
 
       card_header: "Crie sua conta",
       info_orBeCassical: "ou vá em modo clássico mesmo",
-      input_firstName: "Primeiro Nome",
-      input_lastName: "Último Nome",
+      input_fullName: "Nome Completo",
       input_email: "E-mail",
+      input_username: "Usuário",
       input_password: "Senha",
       input_confirmPassword: "Confirmar Senha",
       input_nationality: "Nacionalidade",

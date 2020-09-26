@@ -55,25 +55,22 @@ def StockExchangeList(request):
     return Response(json.loads(r.text))
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def AssetList(request):
     backendRequest = __backendHost__ + '/api/market/assets/'
-
-    detailed = request.query_params.get('detailed')
-    stockExchange = request.query_params.get('stockExchange')
-    assets = request.query_params.get('assets')
-    params = {'detailed': detailed,
-              'stockExchange': stockExchange,
-              'assets': assets}
+    params = request.query_params
+    data = request.data
 
     try:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         data=data,
                          params=params)
     except requests.exceptions.Timeout:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         data=data,
                          params=params)
     except requests.exceptions.RequestException as ex:
         obj_res = {'message': str(ex)}
@@ -104,22 +101,18 @@ def IndicatorList(request):
 def D_RawList(request):
     backendRequest = __backendHost__ + '/api/market/d/raw/'
 
-    detailed = request.query_params.get('detailed')
-    asset = request.query_params.get('asset')
-    dateFrom = request.query_params.get('dateFrom')
-    dateTo = request.query_params.get('dateTo')
-    params = {'detailed': detailed,
-              'asset': asset,
-              'dateFrom': dateFrom,
-              'dateTo': dateTo}
+    params = request.query_params
+    data = request.data
 
     try:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         data=data,
                          params=params)
     except requests.exceptions.Timeout:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         data=data,
                          params=params)
     except requests.exceptions.RequestException as ex:
         obj_res = {'message': str(ex)}
@@ -132,42 +125,18 @@ def D_RawList(request):
 def D_RawLatestList(request):
     backendRequest = __backendHost__ + '/api/market/d/raw/latest/'
 
-    stockExchange = request.query_params.get('stockExchange')
-    assets = request.query_params.get('assets')
-    params = {'stockExchange': stockExchange,
-              'assets': assets}
+    params = request.query_params
+    data = request.data
 
     try:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         data=data,
                          params=params)
     except requests.exceptions.Timeout:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         params=params)
-    except requests.exceptions.RequestException as ex:
-        obj_res = {'message': str(ex)}
-        return Response(obj_res, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-    return Response(json.loads(r.text))
-
-
-@api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
-def D_PhiboLatestList(request):
-    backendRequest = __backendHost__ + '/api/market/d/phibo/latest/'
-
-    stockExchange = request.query_params.get('stockExchange')
-    assets = request.query_params.get('assets')
-    params = {'stockExchange': stockExchange,
-              'assets': assets}
-
-    try:
-        r = requests.get(backendRequest,
-                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         params=params)
-    except requests.exceptions.Timeout:
-        r = requests.get(backendRequest,
-                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         data=data,
                          params=params)
     except requests.exceptions.RequestException as ex:
         obj_res = {'message': str(ex)}
@@ -180,18 +149,42 @@ def D_PhiboLatestList(request):
 def D_EmaLatestList(request):
     backendRequest = __backendHost__ + '/api/market/d/ema/latest/'
 
-    stockExchange = request.query_params.get('stockExchange')
-    assets = request.query_params.get('assets')
-    params = {'stockExchange': stockExchange,
-              'assets': assets}
+    params = request.query_params
+    data = request.data
 
     try:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         data=data,
                          params=params)
     except requests.exceptions.Timeout:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         data=data,
+                         params=params)
+    except requests.exceptions.RequestException as ex:
+        obj_res = {'message': str(ex)}
+        return Response(obj_res, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    return Response(json.loads(r.text))
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def D_PhiboLatestList(request):
+    backendRequest = __backendHost__ + '/api/market/d/phibo/latest/'
+
+    params = request.query_params
+    data = request.data
+
+    try:
+        r = requests.get(backendRequest,
+                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         data=data,
+                         params=params)
+    except requests.exceptions.Timeout:
+        r = requests.get(backendRequest,
+                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         data=data,
                          params=params)
     except requests.exceptions.RequestException as ex:
         obj_res = {'message': str(ex)}
@@ -204,9 +197,7 @@ def D_EmaLatestList(request):
 def D_setupList(request):
     backendRequest = __backendHost__ + '/api/market/d/setups/'
 
-    stockExchange = request.query_params.get('stockExchange')
-    dateFrom = request.query_params.get('dateFrom')
-    params = {'stockExchange': stockExchange, 'dateFrom': dateFrom}
+    params = request.query_params
 
     try:
         r = requests.get(backendRequest,
@@ -228,8 +219,7 @@ def D_setupList(request):
 def D_setupSummaryList(request):
     backendRequest = __backendHost__ + '/api/market/d/setupSummary/'
 
-    stockExchange = request.query_params.get('stockExchange')
-    params = {'stockExchange': stockExchange}
+    params = request.query_params
 
     try:
         r = requests.get(backendRequest,

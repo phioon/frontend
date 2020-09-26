@@ -34,7 +34,8 @@ import {
   compare,
   verifyEmail,
   verifyLength,
-  verifyOnlyLetters
+  verifyOnlyLetters,
+  verifyUsernameStr
 } from "../../core/utils";
 // --------------------
 
@@ -48,13 +49,29 @@ class Register extends React.Component {
       langId: props.prefs.langId,
       isLoading: false,
 
-      firstname: "",
-      lastname: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      nationality: null,
-      cbTerms: false,
+      checkingAvailability: false,
+      isUsernameAvailable: undefined,
+
+      // Any change in user object must be reflected at this.clearInputFields()
+      user: {
+        data: {
+          fullname: "",
+          email: "",
+          username: "",
+          password: "",
+          nationality: null,
+          cbTerms: false
+        },
+        states: {
+          fullname: "",
+          email: "",
+          username: "",
+          password: "",
+          nationality: "",
+          cbTerms: ""
+        },
+        isValidated: undefined
+      },
 
       nationalities: [],
 
@@ -99,21 +116,27 @@ class Register extends React.Component {
   }
 
   clearInputFields = () => {
-    this.setState({
-      firstname: "",
-      firstnameState: "",
-      lastname: "",
-      lastnameState: "",
-      email: "",
-      emailState: "",
-      password: "",
-      passwordState: "",
-      confirmPassword: "",
-      confirmPasswordState: "",
-      nationality: null,
-      cbTerms: false,
-      cbTermsState: ""
-    });
+    let user = {
+      data: {
+        fullname: "",
+        email: "",
+        username: "",
+        password: "",
+        nationality: null,
+        cbTerms: false
+      },
+      states: {
+        fullname: "",
+        email: "",
+        username: "",
+        password: "",
+        nationality: "",
+        cbTerms: ""
+      },
+      isValidated: undefined
+    }
+
+    this.setState({ user });
   };
 
   // function that hide modalNotice
@@ -128,97 +151,142 @@ class Register extends React.Component {
     });
   }
 
-  onChange = (event, stateName, type, stateNameEqualTo) => {
+  onSelectChange(fieldName, value) {
+    let newState = { user: this.state.user }
+
+    newState.user.data[fieldName] = value
+
+    switch (fieldName) {
+      case "nationality":
+        newState.user.states[fieldName] = "has-success"
+        break;
+      default:
+        break;
+    }
+
+    newState.user.isValidated = this.isValidated(newState.user)
+
+    this.setState(newState)
+  }
+  onChange = (fieldName, value, fieldNameEqualTo) => {
+    let newState = { user: this.state.user };
+
     if (this.state.labelAlertState !== null)
       this.setState({
         alertState: null,
         alertMsg: ""
       })
 
-    if (type !== "checkbox") {
-      this.setState({ [stateName]: event.target.value })
-    } else {
-      this.setState({ [stateName]: event.target.checked })
-    }
+    newState.user.data[fieldName] = value
 
-    switch (type) {
-      case "firstname":
-        if (verifyLength(event.target.value, 3) && verifyOnlyLetters(event.target.value)) {
-          this.setState({ [stateName + "State"]: "has-success" });
+    switch (fieldName) {
+      case "fullname":
+        if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
+          newState.user.states[fieldName] = "has-success"
         } else {
-          this.setState({ [stateName + "State"]: "has-danger" });
+          newState.user.states[fieldName] = "has-danger"
         }
         break;
       case "lastname":
-        if (verifyLength(event.target.value, 3) && verifyOnlyLetters(event.target.value)) {
-          this.setState({ [stateName + "State"]: "has-success" });
+        if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
+          newState.user.states[fieldName] = "has-success"
         } else {
-          this.setState({ [stateName + "State"]: "has-danger" });
+          newState.user.states[fieldName] = "has-danger"
         }
         break;
       case "email":
-        if (verifyEmail(event.target.value)) {
-          this.setState({ [stateName + "State"]: "has-success" });
+        if (verifyEmail(value)) {
+          newState.user.states[fieldName] = "has-success"
         } else {
-          this.setState({ [stateName + "State"]: "has-danger" });
+          newState.user.states[fieldName] = "has-danger"
+        }
+        break;
+      case "username":
+        newState.user.data.username_msgId = ""
+        newState.user.data[fieldName] = value.toLowerCase()     // Keep it lowercase
+
+        if (verifyLength(value, 3) && verifyUsernameStr(value)) {
+          newState.user.states[fieldName] = "has-success"
+        } else {
+          newState.user.data.username_msgId = "error_username_minReq"
+          newState.user.states[fieldName] = "has-danger"
         }
         break;
       case "password":
-        if (verifyLength(event.target.value, 8)) {
-          this.setState({ [stateName + "State"]: "has-success" });
+        if (verifyLength(value, 8)) {
+          newState.user.states[fieldName] = "has-success"
         } else {
-          this.setState({ [stateName + "State"]: "has-danger" });
+          newState.user.states[fieldName] = "has-danger"
         }
         break;
-      case "equalTo":
-        if (this.state[stateNameEqualTo + "State"] === "has-success") {
-          if (compare(event.target.value, this.state[stateNameEqualTo])) {
-            this.setState({ [stateName + "State"]: "has-success" });
-            this.setState({ [stateNameEqualTo + "State"]: "has-success" });
-            this.setState({ [stateName + "Value"]: event.target.value });
+      case "confirmPassword":
+        if (newState.user.states[fieldNameEqualTo] === "has-success") {
+          if (compare(value, newState.user.data[fieldNameEqualTo])) {
+            newState.user.states[fieldName] = "has-success"
+            newState.user.states[fieldNameEqualTo] = "has-success"
           } else {
-            this.setState({ [stateName + "State"]: "has-danger" });
+            newState.user.states[fieldName] = "has-danger"
           }
         }
         break;
-      case "checkbox":
-        if (event.target.checked) {
-          this.setState({ [stateName + "State"]: "has-success" });
+      case "cbTerms":
+        if (value) {
+          newState.user.states[fieldName] = "has-success"
         } else {
-          this.setState({ [stateName + "State"]: "has-danger" });
+          newState.user.states[fieldName] = "has-danger"
         }
         break;
       default:
         break;
     }
-  };
 
-  async registerClick(e) {
-    e.preventDefault();
+    newState.user.isValidated = this.isValidated(newState.user)
+
+    this.setState(newState)
+  };
+  async checkUsernameAvailability(user, fieldName, value) {
+    this.setState({ checkingAvailability: true })
+
+    let newState = { user: user }
+    let result = await this.props.managers.auth.checkUsernameAvailability(value)
+
+    console.log({ result })
+    console.log(`result.data.is_available: ${result.data.is_available}`)
+
+    if (result.data && result.data.is_available) {
+      this.setState({ isUsernameAvailable: result.data.is_available })
+      newState.user.states[fieldName] = "has-success"
+    }
+    else {
+      newState.user.data.username_msgId = "error_username_taken"
+      newState.user.states[fieldName] = "has-danger"
+    }
+
+    // If username is available, trigger this.onChange
+    // If not available, set state here.
+
+    this.setState({ checkingAvailability: false })
+  }
+
+  async registerClick(user) {
     this.setState({ isLoading: true })
 
-    if (this.state.emailState === "") {
-      this.setState({ emailState: "has-danger" });
-    }
-    if (
-      this.state.passwordState === "" ||
-      this.state.confirmPasswordState === ""
-    ) {
-      this.setState({ passwordState: "has-danger" });
-      this.setState({ confirmPasswordState: "has-danger" });
-    }
+    let names = String(user.data.fullname).split(" ")
+    let firstname = names[0]
+    names.shift()
+    let lastname = names.join(" ")
 
-    let user = {
-      username: this.state.email,
-      email: this.state.email,
-      first_name: this.state.firstname,
-      last_name: this.state.lastname,
-      password: this.state.confirmPassword,
-      nationality: this.state.nationality.value,
+    let data = {
+      first_name: firstname,
+      last_name: lastname,
+      username: user.data.username,
+      email: user.data.email,
+      password: user.data.password,
+      nationality: user.data.nationality.value,
       langId: this.state.langId
     };
 
-    let result = await this.props.managers.auth.userRegister(user)
+    let result = await this.props.managers.auth.userRegister(data)
 
     if (result.status == 200) {
       this.setState({ isLoading: false });
@@ -227,14 +295,27 @@ class Register extends React.Component {
     }
     else {
       let msg = await this.props.getHttpTranslation(result, this.state.compId, "user")
+
+      if (msg.id == "user_usernameAlreadyExists")
+        user.states.username = "has-danger"
+
       this.setState({
+        user,
         isLoading: false,
         alertState: "has-danger",
-        forgotPassword_isHidden: msg.id == "user_alreadyExists" ? false : true,
+        btnForgotPassword_isHidden: msg.id == "user_emailAlreadyExists" ? false : true,
         alertMsg: msg.text
       })
     }
   };
+
+  isValidated(obj) {
+    for (var state of Object.values(obj.states))
+      if (state != "has-success")
+        return false
+
+    return true
+  }
 
   toggleModal(modalId) {
     this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
@@ -242,27 +323,16 @@ class Register extends React.Component {
 
   render() {
     let { getString } = this.props;
-
-    // taking all the states
     let {
       // register form
       langId,
       compId,
       isLoading,
 
-      firstname,
-      firstnameState,
-      lastname,
-      lastnameState,
-      email,
-      emailState,
-      password,
-      passwordState,
-      confirmPassword,
-      confirmPasswordState,
-      nationality,
-      cbTerms,
-      cbTermsState,
+      checkingAvailability,
+      isUsernameAvailable,
+
+      user,
 
       nationalities,
 
@@ -271,6 +341,8 @@ class Register extends React.Component {
       alertState,
       alertMsg
     } = this.state;
+
+    console.log(user)
 
     return (
       <div className="register-page">
@@ -338,39 +410,24 @@ class Register extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <Form action="" className="form" method="">
-                    {/* First Name */}
-                    <InputGroup className={`has-label ${firstnameState}`}>
+                    {/* Full Name */}
+                    <InputGroup className={`has-label ${user.states.fullname}`}>
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>
                           <i className="nc-icon nc-single-02" />
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
-                        placeholder={getString(langId, compId, "input_firstName")}
+                        placeholder={getString(langId, compId, "input_fullName")}
                         type="text"
-                        name="firstname"
-                        value={firstname}
-                        onChange={e => this.onChange(e, e.target.name, "firstname")}
-                      />
-                    </InputGroup>
-                    {/* Last Name */}
-                    <InputGroup className={`has-label ${lastnameState}`}>
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <i className="nc-icon nc-circle-10" />
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input
-                        placeholder={getString(langId, compId, "input_lastName")}
-                        type="text"
-                        name="lastname"
-                        value={lastname}
-                        onChange={e => this.onChange(e, e.target.name, "lastname")}
+                        name="fullname"
+                        value={user.data.fullname}
+                        onChange={e => this.onChange("fullname", e.target.value)}
                       />
                     </InputGroup>
                     <Row className="mt-4" />
                     {/* Email */}
-                    <InputGroup className={`has-label ${emailState}`}>
+                    <InputGroup className={`has-label ${user.states.email}`}>
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>
                           <i className="nc-icon nc-email-85" />
@@ -380,13 +437,33 @@ class Register extends React.Component {
                         placeholder={getString(langId, compId, "input_email")}
                         name="email"
                         type="email"
-                        value={email}
-                        onChange={e => this.onChange(e, e.target.name, "email")}
+                        value={user.data.email}
+                        onChange={e => this.onChange("email", e.target.value)}
                       />
                     </InputGroup>
-                    <Row className="mt-4" />
+                    {/* Username */}
+                    <InputGroup className={`has-label ${user.states.username}`}>
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="nc-icon nc-badge" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        placeholder={getString(langId, compId, "input_username")}
+                        name="username"
+                        type="username"
+                        value={user.data.username}
+                        onChange={e => this.onChange("username", e.target.value)}
+                      />
+                    </InputGroup>
+                    {checkingAvailability && <Spinner color="default" animation="border" size="sm" />}
+                    <label>
+                      {user.states.username === "has-danger" &&
+                        getString(langId, compId, user.data.username_msgId)
+                      }
+                    </label>
                     {/* Password */}
-                    <InputGroup className={`has-label ${passwordState}`}>
+                    <InputGroup className={`has-label ${user.states.password}`}>
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>
                           <i className="nc-icon nc-key-25" />
@@ -397,44 +474,13 @@ class Register extends React.Component {
                         id="password"
                         name="password"
                         type="password"
-                        value={password}
+                        value={user.data.password}
                         autoComplete="off"
-                        onChange={e =>
-                          this.onChange(e, e.target.name, "password")
-                        }
+                        onChange={e => this.onChange("password", e.target.value)}
                       />
-                      {passwordState === "has-danger" ? (
+                      {user.states.password === "has-danger" ? (
                         <label className="error">
                           {getString(langId, compId, "error_passwordLength")}
-                        </label>
-                      ) : null}
-                    </InputGroup>
-                    {/* Confirm Password */}
-                    <InputGroup className={`has-label ${confirmPasswordState}`}>
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <i className="nc-icon nc-key-25" />
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input
-                        placeholder={getString(
-                          langId,
-                          compId,
-                          "input_confirmPassword"
-                        )}
-                        equalto="#password"
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        type="password"
-                        value={confirmPassword}
-                        autoComplete="off"
-                        onChange={e =>
-                          this.onChange(e, e.target.name, "equalTo", "password")
-                        }
-                      />
-                      {confirmPasswordState === "has-danger" ? (
-                        <label className="error">
-                          {getString(langId, compId, "error_passwordMatch")}
                         </label>
                       ) : null}
                     </InputGroup>
@@ -445,35 +491,33 @@ class Register extends React.Component {
                         className="react-select primary"
                         classNamePrefix="react-select"
                         name="nationality"
-                        value={nationality}
-                        onChange={value =>
-                          this.setState({ nationality: value })
-                        }
+                        value={user.data.nationality}
+                        onChange={value => this.onSelectChange("nationality", value)}
                         options={nationalities}
                         placeholder={getString(langId, compId, "input_nationality")}
                       />
                     </Col>
                     {/* Privacy Policy */}
-                    <InputGroup className={`has-label ${cbTermsState}`}>
+                    <InputGroup className={`has-label ${user.states.cbTerms}`}>
                       <FormGroup check className="text-left">
                         <Label check>
                           <Input
                             type="checkbox"
                             name="cbTerms"
-                            checked={cbTerms}
-                            onChange={e => this.onChange(e, e.target.name, "checkbox")} />
+                            checked={user.data.cbTerms}
+                            onChange={e => this.onChange("cbTerms", e.target.checked)} />
                           <span className="form-check-sign" />
                           {getString(langId, compId, "checkbox_iAgreeToThe") + " "}
-                          <a href="#dosomething" onClick={e => e.preventDefault()}>
+                          <a href="#" onClick={e => e.preventDefault()}>
                             {getString(langId, compId, "checkbox_privacyPolicy")}
                           </a>
                         </Label>
                       </FormGroup>
-                      {/* {cbTermsState === "has-danger" ? (
+                      {user.states.cbTerms === "has-danger" ? (
                         <label className="error">
                           {getString(langId, compId, "error_acceptPrivacyPolicy")}
                         </label>
-                      ) : <br />} */}
+                      ) : null}
                     </InputGroup>
                   </Form>
                 </CardBody>
@@ -482,18 +526,8 @@ class Register extends React.Component {
                     type="submit"
                     className="btn-round"
                     color="primary"
-                    disabled={
-                      compare(password, confirmPassword) &&
-                        this.state.cbTermsState === "has-success" &&
-                        this.state.nationality !== null &&
-                        this.state.confirmPasswordState === "has-success" &&
-                        this.state.passwordState === "has-success" &&
-                        this.state.emailState === "has-success" &&
-                        this.state.lastnameState === "has-success" &&
-                        this.state.firstnameState === "has-success" ?
-                        false : true
-                    }
-                    onClick={e => this.registerClick(e)}
+                    disabled={user.isValidated && !checkingAvailability ? false : true}
+                    onClick={() => this.registerClick(user)}
                   >
                     {isLoading ?
                       <Spinner animation="border" size="sm" /> :

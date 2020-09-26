@@ -2,7 +2,8 @@ from . import utils
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 
-from django.contrib.auth import login, views as django_auth_views, models as django_auth_models
+from django.contrib.auth import login, views as django_auth_views
+from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import get_object_or_404
@@ -23,7 +24,6 @@ from . import serializers
 from app.models import Country, UserCustom, Subscription
 
 
-# User
 class UserRegisterAPIView(generics.GenericAPIView):
     serializer_class = UserRegisterSerializer
     permission_classes = [permissions.AllowAny]
@@ -47,7 +47,7 @@ class UserRegisterAPIView(generics.GenericAPIView):
                         user=user,
                         nationality=nationality,
                         subscription=subscription,
-                        subscription_expires_on='2020-10-31',
+                        subscription_expires_on='2020-12-31',
                         pref_currency=nationality.currency,
                         pref_langId=request.data['langId'])
                 except:
@@ -119,13 +119,26 @@ class LoginAPIView(KnoxLoginView):
         return knox_settings.TOKEN_LIMIT_PER_USER
 
     def post(self, request, format=None):
-        serializer = AuthTokenSerializer(data=request.data)
+        serializer_data = request.data
+
+        if 'username' in serializer_data:
+            # It's a valid log in request
+            if '@' in serializer_data['username']:
+                # Using email to log in
+                user_email = serializer_data['username']
+                if User.objects.filter(email=user_email).exists():
+                    # Email exists in the database
+                    user = User.objects.get(email=user_email)
+                    serializer_data['username'] = user.username
+
+        serializer = AuthTokenSerializer(data=serializer_data)
 
         # Check if user already exists but their email is not confirmed yet
-        user = django_auth_models.User.objects.get(username=serializer.initial_data['username'])
-        if user and not user.is_active:
-            obj_res = {"email": "User email not confirmed."}
-            return Response(obj_res, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(username=serializer.initial_data['username']).exists():
+            user = User.objects.get(username=serializer.initial_data['username'])
+            if not user.is_active:
+                obj_res = {"email": "User email not confirmed."}
+                return Response(obj_res, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
@@ -148,12 +161,23 @@ class RequestEmailConfirmationView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
+        serializer_data = request.data
 
-        try:
-            user = django_auth_models.User.objects.get(username=serializer.initial_data['email'])
-        except django_auth_models.User.DoesNotExist:
+        if 'email' in serializer_data:
+            # It's a valid log in request
+            if '@' not in serializer_data['email']:
+                # Using username...
+                username = serializer_data['email']
+                if User.objects.filter(username=username).exists():
+                    # Username exists in the database
+                    user = User.objects.get(username=username)
+                    serializer_data['email'] = user.email
+
+        serializer = self.serializer_class(data=serializer_data, context={'request': request})
+
+        if User.objects.filter(email=serializer.initial_data['email']).exists():
+            user = User.objects.get(email=serializer.initial_data['email'])
+        else:
             return Response()
 
         # User is active already?
@@ -161,10 +185,9 @@ class RequestEmailConfirmationView(generics.GenericAPIView):
             return Response()
 
         # Brings userCustom to get preferred language
-        userCustom = UserCustom.objects.get(user__username__exact=user.email)
-        langId = "enUS"
-
-        if userCustom:
+        langId = 'ptBR'
+        if UserCustom.objects.filter(user__email__exact=user.email).exists():
+            userCustom = UserCustom.objects.get(user__email__exact=user.email)
             langId = userCustom.pref_langId
 
         # Send Confirmation Email

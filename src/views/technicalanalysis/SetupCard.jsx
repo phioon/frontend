@@ -70,13 +70,13 @@ class SetupCard extends React.Component {
     }
     else {
       // Open Position
-      if (setup.asset_price >= setup.target)
+      if (setup.price >= setup.target)
         return "success"
-      else if (setup.asset_price > setup.max_price)
+      else if (setup.price > setup.max_price)
         return "success"
-      else if (setup.asset_price > setup.stop_loss)
+      else if (setup.price > setup.stop_loss)
         return "warning"
-      else if (setup.asset_price <= setup.stop_loss)
+      else if (setup.price <= setup.stop_loss)
         return "danger"
     }
   }
@@ -93,23 +93,23 @@ class SetupCard extends React.Component {
     else {
       // Open Position
       if (setup.type == "purchase") {
-        if (setup.asset_price >= setup.target)
+        if (setup.price >= setup.target)
           return getString(langId, compId, "label_gain")
-        else if (setup.asset_price > setup.max_price)
-          return this.handleKpiPresentation("currency", setup.asset_price)
-        else if (setup.asset_price > setup.stop_loss)
+        else if (setup.price > setup.max_price)
+          return this.handleKpiPresentation("currency", setup.price)
+        else if (setup.price > setup.stop_loss)
           return getString(langId, compId, "label_buyingArea")
-        else if (setup.asset_price <= setup.stop_loss)
+        else if (setup.price <= setup.stop_loss)
           return getString(langId, compId, "label_loss")
       }
       else {
-        if (setup.asset_price <= setup.target)
+        if (setup.price <= setup.target)
           return getString(langId, compId, "label_gain")
-        else if (setup.asset_price < setup.max_price)
-          return this.handleKpiPresentation("currency", setup.asset_price)
-        else if (setup.asset_price < setup.stop_loss)
+        else if (setup.price < setup.max_price)
+          return this.handleKpiPresentation("currency", setup.price)
+        else if (setup.price < setup.stop_loss)
           return getString(langId, compId, "label_buyingArea")
-        else if (setup.asset_price >= setup.stop_loss)
+        else if (setup.price >= setup.stop_loss)
           return getString(langId, compId, "label_loss")
       }
 

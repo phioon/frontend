@@ -67,8 +67,7 @@ class PositionTypeSerializer(serializers.ModelSerializer):
 
 class StrategySerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    owner_first_name = serializers.ReadOnlyField(source='owner.first_name')
-    owner_last_name = serializers.ReadOnlyField(source='owner.last_name')
+    owner_username = serializers.ReadOnlyField(source='owner.username')
 
     class Meta:
         model = Strategy
@@ -113,7 +112,7 @@ class WalletSerializer(serializers.ModelSerializer):
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'first_name', 'last_name']
+        fields = ['email', 'username', 'password', 'first_name', 'last_name']
         write_only_fields = ['password']
 
     def create(self, validated_data):
@@ -126,6 +125,13 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             is_active=False)
 
         return user
+
+    def validate_email(self, value):
+        try:
+            user = User.objects.get(email=value)
+            raise ValidationError({'email': 'A user with that email already exists.'})
+        except User.DoesNotExist:
+            return value
 
 
 class UserSerializer(serializers.ModelSerializer):

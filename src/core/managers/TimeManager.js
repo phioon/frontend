@@ -62,11 +62,9 @@ class TimeManager {
     return Moment(new Date()).utc(keepLocaltime).toDate().toLocaleDateString()
   }
   static getLocaleString(timestamp, keepLocaltime = true) {
-    if (timestamp) {
-      // Removes 'Z' character, which indicates UTC timezone.
-      timestamp = String(timestamp).replace("Z", "")
+    if (timestamp)
       return Moment(timestamp).utc(keepLocaltime).toDate().toLocaleString()
-    }
+
     return Moment(new Date()).utc(keepLocaltime).toDate().toLocaleString()
   }
 

@@ -21,13 +21,13 @@ class MarketManager {
             "Content-Type": "application/json",
             "Authorization": ""
           },
-          params: {
+          data: {
             detailed: undefined,
             stockExchange: undefined,
             assets: undefined
           },
         },
-        method: "get",
+        method: "post",
         request: "/api/market/assets/"
       },
       wsEma: {
@@ -38,8 +38,10 @@ class MarketManager {
           },
           params: {
             stockExchange: undefined,
-            dateFrom: undefined
-          },
+            interval: undefined,
+            instances: undefined,
+            lastPeriods: undefined
+          }
         },
         method: "get",
         request: "/api/market/<timeInterval>/ema/"
@@ -62,8 +64,10 @@ class MarketManager {
           },
           params: {
             stockExchange: undefined,
-            dateFrom: undefined
-          },
+            interval: undefined,
+            instances: undefined,
+            lastPeriods: undefined
+          }
         },
         method: "get",
         request: "/api/market/<timeInterval>/phibo/"
@@ -83,6 +87,22 @@ class MarketManager {
         },
         method: "get",
         request: "/api/market/<timeInterval>/raw/"
+      },
+      wsRoc: {
+        options: {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": ""
+          },
+          params: {
+            stockExchange: undefined,
+            interval: undefined,
+            instances: undefined,
+            lastPeriods: undefined
+          }
+        },
+        method: "get",
+        request: "/api/market/<timeInterval>/roc/"
       },
       wsSetups: {
         options: {
@@ -152,27 +172,26 @@ class MarketManager {
   }
 
   // Asset
-  async assetList(detailed = false, assets = [], stockExchange) {
+  async assetList(detailed = false, assets = [], se_short) {
     // syncFull is only triggered from WalletList
     // Client must pass 'assets' or 'stockExchange'. One of these 2 parameters are required.
-    if (assets.length == 0 && !stockExchange)
+    if (assets.length == 0 && !se_short)
       return {}
     // --------------------
     const sKey = "assets"
     await this.startRequest(sKey)
 
-    let wsInfo = this.getApi("wsAssets")
     let sData = {}
     let syncList = []
-    let result = null
+    let result = undefined
 
     // StockExchange: Prepare list of assets to be used forward.
-    if (stockExchange) {
+    if (se_short) {
       assets = StorageManager.getItem(sKey)
       delete assets.version                 // Removes first position (key 'version')
 
       for (var [k, v] of Object.entries(assets))
-        if (v.data.stockExchange != stockExchange)
+        if (v.data.stockExchange != se_short)
           delete assets[k]
 
       assets = Object.keys(assets)
@@ -185,15 +204,15 @@ class MarketManager {
 
         if (result) {                       // We have it cached and up to date?
           if (detailed) {                   // Client is requesting detailed info?
-            if (result.data.asset_price && result.data.asset_lastTradeTime) {
-              // We have detailed info? ('asset_lastTradeTime' is a detailed info)
+            if (result.data.price && result.data.last_trade_time) {
+              // We have detailed info? ('last_trade_time' is a detailed info)
               sData[a] = result             // Return it
             }
             else                            // We don't have it detailed
               syncList.push(a)              // Insert Asset into syncList
           }
           else {                            // Client needs basic info only
-            if (result.data.asset_price)
+            if (result.data.price)
               sData[a] = result             // Return it
             else
               syncList.push(a)
@@ -206,13 +225,14 @@ class MarketManager {
     // console.log(`syncList: ${syncList}`)
 
     if (syncList.length > 0) {
+      let wsInfo = this.getApi("wsAssets")
       wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
-      wsInfo.options.params = {
+      wsInfo.options.data = {
         detailed: detailed,
-        stockExchange: stockExchange,
+        stockExchange: se_short,
         assets: syncList.join(','),
       }
-      result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+      result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, wsInfo.options.data)
 
       if (result.status == 200)
         for (let obj of result.data)
@@ -225,6 +245,15 @@ class MarketManager {
 
     this.finishRequest(sKey)
     return sData
+  }
+  async assetData(assets = []) {
+    let data = []
+    let sItem = await this.assetList(false, assets)
+
+    for (var obj of Object.values(sItem))
+      data.push(obj.data)
+
+    return data
   }
   offlineAssetList(assets) {
     const sKey = "assets"
@@ -299,10 +328,43 @@ class MarketManager {
 
     return false
   }
+  static isLastPriceStored(stockExchange, tz_mTime) {
+    // console.log('tz_mTime: ' + tz_mTime.format())
+
+    if (stockExchange) {
+      let tz = stockExchange.se_timezone
+      let se_endTime = TimeManager.getTzMoment(String(tz_mTime.format("YYYY-MM-DD") + "T" + stockExchange.se_endTime), tz)
+      let mTime_weekDay = TimeManager.tzGetWeekday(tz, tz_mTime)
+
+      // console.log('se_endTime: ' + se_endTime.format())
+      // console.log('mTime_weekDay: ' + mTime_weekDay)
+
+      if ([1, 2, 3, 4, 5].includes(mTime_weekDay)) {
+        // Last time it was modified was weekday
+        let mAfterMarketCloses = TimeManager.timestampDiff(tz_mTime, se_endTime)
+
+        // Considers that prices can be updated up to 60 minutes after market is closed.
+        if (mAfterMarketCloses >= 60)
+          return true
+      }
+      else {
+        // Last time it was modified was weekend
+        let syncToleranceWeekend = (1440 * 2) + (60 * 8)
+
+        // console.log("syncToleranceWeekend: " + syncToleranceWeekend)
+        // console.log("TimeManager.timestampDiff(tz_mTime): " + TimeManager.timestampDiff(tz_mTime))
+
+        if (TimeManager.timestampDiff(tz_mTime) > -syncToleranceWeekend)
+          return true
+      }
+    }
+
+    return false
+  }
   // --------------------
 
-  // Indicators
-  // .. [d] data
+  // Strategies
+  // .. Indicators
   async indicatorList() {
     const sKey = "indicators"
     await this.startRequest(sKey)
@@ -355,12 +417,15 @@ class MarketManager {
 
     return retrieveObjFromObjList(sData, "id", pk)
   }
-  // .. [d] EMA
-  async dEmaList(stockExchange, assets, lastXperiods) {
-    const sKey = "dEma"
+  // .. [d] Quote
+  async dQuoteList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    // 'stockExchange' or 'instances'. One of these 2 parameters are required.
+    if (!stockExchange && instances.length == 0)
+      return {}
+    // --------------------
+    const sKey = "dQuote"
     await this.startRequest(sKey)
 
-    let wsInfo = this.getApi("wsEma")
     let result = StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
 
     if (result) {
@@ -368,11 +433,62 @@ class MarketManager {
       return result
     }
 
-    wsInfo.request = wsInfo.request.replace("<timeInterval>", "d")
-    wsInfo.request = wsInfo.request.replace("<period>", "latest")
+    let wsInfo = this.getApi("wsRaw")
+    wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
+    wsInfo.request += "latest/"
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
     wsInfo.options.params = {
-      stockExchange: stockExchange
+      stockExchange: stockExchange,
+      lastPeriods: lastPeriods,
+      instances: instances.join(",")
+    }
+
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+
+    if (result.status == 200) {
+      result = result.data
+      result = StorageManager.store(sKey, result, stockExchange)
+    }
+    else {
+      this.getHttpTranslation(result, "dQuoteList", "dQuote", true)
+    }
+
+    this.finishRequest(sKey)
+    return result
+  }
+  async dQuoteData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    let sItem = await this.dQuoteList(stockExchange, interval, instances, lastPeriods)
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
+  }
+  // .. [d] EMA
+  async dEmaList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    // 'stockExchange' or 'instances'. One of these 2 parameters are required.
+    if (!stockExchange && instances.length == 0)
+      return {}
+    // --------------------
+    const sKey = "dEma"
+    await this.startRequest(sKey)
+
+    let result = StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
+
+    if (result) {
+      this.finishRequest(sKey)
+      return result
+    }
+
+    let wsInfo = this.getApi("wsEma")
+    wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
+    wsInfo.request += "latest/"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.params = {
+      stockExchange: stockExchange,
+      lastPeriods: lastPeriods,
+      instances: instances.join(",")
     }
 
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
@@ -383,18 +499,29 @@ class MarketManager {
     }
     else {
       this.getHttpTranslation(result, "dEmaList", "dEma", true)
-      result = StorageManager.getItem(sKey, stockExchange)
     }
 
     this.finishRequest(sKey)
     return result
   }
+  async dEmaData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    let sItem = await this.dEmaList(stockExchange, interval, instances, lastPeriods)
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
+  }
   // .. [d] Phibo
-  async dPhiboList(stockExchange, assets, lastXperiods) {
+  async dPhiboList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    // 'stockExchange' or 'instances'. One of these 2 parameters are required.
+    if (!stockExchange && instances.length == 0)
+      return {}
+    // --------------------
     const sKey = "dPhibo"
     await this.startRequest(sKey)
 
-    let wsInfo = this.getApi("wsPhibo")
     let result = StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
 
     if (result) {
@@ -402,11 +529,14 @@ class MarketManager {
       return result
     }
 
-    wsInfo.request = wsInfo.request.replace("<timeInterval>", "d")
-    wsInfo.request = wsInfo.request.replace("<period>", "latest")
+    let wsInfo = this.getApi("wsPhibo")
+    wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
+    wsInfo.request += "latest/"
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
     wsInfo.options.params = {
-      stockExchange: stockExchange
+      stockExchange: stockExchange,
+      lastPeriods: lastPeriods,
+      instances: instances.join(",")
     }
 
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
@@ -417,11 +547,71 @@ class MarketManager {
     }
     else {
       this.getHttpTranslation(result, "dPhiboList", "dPhibo", true)
-      result = StorageManager.getItem(sKey, stockExchange)
     }
 
     this.finishRequest(sKey)
     return result
+  }
+  async dPhiboData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    let sItem = await this.dPhiboList(stockExchange, interval, instances, lastPeriods)
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
+  }
+  // .. [d] ROC
+  async dRocList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    // 'stockExchange' or 'instances'. One of these 2 parameters are required.
+    if (!stockExchange && instances.length == 0)
+      return {}
+    // --------------------
+    const sKey = "dRoc"
+    await this.startRequest(sKey)
+
+    let result = StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
+
+    if (result) {
+      this.finishRequest(sKey)
+      return result
+    }
+
+    let wsInfo = this.getApi("wsRoc")
+    wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
+    wsInfo.request += "latest/"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.params = {
+      stockExchange: stockExchange,
+      lastPeriods: lastPeriods,
+      instances: instances.join(",")
+    }
+
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+
+    if (result.status == 200) {
+      result = result.data
+      result = StorageManager.store(sKey, result, stockExchange)
+    }
+    else {
+      this.getHttpTranslation(result, "dRocList", "dRoc", true)
+    }
+
+    this.finishRequest(sKey)
+    return result
+  }
+  async dRocData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    let sItem = await this.dRocList(stockExchange, interval, instances, lastPeriods)
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
+  }
+  // .. Functions
+  static isIndicatorCached(sData) {
+    return false
   }
   // --------------------
 
@@ -692,9 +882,14 @@ class MarketManager {
     await this.startRequest(sKey)
 
     let sData = StorageManager.getData(sKey, asset)
-    let result = StorageManager.isUpToDate(this.sModule, sKey, asset, dateFrom, dateTo)
 
-    if (result) {                     // We have it cached?
+    let props = {
+      dateFrom: dateFrom,
+      dateTo: dateTo
+    }
+    let result = StorageManager.isUpToDate(this.sModule, sKey, asset, props)
+
+    if (result) {                     // Do we have it cached?
       if (detailed) {                 // Client is requesting detailed info?
         if (result.data.d_volume) {   // We have detailed info?
           this.finishRequest(sKey)
@@ -861,39 +1056,6 @@ class MarketManager {
 
         // Considers that prices can be updated up to 60 minutes after market is closed.
         if (mAfterMarketOpens >= 0 && mAfterMarketCloses <= 60)
-          return true
-      }
-    }
-
-    return false
-  }
-  static isLastPriceStored(stockExchange, tz_mTime) {
-    // console.log('tz_mTime: ' + tz_mTime.format())
-
-    if (stockExchange) {
-      let tz = stockExchange.se_timezone
-      let se_endTime = TimeManager.getTzMoment(String(tz_mTime.format("YYYY-MM-DD") + "T" + stockExchange.se_endTime), tz)
-      let mTime_weekDay = TimeManager.tzGetWeekday(tz, tz_mTime)
-
-      // console.log('se_endTime: ' + se_endTime.format())
-      // console.log('mTime_weekDay: ' + mTime_weekDay)
-
-      if ([1, 2, 3, 4, 5].includes(mTime_weekDay)) {
-        // Last time it was modified was weekday
-        let mAfterMarketCloses = TimeManager.timestampDiff(tz_mTime, se_endTime)
-
-        // Considers that prices can be updated up to 60 minutes after market is closed.
-        if (mAfterMarketCloses >= 60)
-          return true
-      }
-      else {
-        // Last time it was modified was weekend
-        let syncToleranceWeekend = (1440 * 2) + (60 * 8)
-
-        // console.log("syncToleranceWeekend: " + syncToleranceWeekend)
-        // console.log("TimeManager.timestampDiff(tz_mTime): " + TimeManager.timestampDiff(tz_mTime))
-
-        if (TimeManager.timestampDiff(tz_mTime) > -syncToleranceWeekend)
           return true
       }
     }

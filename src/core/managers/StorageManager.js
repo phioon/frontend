@@ -23,8 +23,8 @@ const config = {
       version: 0.01
     },
     strategies: {
-      syncLimit: 8640,
-      version: 0.03
+      syncLimit: 10,
+      version: 0.04
     },
     subscriptions: {
       syncLimit: 8640,
@@ -50,14 +50,18 @@ const config = {
   market: {
     assets: {
       syncLimit: 10,
-      version: 0.03
+      version: 0.05
     },
     indicators: {
       syncLimit: 8460,
-      version: 0.15
+      version: 0.16
     },
     dEma: {
-      syncLimit: 0.060,
+      syncLimit: 0.0060,
+      version: 0.01
+    },
+    dQuote: {
+      syncLimit: 0.0060,
       version: 0.01
     },
     dPhibo: {
@@ -179,8 +183,9 @@ class StorageManager {
     }
   }
 
-  static isUpToDate(sModule, sKey, subKey, dateFrom, dateTo) {
-    // 'dateFrom' and 'dateTo' are used only by sKeys ['dRaw']
+  static isUpToDate(sModule, sKey, subKey, props) {
+    // props are only used by special modules: [dRaw, dEma]
+
     let mTime = null
     let result = null
     let isUpToDate = false
@@ -218,16 +223,28 @@ class StorageManager {
         }
         break;
       case "dRaw":
-        let isDRawCached = MarketManager.isDRawCached(result[strData], dateFrom, dateTo)
+        let isDRawCached = MarketManager.isDRawCached(result[strData], props.dateFrom, props.dateTo)
         isUpToDate = isDRawCached || (result.data && mTime &&
           TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit)
         break;
       default:
-        // REMEMBER: ALWAYS RESPECT 'SYNCLIMIT' TIME !
-        // Let's suppose the Backend doesn't have it up to date. So, the client won't ask for it a couple times
-        // whithin few seconds.
-        isUpToDate = result.data && mTime &&
-          TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit
+        let dIndicators = ["dEma", "dQuote", "dPhibo", "dRoc"]
+
+        if (dIndicators.includes(sKey)) {
+          // It's a indicator storage (used by Strategy module)
+          let isIndicatorCached = MarketManager.isIndicatorCached(result[strData])
+          console.log(`Is indicator '${sKey}' cached? ${isIndicatorCached}`)
+          isUpToDate = isIndicatorCached || (result.data && mTime &&
+            TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit)
+        }
+        else {
+          // REMEMBER: ALWAYS RESPECT 'SYNCLIMIT' TIME !
+          // Let's suppose Backend doesn't have the requested data up to date. The client shouldn't ask for it a couple times
+          // whithin few seconds.
+
+          isUpToDate = result.data && mTime &&
+            TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit
+        }
         break
     }
 

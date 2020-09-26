@@ -251,7 +251,6 @@ class ModalStrategy extends React.Component {
       for (var item of ws.items) {
         strategy = this.onWSCommit("add", ws.id, item)
       }
-
       // console.log(rules)
     }
 
@@ -274,7 +273,7 @@ class ModalStrategy extends React.Component {
   verifyStrategyName(name) {
     let isValidated = false
 
-    if (verifyLength(name, 1, 32)) {
+    if (verifyLength(name, 1, 24)) {
       isValidated = true
       if (name == this.state.strategy.initial.name)
         isValidated = true
@@ -306,7 +305,7 @@ class ModalStrategy extends React.Component {
           newState.strategy.states[stateName] = "has-danger"
         break;
       case "desc":
-        if (verifyLength(value, 0, 1020))
+        if (verifyLength(value, 0, 1000))
           newState.strategy.states[stateName] = "has-success"
         else
           newState.strategy.states[stateName] = "has-danger"
@@ -711,13 +710,11 @@ class ModalStrategy extends React.Component {
   }
 
   isValidated(obj) {
-    if (Object.values(obj.states).length > 1) {
-      // At least 'name' and one more WS must be validated
-      for (var state of Object.values(obj.states))
-        if (state != "has-success")
-          return false
-    }
-    else {
+    for (var state of Object.values(obj.states))
+      if (state != "has-success")
+        return false
+
+    if (!obj.states.basic_0 && !obj.states.basic_1 && !obj.states.advanced) {
       // All WS are empty
       return false
     }

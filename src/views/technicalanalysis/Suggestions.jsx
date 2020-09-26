@@ -147,7 +147,7 @@ class Suggestions extends React.Component {
       obj.ended_on = obj.ended_on ? obj.ended_on : obj.ended_on
       obj.asset_label = assets[obj.asset_symbol].data.asset_label
       obj.asset_name = assets[obj.asset_symbol].data.asset_name
-      obj.asset_price = assets[obj.asset_symbol].data.asset_price
+      obj.price = assets[obj.asset_symbol].data.price
       obj.type = tc.type
       obj.currency = currency
       obj.tc_id = tc.id
@@ -155,7 +155,7 @@ class Suggestions extends React.Component {
       obj.delta = {
         stopLoss_maxPrice: tc.type == "purchase" ? obj.max_price - obj.stop_loss : obj.stop_loss - obj.max_price,
         stopLoss_target: tc.type == "purchase" ? obj.target - obj.stop_loss : obj.stop_loss - obj.target,
-        stopLoss_assetPrice: tc.type == "purchase" ? obj.asset_price - obj.stop_loss : obj.stop_loss - obj.asset_price,
+        stopLoss_assetPrice: tc.type == "purchase" ? obj.price - obj.stop_loss : obj.stop_loss - obj.price,
       }
 
       obj.occurrencies = ss.occurrencies
