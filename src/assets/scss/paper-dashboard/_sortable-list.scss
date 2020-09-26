@@ -1,0 +1,44 @@
+.sortable-item-handle {
+    vertical-align: center;
+    display: flex;
+    width: 17px;
+    height: 10px;
+    opacity: 0.25;
+    margin-right: 15px;
+    cursor: grab;
+    background: -webkit-linear-gradient(
+      top,
+      #000,
+      #000,
+      #fff,
+      #fff,
+      #000,
+      #000,
+      #fff,
+      #fff,
+      #000,
+      #000
+    );
+    background: linear-gradient(
+      180deg,
+      #000,
+      #000,
+      #fff,
+      #fff,
+      #000,
+      #000,
+      #fff,
+      #fff,
+      #000,
+      #000
+    );
+  }
+  
+  .sortable-item {
+    display: flex;
+    align-items: center;
+    cursor: grab;
+    line-height: 2.8em;
+    z-index: 99999999;
+    box-shadow: 0px 0.5px rgba(0, 0, 0, 0.2);
+  }

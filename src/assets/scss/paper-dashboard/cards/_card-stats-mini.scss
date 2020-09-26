@@ -1,7 +1,10 @@
 .card-stats-mini {
-  &.card-background::after {
-    background-image: linear-gradient(to right, #434343 0%, black 100%);
-    opacity: .94;
+  position: relative;
+  cursor: pointer;
+
+  &:hover,
+  &:focus{
+    box-shadow: 0 9px 10px -4px rgba(0, 0, 0, 0.15);
   }
 
   .card-body {
@@ -14,7 +17,6 @@
 
   .card-footer {
     border-top: 1px solid $opacity-2;
-    margin: 0 15px;
   }
 
   &.card-background {
@@ -41,13 +43,26 @@
     }
   }
 
-  .chart-area {
-    float: left;
-    width: 60%;
-  }
+  .bg-icon{
+    position: absolute;
+    bottom: 0;
+    transform: translateY(0%);
+    color: $black-color;
 
-  .stats {
-    text-align: left;
-    color: $white-color;
+    &.icon-danger{
+        color: $danger-color;
+        opacity: 7%;
+    }
+    &.icon-success{
+        color: $success-color;
+        opacity: 12%;
+    }
+
+    i {
+      font-size: 618%;
+    }
+    p {
+      margin-bottom: 0;
+    }
   }
 }

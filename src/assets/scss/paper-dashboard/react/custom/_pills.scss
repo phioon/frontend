@@ -8,9 +8,9 @@
         border: 1px solid $default-color;
         border-radius: 0;
         color: $default-color;
-        font-weight: $font-weight-bold;
+        font-weight: $font-weight-normal;
         margin-left: -1px;
-        padding: 10px 25px;
+        padding: 4px 20px;
 
     }
     .nav-item.active .nav-link,
@@ -20,14 +20,14 @@
         color: #FFFFFF;
     }
     &:not(.flex-column) .nav-item:first-child .nav-link{
-        border-radius: 30px 0 0 30px !important;
+        border-radius: 15px 0 0 15px !important;
         margin: 0;
     }
     &:not(.flex-column) .nav-item:last-child .nav-link{
-        border-radius: 0 30px 30px 0 !important;
+        border-radius: 0 15px 15px 0 !important;
     }
     &.flex-column .nav-item .nav-link{
-      border-radius: 30px!important;
+      border-radius: 15px!important;
       margin-bottom: 15px;
     }
     .nav-item .nav-link.active{

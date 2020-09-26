@@ -13,7 +13,7 @@ from django.utils.encoding import force_text
 from django.utils import timezone
 from datetime import datetime
 
-from app.models import Country, Currency, Subscription, Position, PositionType, UserCustom, Wallet
+from app.models import Country, Currency, Strategy, Subscription, Position, PositionType, UserCustom, Wallet
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -65,6 +65,15 @@ class PositionTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class StrategySerializer(serializers.ModelSerializer):
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    owner_username = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = Strategy
+        fields = '__all__'
+
+
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
@@ -103,7 +112,7 @@ class WalletSerializer(serializers.ModelSerializer):
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'first_name', 'last_name']
+        fields = ['email', 'username', 'password', 'first_name', 'last_name']
         write_only_fields = ['password']
 
     def create(self, validated_data):
@@ -116,6 +125,13 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             is_active=False)
 
         return user
+
+    def validate_email(self, value):
+        try:
+            user = User.objects.get(email=value)
+            raise ValidationError({'email': 'A user with that email already exists.'})
+        except User.DoesNotExist:
+            return value
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -139,7 +155,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserCustomSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCustom
-        fields = '__all__'
+        fields = ['birthday', 'nationality', 'pref_langId', 'pref_currency']
 
 
 class RequestPasswordResetSerializer(rest_auth_serializers.PasswordResetSerializer):

@@ -37,6 +37,7 @@ export async function httpRequest(method, url, headers, params, data) {
   return result
 }
 
+// Handling data structures
 export function retrieveLessFields(objList, fieldList) {
   let result = []
 
@@ -50,10 +51,34 @@ export function retrieveLessFields(objList, fieldList) {
   return result
 }
 export function retrieveObjFromObjList(objList, keyField = "id", value) {
+  // Return the first occurrence found
   for (var obj of objList)
     if (obj[keyField] == value)
       return obj
   return null
+}
+export function applyFilterToObjList(objList, filters = { field: undefined }) {
+  // Filter object and return only the matching occurrencies
+  let data = []
+
+  for (var obj of objList) {
+    let push = undefined
+
+    // Apply filter
+    for (var [k, v] of Object.entries(filters))
+      // Object 'filters' is not empty
+      if (obj[k] == v)
+        push = true
+      else {
+        push = false
+        break;        // Leaves this FOR iteration and check next 'obj'
+      }
+
+    if (push)
+      data.push(obj)
+  }
+
+  return data
 }
 export function getDistinctValuesFromList(objList, field) {
   let distinctList = []
@@ -71,7 +96,6 @@ export function getValueListFromObjList(objList, field) {
       valueList.push(obj[field])
   return valueList
 }
-
 export function getObjsExpectedField(objList, field, value) {
   let newObjList = []
   for (var obj of objList)
@@ -96,24 +120,18 @@ export function getObjsFieldNotNull(objList, field) {
 
   return newObjList
 }
-
 export function removeFieldFromObjList(objList, field) {
   for (var obj of objList)
     delete obj[field]
 
   return objList
 }
-
 export function deepCloneObj(obj) {
   return JSON.parse(JSON.stringify(obj))
 }
-
-export function areObjsEqual(obj1, obj2) {
-  return JSON.stringify(obj1) == JSON.stringify(obj2)
-}
-
 export function joinObjLists(objList0, objList1, keyField = "id") {
-  // keyField must exist in every object of both lists
+  // Both lists must have the keyField.
+  // Objects that doesn't exist on objList0, but exist on objList1, will be pushed into objList0.
   let keyList = []
 
   for (var obj of objList0)
@@ -125,7 +143,22 @@ export function joinObjLists(objList0, objList1, keyField = "id") {
 
   return objList0
 }
+export function joinContentObjLists(objList0, objList1, keyField = "id") {
+  // Both lists must have the keyField.
+  // Keys that doesn't exist on objList0, but exist on objList1, will be pushed into its object  main list.
 
+  for (var obj of objList0) {
+    let key = obj[keyField]
+    let relatedObj = retrieveObjFromObjList(objList1, keyField, key)
+
+    if (relatedObj)
+      for (var [k, v] of Object.entries(relatedObj))
+        if (!Object.keys(obj).includes(k))
+          obj[k] = v
+  }
+
+  return objList0
+}
 export function getFieldAsKey(objList, keyField) {
   let objDict = {}
 
@@ -215,6 +248,27 @@ export function cumulativeAggr(rawData, aggrProps, mFields = []) {
   return aggrData
 }
 
+// Used by Sortable List
+export function arrayMove(array, from, to) {
+  array = [...array];
+  array = arrayMoveMutate(array, from, to);
+
+  return array;
+}
+function arrayMoveMutate(array, from, to) {
+  const startIndex = from < 0 ? array.length + from : from;
+
+  if (startIndex >= 0 && startIndex < array.length) {
+    const endIndex = to < 0 ? array.length + to : to;
+
+    const [item] = array.splice(from, 1);
+    array.splice(endIndex, 0, item);
+  }
+
+  return array
+}
+
+// Converting
 export function convertMaskedStringToFloat(strNumber, currency) {
   let number = String(strNumber).replace(/[^0-9.,]/g, "")
 
@@ -312,6 +366,10 @@ export function round(value, decimals) {
 }
 
 // Validators
+// function that verifies if two objects are equal
+export function areObjsEqual(obj1, obj2) {
+  return JSON.stringify(obj1) == JSON.stringify(obj2)
+}
 // function that verifies if two strings are equal
 export function compare(string1, string2) {
   if (string1 === string2) {
@@ -334,15 +392,24 @@ export function verifyGreaterThan(value, gt) {
   return false;
 };
 // function that verifies if a string has a given length or not
-export function verifyLength(value, length) {
-  if (value.length >= length) {
-    return true;
+export function verifyLength(value, minLen, maxLen = undefined) {
+  if (value.length >= minLen) {
+    if (maxLen) {
+      if (value.length <= maxLen)
+        return true
+    }
+    else
+      return true;
   }
   return false;
 };
 // function that verifies if a string has only letters
 export function verifyOnlyLetters(value) {
   return /^[a-zA-Z- ]+$/.test(value);
+}
+// function that verifies if a string has only letters
+export function verifyUsernameStr(value) {
+  return /^[0-9a-zA-Z_.]+$/.test(value);
 }
 // function that verifies if number is a integer
 export function verifyIfInteger(value) {
@@ -381,32 +448,3 @@ export function orderBy(objList, fields = ["id"]) {
     return 0
   })
 }
-
-// export function orderByAsc(objList, field = "id", isNumber = false) {
-//   if (isNumber)
-//     return objList.sort(
-//       (a, b) => (Number(a[field]) > Number(b[field])) ? 1
-//         : ((Number(b[field]) > Number(a[field])) ? -1
-//           : 0
-//         ))
-//   else
-//     return objList.sort(
-//       (a, b) => (String(a[field]).toLowerCase() > String(b[field]).toLowerCase()) ? 1
-//         : ((String(b[field]).toLowerCase() > String(a[field]).toLowerCase()) ? -1
-//           : 0
-//         ))
-// }
-// export function orderByDesc(objList, field = "id", isNumber = false) {
-//   if (isNumber)
-//     return objList.sort(
-//       (a, b) => (Number(a[field]) < Number(b[field])) ? 1
-//         : ((Number(b[field]) < Number(a[field])) ? -1
-//           : 0
-//         ))
-//   else
-//     return objList.sort(
-//       (a, b) => (String(a[field]).toLowerCase() < String(b[field]).toLowerCase()) ? 1
-//         : ((String(b[field]).toLowerCase() < String(a[field]).toLowerCase()) ? -1
-//           : 0
-//         ))
-// }

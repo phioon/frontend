@@ -11,6 +11,8 @@ urlpatterns = [
     path('app/wallets/', apiApp.WalletList.as_view()),
     path('app/wallets/<int:pk>/', apiApp.WalletDetail.as_view()),
     path('app/positionTypes/', apiApp.PositionTypeList.as_view()),
+    path('app/strategies/', apiApp.StrategyList.as_view()),
+    path('app/strategies/<int:pk>/', apiApp.StrategyDetail.as_view()),
     path('app/subscriptions/', apiApp.SubscriptionList.as_view()),
     path('app/countries/', apiApp.CountryList.as_view()),
     path('app/currencies/', apiApp.CurrencyList.as_view()),
@@ -40,7 +42,13 @@ urlpatterns += [
     path('market/technicalConditions/', apiMarket.TechnicalConditionList, name='Technical Conditions'),
     path('market/stockExchanges/', apiMarket.StockExchangeList, name='StockExchanges'),
     path('market/assets/', apiMarket.AssetList, name='Assets'),
+    path('market/indicators/', apiMarket.IndicatorList, name='Indicators available'),
+
     path('market/d/raw/', apiMarket.D_RawList, name='D_Raw data'),
+    path('market/d/raw/latest/', apiMarket.D_RawLatestList, name='D_Raw latest data'),
+    path('market/d/phibo/latest/', apiMarket.D_PhiboLatestList, name='D_Phibo latest data'),
+    path('market/d/ema/latest/', apiMarket.D_EmaLatestList, name='D_Ema latest data'),
+
     path('market/d/setups/', apiMarket.D_setupList, name='D_setups data'),
     path('market/d/setupSummary/', apiMarket.D_setupSummaryList, name='D_setupSummary data'),
 ]

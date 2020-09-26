@@ -60,17 +60,20 @@ class AppLayout extends React.Component {
     let syncFull = true
     let detailed = true
     // App
-    let wallets = await this.props.managers.app.walletList(syncFull)
-    let positions = await this.props.managers.app.positionList(syncFull)
     this.props.managers.app.countryList()                                 // async call
     this.props.managers.app.currencyList()                                // async call
     this.props.managers.app.subscriptionList()                            // async call
     this.props.managers.app.positionTypeList()                            // async call
+    this.props.managers.app.strategyList(syncFull)                        // async call
+    let wallets = await this.props.managers.app.walletList(syncFull)
+    let positions = await this.props.managers.app.positionList(syncFull)
+
     // Market
     let stockExchanges = getDistinctValuesFromList(wallets.data, "se_short")
     let assetsOpenPositions = getObjsFieldNull(positions.data, "ended_on")
     assetsOpenPositions = getDistinctValuesFromList(assetsOpenPositions, "asset_symbol")
 
+    this.props.managers.market.indicatorList()                            // async call
     this.props.managers.market.stockExchangeList()                        // async call
     this.props.managers.market.assetList(detailed, assetsOpenPositions)   // async call
 
@@ -84,6 +87,8 @@ class AppLayout extends React.Component {
         this.props.managers.market.dSetupList(se_short)                   // async call
       }
     }
+
+    this.props.managers.market.dEmaList("BVMF", "d", ["d_ema_close34", "d_ema_close144"], 2)
   }
 
   setNavbarTitleId(titleId) {

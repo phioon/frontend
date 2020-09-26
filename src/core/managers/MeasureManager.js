@@ -122,13 +122,13 @@ class MeasureManager {
     return percentage(opCost, totalCost, 2)
   }
 
-  result_currency_raw(type, amount, asset_price, totalCost) {
+  result_currency_raw(type, amount, price, totalCost) {
     let result = 0.00
 
     if (type.name == "buy")
-      result = (amount * asset_price) - totalCost
+      result = (amount * price) - totalCost
     else
-      result = totalCost - (amount * asset_price)
+      result = totalCost - (amount * price)
 
     return round(result, 2)
   }
@@ -216,7 +216,7 @@ class MeasureManager {
         if (obj.ended_on)
           result += this.result_currency_raw(type, obj.amount, obj.e_unit_price, totalCost)
         else
-          result += this.result_currency_raw(type, obj.amount, assets[obj.asset_symbol].data.asset_price, totalCost)
+          result += this.result_currency_raw(type, obj.amount, assets[obj.asset_symbol].data.price, totalCost)
       }
     }
 
@@ -307,7 +307,7 @@ class MeasureManager {
       let totalCost = await this.amountInvested_currency([obj])
       let dRaws = await this.managers.market.dRawList(false, obj.asset_symbol, obj.started_on, ended_on)
 
-      let lastTradeDate = TimeManager.getDateString(assets[obj.asset_symbol].data.asset_lastTradeTime)
+      let lastTradeDate = TimeManager.getDateString(assets[obj.asset_symbol].data.last_trade_time)
 
       let wallet_name = tWallet.name
       let asset_label = obj.asset_label
@@ -342,7 +342,7 @@ class MeasureManager {
         started_on <= lastTradeDate &&
         !getDistinctValuesFromList(data, "date").includes(lastTradeDate)) {
 
-        let tResult_currency = this.result_currency_raw(tType, obj.amount, assets[obj.asset_symbol].data.asset_price, totalCost)
+        let tResult_currency = this.result_currency_raw(tType, obj.amount, assets[obj.asset_symbol].data.price, totalCost)
         data.push({
           id: obj.id,
           date: lastTradeDate,
@@ -374,7 +374,7 @@ class MeasureManager {
       let totalCost = await this.amountInvested_currency([obj])
       let dRaws = await this.managers.market.dRawList(false, obj.asset_symbol, obj.started_on, ended_on)
 
-      let lastTradeDate = TimeManager.getDateString(assets[obj.asset_symbol].data.asset_lastTradeTime)
+      let lastTradeDate = TimeManager.getDateString(assets[obj.asset_symbol].data.last_trade_time)
 
       let wallet_name = tWallet.name
       let asset_label = obj.asset_label
@@ -418,7 +418,7 @@ class MeasureManager {
         started_on < lastTradeDate &&
         !dateList.includes(lastTradeDate)) {
 
-        let tResult_currency = this.result_currency_raw(tType, obj.amount, assets[obj.asset_symbol].data.asset_price, totalCost)
+        let tResult_currency = this.result_currency_raw(tType, obj.amount, assets[obj.asset_symbol].data.price, totalCost)
 
         if (data.length > 0)
           data[0].tResult_currency = tResult_currency

@@ -20,13 +20,16 @@ const strings = {
     generic: {
       label_comingSoon: "Coming Soon...",
       label_loading: "Loading...",
-
       label_days: "days",
+
+      input_select: "Select...",
+      input_noOptions: "No options available..."
     },
     appnavbar: {
       title_default: "Dashboard",
       title_openpositions: "Open Positions",
       title_positions: "My Assets",
+      title_strategies: "Technical Analysis",
       title_suggestions: "Technical Analysis",
       title_userprofile: "My Profile",
       title_walletoverview: "Overview",
@@ -127,7 +130,8 @@ const strings = {
 
       user_profileUpdated: "Profile updated!",
 
-      user_alreadyExists: "hmm... If I'm not wrong, I've seen you here. Did you forget your password?",
+      user_emailAlreadyExists: "hmm... If I'm not wrong, I've seen your email here before. Did you forget your password?",
+      user_usernameAlreadyExists: "hmm... This username is taken already... Let's try another one.",
       user_emailNotConfirmed: "Before we continue, I need you to confirm your email... Did you not receive the Confirmation Email yet?",
       user_emailCouldNotBeSent: "Ok, good news is that your user has been created. Bad news, my team couldn't send you a confirmation email. I already asked them to handle it, so you should receive an email in a couple hours. ;)",
       user_amountOfSessions: "Ooops... Seems like the amount of sessions for this user is exceeded. Wait a few minutes and try again.",
@@ -145,6 +149,49 @@ const strings = {
       general_noResponseReceived: "Ooops... Sorry for that. :( Seems like my team is out for lunch or they are just ignoring me... I'll keep trying to reach them.",
       general_couldNotSendRequest: "I couldn't send your request. Could you check your internet connection and try again?",
     },
+    indicators: {
+      // Time Intervals
+      any: "Any",
+      d: "Daily",
+      // Sub Categories
+      quote: "Quote",
+      moving_average: "Moving Average",
+      phibo: "Phibo PVPC",
+      roc: "Rate of Change",
+      // Quote
+      open: "Open",
+      high: "High",
+      low: "Low",
+      close: "Close",
+      volume: "Volume",
+      // Zero Line
+      zero_line: "Zero Line",
+      // Indicators
+      ema_close17: "EMA 17",
+      ema_close34: "EMA 34",
+      ema_close72: "EMA 72",
+      ema_close144: "EMA 144",
+      ema_close305: "EMA 305",
+      ema_close610: "EMA 610",
+      ema_close1292: "EMA 1292",
+      ema_close2584: "EMA 2584",
+
+      pv72: "Phibo PV 72",
+      pv305: "Phibo PV 305",
+      pv1292: "Phibo PV 1292",
+      pc72: "Phibo PC 72",
+      pc305: "Phibo PC 305",
+      pc1292: "Phibo PC 1292",
+
+      roc_emaclose17: "ROC EMA 17",
+      roc_emaclose34: "ROC EMA 34",
+      roc_emaclose72: "ROC EMA 72",
+      roc_emaclose144: "ROC EMA 144",
+      roc_emaclose305: "ROC EMA 305",
+      roc_emaclose610: "ROC EMA 610",
+      roc_emaclose1292: "ROC EMA 1292",
+      roc_emaclose2584: "ROC EMA 2584",
+    },
     languages: {
       enUS: "English",
       ptBR: "Português (Brasil)",
@@ -155,7 +202,7 @@ const strings = {
     },
     login: {
       card_header: "Login",
-      input_email: "Email",
+      input_email: "Username or email",
       input_password: "Password",
 
       btn_login: "Login",
@@ -213,10 +260,9 @@ const strings = {
 
       input_type_buy: "BUY",
       input_type_sell: "SELL",
-      input_select: "Select...",
       input_wallet: "Wallet",
       input_asset: "Asset",
-      input_asset_noOptions: "Firstly, select a Wallet.",
+      input_asset_noOptions: "First, select a Wallet.",
       input_amount: "Amount",
       input_date: "Date",
       input_date_hint: "When did this operation happen?",
@@ -249,7 +295,6 @@ const strings = {
       input_type: "Type",
       input_type_buy: "BUY",
       input_type_sell: "SELL",
-      input_select: "Select...",
       input_wallet: "Wallet",
       input_asset: "Asset",
       input_amount: "Amount",
@@ -297,8 +342,6 @@ const strings = {
       label_intro_p1: "I see you don't have a wallet yet...",
       label_intro_p2: "What if we create your first wallet now? Then, we'll be able to open Positions, take a look at Technical Analysis, and so on!",
 
-      input_select: "Select...",
-
       input_name: "Name",
       input_description: "Description",
       input_currency: "Currency",
@@ -313,6 +356,97 @@ const strings = {
       alert_created_text: "Your wallet has been created.",
 
       btn_confirm: "Create",
+    },
+    modalmovingavgdetail: {
+      title: "Moving Average",
+
+      label_ema: "Exponential",
+
+      input_type: "Type",
+      input_type_hint: "Which moving average are we talking about?",
+      input_periods: "Periods",
+      input_periods_hint: "Amount of periods considered to calculate this moving average.",
+      input_periods_noOptions: "First, select Type.",
+
+      btn_add: "Add",
+      btn_save: "Save",
+    },
+    modalquotedetail: {
+      title: "Quote",
+
+      input_type: "Quote",
+      input_type_hint: "Which quote value are you looking for?",
+
+      btn_add: "Add",
+      btn_save: "Save",
+    },
+    modalphibodetail: {
+      title: "Phibo PVPC",
+
+      input_type: "Indicator",
+      input_type_hint: "Which Phibo PVPC indicator are we talking about?",
+
+      btn_add: "Add",
+      btn_save: "Save",
+    },
+    modalstrategy: {
+      title_create: "Create Strategy",
+      title_update: "Update Strategy",
+      label_intro_p1: "A Strategy is a set of rules/filters that can be applied to the relation between Price and Indicators.",
+      label_intro_p2: "Once created, it can be applied to any time interval, unless you force it on the advanced workspace.",
+
+      label_workspaces: "Workspaces",
+
+      label_basic: "Basic",
+      label_transition: "Transition",
+      label_basic_intro_p1: "Click or move the following indicators into the Workspace desired...",
+      label_basic_intro_p2: "Then, reorder them accordingly to the way they should appear on a chart.",
+
+      label_advanced: "Advanced",
+      label_advanced_intro_p1: "Is there something you couldn't do on Basic mode? No problem, you can aggregate the best of both modes...",
+
+      input_name: "Name",
+      input_logic: "Logic",
+      label_logic_dynamic: "Dynamic",
+      label_logic_static: "Static",
+      input_logic_hint: "A Dynamic Strategy can be applied to any time interval (d, m60). It can become a Static one if the time interval is set in one of its rules.",
+      input_description: "Description",
+      label_description_placeholder: "A well written explanation may help other users understand how your Strategy works...",
+      input_public: "Public",
+      input_public_hint: "Other users can see this strategy.",
+      input_private: "Private",
+      input_private_hint: "Only you can see this strategy.",
+      input_buy: "Buy",
+      input_buy_hint: "It's a Purchase Strategy.",
+      input_sell: "Sell",
+      input_sell_hint: "It's a Sale Strategy.",
+
+      label_basic_0: "Now",
+      label_basic_0_intro: "How indicators should be aligned now?",
+      label_basic_1: "Before",
+      label_basic_1_intro: "How indicators should be aligned on the previous candle?",
+      label_optional: "(optional)",
+      btn_goToRules_hint: "See rules...",
+      btn_goToExplainer_hint: "See explanation...",
+
+      title_wsDestination_add: "Add",
+      title_wsDestination_to: "to",
+      input_wsDestination: "Workspace",
+      input_wsDestination_hint: "Where would you like to send this Indicator to?",
+
+      alert_updated_title: "Updated!",
+      alert_updated_text: "Your Strategy has been updated.",
+
+      alert_created_title: "Created!",
+      alert_created_text_p1: "Your Strategy has been created.",
+      alert_created_text_p2: "Now, you can run it and see the results! ;) ",
+
+      error_name: "It's important that the name is less than 24 characters and unique between your Strategies.",
+      error_desc: "It seems too long... Please, try to keep it lesser than 1000 characters.",
+
+      btn_add: "Add",
+      btn_create: "Create",
+      btn_update: "Update"
     },
     modalupdatewallet: {
       title: "Update Wallet",
@@ -405,7 +539,6 @@ const strings = {
       btn_alert_confirm: "Confirm",
       alert_confirming_title: "Are you sure?",
       alert_confirming_text: "Once deleted, it's not possible to recover it back.",
-      alert_confirming_footer: "Once deleted, it's not possible to recover it back.",
       alert_deleted_title: "Deleted!",
       alert_deleted_text: "Position has been deleted.",
 
@@ -444,8 +577,8 @@ const strings = {
         "Ooops... A user with that email address already exists. Did you forget your password?",
 
       error_enterValidEmail: "Here, I need a valid email.",
+      error_username_minReq: "It can have letters, numbers and few special characters like: '_' and '.'",
       error_passwordLength: "It must have at least 8 characters.",
-      error_passwordMatch: "Seems like password fields are not matching.",
       error_acceptPrivacyPolicy: "To proceed, I need you to accept our Privacy Policy.",
 
       info_selectNationality: "Select one",
@@ -459,9 +592,9 @@ const strings = {
 
       card_header: "Create your account",
       info_orBeCassical: "or be classical",
-      input_firstName: "First Name",
-      input_lastName: "Last Name",
+      input_fullName: "Full Name",
       input_email: "Email",
+      input_username: "Username",
       input_password: "Password",
       input_confirmPassword: "Confirm Password",
       input_nationality: "Nationality",
@@ -469,6 +602,12 @@ const strings = {
       checkbox_privacyPolicy: "privacy policy.",
       btn_createAccount: "Create account",
       btn_forgotPassword: "Forgot password",
+    },
+    rulesexplainer: {
+      label_basic_noItems_p1: "hmm... Seems like there is no indicators over here yet...",
+      label_basic_noItems_p2: "Try dragging and dropping them into this area.",
+      label_basic_onlyOneItem: "We're almost there... Keep dropping indicators here. I need at least 2 of them. ;)",
+      label_explain_gte: ">=",
     },
     sectors: {
       basic_materials: "Basic Materials",
@@ -565,8 +704,8 @@ const strings = {
       walletoverviewMini: "O",
       openpositions: "Open Positions",
       openpositionsMini: "OP",
-      walletmanagerMini: "M",
-      walletmanager: "Manager",
+      strategiesMini: "S",
+      strategies: "Strategies",
 
       technicalAnalysis: "Technical Analysis",
       suggestions: "Suggestions",
@@ -577,6 +716,83 @@ const strings = {
     },
     stockexchangefilter: {
       label_title: "Stock Exchanges",
+    },
+    strategies: {
+      card_title: "Strategies",
+      btn_newStrategy: "New Strategy",
+
+      card_selection_title: "Context",
+
+      input_timeInterval: "Interval",
+      input_timeInterval_hint: "",
+      input_stockExchange: "Stock Exchange",
+      input_stockExchange_hint: "",
+
+      btn_alert_cancel: "Cancel",
+      btn_alert_confirm: "Confirm",
+      alert_confirming_title: "Are you sure?",
+      alert_confirming_text: "Once deleted, it's not possible to recover it back.",
+      alert_deleted_title: "Deleted!",
+      alert_deleted_text: "Your Strategy has been deleted.",
+    },
+    strategycard: {
+      label_public: "Public",
+      label_public_hint: "Other users can see this strategy.",
+      label_private: "Private",
+      label_private_hint: "Only you can see this strategy.",
+
+      icon_type_buy_hint: "It's a Purchase Strategy.",
+      icon_type_sell_hint: "It's a Sale Strategy.",
+
+      label_author: "AUTHOR",
+      label_createdOn: "CREATED ON",
+
+      label_logic: "LOGIC",
+      label_logic_hint: "A Dynamic Strategy can be applied to any time interval (d, m60). It can become a Static one if the time interval is set in one of its rules.",
+      label_dynamic: "Dynamic",
+      label_static: "Static",
+
+      label_actions: "Actions",
+      btn_update_hint: "Update this Strategy.",
+      btn_delete_hint: "Delete this Strategy.",
+    },
+    strategycardmini: {
+      label_public: "Public",
+      label_public_hint: "Other users can see this strategy.",
+      label_private: "Private",
+      label_private_hint: "Only you can see this strategy.",
+
+      icon_type_buy_hint: "It's a Purchase Strategy.",
+      icon_type_sell_hint: "It's a Sale Strategy.",
+
+      label_author: "AUTHOR",
+      label_createdOn: "CREATED ON",
+
+      label_logic: "LOGIC",
+      label_logic_hint: "A Dynamic Strategy can be applied to any time interval (d, m60). It can become a Static one if the time interval is set in one of its rules.",
+      label_dynamic: "Dynamic",
+      label_static: "Static",
+
+      label_actions: "Actions",
+      btn_run_hint: "See results.",
+      btn_view_hint: "View Strategy.",
+      btn_update_hint: "Update Strategy.",
+      btn_delete_hint: "Delete Strategy.",
+    },
+    strategyresults: {
+      card_title: "Results",
+      card_subtitle: "Strategy:",
+      badge_strategy: "Run a Strategy",
+
+      header_asset: "Asset",
+      header_name: "Name",
+      header_quote: "Quote",
+      header_volume: "Volume Avg.",
+      header_lastTradeTime: "Last trade time",
+
+      table_firstLoad: "Run a Strategy and let's see what I can do... ;)",
+      table_emptyData: "Right now, there are no assets matching the selected Strategy.",
+      table_noDataFound: "hmm... Did I miss something?! Please, check your filters. ;)"
     },
     subscriptions: {
       basic_label: "BASIC",
@@ -649,7 +865,6 @@ const strings = {
       label_suggestions: "Suggestions",
       label_suggestions_hint: "Amount of suggestions since the date you joined us.",
 
-      input_select: "Select...",
       input_email: "Email",
       btn_changePassword: "Change Password",
       input_firstName: "First Name",
@@ -710,13 +925,16 @@ const strings = {
     generic: {
       label_comingSoon: "Em breve...",
       label_loading: "Carregando...",
-
       label_days: "dias",
+
+      input_select: "Selecione...",
+      input_noOptions: "Opções indisponíveis..."
     },
     appnavbar: {
       title_default: "Dashboard",
       title_openpositions: "Posições Abertas",
       title_positions: "Meus Ativos",
+      title_strategies: "Análise Técnica",
       title_suggestions: "Análise Técnica",
       title_userprofile: "Meu Perfil",
       title_walletoverview: "Visão Geral",
@@ -816,9 +1034,10 @@ const strings = {
 
       user_profileUpdated: "Perfil atualizado!",
 
+      user_emailAlreadyExists: "hmm... Se não me engano, eu já vi seu email por aqui antes. Esqueceu a senha?",
+      user_usernameAlreadyExists: "hmm... This username is taken already... Let's try another one.",
       user_emailCouldNotBeSent: "Ok, a boa notícia é que seu usuário foi criado. Má notícia, meu time não está conseguindo te enviar o email de confirmação. Já pedi para darem uma olhada no seu caso, então você deve receber um email nas próximas horas. ;)",
       user_emailNotConfirmed: "Antes de continuar, preciso que confirme seu e-mail... Ainda não recebeu o E-mail de Confirmação?",
-      user_alreadyExists: "hmm... Se não me engano, eu já te vi por aqui. Esqueceu a senha?",
       user_amountOfSessions: "Ooops... A quantidade de sessões para este usuário foi excedida. Aguarde alguns minutos e tente novamente.",
       user_invalidCredentials: "Parece que suas credenciais estão incorretas. Por favor, tente novamente.",
       user_password_entirelyNumeric: "Sua nova senha possui apenas numeros. Que tal uma combinação mais segura?",
@@ -845,7 +1064,7 @@ const strings = {
     },
     login: {
       card_header: "Login",
-      input_email: "E-mail",
+      input_email: "Usuário ou e-mail",
       input_password: "Senha",
 
       btn_login: "Login",
@@ -897,14 +1116,37 @@ const strings = {
       winners_number_hint: "Quantidade de Posições com resultado positivo.",
       winners_percentage_hint: "Quantidade de Posições vencedoras dividido pela quantidade de Posições."
     },
+    mysetups: {
+      card_title: "Setups",
+
+      table_noDataFound: "hmm... Não encontrei nenhuma Carteira com esses filtros. Será que perdi algo?",
+      table_emptyData: "Ainda não tem Carteiras aqui? Crie uma no botão à direita da tela. ;)",
+
+      header_name: "Nome",
+      header_balance: "Saldo",
+      header_desc: "Descrição",
+      header_stockExchange: "Bolsa de Valores",
+      header_currency: "Moeda",
+      header_actions: "Ações",
+
+      btn_alert_cancel: "Cancelar",
+      btn_alert_confirm: "Confirmar",
+      alert_confirming_title: "Você tem certeza?",
+      alert_confirming_text: "Posições relacionadas a esta Carteira também serão removidas.",
+      alert_confirming_footer: "Uma vez removida, não é possível recupera-la.",
+      alert_deleted_title: "Removida!",
+      alert_deleted_text: "Sua Carteira foi removida com sucesso.",
+
+      wallets_edit_hint: "Editar esta Carteira.",
+      wallets_delete_hint: "Deletar esta Carteira."
+    },
     modalopenposition: {
       title: "Abrir nova Posição",
       hint: "Uma posição é feita de 2 Transações: Abertura (ex. Compra) e Fechamento (ex. Venda). Nesse momento, apenas os dados da abertura são necessários.",
 
-      input_select: "Selecione...",
       input_wallet: "Carteira",
       input_asset: "Ativo",
-      input_asset_noOptions: "Primeiramente, selecione a Carteira.",
+      input_asset_noOptions: "Primeiro, selecione a Carteira.",
       input_type: "Tipo",
       input_type_buy: "COMPRA",
       input_type_sell: "VENDA",
@@ -940,7 +1182,6 @@ const strings = {
       input_type: "Tipo",
       input_type_buy: "COMPRA",
       input_type_sell: "VENDA",
-      input_select: "Selecione...",
       input_wallet: "Carteira",
       input_asset: "Ativo",
       input_amount: "Quantidade",
@@ -988,8 +1229,6 @@ const strings = {
       label_intro_p1: "Vejo que você ainda não tem carteiras por aqui...",
       label_intro_p2: "Que tal criarmos sua primeira carteira? Assim, poderemos criar Posições, acessar Análises Técnicas, e muito mais!",
 
-      input_select: "Selecione...",
-
       input_name: "Nome",
       input_description: "Descrição",
       input_currency: "Moeda",
@@ -1004,6 +1243,96 @@ const strings = {
       alert_created_text: "Sua Carteira foi criada com sucesso.",
 
       btn_confirm: "Criar",
+    },
+    modalmovingavgdetail: {
+      title: "Média Móvel",
+
+      label_ema: "Exponencial",
+
+      input_type: "Tipo",
+      input_type_hint: "Estamos falando de qual média móvel?",
+      input_periods: "Períodos",
+      input_periods_hint: "Quantidade de períodos considerados para calcular esta média móvel.",
+      input_periods_noOptions: "Primeiro, selecione o Tipo.",
+
+      btn_add: "Adicionar",
+      btn_save: "Salvar",
+    },
+    modalquotedetail: {
+      title: "Cotação",
+
+      input_type: "Cotação",
+      input_type_hint: "Qual valor de cotação estamos procurando?",
+
+      btn_add: "Adicionar",
+      btn_save: "Salvar",
+    },
+    modalphibodetail: {
+      title: "Phibo PVPC",
+
+      input_type: "Indicador",
+      input_type_hint: "De qual linha Phibo PVPC estamos falando?",
+
+      btn_add: "Adicionar",
+      btn_save: "Salvar",
+    },
+    modalstrategy: {
+      title_create: "Criar Estratégia",
+      title_update: "Atualizar Estratégia",
+      label_intro_p1: "Uma Estratégia é um conjunto de regras/filtros que pode ser aplicado à relação entre Preço e Indicadores.",
+      label_intro_p2: "Uma vez criada, ela pode ser aplicada à qualquer tempo gráfico, a menos que você force isso na área avançada.",
+
+      label_workspaces: "Áreas de Trabalho",
+
+      label_basic: "Básica",
+      label_transition: "Transição",
+      label_basic_intro_p1: "Clique ou mova os seguintes indicadores para a Área de Trabalho desejada...",
+      label_basic_intro_p2: "Depois, realinhe os indicadores da forma como eles deveriam aparecer em um gráfico.",
+
+      label_advanced: "Avançada",
+      label_advanced_intro_p1: "As outras Áreas de Trabalho não foram suficientes? Sem problemas, é possível aproveitar o melhor de cada uma delas...",
+
+      input_name: "Nome",
+      input_logic: "Lógica",
+      label_logic_dynamic: "Dinâmica",
+      label_logic_static: "Estática",
+      input_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico. Ela pode se tornar Estática caso o tempo gráfico seja configurado em uma de suas regras.",
+      input_description: "Descrição",
+      label_description_placeholder: "Uma explicação bem escrita pode ajudar outros usuários a entenderem melhor como sua Estratégia funciona...",
+      input_public: "Pública",
+      input_public_hint: "Outros usuários podem ver esta estratégia.",
+      input_private: "Privada",
+      input_private_hint: "Apenas você pode ver esta estratégia.",
+      input_buy: "Compra",
+      input_buy_hint: "Estratégia de Compra.",
+      input_sell: "Venda",
+      input_sell_hint: "Estratégia de Venda.",
+
+      label_basic_0: "Agora",
+      label_basic_0_intro: "Como os indicadores deveriam estar alinhados agora?",
+      label_basic_1: "Antes",
+      label_basic_1_intro: "Como os indicadores deveriam estar alinhados no candle anterior?",
+      btn_goToRules_hint: "Ver regras...",
+      btn_goToExplainer_hint: "Ver explicação...",
+
+      title_wsDestination_add: "Adicionar",
+      title_wsDestination_to: "em",
+      input_wsDestination: "Área de Trabalho",
+      input_wsDestination_hint: "Para onde vamos mandar este indicador?",
+
+      alert_updated_title: "Atualizada!",
+      alert_updated_text: "Sua Estratégia foi atualizada com sucesso.",
+
+      alert_created_title: "Criada!",
+      alert_created_text_p1: "Sua Estratégia foi criada com sucesso.",
+      alert_created_text_p2: "Agora, você pode executa-la e ver os resultados! ;)",
+
+      error_name: "É importante que o nome seja menor que 32 caracteres e único entre as suas Estratégias.",
+      error_desc: "Descrição muito longa... Tente mante-la com no máximo 1024 caracteres.",
+
+      btn_add: "Adicionar",
+      btn_create: "Criar",
+      btn_update: "Atualizar"
     },
     modalupdatewallet: {
       title: "Atualizar Carteira",
@@ -1128,8 +1457,8 @@ const strings = {
     },
     register: {
       error_enterValidEmail: "Aqui, preciso de um e-mail válido.",
+      error_username_minReq: "Pode conter letras, números and alguns caracteres especiais como: '_' e '.'",
       error_passwordLength: "Precisa ser no minimo 8 caracteres.",
-      error_passwordMatch: "Parece que os campos de senha não estão iguais.",
       error_acceptPrivacyPolicy: "Para prosseguir, preciso que aceite nossa Politica de Privacidade.",
 
       leftArea_infoTitle1: "Praticidade",
@@ -1141,9 +1470,9 @@ const strings = {
 
       card_header: "Crie sua conta",
       info_orBeCassical: "ou vá em modo clássico mesmo",
-      input_firstName: "Primeiro Nome",
-      input_lastName: "Último Nome",
+      input_fullName: "Nome Completo",
       input_email: "E-mail",
+      input_username: "Usuário",
       input_password: "Senha",
       input_confirmPassword: "Confirmar Senha",
       input_nationality: "Nacionalidade",
@@ -1248,8 +1577,8 @@ const strings = {
       walletoverviewMini: "VG",
       openpositions: "Posições Abertas",
       openpositionsMini: "PA",
-      walletmanagerMini: "M",
-      walletmanager: "Manager",
+      strategiesMini: "E",
+      strategies: "Estratégias",
 
       technicalAnalysis: "Análise Técnica",
       suggestions: "Recomendações",
@@ -1257,6 +1586,42 @@ const strings = {
     },
     statusfilter: {
       label_title: "Status",
+    },
+    strategies: {
+      card_title: "Estratégias",
+      btn_newStrategy: "Nova Estratégia",
+
+      btn_alert_cancel: "Cancelar",
+      btn_alert_confirm: "Confirmar",
+      alert_confirming_title: "Você tem certeza?",
+      alert_confirming_text: "Uma vez removida, não é possível recupera-la.",
+      alert_deleted_title: "Removida!",
+      alert_deleted_text: "Sua Estratégia foi removida com sucesso.",
+
+      wallets_edit_hint: "Editar esta Estratégia.",
+      wallets_delete_hint: "Deletar esta Estratégia."
+    },
+    strategycard: {
+      label_public: "Pública",
+      label_public_hint: "Outros usuários podem ver esta estratégia.",
+      label_private: "Privada",
+      label_private_hint: "Apenas você pode ver esta estratégia.",
+
+      icon_type_buy_hint: "Estratégia de Compra.",
+      icon_type_sell_hint: "Estratégia de Venda.",
+
+
+      label_author: "AUTOR",
+      label_createdOn: "CRIADO EM",
+
+      label_logic: "LÓGICA",
+      label_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico. Ela pode se tornar Estática caso o tempo gráfico seja configurado em uma de suas regras.",
+      label_dynamic: "Dinâmica",
+      label_static: "Estática",
+
+      label_actions: "Ações",
+      btn_update_hint: "Atualizar esta Estratégia.",
+      btn_delete_hint: "Deletar esta Estratégia.",
     },
     stockexchangefilter: {
       label_title: "Bolsa de Valores",
@@ -1313,7 +1678,6 @@ const strings = {
       label_suggestions: "RECOMENDAÇÕES",
       label_suggestions_hint: "Quantidade de recomendações desde a data em que temos você com a gente.",
 
-      input_select: "Selecione...",
       input_email: "E-mail",
       btn_changePassword: "Alterar Senha",
       input_firstName: "Primeiro Nome",
@@ -1363,7 +1727,6 @@ const strings = {
       btn_alert_confirm: "Confirmar",
       alert_confirming_title: "Você tem certeza?",
       alert_confirming_text: "Posições relacionadas a esta Carteira também serão removidas.",
-      alert_confirming_footer: "Uma vez removida, não é possível recupera-la.",
       alert_deleted_title: "Removida!",
       alert_deleted_text: "Sua Carteira foi removida com sucesso.",
 

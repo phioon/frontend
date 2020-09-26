@@ -63,7 +63,8 @@
 @import 'paper-dashboard/carousel';
 @import 'paper-dashboard/sidebar-and-main-panel';
 @import 'paper-dashboard/timeline';
-
+@import 'paper-dashboard/sortable-list';
+@import 'paper-dashboard/drag-and-drop';
 
 
 // cards
@@ -83,6 +84,7 @@
 @import "paper-dashboard/cards/card-signup";
 @import "paper-dashboard/cards/card-stats-mini";
 @import "paper-dashboard/cards/card-stats";
+@import "paper-dashboard/cards/card-summary";
 @import "paper-dashboard/cards/card-subcategories";
 @import "paper-dashboard/cards/card-testimonials";
 @import "paper-dashboard/cards/card-tasks";

@@ -24,6 +24,7 @@ import AuthManager from "./core/managers/AuthManager";
 import AppManager from "./core/managers/AppManager";
 import MarketManager from "./core/managers/MarketManager";
 import MeasureManager from "./core/managers/MeasureManager";
+import StrategyManager from "./core/managers/StrategyManager";
 
 export var isAuthenticated = undefined
 const hist = createBrowserHistory();
@@ -50,10 +51,9 @@ class App extends React.Component {
       app: new AppManager(this.getHttpTranslation),
       market: new MarketManager(this.getHttpTranslation)
     }
-    this.managers.measure = new MeasureManager(
-      this.managers.app,
-      this.managers.market,
-    )
+    this.managers.strategy = new StrategyManager(this.managers.market)
+    this.managers.measure = new MeasureManager(this.managers.app, this.managers.market)
+
     this.msgQueue = []
   }
   componentDidMount() {
@@ -169,8 +169,10 @@ class App extends React.Component {
           case "user":
             switch (context) {
               case "register":
-                if (rData.includes("username already exists"))
-                  msg.id = model + "_alreadyExists"
+                if (rData.includes("email already exists"))
+                  msg.id = model + "_emailAlreadyExists"
+                else if (rData.includes("username already exists"))
+                  msg.id = model + "_usernameAlreadyExists"
                 break;
               case "login":
                 if (rData.includes("Unable to log in with provided credentials"))

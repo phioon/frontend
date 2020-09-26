@@ -561,7 +561,7 @@ class ModalUpdatePosition extends React.Component {
               <ReactDatetime
                 inputProps={{
                   className: "form-control",
-                  placeholder: getString(langId, compId, "input_select")
+                  placeholder: getString(langId, "generic", "input_select")
                 }}
                 locale={getString(langId, "locales", langId)}
                 value={position.data.startedOn}
@@ -747,7 +747,7 @@ class ModalUpdatePosition extends React.Component {
               <ReactDatetime
                 inputProps={{
                   className: "form-control",
-                  placeholder: getString(langId, compId, "input_select")
+                  placeholder: getString(langId, "generic", "input_select")
                 }}
                 locale={getString(langId, "locales", langId)}
                 value={position.data.endedOn}
@@ -1012,7 +1012,7 @@ class ModalUpdatePosition extends React.Component {
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
-                placeholder={getString(langId, compId, "input_select")}
+                placeholder={getString(langId, "generic", "input_select")}
                 name="wallet"
                 value={position.data.wallet}
                 options={walletOptions}
@@ -1025,7 +1025,7 @@ class ModalUpdatePosition extends React.Component {
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
-                placeholder={getString(langId, compId, "input_select")}
+                placeholder={getString(langId, "generic", "input_select")}
                 name="asset"
                 value={position.data.asset}
                 options={assetOptions}

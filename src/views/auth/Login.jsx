@@ -79,7 +79,7 @@ class Login extends React.Component {
 
     switch (type) {
       case "email":
-        if (verifyEmail(event.target.value)) {
+        if (verifyLength(event.target.value), 1) {
           this.setState({ [stateName + "State"]: "has-success" });
         } else {
           this.setState({ [stateName + "State"]: "has-danger" });

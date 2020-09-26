@@ -5,11 +5,26 @@
     display: block;
 }
 
+.carousel-control-prev, .carousel-control-next{
+    width: 25px;
+    background: linear-gradient($default-body-bg 10%, $medium-gray 50%, $default-body-bg 90%);
+}
+
+.carousel-control-prev{
+    left: -25px;
+}
+.carousel-control-next {
+    right: -25px;
+}
+
 .carousel{
     .carousel-inner{
-        box-shadow: $box-shadow-raised;
+        min-height: 301px;
+        // box-shadow: $box-shadow-raised;
     }
-    .nc-icon{
-        font-size: 2em;
-    }
+
 }
+
+.carousel-indicators li {
+    background-color: $dark-gray;
+  }
