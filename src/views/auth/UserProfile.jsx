@@ -23,6 +23,7 @@ import Select from "react-select";
 import ModalChangePassword from "../modals/auth/ModalChangePassword";
 
 import TimeManager from "../../core/managers/TimeManager";
+import { project } from "../../core/projectData";
 import { getLangList } from "../../core/lang";
 import {
   areObjsEqual,
@@ -32,7 +33,6 @@ import {
   verifyOnlyLetters,
   verifyUsernameStr
 } from "../../core/utils";
-import { project } from "../../core/projectData";
 
 class UserProfile extends React.Component {
   constructor(props) {
@@ -48,7 +48,6 @@ class UserProfile extends React.Component {
 
       subscription: {},
 
-      initial_personalData: {},
       personalData: {
         data: {
           email: "",
@@ -64,7 +63,6 @@ class UserProfile extends React.Component {
         isLoading: false,
         isValidated: undefined
       },
-      initial_prefs: {},
       prefs: {
         data: {
           pref_langId: "",
@@ -161,13 +159,13 @@ class UserProfile extends React.Component {
         prefs.data.pref_langId = option
     }
 
-    let initial_personalData = deepCloneObj(personalData)
-    let initial_prefs = deepCloneObj(prefs)
+    personalData.initial = deepCloneObj(personalData.data)
+    prefs.initial = deepCloneObj(prefs.data)
 
     this.setState({
       subscription,
-      initial_personalData, personalData,
-      initial_prefs, prefs,
+      personalData,
+      prefs,
       currencies, languages,
     })
   }
@@ -225,9 +223,18 @@ class UserProfile extends React.Component {
         newState[type].data[fieldName] = value.toLowerCase()     // Keep it lowercase
 
         if (verifyLength(value, 3) && verifyUsernameStr(value)) {
-          this.checkUsernameAvailability(newState[type], fieldName, value)
-          newState[type].states[fieldName] = "has-success"
-        } else {
+          if (newState[type].initial[fieldName] === value) {
+            // Username is the same as before
+            newState.personalData.states[fieldName] = ""
+          }
+          else {
+            // Username is different as the initial one...
+            this.checkUsernameAvailability(newState[type], fieldName, value)
+            newState[type].states[fieldName] = "has-success"
+          }
+        }
+        else {
+          // Username is not complaint with the minimum requirements
           newState[type].data.username_msgId = "error_username_minReq"
           newState[type].states[fieldName] = "has-danger"
         }
@@ -256,7 +263,7 @@ class UserProfile extends React.Component {
         break;
     }
 
-    newState[type].isValidated = this.isValidated(type, newState[type])
+    newState[type].isValidated = this.isValidated(newState[type])
 
     this.setState(newState)
   }
@@ -296,29 +303,28 @@ class UserProfile extends React.Component {
     this.setState({ isCheckingUsername: true })
 
     let newState = { personalData: personalData }
-    let result = await this.props.managers.auth.checkUsernameAvailability(value)
+    let isAvailable = await this.props.managers.auth.isUsernameAvailable(value)
 
-    console.log({ result })
-    console.log(`result.data.is_available: ${result.data.is_available}`)
-
-    if (result.data && result.data.is_available) {
-      this.setState({ isUsernameAvailable: result.data.is_available })
+    if (isAvailable) {
+      this.setState({ isUsernameAvailable: isAvailable })
       newState.personalData.states[fieldName] = "has-success"
+    }
+    else if (typeof isAvailable === "undefined") {
+      newState.personalData.data.username_msgId = "error_username_couldNotCheck"
+      newState.personalData.states[fieldName] = "has-danger"
     }
     else {
       newState.personalData.data.username_msgId = "error_username_taken"
       newState.personalData.states[fieldName] = "has-danger"
     }
 
+    personalData.isValidated = this.isValidated(personalData)
     newState.isCheckingUsername = false
-
     this.setState(newState)
   }
 
-  isValidated(type, obj) {
-    let initial_obj = this.state["initial_" + type]
-
-    if (areObjsEqual(initial_obj.data, obj.data))
+  isValidated(obj) {
+    if (areObjsEqual(obj.data, obj.initial))
       return false
 
     if (Object.values(obj.states).includes("has-danger"))
@@ -335,7 +341,7 @@ class UserProfile extends React.Component {
   async saveClick(e, type, obj) {
     e.preventDefault();
     obj.isLoading = true
-    this.setState({ obj })
+    this.setState({ [type]: obj })
 
     let obj_data = deepCloneObj(obj.data)
 
@@ -351,10 +357,9 @@ class UserProfile extends React.Component {
     obj.isLoading = false
     obj.isValidated = undefined
     obj.states = {}
-    this.setState({
-      obj,
-      ["initial_" + type]: deepCloneObj(obj)
-    })
+    obj.initial = deepCloneObj(obj.data)
+
+    this.setState({ [type]: obj })
   }
 
   hideAlert() {
@@ -618,10 +623,10 @@ class UserProfile extends React.Component {
                         </FormGroup>
                       </Col>
                       <Col md="4" sm="4" xs="4" className="align-center">
-                        {!isCheckingUsername && <Spinner type="grow" color="info" size="mm" />}
-                        <label>
+                        {isCheckingUsername && <Spinner color="info" size="sm" />}
+                        <label className="text-danger">
                           {personalData.states.username === "has-danger" &&
-                            getString(langId, "httptranslation", personalData.data.username_msgId)
+                            getString(langId, compId, personalData.data.username_msgId)
                           }
                         </label>
                       </Col>

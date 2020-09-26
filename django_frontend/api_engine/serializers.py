@@ -149,7 +149,7 @@ class UserSerializer(serializers.ModelSerializer):
                   'birthday', 'nationality',
                   'subscription', 'subscription_renews_on', 'subscription_expires_on',
                   'pref_langId', 'pref_currency']
-        read_only_fields = ['username', 'email']
+        read_only_fields = ['email']
 
 
 class UserCustomSerializer(serializers.ModelSerializer):

@@ -24,6 +24,9 @@ class AuthManager {
         request: "/api/auth/logoutAll/"
       },
     }
+    this.username_lastCheck = ""
+    this.username_next = ""
+    this.username_lastResult = undefined
     this.rQueue = []
   }
   async startRequest(sKey) {
@@ -42,11 +45,25 @@ class AuthManager {
     this.rQueue.splice(this.rQueue.indexOf(sKey), 1)
   }
 
-  async checkUsernameAvailability(username) {
+  async isUsernameAvailable(username) {
+    // This function is triggered after an onChange() function. That means, every change on the field will trigger it.
+    // To avoid stressing our backend, we'll try to reduce the amount of requests.
     const sKey = "checkUsername"
+
+    this.username_next = username                   // Sets the latest username to be tested
     await this.startRequest(sKey)
 
+    if (this.username_lastCheck === this.username_next) {
+      // If last checking process checked for the same username as now, return the last result.
+      this.finishRequest(sKey)
+      return this.username_lastResult
+    }
+
+    this.username_lastCheck = this.username_next    // Gets what's going to be the next username to be tested
+    username = this.username_lastCheck
+
     let data = { username: username }
+    let isAvailable = false
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "checkAvailability/"
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
@@ -54,8 +71,14 @@ class AuthManager {
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, data)
 
+    if (result.status == 200)
+      isAvailable = result.data.is_available
+    else
+      isAvailable = undefined
+
+    this.username_lastResult = isAvailable
     this.finishRequest(sKey)
-    return result
+    return isAvailable
   }
   async userRegister(user) {
     let wsInfo = this.getApi("wsUser")
@@ -143,7 +166,7 @@ class AuthManager {
 
   async userUpdate(user) {
     const sKey = "user"
-    let userFields = ["email", "first_name", "last_name"]
+    let userFields = ["email", "username", "first_name", "last_name"]
     let obj_user = {}
     let obj_userCustom = {}
 

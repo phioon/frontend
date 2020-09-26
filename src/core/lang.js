@@ -577,7 +577,7 @@ const strings = {
         "Ooops... A user with that email address already exists. Did you forget your password?",
 
       error_enterValidEmail: "Here, I need a valid email.",
-      error_username_minReq: "It can have letters, numbers and few special characters like: '_' and '.'",
+      error_username_minReq: "It can have letters (a-z), numbers (0-9) underscores (_) and periods (.)",
       error_passwordLength: "It must have at least 8 characters.",
       error_acceptPrivacyPolicy: "To proceed, I need you to accept our Privacy Policy.",
 
@@ -877,6 +877,10 @@ const strings = {
       input_currency: "Main Currency",
       input_currency_hint: "Do you invest in different countries? I could convert the currencies to your preferred one on dashboards and reports. ",
       input_language: "Language",
+
+      error_username_minReq: "Letters (a-z), numbers (0-9), underscores (_) and periods (.)",
+      error_username_taken: "Username taken :/",
+      error_username_couldNotCheck: "Something went wrong :/ Let's try again later.",
 
       btn_save: "Save"
     },
@@ -1458,7 +1462,7 @@ const strings = {
     },
     register: {
       error_enterValidEmail: "Aqui, preciso de um e-mail válido.",
-      error_username_minReq: "Pode conter letras, números and alguns caracteres especiais como: '_' e '.'",
+      error_username_minReq: "Pode conter letras (a-z), números (0-9), underscores (_) e pontos (.)",
       error_passwordLength: "Precisa ser no minimo 8 caracteres.",
       error_acceptPrivacyPolicy: "Para prosseguir, preciso que aceite nossa Politica de Privacidade.",
 
@@ -1691,6 +1695,10 @@ const strings = {
       input_currency: "Moeda Principal",
       input_currency_hint: "Investe em diferentes países? Posso converter outras moedas para a de sua preferência em relatórios e dashboards. ",
       input_language: "Língua",
+
+      error_username_minReq: "Letras (a-z), números (0-9), underscores (_) e pontos (.)",
+      error_username_taken: "Nome de usuário em uso :/",
+      error_username_couldNotCheck: "Algo deu errado :/ Vamos tentar novamente mais tarde.",
 
       btn_save: "Salvar"
     },
