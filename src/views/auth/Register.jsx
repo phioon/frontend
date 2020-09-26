@@ -49,9 +49,6 @@ class Register extends React.Component {
       langId: props.prefs.langId,
       isLoading: false,
 
-      checkingAvailability: false,
-      isUsernameAvailable: undefined,
-
       // Any change in user object must be reflected at this.clearInputFields()
       user: {
         data: {
@@ -187,13 +184,6 @@ class Register extends React.Component {
           newState.user.states[fieldName] = "has-danger"
         }
         break;
-      case "lastname":
-        if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
-          newState.user.states[fieldName] = "has-success"
-        } else {
-          newState.user.states[fieldName] = "has-danger"
-        }
-        break;
       case "email":
         if (verifyEmail(value)) {
           newState.user.states[fieldName] = "has-success"
@@ -244,29 +234,6 @@ class Register extends React.Component {
 
     this.setState(newState)
   };
-  async checkUsernameAvailability(user, fieldName, value) {
-    this.setState({ checkingAvailability: true })
-
-    let newState = { user: user }
-    let result = await this.props.managers.auth.checkUsernameAvailability(value)
-
-    console.log({ result })
-    console.log(`result.data.is_available: ${result.data.is_available}`)
-
-    if (result.data && result.data.is_available) {
-      this.setState({ isUsernameAvailable: result.data.is_available })
-      newState.user.states[fieldName] = "has-success"
-    }
-    else {
-      newState.user.data.username_msgId = "error_username_taken"
-      newState.user.states[fieldName] = "has-danger"
-    }
-
-    // If username is available, trigger this.onChange
-    // If not available, set state here.
-
-    this.setState({ checkingAvailability: false })
-  }
 
   async registerClick(user) {
     this.setState({ isLoading: true })
@@ -329,9 +296,6 @@ class Register extends React.Component {
       compId,
       isLoading,
 
-      checkingAvailability,
-      isUsernameAvailable,
-
       user,
 
       nationalities,
@@ -341,8 +305,6 @@ class Register extends React.Component {
       alertState,
       alertMsg
     } = this.state;
-
-    console.log(user)
 
     return (
       <div className="register-page">
@@ -456,7 +418,6 @@ class Register extends React.Component {
                         onChange={e => this.onChange("username", e.target.value)}
                       />
                     </InputGroup>
-                    {checkingAvailability && <Spinner color="default" animation="border" size="sm" />}
                     <label>
                       {user.states.username === "has-danger" &&
                         getString(langId, compId, user.data.username_msgId)
@@ -526,11 +487,11 @@ class Register extends React.Component {
                     type="submit"
                     className="btn-round"
                     color="primary"
-                    disabled={user.isValidated && !checkingAvailability ? false : true}
+                    disabled={user.isValidated ? false : true}
                     onClick={() => this.registerClick(user)}
                   >
                     {isLoading ?
-                      <Spinner animation="border" size="sm" /> :
+                      <Spinner size="sm" /> :
                       getString(langId, compId, "btn_createAccount")}
                   </Button>
                   <LabelAlert alertState={alertState} alertMsg={alertMsg} />

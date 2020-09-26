@@ -24,6 +24,22 @@ from . import serializers
 from app.models import Country, UserCustom, Subscription
 
 
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def checkUsernameAvailability(request):
+    result = {'is_available': None}
+
+    if 'username' in request.data:
+        username = request.data['username']
+
+        if User.objects.filter(username=username).exists():
+            result['is_available'] = False
+        else:
+            result['is_available'] = True
+
+    return Response(status=status.HTTP_200_OK, data=result)
+
+
 class UserRegisterAPIView(generics.GenericAPIView):
     serializer_class = UserRegisterSerializer
     permission_classes = [permissions.AllowAny]

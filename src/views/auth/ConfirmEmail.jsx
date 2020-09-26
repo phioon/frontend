@@ -193,7 +193,7 @@ class ConfirmEmail extends React.Component {
                     onClick={e => this.submitClick(e)}
                   >
                     {isLoading ?
-                      <Spinner animation="border" size="sm" /> :
+                      <Spinner size="sm" /> :
                       getString(langId, compId, "btn_login")
                     }
                   </Button>

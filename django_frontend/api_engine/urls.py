@@ -22,6 +22,7 @@ urlpatterns = [
 
 # Auth
 urlpatterns += [
+    path('auth/user/checkAvailability/', apiAuth.checkUsernameAvailability, name='check_username_availability'),
     path('auth/usercustom/update/', apiAuth.UserCustomUpdateAPIView.as_view()),
     path('auth/user/register/', apiAuth.UserRegisterAPIView.as_view()),
     path('auth/user/update/', apiAuth.UserUpdateAPIView.as_view()),

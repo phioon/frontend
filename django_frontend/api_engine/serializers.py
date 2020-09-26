@@ -165,14 +165,16 @@ class RequestPasswordResetSerializer(rest_auth_serializers.PasswordResetSerializ
 
         user_email = self.validated_data['email']
 
-        try:
-            userCustom = UserCustom.objects.get(user__username__exact=user_email)
+        if UserCustom.objects.filter(user__email__exact=user_email).exists():
+            userCustom = UserCustom.objects.get(user__email__exact=user_email)
             pref_langId = userCustom.pref_langId
             subject_template_name = subject_template_name.replace('<langId>', pref_langId)
             html_email_template_name = html_email_template_name.replace('<langId>', pref_langId)
-        except exceptions.ObjectDoesNotExist:
-            pass
+        else:
+            subject_template_name = subject_template_name.replace('<langId>', 'ptBR')
+            html_email_template_name = html_email_template_name.replace('<langId>', 'ptBR')
 
+        print('subject_template_name: %s' % subject_template_name)
         return {
             'subject_template_name': subject_template_name,
             'email_template_name': html_email_template_name,

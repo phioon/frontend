@@ -225,7 +225,7 @@ class Login extends React.Component {
                       onClick={e => this.submitClick(e)}
                     >
                       {isLoading ?
-                        <Spinner animation="border" size="sm" /> :
+                        <Spinner size="sm" /> :
                         getString(langId, compId, "btn_login")
                       }
                     </Button>
@@ -242,7 +242,7 @@ class Login extends React.Component {
                           color="default"
                           onClick={e => this.resendEmailClick(e)}>
                           {resendEmail_isLoading ?
-                            <Spinner animation="border" size="sm" /> :
+                            <Spinner size="sm" /> :
                             getString(langId, compId, "btn_resendEmail")
                           }
                         </Button>

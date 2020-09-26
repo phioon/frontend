@@ -1253,7 +1253,7 @@ class ModalStrategy extends React.Component {
               onClick={() => this.confirmClick(this.props.action, strategy)}
             >
               {isLoading ?
-                <Spinner animation="border" size="sm" /> :
+                <Spinner size="sm" /> :
                 getString(langId, compId, ["btn_" + this.props.action])
               }
             </Button>

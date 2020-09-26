@@ -712,7 +712,7 @@ class ModalOpenPosition extends React.Component {
               onClick={e => this.confirmClick(e)}
             >
               {isLoading ?
-                <Spinner animation="border" size="sm" /> :
+                <Spinner size="sm" /> :
                 getString(langId, compId, "btn_confirm")
               }
             </Button>

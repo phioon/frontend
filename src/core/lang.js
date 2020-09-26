@@ -867,6 +867,7 @@ const strings = {
 
       input_email: "Email",
       btn_changePassword: "Change Password",
+      input_username: "Username",
       input_firstName: "First Name",
       input_lastName: "Last Name",
       input_nationality: "Nationality",
@@ -1680,6 +1681,7 @@ const strings = {
 
       input_email: "E-mail",
       btn_changePassword: "Alterar Senha",
+      input_username: "Usuário",
       input_firstName: "Primeiro Nome",
       input_lastName: "Último Nome",
       input_nationality: "Nacionalidade",

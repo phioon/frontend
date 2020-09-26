@@ -1,6 +1,6 @@
 import StorageManager from "./StorageManager";
 import TimeManager from "./TimeManager";
-import { deepCloneObj, httpRequest } from "../utils";
+import { deepCloneObj, httpRequest, sleep } from "../utils";
 
 class AuthManager {
   constructor(getHttpTranslation, setAuthStatus, setPrefs) {
@@ -24,6 +24,38 @@ class AuthManager {
         request: "/api/auth/logoutAll/"
       },
     }
+    this.rQueue = []
+  }
+  async startRequest(sKey) {
+    let waitTime = 200
+    let waitTimeLimit = 3000
+    let waitedTime = 0
+
+    while (this.rQueue.includes(sKey) && waitedTime <= waitTimeLimit) {
+      // console.log(sKey + " waiting... rQueue: [" + this.rQueue + "]")
+      await sleep(waitTime)
+      waitedTime += waitTime
+    }
+    this.rQueue.push(sKey)
+  }
+  finishRequest(sKey) {
+    this.rQueue.splice(this.rQueue.indexOf(sKey), 1)
+  }
+
+  async checkUsernameAvailability(username) {
+    const sKey = "checkUsername"
+    await this.startRequest(sKey)
+
+    let data = { username: username }
+    let wsInfo = this.getApi("wsUser")
+    wsInfo.request += "checkAvailability/"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.method = "post"
+
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, data)
+
+    this.finishRequest(sKey)
+    return result
   }
   async userRegister(user) {
     let wsInfo = this.getApi("wsUser")

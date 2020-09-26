@@ -29,7 +29,8 @@ import {
   deepCloneObj,
   getDistinctValuesFromList,
   verifyLength,
-  verifyOnlyLetters
+  verifyOnlyLetters,
+  verifyUsernameStr
 } from "../../core/utils";
 import { project } from "../../core/projectData";
 
@@ -41,6 +42,7 @@ class UserProfile extends React.Component {
       compId: this.constructor.name.toLowerCase(),
       langId: props.prefs.langId,
       pageFirstLoading: true,
+      isCheckingUsername: false,
 
       modal_changePassword_isOpen: false,
 
@@ -50,6 +52,7 @@ class UserProfile extends React.Component {
       personalData: {
         data: {
           email: "",
+          username: "",
           first_name: "",
           last_name: "",
           initials: "",
@@ -206,7 +209,7 @@ class UserProfile extends React.Component {
     return insights
   }
 
-  onChange(event, type, stateName) {
+  onChange(type, fieldName, value) {
     let newState = { [type]: this.state[type] }
 
     if (this.state.alertState !== null) {
@@ -214,28 +217,40 @@ class UserProfile extends React.Component {
       newState.alertMsg = ""
     }
 
-    newState[type].data[stateName] = event.target.value
+    newState[type].data[fieldName] = value
 
-    switch (stateName) {
+    switch (fieldName) {
+      case "username":
+        newState[type].data.username_msgId = ""
+        newState[type].data[fieldName] = value.toLowerCase()     // Keep it lowercase
+
+        if (verifyLength(value, 3) && verifyUsernameStr(value)) {
+          this.checkUsernameAvailability(newState[type], fieldName, value)
+          newState[type].states[fieldName] = "has-success"
+        } else {
+          newState[type].data.username_msgId = "error_username_minReq"
+          newState[type].states[fieldName] = "has-danger"
+        }
+        break;
       case "first_name":
-        if (verifyLength(event.target.value, 3) && verifyOnlyLetters(event.target.value)) {
-          newState[type].states[stateName] = "has-success";
+        if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
+          newState[type].states[fieldName] = "has-success";
 
-          newState[type].data.initials = `${event.target.value[0]}${newState[type].data.last_name[0]}`
+          newState[type].data.initials = `${value[0]}${newState[type].data.last_name[0]}`
           newState[type].data.initials = newState[type].data.initials
         }
         else
-          newState[type].states[stateName] = "has-danger";
+          newState[type].states[fieldName] = "has-danger";
         break;
       case "last_name":
-        if (verifyLength(event.target.value, 3) && verifyOnlyLetters(event.target.value)) {
-          newState[type].states[stateName] = "has-success";
+        if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
+          newState[type].states[fieldName] = "has-success";
 
-          newState[type].data.initials = `${newState[type].data.first_name[0]}${event.target.value[0]}`
+          newState[type].data.initials = `${newState[type].data.first_name[0]}${value[0]}`
           newState[type].data.initials = newState[type].data.initials
         }
         else
-          newState[type].states[stateName] = "has-danger";
+          newState[type].states[fieldName] = "has-danger";
         break;
       default:
         break;
@@ -274,6 +289,28 @@ class UserProfile extends React.Component {
     }
 
     newState[type].isValidated = this.isValidated(type, newState[type])
+
+    this.setState(newState)
+  }
+  async checkUsernameAvailability(personalData, fieldName, value) {
+    this.setState({ isCheckingUsername: true })
+
+    let newState = { personalData: personalData }
+    let result = await this.props.managers.auth.checkUsernameAvailability(value)
+
+    console.log({ result })
+    console.log(`result.data.is_available: ${result.data.is_available}`)
+
+    if (result.data && result.data.is_available) {
+      this.setState({ isUsernameAvailable: result.data.is_available })
+      newState.personalData.states[fieldName] = "has-success"
+    }
+    else {
+      newState.personalData.data.username_msgId = "error_username_taken"
+      newState.personalData.states[fieldName] = "has-danger"
+    }
+
+    newState.isCheckingUsername = false
 
     this.setState(newState)
   }
@@ -335,6 +372,7 @@ class UserProfile extends React.Component {
       langId,
       compId,
       pageFirstLoading,
+      isCheckingUsername,
 
       modal_changePassword_isOpen,
 
@@ -364,8 +402,8 @@ class UserProfile extends React.Component {
           />
           {alert}
           <Row>
+            {/* Subscription */}
             <Col lg="4" md="5">
-              {/* Subscription */}
               <Card className="card-user">
                 <div className="image">
                   <img
@@ -560,11 +598,32 @@ class UserProfile extends React.Component {
                       <Col md="4" sm="4" xs="4" className="centered">
                         <Button
                           className="btn-neutral"
-                          // color="black"
                           onClick={() => this.toggleModal("changePassword")}
                         >
                           {getString(langId, compId, "btn_changePassword")}
                         </Button>
+                      </Col>
+                    </Row>
+                    <Row className="justify-content-center">
+                      {/* Username */}
+                      <Col md="8" sm="8" xs="8">
+                        <FormGroup className={`has-label ${personalData.states.username}`}>
+                          <label>{getString(langId, compId, "input_username")}</label>
+                          <Input
+                            type="text"
+                            name="username"
+                            value={personalData.data.username}
+                            onChange={e => this.onChange("personalData", e.target.name, e.target.value)}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col md="4" sm="4" xs="4" className="align-center">
+                        {!isCheckingUsername && <Spinner type="grow" color="info" size="mm" />}
+                        <label>
+                          {personalData.states.username === "has-danger" &&
+                            getString(langId, "httptranslation", personalData.data.username_msgId)
+                          }
+                        </label>
                       </Col>
                     </Row>
                     <Row>
@@ -577,7 +636,7 @@ class UserProfile extends React.Component {
                             type="text"
                             name="first_name"
                             value={personalData.data.first_name}
-                            onChange={e => this.onChange(e, "personalData", e.target.name)}
+                            onChange={e => this.onChange("personalData", e.target.name, e.target.value)}
                           />
                         </FormGroup>
                       </Col>
@@ -590,7 +649,7 @@ class UserProfile extends React.Component {
                             type="text"
                             name="last_name"
                             value={personalData.data.last_name}
-                            onChange={e => this.onChange(e, "personalData", e.target.name)}
+                            onChange={e => this.onChange("personalData", e.target.name, e.target.value)}
                           />
                         </FormGroup>
                       </Col>
@@ -649,7 +708,7 @@ class UserProfile extends React.Component {
                         onClick={e => this.saveClick(e, "personalData", personalData)}
                       >
                         {personalData.isLoading ?
-                          <Spinner animation="border" size="sm" /> :
+                          <Spinner size="sm" /> :
                           getString(langId, compId, "btn_save")
                         }
                       </Button>
@@ -718,7 +777,7 @@ class UserProfile extends React.Component {
                         onClick={e => this.saveClick(e, "prefs", prefs)}
                       >
                         {prefs.isLoading ?
-                          <Spinner animation="border" size="sm" /> :
+                          <Spinner size="sm" /> :
                           getString(langId, compId, "btn_save")
                         }
                       </Button>
