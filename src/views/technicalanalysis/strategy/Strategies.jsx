@@ -1,14 +1,17 @@
 import React from "react";
+import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
 // reactstrap components
 import {
+  Badge,
   Button,
   Card,
   CardHeader,
-  CardBody,
   CardTitle,
+  CardBody,
+  CardFooter,
   Carousel,
   CarouselItem,
   CarouselControl,
@@ -28,6 +31,7 @@ import ReactBSAlert from "react-bootstrap-sweetalert";
 import StrategyCardMini from "./StrategyCardMini";
 import StrategyResults from "./StrategyResults";
 import ModalStrategy from "../../modals/strategy/ModalStrategy";
+import CarouselSkeleton from "./CarouselSkeleton";
 import { orderBy, getDistinctValuesFromList, deepCloneObj, retrieveObjFromObjList } from "../../../core/utils";
 
 class Strategies extends React.Component {
@@ -48,7 +52,6 @@ class Strategies extends React.Component {
       carousel: {
         slides: [],
         activeIndex: 0,
-        maxItemsPerSlide: 0
       },
       selected: {
         filters: {
@@ -62,6 +65,7 @@ class Strategies extends React.Component {
         strategy: { rules: "{}" },
       },
 
+      cWallets: 0,
       stockExchangeOptions: [],
       timeIntervalOptions: [],
 
@@ -95,6 +99,7 @@ class Strategies extends React.Component {
       this.resize()
     });
   }
+
   resize() {
     let maxItemsPerSlide = this.getMaxItemsPerSlide()
 
@@ -123,20 +128,33 @@ class Strategies extends React.Component {
     // Check User's subscription
 
     let tasks = [
-      this.prepareFilters(),
+      this.prepareContext(),
       this.prepareCarousel()
     ]
-    Promise.all(tasks)
+    await Promise.all(tasks)
 
     this.setState({ pageFirstLoading: false })
   }
-  async prepareFilters() {
+  async prepareContext() {
     let { getString } = this.props;
     let { langId } = this.state;
 
     let iItems = await this.props.managers.market.indicatorData()
-    let stockExchangeOptions = await this.props.managers.market.stockExchangesForSelect()
+
+    let wallets = await this.props.managers.app.walletList()
+    let stockExchanges = getDistinctValuesFromList(wallets.data, "se_short")
+    let stockExchangeOptions = []
     let timeIntervalOptions = []
+
+    for (var se_short of stockExchanges) {
+      let stockExchange = await this.props.managers.market.stockExchangeRetrieve(se_short)
+      let option = {
+        value: stockExchange.se_short,
+        label: stockExchange.se_name
+      }
+
+      stockExchangeOptions.push(option)
+    }
 
     // Default option
     if (stockExchangeOptions.length > 0)
@@ -151,21 +169,21 @@ class Strategies extends React.Component {
           }
           timeIntervalOptions.push(option)
 
-          console.log(option)
-
           // Default option
           if (option.value == "d")
             this.onSelectChange("timeInterval", option)
         }
 
 
-    this.setState({ stockExchangeOptions, timeIntervalOptions })
+    this.setState({ cWallets: wallets.data.length, stockExchangeOptions, timeIntervalOptions })
   }
   async prepareCarousel() {
     // 1. Strategies
     let strategies = await this.props.managers.app.strategyData()
     strategies = orderBy(strategies, ['-create_time'])
     let sStrategyNames = getDistinctValuesFromList(strategies, "name")
+
+    console.log(strategies)
 
     // 2. Carousel
     let carousel = this.prepareSlides(this.state.carousel, strategies)
@@ -183,7 +201,7 @@ class Strategies extends React.Component {
       if (x == maxItemsPerSlide - 1) {
         slides.push(items)
         items = []
-        maxItemsPerSlide += this.getMaxItemsPerSlide()
+        maxItemsPerSlide += maxItemsPerSlide
       }
     }
 
@@ -198,12 +216,13 @@ class Strategies extends React.Component {
 
   renderStrategyItem(slide) {
     return slide.map((strategy) => {
+      let isOwner = this.props.managers.auth.storedUser().user.username === strategy.owner_username
       return (
         <Col key={"strategy__" + strategy.id} xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
           <StrategyCardMini
             {...this.props}
             strategy={deepCloneObj(strategy)}
-            user={this.props.managers.auth.storedUser().user}
+            isOwner={isOwner}
             onClick={this.onClick}
             isLoading={this.state.isLoading}
           />
@@ -260,11 +279,19 @@ class Strategies extends React.Component {
   onSelectChange(fieldName, value) {
     let newState = { selected: this.state.selected }
 
+    let runStrategy = false
+
     switch (fieldName) {
       case "stockExchange":
+        if (newState.selected.filters.general.stockExchange !== value)
+          runStrategy = true
+
         newState.selected.filters.general.stockExchange = value
         break;
       case "timeInterval":
+        if (newState.selected.filters.variables.interval !== value)
+          runStrategy = true
+
         newState.selected.filters.variables.interval = value
         break;
       default:
@@ -272,6 +299,11 @@ class Strategies extends React.Component {
     }
 
     this.setState(newState)
+
+    if (runStrategy && this.state.selected.strategy.id) {
+      // If a Strategy is selected, for each select change, run it again.
+      this.runClick(this.state.selected.strategy)
+    }
   }
 
   onClick(action, obj) {
@@ -392,6 +424,7 @@ class Strategies extends React.Component {
       carousel,
       selected,
 
+      cWallets,
       stockExchangeOptions,
       timeIntervalOptions,
 
@@ -399,7 +432,7 @@ class Strategies extends React.Component {
       alert,
     } = this.state;
 
-    console.log(selected)
+    console.log(this.state)
 
     return (
       <div className="content">
@@ -415,107 +448,173 @@ class Strategies extends React.Component {
           sStrategyNames={sStrategyNames}
           runItIfSuccess={this.prepareCarousel}
         />
+        <div className="header text-center">
+          <h3 className="title">{getString(langId, compId, "title")}</h3>
+        </div>
         {/* Carousel */}
-        <Card className="card-plain">
-          <CardHeader>
-            <Row>
-              <Col>
-                <CardTitle tag="h4">{getString(langId, compId, "card_title")}</CardTitle>
-              </Col>
-              <Col className="text-right">
+        {pageFirstLoading ?
+          <Card className="card-plain">
+            <CardHeader>
+              <Row>
+                <Col>
+                  <CardTitle tag="h4">{getString(langId, compId, "card_title")}</CardTitle>
+                </Col>
+                <Col className="text-right">
+                  <Button
+                    type="submit"
+                    className="btn-round"
+                    outline
+                    color="success"
+                    onClick={() => this.onClick("create")}
+                  >
+                    {getString(langId, compId, "btn_newStrategy")}
+                  </Button>
+                </Col>
+              </Row>
+            </CardHeader>
+            <CardBody>
+              <CarouselSkeleton />
+            </CardBody>
+          </Card> :
+          cWallets == 0 ?
+            // No wallets
+            <Card className="card-stats">
+              <Row>
+                <Col xl="2" lg="2" md="3" xs="3" className="centered">
+                  <div className="icon-big text-center">
+                    <i className="nc-icon nc-alert-circle-i text-warning" />
+                  </div>
+                </Col>
+                <Col xl="10" lg="10" md="9" xs="9">
+                  <br />
+                  <p className="card-description">{getString(langId, compId, "label_noWallets_p1")}</p>
+                  <p className="card-description">{getString(langId, compId, "label_noWallets_p2")}</p>
+                </Col>
+              </Row>
+              <CardFooter className="centered">
                 <Button
-                  type="submit"
                   className="btn-round"
-                  outline
                   color="success"
-                  onClick={() => this.onClick("create")}
+                  data-dismiss="modal"
+                  type="submit"
+                  onClick={() => this.setState({ goToWallets: true })}
                 >
-                  {getString(langId, compId, "btn_newStrategy")}
+                  {getString(langId, compId, "btn_goToWallets")}
                 </Button>
-              </Col>
-            </Row>
-          </CardHeader>
-          <CardBody>
-            <Carousel
-              activeIndex={carousel.activeIndex}
-              next={() => this.moveSlide("next")}
-              previous={() => this.moveSlide("previous")}
-              interval={false}>
-              <CarouselIndicators
-                items={Object.keys(carousel.slides)}
-                activeIndex={carousel.activeIndex}
-                onClickHandler={index => this.moveSlide("goto", index)} />
-              {this.renderStrategySlides(carousel.slides)}
-              <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide("previous")} />
-              <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide("next")} />
-            </Carousel>
-          </CardBody>
-        </Card>
-        {/* Selections */}
-        <Row className="centered">
-          <Col xl="6" md="8" xs="12">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-center" tag="h6">{getString(langId, compId, "card_selection_title")}</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <Row className="centered">
-                  {/* Stock Exchange */}
-                  <Col>
-                    <FormGroup>
-                      <label>{getString(langId, compId, "input_stockExchange")}
-                        {" "}
-                        <i id={"input_stockExchange_hint"} className="nc-icon nc-alert-circle-i" />
-                      </label>
-                      <UncontrolledTooltip delay={{ show: 200 }} placement="right" target={"input_stockExchange_hint"}>
-                        {getString(langId, compId, "input_stockExchange_hint")}
-                      </UncontrolledTooltip>
-                      <Select
-                        className="react-select"
-                        classNamePrefix="react-select"
-                        name="stockExchange"
-                        placeholder={getString(langId, "generic", "input_select")}
-                        value={selected.filters.general.stockExchange}
-                        options={stockExchangeOptions}
-                        onChange={value => this.onSelectChange("stockExchange", value)}
-                      />
-                    </FormGroup>
-                  </Col>
-                  {/* Time Interval */}
-                  <Col>
-                    <FormGroup>
-                      <label>{getString(langId, compId, "input_timeInterval")}
-                        {" "}
-                        <i id={"input_timeInterval_hint"} className="nc-icon nc-alert-circle-i" />
-                      </label>
-                      <UncontrolledTooltip delay={{ show: 200 }} placement="right" target={"input_timeInterval_hint"}>
-                        {getString(langId, compId, "input_timeInterval_hint")}
-                      </UncontrolledTooltip>
-                      <Select
-                        className="react-select"
-                        classNamePrefix="react-select"
-                        name="timeInterval"
-                        placeholder={getString(langId, "generic", "input_select")}
-                        value={selected.filters.variables.interval}
-                        options={timeIntervalOptions}
-                        onChange={value => this.onSelectChange("timeInterval", value)}
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <label>Test</label>
-              </CardBody>
+                {this.state.goToWallets && <Redirect to="/app/myassets/wallets" />}
+              </CardFooter>
             </Card>
-          </Col>
-        </Row>
-        {/* Results */}
-        <StrategyResults
-          {...this.props}
-          toggleLoading={this.toggleLoading}
-          isLoading={isLoading}
-          strategy={selected.strategy}
-          filters={selected.filters}
-        />
+            :
+            <>
+              {/* Strategies */}
+              <Card className="card-plain">
+                <CardHeader>
+                  <Row>
+                    <Col>
+                      <CardTitle tag="h4">{getString(langId, compId, "card_title")}</CardTitle>
+                    </Col>
+                    <Col className="text-right">
+                      <Button
+                        type="submit"
+                        className="btn-round"
+                        outline
+                        color="success"
+                        onClick={() => this.onClick("create")}
+                      >
+                        {getString(langId, compId, "btn_newStrategy")}
+                      </Button>
+                    </Col>
+                  </Row>
+                </CardHeader>
+                <CardBody>
+                  <Carousel
+                    activeIndex={carousel.activeIndex}
+                    next={() => this.moveSlide("next")}
+                    previous={() => this.moveSlide("previous")}
+                    interval={false}>
+                    <CarouselIndicators
+                      items={Object.keys(carousel.slides)}
+                      activeIndex={carousel.activeIndex}
+                      onClickHandler={index => this.moveSlide("goto", index)} />
+                    {this.renderStrategySlides(carousel.slides)}
+                    <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide("previous")} />
+                    <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide("next")} />
+                  </Carousel>
+                </CardBody>
+              </Card>
+              {/* Results */}
+              <Card id="strategyresults">
+                <CardHeader>
+                  <Row>
+                    <Col>
+                      <CardTitle tag="h5">{getString(langId, compId, "card_results_title")}</CardTitle>
+                    </Col>
+                    <Col>
+                      <div className="pull-right">
+                        <Badge color="default" pill>
+                          {selected.strategy.name && selected.strategy.name}
+                        </Badge>
+                      </div>
+                    </Col>
+                  </Row>
+                </CardHeader>
+                <CardBody>
+                  <Row className="justify-content-center">
+                    {/* Stock Exchange */}
+                    <Col xl="3" lg="3" md="4" xs="6">
+                      <FormGroup>
+                        <label>{getString(langId, compId, "input_stockExchange")}
+                          {" "}
+                          <i id={"input_stockExchange_hint"} className="nc-icon nc-alert-circle-i" />
+                        </label>
+                        <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_stockExchange_hint"}>
+                          {getString(langId, compId, "input_stockExchange_hint")}
+                        </UncontrolledTooltip>
+                        <Select
+                          className="react-select"
+                          classNamePrefix="react-select"
+                          name="stockExchange"
+                          placeholder={getString(langId, "generic", "input_select")}
+                          value={selected.filters.general.stockExchange}
+                          options={stockExchangeOptions}
+                          onChange={value => this.onSelectChange("stockExchange", value)}
+                        />
+                      </FormGroup>
+                    </Col>
+                    {/* Time Interval */}
+                    <Col xl="2" lg="3" md="3" xs="6">
+                      <FormGroup>
+                        <label>{getString(langId, compId, "input_timeInterval")}
+                          {" "}
+                          <i id={"input_timeInterval_hint"} className="nc-icon nc-alert-circle-i" />
+                        </label>
+                        <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_timeInterval_hint"}>
+                          {getString(langId, compId, "input_timeInterval_hint")}
+                        </UncontrolledTooltip>
+                        <Select
+                          className="react-select"
+                          classNamePrefix="react-select"
+                          name="timeInterval"
+                          placeholder={getString(langId, "generic", "input_select")}
+                          value={selected.filters.variables.interval}
+                          options={timeIntervalOptions}
+                          onChange={value => this.onSelectChange("timeInterval", value)}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row className="mt-4" />
+                  <StrategyResults
+                    {...this.props}
+                    toggleLoading={this.toggleLoading}
+                    isLoading={isLoading}
+                    strategy={selected.strategy}
+                    filters={selected.filters}
+                  />
+                </CardBody>
+              </Card>
+            </>
+        }
       </div>
     )
   }

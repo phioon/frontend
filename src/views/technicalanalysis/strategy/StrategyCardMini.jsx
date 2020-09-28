@@ -6,10 +6,7 @@ import {
   Button,
   Card,
   CardBody,
-  CardHeader,
   CardTitle,
-  Col,
-  Row,
   UncontrolledTooltip
 } from "reactstrap";
 // react component used to flip cards
@@ -45,7 +42,7 @@ class StrategyCardMini extends React.Component {
   }
 
   render() {
-    let { getString, strategy, isLoading } = this.props;
+    let { getString, strategy, isLoading, isOwner } = this.props;
     let {
       langId,
       compId,
@@ -100,35 +97,41 @@ class StrategyCardMini extends React.Component {
                 {getString(langId, compId, "btn_run_hint")}
               </UncontrolledTooltip>
               {/* Edit */}
-              <Button
-                className="btn-icon btn-link"
-                color="warning"
-                id={"update__" + strategy.id}
-                size="sm"
-                type="button"
-                disabled={this.props.user.username !== strategy.owner_username}
-                onClick={() => this.props.onClick("update", strategy)}
-              >
-                <i className="fa fa-edit" />
-              </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"update__" + strategy.id}>
-                {getString(langId, compId, "btn_update_hint")}
-              </UncontrolledTooltip>
+              {isOwner ?
+                <>
+                  <Button
+                    className="btn-icon btn-link"
+                    color="warning"
+                    id={"update__" + strategy.id}
+                    size="sm"
+                    type="button"
+                    onClick={() => this.props.onClick("update", strategy)}
+                  >
+                    <i className="fa fa-edit" />
+                  </Button>
+                  <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"update__" + strategy.id}>
+                    {getString(langId, compId, "btn_update_hint")}
+                  </UncontrolledTooltip>
+                </> : null
+              }
               {/* Delete */}
-              <Button
-                className="btn-icon btn-link remove"
-                color="danger"
-                id={"delete__" + strategy.id}
-                size="sm"
-                type="button"
-                disabled={this.props.user.username !== strategy.owner_username}
-                onClick={() => this.props.onClick("delete", strategy)}
-              >
-                <i className="fa fa-times" />
-              </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"delete__" + strategy.id}>
-                {getString(langId, compId, "btn_delete_hint")}
-              </UncontrolledTooltip>
+              {isOwner ?
+                <>
+                  <Button
+                    className="btn-icon btn-link remove"
+                    color="danger"
+                    id={"delete__" + strategy.id}
+                    size="sm"
+                    type="button"
+                    onClick={() => this.props.onClick("delete", strategy)}
+                  >
+                    <i className="fa fa-times" />
+                  </Button>
+                  <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"delete__" + strategy.id}>
+                    {getString(langId, compId, "btn_delete_hint")}
+                  </UncontrolledTooltip>
+                </> : null
+              }
             </div>
           </CardBody>
         </Card>

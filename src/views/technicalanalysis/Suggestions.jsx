@@ -1,9 +1,12 @@
 import React from "react";
+import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 // reactstrap components
 import {
+  Button,
   Card,
   CardBody,
+  CardFooter,
   Row,
   Col
 } from "reactstrap";
@@ -362,79 +365,75 @@ class Suggestions extends React.Component {
           </div>
 
           {pageFirstLoading ?
-            <Row>
-              <Col>
+            <Card className="card-timeline card-plain">
+              <CardBody>
+                <ul className="timeline">
+                  <li className="">
+                    <div className="timeline-panel">
+                      <Skeleton height={420} />
+                    </div>
+                  </li>
+                  <li className="timeline-inverted">
+                    <div className="timeline-panel">
+                      <Skeleton height={420} />
+                    </div>
+                  </li>
+                </ul>
+              </CardBody>
+            </Card> :
+            cWallets == 0 ?
+              // No wallets
+              <Card className="card-stats">
+                <Row>
+                  <Col xl="2" lg="2" md="3" xs="3" className="centered">
+                    <div className="icon-big text-center">
+                      <i className="nc-icon nc-alert-circle-i text-warning" />
+                    </div>
+                  </Col>
+                  <Col xl="10" lg="10" md="9" xs="9">
+                    <br />
+                    <p className="card-description">{getString(langId, compId, "label_noWallets_p1")}</p>
+                    <p className="card-description">{getString(langId, compId, "label_noWallets_p2")}</p>
+                  </Col>
+                </Row>
+                <CardFooter className="centered">
+                  <Button
+                    className="btn-round"
+                    color="success"
+                    data-dismiss="modal"
+                    type="submit"
+                    onClick={() => this.setState({ goToWallets: true })}
+                  >
+                    {getString(langId, compId, "btn_goToWallets")}
+                  </Button>
+                  {this.state.goToWallets && <Redirect to="/app/myassets/wallets" />}
+                </CardFooter>
+              </Card>
+              :
+              dimensions.setups.data.length == 0 ?
+                // Empty Setups
+                <Card className="card-stats">
+                  <Row>
+                    <Col xl="2" lg="2" md="3" xs="4" className="centered">
+                      <div className="icon-big text-center">
+                        <i className="nc-icon nc-zoom-split text-warning" />
+                      </div>
+                    </Col>
+                    <Col xl="10" lg="10" md="9" xs="8">
+                      <br />
+                      <p className="card-description">{getString(langId, compId, "label_noNews_p1")}</p>
+                      <p className="card-description">{getString(langId, compId, "label_noNews_p2")}</p>
+                    </Col>
+                  </Row>
+                </Card> :
+                // Setups
                 <Card className="card-timeline card-plain">
                   <CardBody>
                     <ul className="timeline">
-                      <li className="">
-                        <div className="timeline-panel">
-                          <Skeleton height={420} />
-                        </div>
-                      </li>
-                      <li className="timeline-inverted">
-                        <div className="timeline-panel">
-                          <Skeleton height={420} />
-                        </div>
-                      </li>
+                      {this.TimelineItems(dimensions.setups)}
                     </ul>
                   </CardBody>
                 </Card>
-              </Col>
-            </Row> :
-            cWallets == 0 ?
-              // No wallets
-              <Row>
-                <Col>
-                  <Card className="card-stats">
-                    <Row>
-                      <Col xl="2" lg="2" md="3" xs="3" className="centered">
-                        <div className="icon-big text-center">
-                          <i className="nc-icon nc-alert-circle-i text-warning" />
-                        </div>
-                      </Col>
-                      <Col xl="10" lg="10" md="9" xs="9">
-                        <br />
-                        <p className="card-description">{getString(langId, compId, "label_noWallets_p1")}</p>
-                        <p className="card-description">{getString(langId, compId, "label_noWallets_p2")}</p>
-                      </Col>
-                    </Row>
-                  </Card>
-                </Col>
-              </Row> :
-              dimensions.setups.data.length == 0 ?
-                // Empty Setups
-                <Row>
-                  <Col>
-                    <Card className="card-stats">
-                      <Row>
-                        <Col xl="2" lg="2" md="3" xs="4" className="centered">
-                          <div className="icon-big text-center">
-                            <i className="nc-icon nc-zoom-split text-warning" />
-                          </div>
-                        </Col>
-                        <Col xl="10" lg="10" md="9" xs="8">
-                          <br />
-                          <p className="card-description">{getString(langId, compId, "label_noNews_p1")}</p>
-                          <p className="card-description">{getString(langId, compId, "label_noNews_p2")}</p>
-                        </Col>
-                      </Row>
-                    </Card>
-                  </Col>
-                </Row>
-                :
-                // Setups
-                <Row>
-                  <Col>
-                    <Card className="card-timeline card-plain">
-                      <CardBody>
-                        <ul className="timeline">
-                          {this.TimelineItems(dimensions.setups)}
-                        </ul>
-                      </CardBody>
-                    </Card>
-                  </Col>
-                </Row>
           }
         </div>
         <FixedFilter

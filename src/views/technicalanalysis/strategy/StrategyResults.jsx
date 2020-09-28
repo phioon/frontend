@@ -1,15 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-// reactstrap components
-import {
-  Badge,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  Col,
-  Row,
-} from "reactstrap";
+
 // react component for creating dynamic tables
 import ReactTable from "react-table";
 
@@ -36,6 +27,7 @@ class StrategyResults extends React.Component {
 
       tableData: [],
 
+      stockExchange: {},
       currency: { code: "BRL", symbol: "R$", thousands_separator_symbol: ".", decimal_symbol: "," },
       alert: null,
     }
@@ -66,11 +58,11 @@ class StrategyResults extends React.Component {
     let data = await this.props.managers.strategy.buildData(stockExchange.se_short, jsonRules)
     let result = this.props.managers.strategy.applyRules(data, jsonRules)
 
-    let tableData = await this.prepareTableData(result, stockExchange)
+    let tableData = await this.prepareTableData(result)
 
     console.log(tableData)
 
-    this.setState({ isLoading: false, tableData, currency })
+    this.setState({ isLoading: false, tableData, stockExchange, currency })
     this.props.toggleLoading(false)
   }
   prepareRules(strategy, filters) {
@@ -87,87 +79,83 @@ class StrategyResults extends React.Component {
 
     return jsonRules
   }
-  async prepareTableData(result, stockExchange) {
-    // Extend data related to each asset...
+  async prepareTableData(result) {
+    // Prepare data to be shown related on Table Results...
     let assets = getDistinctValuesFromList(result, "asset_symbol")
     assets = await this.props.managers.market.assetData(assets)
     assets = orderBy(assets, ["-last_trade_time", "asset_label"])
-
-    for (var a of assets) {
-      let tzDatetime = TimeManager.tzConvert(stockExchange.se_timezone, a.last_trade_time, true)
-
-      a.last_trade_time = TimeManager.getLocaleString(tzDatetime)
-    }
 
     return assets
   }
 
   render() {
-    let { getString, strategy, filters } = this.props;
-    let { langId, compId, firstLoad, isLoading, tableData, currency } = this.state;
+    let { getString } = this.props;
+    let { langId, compId, firstLoad, isLoading, tableData, stockExchange, currency } = this.state;
 
     return (
-      <Card id={compId}>
-        <CardHeader>
-          <Row>
-            <Col>
-              <CardTitle tag="h5">{getString(langId, compId, "card_title")}</CardTitle>
-            </Col>
-            <Col>
-              <div className="pull-right">
-                <Badge color={"default"} pill>
-                  {strategy.name ? strategy.name : getString(langId, compId, "badge_strategy")}
-                </Badge>
-              </div>
-            </Col>
-          </Row>
-        </CardHeader>
-        <CardBody>
-          <ReactTable
-            data={tableData}
-            filterable={tableData.length > 0 ? true : false}
-            columns={[
-              {
-                Header: getString(langId, compId, "header_asset"),
-                accessor: "asset_label",
-                width: 100
-              },
-              {
-                Header: getString(langId, compId, "header_name"),
-                accessor: "asset_name"
-              },
-              {
-                className: "text-right",
-                Header: getString(langId, compId, "header_quote"),
-                accessor: "price",
-                Cell: (cell) => { return convertFloatToCurrency(cell.value, currency) },
-                width: 100
-              },
-              {
-                className: "text-right",
-                Header: getString(langId, compId, "header_volume"),
-                accessor: "avg_volume_10d",
-                Cell: (cell) => { return integerWithThousandsSeparator(cell.value, currency.thousands_separator_symbol) },
-                width: 120
-              },
-              {
-                Header: getString(langId, compId, "header_lastTradeTime"),
-                accessor: "last_trade_time"
-              }
-            ]}
-            defaultPageSize={5}
-            noDataText={
-              firstLoad ? getString(langId, compId, "table_firstLoad") :
-                isLoading ? getString(langId, "generic", "label_loading") :
-                  tableData.length == 0 ?
-                    getString(langId, compId, "table_emptyData") :
-                    getString(langId, compId, "table_noDataFound")
+      <ReactTable
+        data={tableData}
+        filterable={tableData.length > 0 ? true : false}
+        columns={[
+          {
+            Header: getString(langId, compId, "header_asset"),
+            accessor: "asset_label",
+            width: 100
+          },
+          {
+            Header: getString(langId, compId, "header_name"),
+            accessor: "asset_name"
+          },
+          {
+            className: "text-right",
+            Header: getString(langId, compId, "header_quote"),
+            accessor: "price",
+            Cell: (cell) => { return convertFloatToCurrency(cell.value, currency) },
+            width: 100
+          },
+          {
+            className: "text-right",
+            Header: getString(langId, compId, "header_volume"),
+            accessor: "avg_volume_10d",
+            Cell: (cell) => { return integerWithThousandsSeparator(cell.value, currency.thousands_separator_symbol) },
+            width: 120
+          },
+          {
+            Header: getString(langId, compId, "header_lastTradeTime"),
+            accessor: "last_trade_time",
+            Cell: (cell) => {
+              let tzDatetime = TimeManager.tzConvert(stockExchange.se_timezone, cell.value, true)
+              tzDatetime.locale(getString(langId, "locales", langId))
+
+              let calendarTime = tzDatetime.calendar(null, {
+                sameDay: `[${getString(langId, "momentcalendar", "sameDay")}] LT`,
+                nextDay: `[${getString(langId, "momentcalendar", "nextDay")}] LT`,
+                nextWeek: `[${getString(langId, "momentcalendar", "next")}] dddd[,] LT`,
+                lastDay: `[${getString(langId, "momentcalendar", "lastDay")}] LT`,
+                lastWeek: `[${getString(langId, "momentcalendar", "last")}] dddd[,] LT`,
+                sameElse: `L LT`
+              })
+
+              return calendarTime
             }
-            showPaginationBottom
-            className="-striped -highlight default-pagination"
-          />
-        </CardBody>
-      </Card>
+          }
+        ]}
+        defaultPageSize={5}
+        previousText={getString(langId, "reacttable", "label_previous")}
+        nextText={getString(langId, "reacttable", "label_next")}
+        pageText={getString(langId, "reacttable", "label_page")}
+        ofText={getString(langId, "reacttable", "label_of")}
+        rowsText={getString(langId, "reacttable", "label_rows")}
+        noDataText={
+          firstLoad ? getString(langId, compId, "table_firstLoad") :
+            isLoading ? getString(langId, "generic", "label_loading") :
+              tableData.length == 0 ?
+                getString(langId, compId, "table_emptyData") :
+                getString(langId, compId, "table_noDataFound")
+        }
+        showPaginationBottom
+        className="-striped -highlight default-pagination"
+      />
     )
   }
 }

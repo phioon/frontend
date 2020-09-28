@@ -61,7 +61,7 @@ class TimeManager {
     }
     return Moment(new Date()).utc(keepLocaltime).toDate().toLocaleDateString()
   }
-  static getLocaleString(timestamp, keepLocaltime = true) {
+  static getLocaleString(timestamp, keepLocaltime = false) {
     if (timestamp)
       return Moment(timestamp).utc(keepLocaltime).toDate().toLocaleString()
 
@@ -83,6 +83,25 @@ class TimeManager {
     if (timestamp)
       return new Date(timestamp).toISOString().replace(/\..+/, '')
     return new Date().toISOString().replace(/\..+/, '')
+  }
+
+  static getCalendarTime(moment, now) {
+    if (!now)
+      now = Moment(new Date())
+
+    let diff = moment.diff(now, "hours", true)
+
+    console.log(`diff: ${diff}`)
+
+    let lastMidnight = String(TimeManager.getDateString() + " 00:00:00")
+    lastMidnight = Moment(moment)
+
+    // console.log(`lastMidnight: ${lastMidnight}`)
+
+    // console.log(`getLocaleString: ${TimeManager.getLocaleString(moment)}`)
+    // console.log(`duration: ${duration_nowBefore.asHours()}`)
+
+    return "Working on it"
   }
 
   static timestampDiff(t1, t2) {

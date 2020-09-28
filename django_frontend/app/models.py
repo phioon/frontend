@@ -168,7 +168,7 @@ class Strategy (models.Model):
 
     owner = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
-    desc = models.CharField(max_length=1024, blank=True)
+    desc = models.CharField(max_length=2048, blank=True)
     type = models.CharField(max_length=8, verbose_name='buy or sell')
 
     is_public = models.BooleanField(default=True, verbose_name='Visibility')
