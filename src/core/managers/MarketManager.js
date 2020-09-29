@@ -177,7 +177,6 @@ class MarketManager {
     // Client must pass 'assets' or 'stockExchange'. One of these 2 parameters are required.
     if (assets.length == 0 && !se_short)
       return {}
-    // --------------------
     const sKey = "assets"
     await this.startRequest(sKey)
 
@@ -361,7 +360,6 @@ class MarketManager {
 
     return false
   }
-  // --------------------
 
   // Strategies
   // .. Indicators
@@ -422,7 +420,6 @@ class MarketManager {
     // 'stockExchange' or 'instances'. One of these 2 parameters are required.
     if (!stockExchange && instances.length == 0)
       return {}
-    // --------------------
     const sKey = "dQuote"
     await this.startRequest(sKey)
 
@@ -470,7 +467,6 @@ class MarketManager {
     // 'stockExchange' or 'instances'. One of these 2 parameters are required.
     if (!stockExchange && instances.length == 0)
       return {}
-    // --------------------
     const sKey = "dEma"
     await this.startRequest(sKey)
 
@@ -518,7 +514,6 @@ class MarketManager {
     // 'stockExchange' or 'instances'. One of these 2 parameters are required.
     if (!stockExchange && instances.length == 0)
       return {}
-    // --------------------
     const sKey = "dPhibo"
     await this.startRequest(sKey)
 
@@ -566,7 +561,6 @@ class MarketManager {
     // 'stockExchange' or 'instances'. One of these 2 parameters are required.
     if (!stockExchange && instances.length == 0)
       return {}
-    // --------------------
     const sKey = "dRoc"
     await this.startRequest(sKey)
 
@@ -613,9 +607,8 @@ class MarketManager {
   static isIndicatorCached(sData) {
     return false
   }
-  // --------------------
 
-  // Setups
+  // Setups (Phi Trader)
   // .. [d] Data
   async dSetupList(stockExchange, dateFrom) {
     const sKey = "dSetups"
@@ -829,9 +822,8 @@ class MarketManager {
 
     return dimension
   }
-  // --------------------
 
-  // Setup Summary
+  // Setup Summary (Phi Trader)
   // .. [d] Data
   async dSetupSummaryList(stockExchange) {
     const sKey = "dSetupSummary"
@@ -976,7 +968,6 @@ class MarketManager {
     }
     return false
   }
-  // --------------------
 
   // Stock Exchange
   // .. Data
@@ -1066,7 +1057,6 @@ class MarketManager {
     let stockExchange = StorageManager.getData("stockExchanges", strStockExchange)
     return stockExchange.se_timezone
   }
-  // --------------------
 
   // Technical Condition
   async technicalConditionList() {

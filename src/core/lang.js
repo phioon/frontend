@@ -30,7 +30,7 @@ const strings = {
       title_openpositions: "Open Positions",
       title_positions: "My Assets",
       title_strategies: "Technical Analysis",
-      title_suggestions: "Technical Analysis",
+      title_phitrader: "Technical Analysis",
       title_userprofile: "My Profile",
       title_walletoverview: "Overview",
       title_wallets: "My Assets",
@@ -520,6 +520,24 @@ const strings = {
 
       alert_timeInterval_noPositions: "Ops... I didn't find any Position opened within this time interval. Would you like to try another one?",
     },
+    phitrader: {
+      title: "Phi Trader",
+      label_intro_p1: "Hi! I'm Phi, the Artificial Intelligence behind PHIOON's main trading strategies...",
+      label_intro_p2: "Here, I'll expose all my personal operations, with details like: entry point, target, stop loss and the reason of it.",
+      label_intro_p3: "Be aware that they",
+      label_intro_notRecommendation: "are not recommendations",
+      label_intro_p4: "but I believe you could use my experience to analyze and learning with it.",
+
+      label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
+      label_noWallets_p2: "That way, I'll know which Stock Exchange you work with, so I can share my operations with you! ;)",
+      btn_goToWallets: "Go to Wallets",
+
+      label_noNews_p1: "Hmm... I don't have any operations so far.",
+      label_noNews_p2: "As soon as I see an opportunity, I'll let you know! ;)",
+
+      item_open: "On-going",
+      item_closed: "Closed",
+    },
     positions: {
       card_title: "Positions",
       btn_newPosition: "New Position",
@@ -710,12 +728,12 @@ const strings = {
       walletoverviewMini: "O",
       openpositions: "Open Positions",
       openpositionsMini: "OP",
-      strategiesMini: "S",
-      strategies: "Strategies",
 
       technicalAnalysis: "Technical Analysis",
-      suggestions: "Suggestions",
-      suggestionsMini: "S",
+      strategiesMini: "S",
+      strategies: "Strategies",
+      phitrader: "Phi Trader",
+      phitraderMini: "PHI",
     },
     statusfilter: {
       label_title: "Status",
@@ -796,18 +814,6 @@ const strings = {
       platinum_desc_p2: "So, you need an intelligent platform for assets in the entire world",
       platinum_desc_p3: "I'm designed to help investors being more efficient and secure."
     },
-    suggestions: {
-      title: "Suggestions",
-      label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
-      label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can look for the best opportunities there! ;)",
-      btn_goToWallets: "Go to Wallets",
-
-      label_noNews_p1: "Hmm... I do not see new opportunities over here.",
-      label_noNews_p2: "Let me check again and I will get back to you! ;)",
-
-      item_open: "On-going",
-      item_closed: "Closed",
-    },
     technicalconditions: {
       "btl_ema_7__trend_ema_610+": "Price is getting more support and starting an upward trend. Moving Averages 34, 144 and 610 are aligned up and Price is breaking above EMA 34. Gains may vary between 7% and 23%.",
       "btl_ema_7__trend_ema_144+": "Price is getting more support and starting an upward trend. Moving Averages 34, 144 and 610 are aligned up and Price is breaking above EMA 34. Gains may vary between 7% and 23%.",
@@ -849,8 +855,8 @@ const strings = {
       label_result: "RESULT",
       label_result_hint: "How much your money is earning.",
       // Premium
-      label_suggestions: "Suggestions",
-      label_suggestions_hint: "Amount of suggestions since the date you joined us.",
+      label_phiOperations: "PHI TRADER",
+      label_phiOperations_hint: "Operations made by Phi since you joined us.",
 
       input_email: "Email",
       btn_changePassword: "Change Password",
@@ -927,7 +933,7 @@ const strings = {
       title_openpositions: "Posições Abertas",
       title_positions: "Meus Ativos",
       title_strategies: "Análise Técnica",
-      title_suggestions: "Análise Técnica",
+      title_phitrader: "Análise Técnica",
       title_userprofile: "Meu Perfil",
       title_walletoverview: "Visão Geral",
       title_wallets: "Meus Ativos",
@@ -1030,6 +1036,7 @@ const strings = {
     },
     httptranslation: {
       wallet_limitReached: "Precisa de mais carteiras para gerenciar seus investimentos? Atualize seu plano e aproveite! ;)",
+      strategy_limitReached: "Precisa de mais estratégias para melhorar seus resultados? Atualize seu plano e aproveite! ;)",
 
       user_profileUpdated: "Perfil atualizado!",
 
@@ -1442,6 +1449,24 @@ const strings = {
 
       alert_timeInterval_noPositions: "Oops... Não encontrei Posições que foram abertas neste intervalo de tempo. Gostaria de tentar outro intervalo?",
     },
+    phitrader: {
+      title: "Phi Trader",
+      label_intro_p1: "Olá! Sou o Phi, a Inteligência Artificial por trás das estratégias de mercado do PHIOON...",
+      label_intro_p2: "Aqui, vou expor minhas operações pessoais, com detalhes como: alvo, stop loss e o motivo de ter entrado na operação.",
+      label_intro_p3: "Elas",
+      label_intro_notRecommendation: "não são recomendações",
+      label_intro_p4: "mas acredito que você pode aproveitar a minha experiência para analisar e aprender com elas.",
+
+      label_noWallets_p1: "Hmm... Parece que você ainda tem Carteiras criadas por aqui... Que tal criar a primeira?",
+      label_noWallets_p2: "Dessa forma, vou saber com qual Bolsa de Valores você trabalha, para então compartilhar minhas operações com você! ;)",
+      btn_goToWallets: "Ir para Carteiras",
+
+      label_noNews_p1: "Hmm... Não tenho operações abertas no momento.",
+      label_noNews_p2: "Assim que eu ver uma oportunidade, te aviso! ;)",
+
+      item_open: "Em andamento",
+      item_closed: "Fechado",
+    },
     positions: {
       card_title: "Posições",
       btn_newPosition: "Nova PosiÇão",
@@ -1619,12 +1644,12 @@ const strings = {
       walletoverviewMini: "VG",
       openpositions: "Posições Abertas",
       openpositionsMini: "PA",
-      strategiesMini: "E",
-      strategies: "Estratégias",
 
       technicalAnalysis: "Análise Técnica",
-      suggestions: "Recomendações",
-      suggestionsMini: "R",
+      strategiesMini: "E",
+      strategies: "Estratégias",
+      phitrader: "Phi Trader",
+      phitraderMini: "PHI",
     },
     statusfilter: {
       label_title: "Status",
@@ -1686,18 +1711,6 @@ const strings = {
       table_emptyData: "Nesse momento, não há ativos nesta condição técnica. Talvez mais tarde...",
       table_noDataFound: "hmm... Será que perdi algo?! Por favor, dê uma olhada nos seus filtros. ;)"
     },
-    suggestions: {
-      title: "Recomendações",
-      label_noWallets_p1: "Hmm... Parece que você ainda tem Carteiras criadas por aqui... Que tal criar a primeira?",
-      label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua, para então procurar pelas melhores oportunidades lá! ;)",
-      btn_goToWallets: "Ir para Carteiras",
-
-      label_noNews_p1: "Hmm... Não estou encontrando novas oportunidades por aqui.",
-      label_noNews_p2: "Assim que eu souber de algo, te aviso! ;)",
-
-      item_open: "Em andamento",
-      item_closed: "Fechado",
-    },
     technicalconditions: {
       "btl_ema_7__trend_ema_610+": "Preço está ganhando mais suporte e iniciando uma tendência de alta. Médias Móveis 34, 144 e 610 estão alinhadas para cima e o Preço está rompendo acima da MME 34. Ganhos podem variar entre 7% e 23%.",
       "btl_ema_7__trend_ema_144+": "Preço está ganhando mais suporte e iniciando uma tendência de alta. Médias Móveis 34, 144 e 610 estão alinhadas para cima e o Preço está rompendo acima da MME 34. Ganhos podem variar entre 7% e 23%.",
@@ -1737,8 +1750,8 @@ const strings = {
       label_result: "RESULTADO",
       label_result_hint: "O quanto seu dinheiro está rendendo.",
       // Premium
-      label_suggestions: "RECOMENDAÇÕES",
-      label_suggestions_hint: "Quantidade de recomendações desde a data em que temos você com a gente.",
+      label_phiOperations: "PHI TRADER",
+      label_phiOperations_hint: "Operações feitas pelo Phi desde a data em que temos você com a gente.",
 
       input_email: "E-mail",
       btn_changePassword: "Alterar Senha",

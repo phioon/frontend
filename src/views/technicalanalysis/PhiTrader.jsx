@@ -15,9 +15,9 @@ import Skeleton from "react-loading-skeleton";
 import TimeManager from "../../core/managers/TimeManager";
 import { getDistinctValuesFromList, retrieveObjFromObjList } from "../../core/utils";
 import SetupCard from "./SetupCard";
-import FixedFilter from "../../components/FixedPlugin/filters/Suggestions";
+import FixedFilter from "../../components/FixedPlugin/filters/PhiTrader";
 
-class Suggestions extends React.Component {
+class PhiTrader extends React.Component {
   constructor(props) {
     super(props);
 
@@ -362,6 +362,17 @@ class Suggestions extends React.Component {
         <div className="content">
           <div className="header text-center">
             <h3 className="title">{getString(langId, compId, "title")}</h3>
+            <Card className="card-plain centered">
+              <label>{getString(langId, compId, "label_intro_p1")}</label>
+              <label>{getString(langId, compId, "label_intro_p2")}</label>
+              <label>
+                {getString(langId, compId, "label_intro_p3")}
+                {" "}
+                <strong>{getString(langId, compId, "label_intro_notRecommendation")}</strong>,
+                {" "}
+                {getString(langId, compId, "label_intro_p4")}
+              </label>
+            </Card>
           </div>
 
           {pageFirstLoading ?
@@ -452,9 +463,9 @@ class Suggestions extends React.Component {
   }
 }
 
-export default Suggestions;
+export default PhiTrader;
 
-Suggestions.propTypes = {
+PhiTrader.propTypes = {
   managers: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,

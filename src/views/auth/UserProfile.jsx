@@ -84,7 +84,7 @@ class UserProfile extends React.Component {
       },
 
       insights: {
-        suggestions: {
+        phiOperations: {
           amount: {}
         }
       },
@@ -184,7 +184,7 @@ class UserProfile extends React.Component {
   }
   async prepareInsights() {
     let { subscription, insights } = this.state
-    insights.suggestions.amount.data = 0
+    insights.phiOperations.amount.data = 0
     let wallets = await this.props.managers.app.walletData()
     let stockExchanges = getDistinctValuesFromList(wallets, "se_short")
     let dSetups = []
@@ -201,7 +201,7 @@ class UserProfile extends React.Component {
       let startedOn = TimeManager.getMoment(obj.started_on)
 
       if (startedOn.isSameOrAfter(userJoinedOn))
-        insights.suggestions.amount.data += 1
+        insights.phiOperations.amount.data += 1
     }
 
     return insights
@@ -500,9 +500,7 @@ class UserProfile extends React.Component {
                   <hr />
                   {/* Insights */}
                   <p className="description text-center">
-                    {subscription.label}
-                    {" "}
-                    {getString(langId, compId, "label_insights")}
+                    {subscription.label}{" "}{getString(langId, compId, "label_insights")}
                   </p>
                   <div className="text-center">
                     {/* Basic Insights */}
@@ -555,21 +553,21 @@ class UserProfile extends React.Component {
                           </UncontrolledTooltip>
                         </h6>
                       </Col>
-                      {/* Suggestions */}
+                      {/* Phi Trader */}
                       {subscription.name != "basic" &&
                         <Col lg="6" md="6" sm="6" xs="6">
                           <h6>
                             {pageFirstLoading ?
                               <Skeleton /> :
-                              insights.suggestions.amount.data
+                              insights.phiOperations.amount.data
                             }
                             <br />
-                            <small>{getString(langId, compId, "label_suggestions")}</small>
+                            <small>{getString(langId, compId, "label_phiOperations")}</small>
                             <br />
-                            <i id={"suggestions_hint"} className="nc-icon nc-alert-circle-i" />
+                            <i id={"phiOperations_hint"} className="nc-icon nc-alert-circle-i" />
                           </h6>
-                          <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"suggestions_hint"}>
-                            {getString(langId, compId, "label_suggestions_hint")}
+                          <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"phiOperations_hint"}>
+                            {getString(langId, compId, "label_phiOperations_hint")}
                           </UncontrolledTooltip>
                         </Col>
                       }

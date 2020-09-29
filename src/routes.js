@@ -24,7 +24,7 @@ import UserProfile from "views/auth/UserProfile.jsx";
 import Strategies from "views/technicalanalysis/strategy/Strategies";
 import OpenPositions from "views/wallet/OpenPositions";
 import Positions from "views/myassets/Positions";
-import Suggestions from "views/technicalanalysis/Suggestions";
+import PhiTrader from "views/technicalanalysis/PhiTrader";
 import WalletOverview from "views/wallet/WalletOverview";
 import Wallets from "views/myassets/Wallets";
 
@@ -173,9 +173,9 @@ const routes = [
       },
       {
         sidebar: true,
-        path: "/analysis/suggestions",
-        name: "suggestions",
-        component: Suggestions,
+        path: "/analysis/phitrader",
+        name: "phitrader",
+        component: PhiTrader,
         layout: "/app"
       },
     ]

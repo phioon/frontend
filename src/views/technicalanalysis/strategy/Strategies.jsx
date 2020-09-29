@@ -557,7 +557,7 @@ class Strategies extends React.Component {
                       <CardTitle tag="h5">{getString(langId, compId, "card_results_title")}</CardTitle>
                     </Col>
                     <Col>
-                      <div className="pull-right">
+                      <div className="align-center pull-right">
                         <Badge color="default" pill>
                           {selected.strategy.name && selected.strategy.name}
                         </Badge>
