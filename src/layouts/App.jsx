@@ -87,8 +87,6 @@ class AppLayout extends React.Component {
         this.props.managers.market.dSetupList(se_short)                   // async call
       }
     }
-
-    this.props.managers.market.dEmaList("BVMF", "d", ["d_ema_close34", "d_ema_close144"], 2)
   }
 
   setNavbarTitleId(titleId) {

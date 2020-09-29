@@ -604,7 +604,30 @@ class MarketManager {
     return sItem
   }
   // .. Functions
-  static isIndicatorCached(sData) {
+  static isDIndicatorCached(sData) {
+    let stockExchanges = StorageManager.getData("stockExchanges")
+    let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", sData.stockExchange)
+
+    let syncToleranceDaily = (1440 * 1) + (60 * 20)
+    let syncToleranceWeekend = (1440 * 3) + (60 * 20)
+
+    let tz = stockExchange.se_timezone
+    let tz_sDate = TimeManager.tzConvert(tz, sData.latest_datetime, true, true)
+    let sDateWeekday = new Date(tz_sDate).getDay()
+
+    // console.log("syncToleranceDaily: " + syncToleranceDaily)
+    // console.log("syncToleranceWeekend: " + syncToleranceWeekend)
+    // console.log("timestampDiff(tz_sDate): " + TimeManager.timestampDiff(tz_sDate))
+
+    if (TimeManager.timestampDiff(tz_sDate) > -syncToleranceDaily) {
+      // User has yesterday's data already. And today's data is probably not ready on backend side.
+      return true
+    }
+    else if (sDateWeekday === 5 && TimeManager.timestampDiff(tz_sDate) > -syncToleranceWeekend) {
+      // User has Friday's data and today is still weekend.
+      return true
+    }
+
     return false
   }
 
@@ -953,17 +976,20 @@ class MarketManager {
       // console.log("syncToleranceWeekend: " + syncToleranceWeekend)
       // console.log("timestampDiff(tz_sLastDate): " + TimeManager.timestampDiff(tz_sLastDate))
 
-      // If 'dateFrom' is greater than 'sFirstDate', that means there's a possibility we have it cached
       if (TimeManager.timestampDiff(pDateFrom, sFirstDate) >= 0) {
-        // If 'dateTo' is greater than 'sLastDate, we have it cached.
-        if (TimeManager.timestampDiff(sLastDate, pDateTo) >= 0)
+        // 'dateFrom' is greater than 'sFirstDate'. That means there's a possibility we have it cached
+        if (TimeManager.timestampDiff(sLastDate, pDateTo) >= 0) {
+          // 'dateTo' is greater than 'sLastDate. So, we have it cached.
           return true
-        // If user has yesterday's data already, return it.
-        else if (TimeManager.timestampDiff(tz_sLastDate) > -syncToleranceDaily)
+        }
+        else if (TimeManager.timestampDiff(tz_sLastDate) > -syncToleranceDaily) {
+          // User has yesterday's data already. And today's data is probably not ready on backend side.
           return true
-        // If user has Friday's data and it's still weekend, return it.
-        else if (sLastDateWeekday === 5 && TimeManager.timestampDiff(tz_sLastDate) > -syncToleranceWeekend)
+        }
+        else if (sLastDateWeekday === 5 && TimeManager.timestampDiff(tz_sLastDate) > -syncToleranceWeekend) {
+          // User has Friday's data and today is still weekend.
           return true
+        }
       }
     }
     return false

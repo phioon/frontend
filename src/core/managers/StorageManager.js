@@ -52,29 +52,29 @@ const config = {
       syncLimit: 10,
       version: 0.05
     },
+    dRaw: {
+      syncLimit: 60,
+      version: 0.04
+    },
     indicators: {
       syncLimit: 8460,
       version: 0.16
     },
     dEma: {
-      syncLimit: 0.0060,
-      version: 0.01
+      syncLimit: 60,
+      version: 0.03
     },
     dQuote: {
-      syncLimit: 0.0060,
-      version: 0.01
+      syncLimit: 15,
+      version: 0.03
     },
     dPhibo: {
-      syncLimit: 0.060,
-      version: 0.01
-    },
-    dRaw: {
       syncLimit: 60,
-      version: 0.04
+      version: 0.03
     },
     dRoc: {
-      syncLimit: 0.060,
-      version: 0.01
+      syncLimit: 60,
+      version: 0.03
     },
     dSetups: {
       syncLimit: 60,
@@ -188,7 +188,11 @@ class StorageManager {
 
     let mTime = null
     let result = null
-    let isUpToDate = false
+    let isUpToDate = undefined
+
+    let isMarketOpen = undefined
+    let isDRawCached = undefined
+    let isIndicatorCached = undefined
 
     let sItem = this.getItem(sKey)
 
@@ -208,7 +212,7 @@ class StorageManager {
 
     switch (sKey) {
       case "assets":
-        let isMarketOpen = MarketManager.isMarketOpen(result[strData].stockExchange)
+        isMarketOpen = MarketManager.isMarketOpen(result[strData].stockExchange)
 
         if (isMarketOpen) {
           // Market is Open
@@ -222,18 +226,37 @@ class StorageManager {
             TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit)
         }
         break;
+      case "dQuote":
+        isMarketOpen = MarketManager.isMarketOpen(result[strData].stockExchange)
+
+        if (isMarketOpen) {
+          // Market is Open
+          isUpToDate = result.data && mTime &&
+            TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit
+        }
+        else {
+          // Market is Closed
+          isIndicatorCached = MarketManager.isDIndicatorCached(result[strData], subKey)
+          console.log(`Is indicator '${sKey}' cached? ${isIndicatorCached}`)
+
+          isUpToDate = isIndicatorCached || (result.data && mTime &&
+            TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit)
+        }
+        break;
       case "dRaw":
-        let isDRawCached = MarketManager.isDRawCached(result[strData], props.dateFrom, props.dateTo)
+        isDRawCached = MarketManager.isDRawCached(result[strData], props.dateFrom, props.dateTo)
+
         isUpToDate = isDRawCached || (result.data && mTime &&
           TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit)
         break;
       default:
-        let dIndicators = ["dEma", "dQuote", "dPhibo", "dRoc"]
+        let dIndicators = ["dEma", "dPhibo", "dRoc"]
 
         if (dIndicators.includes(sKey)) {
           // It's a indicator storage (used by Strategy module)
-          let isIndicatorCached = MarketManager.isIndicatorCached(result[strData])
+          isIndicatorCached = MarketManager.isDIndicatorCached(result[strData], subKey)
           console.log(`Is indicator '${sKey}' cached? ${isIndicatorCached}`)
+
           isUpToDate = isIndicatorCached || (result.data && mTime &&
             TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit)
         }
@@ -245,7 +268,7 @@ class StorageManager {
           isUpToDate = result.data && mTime &&
             TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit
         }
-        break
+        break;
     }
 
     if (isUpToDate)

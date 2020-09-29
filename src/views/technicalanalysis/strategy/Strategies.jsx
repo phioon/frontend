@@ -23,8 +23,6 @@ import {
 } from "reactstrap";
 // react plugin used to create DropdownMenu for selecting items
 import Select from "react-select";
-// react component for creating dynamic tables
-import FixedButton from "../../../components/FixedPlugin/FixedButton";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
 
@@ -77,6 +75,7 @@ class Strategies extends React.Component {
 
     this.resultRef = React.createRef()
 
+    this.resize = this.resize.bind(this);
     this.prepareCarousel = this.prepareCarousel.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.toggleLoading = this.toggleLoading.bind(this);
@@ -88,17 +87,13 @@ class Strategies extends React.Component {
     return null
   }
   componentDidMount() {
-    window.addEventListener("resize", () => {
-      this.resize()
-    });
+    window.addEventListener("resize", this.resize);
 
     this.props.setNavbarTitleId("title_" + this.state.compId)
     this.prepareRequirements()
   }
   componentWillUnmount() {
-    window.removeEventListener("resize", () => {
-      this.resize()
-    });
+    window.removeEventListener("resize", this.resize)
   }
 
   resize() {
@@ -183,8 +178,6 @@ class Strategies extends React.Component {
     let strategies = await this.props.managers.app.strategyData()
     strategies = orderBy(strategies, ['-create_time'])
     let sStrategyNames = getDistinctValuesFromList(strategies, "name")
-
-    console.log(strategies)
 
     // 2. Carousel
     let carousel = this.prepareSlides(this.state.carousel, strategies)

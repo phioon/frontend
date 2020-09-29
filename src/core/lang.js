@@ -749,7 +749,7 @@ const strings = {
       label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can bring you strategies and indicators that are available there! ;)",
       btn_goToWallets: "Go to Wallets",
 
-      label_noStrategies_p1: "Hey... Are you ready to start saving time and always having the best opportunities at hand?",
+      label_noStrategies_p1: "Hey... Are you ready to start saving time and always having the best opportunities at one click?",
       label_noStrategies_p2: "Go ahead and create your first Strategy !",
       label_noStrategies_p3: "Ah! I hope you enjoy the journey... Once you get used to it, there is no way back! ;)",
 
@@ -1665,7 +1665,7 @@ const strings = {
       label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua, para trazer estratégias e indicadores disponíveis por lá! ;)",
       btn_goToWallets: "Ir para Carteiras",
 
-      label_noStrategies_p1: "Opa... Está preparado começar a economizar tempo e sempre ter as melhores oportunidades do mercado ao seu alcance?",
+      label_noStrategies_p1: "Opa... Está preparado para começar a economizar tempo e ainda ter as melhores oportunidades do mercado à um clique?",
       label_noStrategies_p2: "Então comece criando a sua primeira Estratégia !",
       label_noStrategies_p3: "Ah! Espero que aproveite a experiência... Uma vez acostumado, não tem mais volta! ;)",
 

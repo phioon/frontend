@@ -40,9 +40,9 @@ class StrategyManager {
 
     rawData = await Promise.all(rawData)
 
-    result = rawData[0]
+    result = rawData[0].instances
     for (var x = 1; x < rawData.length; x++)
-      result = joinContentObjLists(result, rawData[x], "asset_symbol")
+      result = joinContentObjLists(result, rawData[x].instances, "asset_symbol")
 
     return result
   }
