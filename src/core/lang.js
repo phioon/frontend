@@ -416,7 +416,7 @@ const strings = {
       input_logic: "Logic",
       label_logic_dynamic: "Dynamic",
       label_logic_static: "Static",
-      input_logic_hint: "A Dynamic Strategy can be applied to any time interval (d, m60). It can become a Static one if the time interval is set in one of its rules.",
+      input_logic_hint: "A Dynamic Strategy can be applied to any time interval (d, m60). It becomes Static if the time interval is set in one the rules.",
       input_description: "Description",
       label_description_placeholder: "A well written explanation may help other users understand how your Strategy works...",
       input_public: "Public",
@@ -730,6 +730,10 @@ const strings = {
       label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
       label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can bring you strategies and indicators that are available there! ;)",
       btn_goToWallets: "Go to Wallets",
+
+      label_noStrategies_p1: "Hey... Are you ready to start saving time and always having the best opportunities at hand?",
+      label_noStrategies_p2: "Go ahead and create your first Strategy !",
+      label_noStrategies_p3: "Ah! I hope you enjoy the journey... Once you get used to it, there is no way back! ;)",
 
       card_results_title: "Results",
 
@@ -1334,7 +1338,7 @@ const strings = {
       input_logic: "Lógica",
       label_logic_dynamic: "Dinâmica",
       label_logic_static: "Estática",
-      input_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico. Ela pode se tornar Estática caso o tempo gráfico seja configurado em uma de suas regras.",
+      input_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico. Ela se torna Estática caso o tempo gráfico seja forçado em uma das regras.",
       input_description: "Descrição",
       label_description_placeholder: "Uma explicação bem escrita pode ajudar outros usuários a entenderem melhor como sua Estratégia funciona...",
       input_public: "Pública",
@@ -1635,6 +1639,10 @@ const strings = {
       label_noWallets_p1: "Hmm... Parece que você ainda tem Carteiras criadas por aqui... Que tal criar a primeira?",
       label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua, para trazer estratégias e indicadores disponíveis por lá! ;)",
       btn_goToWallets: "Ir para Carteiras",
+
+      label_noStrategies_p1: "Opa... Está preparado começar a economizar tempo e sempre ter as melhores oportunidades do mercado ao seu alcance?",
+      label_noStrategies_p2: "Então comece criando a sua primeira Estratégia !",
+      label_noStrategies_p3: "Ah! Espero que curta essa nova fase da sua vida... Uma vez que se acostuma com ela, não tem mais volta! ;)",
 
       card_results_title: "Resultados",
 

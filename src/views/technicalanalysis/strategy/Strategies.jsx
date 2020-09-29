@@ -32,6 +32,7 @@ import StrategyCardMini from "./StrategyCardMini";
 import StrategyResults from "./StrategyResults";
 import ModalStrategy from "../../modals/strategy/ModalStrategy";
 import CarouselSkeleton from "./CarouselSkeleton";
+import CarouselEmpty from "./CarouselEmpty";
 import { orderBy, getDistinctValuesFromList, deepCloneObj, retrieveObjFromObjList } from "../../../core/utils";
 
 class Strategies extends React.Component {
@@ -432,8 +433,6 @@ class Strategies extends React.Component {
       alert,
     } = this.state;
 
-    console.log(this.state)
-
     return (
       <div className="content">
         <NotificationAlert ref="notificationAlert" />
@@ -451,8 +450,9 @@ class Strategies extends React.Component {
         <div className="header text-center">
           <h3 className="title">{getString(langId, compId, "title")}</h3>
         </div>
-        {/* Carousel */}
+
         {pageFirstLoading ?
+          // Carousel Skeleton
           <Card className="card-plain">
             <CardHeader>
               <Row>
@@ -475,7 +475,8 @@ class Strategies extends React.Component {
             <CardBody>
               <CarouselSkeleton />
             </CardBody>
-          </Card> :
+          </Card>
+          :
           cWallets == 0 ?
             // No wallets
             <Card className="card-stats">
@@ -527,19 +528,25 @@ class Strategies extends React.Component {
                   </Row>
                 </CardHeader>
                 <CardBody>
-                  <Carousel
-                    activeIndex={carousel.activeIndex}
-                    next={() => this.moveSlide("next")}
-                    previous={() => this.moveSlide("previous")}
-                    interval={false}>
-                    <CarouselIndicators
-                      items={Object.keys(carousel.slides)}
+                  {carousel.slides.length == 0 ?
+                    <CarouselEmpty
+                      getString={getString}
+                      langId={langId}
+                      compId={compId} /> :
+                    <Carousel
                       activeIndex={carousel.activeIndex}
-                      onClickHandler={index => this.moveSlide("goto", index)} />
-                    {this.renderStrategySlides(carousel.slides)}
-                    <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide("previous")} />
-                    <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide("next")} />
-                  </Carousel>
+                      next={() => this.moveSlide("next")}
+                      previous={() => this.moveSlide("previous")}
+                      interval={false}>
+                      <CarouselIndicators
+                        items={Object.keys(carousel.slides)}
+                        activeIndex={carousel.activeIndex}
+                        onClickHandler={index => this.moveSlide("goto", index)} />
+                      {this.renderStrategySlides(carousel.slides)}
+                      <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide("previous")} />
+                      <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide("next")} />
+                    </Carousel>
+                  }
                 </CardBody>
               </Card>
               {/* Results */}

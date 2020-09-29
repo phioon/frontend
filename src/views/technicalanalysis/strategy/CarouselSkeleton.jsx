@@ -1,13 +1,23 @@
 import React from "react";
 // reactstrap components
 import {
+  Card,
   Carousel,
   CarouselItem,
-  CarouselControl,
   Col,
   Row,
 } from "reactstrap";
 import Skeleton from "react-loading-skeleton";
+
+function SkeletonCol() {
+  return (
+    <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
+      <Card className="card-plain">
+        <Skeleton height={115} />
+      </Card>
+    </Col>
+  )
+}
 
 function CarouselSkeleton() {
   return (
@@ -18,15 +28,14 @@ function CarouselSkeleton() {
       interval={false}>
       <CarouselItem key={"skeleton__0"}>
         <Row>
-          <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
-            <Skeleton height={115} />
-          </Col>
-          <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
-            <Skeleton height={115} />
-          </Col>
-          <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
-            <Skeleton height={115} />
-          </Col>
+          <SkeletonCol />
+          <SkeletonCol />
+          {window.innerWidth > 576 && <SkeletonCol />}
+          {window.innerWidth > 576 && <SkeletonCol />}
+          {window.innerWidth > 990 && <SkeletonCol />}
+          {window.innerWidth > 990 && <SkeletonCol />}
+          {window.innerWidth > 1200 && <SkeletonCol />}
+          {window.innerWidth > 1200 && <SkeletonCol />}
         </Row>
       </CarouselItem>
       <CarouselItem key={"skeleton__1"} />

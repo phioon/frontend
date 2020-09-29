@@ -1042,7 +1042,7 @@ class ModalStrategy extends React.Component {
                   </div>
                   <label>{getString(langId, compId, "input_sell")}</label>
                 </div>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_sell"}>
+                <UncontrolledTooltip delay={{ show: 200 }} placement="right" target={"radio_sell"}>
                   {getString(langId, compId, "input_sell_hint")}
                 </UncontrolledTooltip>
               </Col>
