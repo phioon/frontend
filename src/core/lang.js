@@ -134,6 +134,7 @@ const strings = {
     },
     httptranslation: {
       wallet_limitReached: "Need more wallets to manage your investments? Go premium and enjoy it! ;)",
+      strategy_limitReached: "Need more strategies to improve your performance? Go premium and enjoy it! ;)",
 
       user_profileUpdated: "Profile updated!",
 
@@ -1030,6 +1031,7 @@ const strings = {
     },
     httptranslation: {
       wallet_limitReached: "Precisa de mais carteiras para gerenciar seus investimentos? Atualize seu plano e aproveite! ;)",
+      strategy_limitReached: "Precisa de mais estratégias para melhorar seus resultados? Atualize seu plano e aproveite! ;)",
 
       user_profileUpdated: "Perfil atualizado!",
 
@@ -1642,7 +1644,7 @@ const strings = {
 
       label_noStrategies_p1: "Opa... Está preparado começar a economizar tempo e sempre ter as melhores oportunidades do mercado ao seu alcance?",
       label_noStrategies_p2: "Então comece criando a sua primeira Estratégia !",
-      label_noStrategies_p3: "Ah! Espero que curta essa nova fase da sua vida... Uma vez que se acostuma com ela, não tem mais volta! ;)",
+      label_noStrategies_p3: "Ah! Espero que aproveite a experiência... Uma vez acostumado, não tem mais volta! ;)",
 
       card_results_title: "Resultados",
 

@@ -49,8 +49,6 @@ class StrategyResults extends React.Component {
 
     strategy.rules = JSON.parse(strategy.rules)
 
-    console.log(strategy)
-
     let stockExchange = await this.props.managers.market.stockExchangeRetrieve(filters.general.stockExchange.value)
     let currency = await this.props.managers.app.currencyRetrieve(stockExchange.currency_code)
 
@@ -59,8 +57,6 @@ class StrategyResults extends React.Component {
     let result = this.props.managers.strategy.applyRules(data, jsonRules)
 
     let tableData = await this.prepareTableData(result)
-
-    console.log(tableData)
 
     this.setState({ isLoading: false, tableData, stockExchange, currency })
     this.props.toggleLoading(false)

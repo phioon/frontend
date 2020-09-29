@@ -177,7 +177,7 @@ class Sidebar extends React.Component {
         data-active-color={this.props.activeColor}
       >
         <div className="logo">
-          <a href={project.info.website} className="simple-text logo-mini" target="_blank">
+          <a href={project.info.website} target="_blank" className="simple-text logo-mini">
             <div className="logo-img">
               <img
                 alt={project.img.branding.avatar.original.alt}
@@ -187,10 +187,7 @@ class Sidebar extends React.Component {
               />
             </div>
           </a>
-          <a
-            href={project.info.website}
-            className="simple-text logo-normal"
-          >
+          <a href={project.info.website} target="_blank" className="simple-text logo-normal">
             <img
               alt={project.img.branding.logo.white.alt}
               width={project.img.branding.logo.white.width * 0.06}

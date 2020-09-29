@@ -32,10 +32,17 @@ function CarouselSkeleton() {
           <SkeletonCol />
           {window.innerWidth > 576 && <SkeletonCol />}
           {window.innerWidth > 576 && <SkeletonCol />}
-          {window.innerWidth > 990 && <SkeletonCol />}
-          {window.innerWidth > 990 && <SkeletonCol />}
+
+          {window.innerWidth > 768 && <SkeletonCol />}
+          {window.innerWidth > 768 && <SkeletonCol />}
+
           {window.innerWidth > 1200 && <SkeletonCol />}
           {window.innerWidth > 1200 && <SkeletonCol />}
+
+          {window.innerWidth > 1600 && <SkeletonCol />}
+          {window.innerWidth > 1600 && <SkeletonCol />}
+          {window.innerWidth > 1600 && <SkeletonCol />}
+          {window.innerWidth > 1600 && <SkeletonCol />}
         </Row>
       </CarouselItem>
       <CarouselItem key={"skeleton__1"} />

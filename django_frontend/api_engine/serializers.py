@@ -73,6 +73,19 @@ class StrategySerializer(serializers.ModelSerializer):
         model = Strategy
         fields = '__all__'
 
+    def create(self, validated_data):
+        requestor = self.context['request'].user
+        subscriptionPlan = Subscription.objects.get(usercustom__user=requestor)
+
+        if subscriptionPlan.name == 'basic':
+            strategyAmount = Strategy.objects.filter(owner=requestor).count()
+            if strategyAmount >= 3:
+                raise serializers.ValidationError("Strategies limit reached.")
+
+        strategy = Strategy.objects.create(**validated_data)
+
+        return strategy
+
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -95,7 +108,7 @@ class WalletSerializer(serializers.ModelSerializer):
         if subscriptionPlan.name == 'basic':
             walletAmount = Wallet.objects.filter(owner=requestor).count()
             if walletAmount >= 3:
-                raise serializers.ValidationError("Wallet's limit reached.")
+                raise serializers.ValidationError("Wallets limit reached.")
 
         wallet = Wallet.objects.create(
             owner=requestor,
