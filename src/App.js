@@ -208,10 +208,6 @@ class App extends React.Component {
             if (rData.includes("limit reached"))
               msg.id = model + "_limitReached"
             break
-          case "strategy":
-            if (rData.includes("limit reached"))
-              msg.id = model + "_limitReached"
-            break
           default:
             break;
         }

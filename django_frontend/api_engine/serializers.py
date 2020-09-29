@@ -73,19 +73,6 @@ class StrategySerializer(serializers.ModelSerializer):
         model = Strategy
         fields = '__all__'
 
-    def create(self, validated_data):
-        requestor = self.context['request'].user
-        subscriptionPlan = Subscription.objects.get(usercustom__user=requestor)
-
-        if subscriptionPlan.name == 'basic':
-            strategyAmount = Strategy.objects.filter(owner=requestor).count()
-            if strategyAmount >= 3:
-                raise serializers.ValidationError("Strategies limit reached.")
-
-        strategy = Strategy.objects.create(**validated_data)
-
-        return strategy
-
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:

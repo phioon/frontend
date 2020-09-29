@@ -134,7 +134,6 @@ const strings = {
     },
     httptranslation: {
       wallet_limitReached: "Need more wallets to manage your investments? Go premium and enjoy it! ;)",
-      strategy_limitReached: "Need more strategies to improve your performance? Go premium and enjoy it! ;)",
 
       user_profileUpdated: "Profile updated!",
 
@@ -1031,7 +1030,6 @@ const strings = {
     },
     httptranslation: {
       wallet_limitReached: "Precisa de mais carteiras para gerenciar seus investimentos? Atualize seu plano e aproveite! ;)",
-      strategy_limitReached: "Precisa de mais estratégias para melhorar seus resultados? Atualize seu plano e aproveite! ;)",
 
       user_profileUpdated: "Perfil atualizado!",
 
