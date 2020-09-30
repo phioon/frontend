@@ -46,7 +46,7 @@ urlpatterns += [
     path('market/indicators/', apiMarket.IndicatorList, name='Indicators available'),
 
     path('market/d/raw/', apiMarket.D_RawList, name='D_Raw data'),
-    path('market/d/raw/latest/', apiMarket.D_RawLatestList, name='D_Raw latest data'),
+    path('market/d/quote/latest/', apiMarket.D_QuoteLatestList, name='D_Quote latest data'),
     path('market/d/phibo/latest/', apiMarket.D_PhiboLatestList, name='D_Phibo latest data'),
     path('market/d/ema/latest/', apiMarket.D_EmaLatestList, name='D_Ema latest data'),
 

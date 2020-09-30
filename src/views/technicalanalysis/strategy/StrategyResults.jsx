@@ -107,14 +107,16 @@ class StrategyResults extends React.Component {
             Header: getString(langId, compId, "header_quote"),
             accessor: "price",
             Cell: (cell) => { return convertFloatToCurrency(cell.value, currency) },
-            width: 100
+            width: 100,
+            filterable: false
           },
           {
             className: "text-right",
             Header: getString(langId, compId, "header_volume"),
             accessor: "avg_volume_10d",
             Cell: (cell) => { return integerWithThousandsSeparator(cell.value, currency.thousands_separator_symbol) },
-            width: 120
+            width: 120,
+            filterable: false
           },
           {
             Header: getString(langId, compId, "header_lastTradeTime"),
@@ -131,12 +133,11 @@ class StrategyResults extends React.Component {
                 lastWeek: `[${getString(langId, "momentcalendar", "last")}] dddd[,] LT`,
                 sameElse: `L LT`
               })
-
               return calendarTime
             }
           }
         ]}
-        defaultPageSize={5}
+        defaultPageSize={10}
         previousText={getString(langId, "reacttable", "label_previous")}
         nextText={getString(langId, "reacttable", "label_next")}
         pageText={getString(langId, "reacttable", "label_page")}

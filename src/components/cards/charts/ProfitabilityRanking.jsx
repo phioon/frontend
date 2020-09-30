@@ -27,36 +27,16 @@ class ProfitabilityRanking extends Component {
     this.state = {
       compId: this.constructor.name.toLowerCase(),
       langId: props.prefs.langId,
-      pageFirstLoading: props.pageFirstLoading,
 
-      chart: props.chart,
       interval: "generic",
       selected: "groupByAsset",
-      rankingType: "top",         // TOP or BOTTOM
+      rankingType: "top",         // 'top' or 'bottom'
       rankingSize: "5",
-
-      measures: props.measures,
-
-      currency: props.currency,
     };
   }
   static getDerivedStateFromProps(props, state) {
     if (props.prefs.langId !== state.langId)
       return { langId: props.prefs.langId }
-    if (props.pageFirstLoading !== state.pageFirstLoading)
-      return {
-        pageFirstLoading: props.pageFirstLoading,
-        chart: props.chart,
-        measures: props.measures,
-        currency: props.currency
-      }
-    if (props.chart !== state.chart)
-      return {
-        pageFirstLoading: props.pageFirstLoading,
-        chart: props.chart,
-        measures: props.measures,
-        currency: props.currency
-      }
 
     return null
   }
@@ -104,8 +84,13 @@ class ProfitabilityRanking extends Component {
   }
 
   render() {
-    let { getString } = this.props;
-    let { langId, pageFirstLoading, chart, interval, selected, rankingType, rankingSize } = this.state;
+    let {
+      getString,
+      pageFirstLoading,
+      chart,
+    } = this.props;
+
+    let { langId, interval, selected, rankingType, rankingSize } = this.state;
 
     return (
       <Card className="card-stats">

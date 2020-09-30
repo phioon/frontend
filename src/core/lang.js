@@ -523,7 +523,7 @@ const strings = {
     phitrader: {
       title: "Phi Trader",
       label_intro_p1: "Hi! I'm Phi, the Artificial Intelligence behind PHIOON's main trading strategies...",
-      label_intro_p2: "Here, I'll expose all my personal operations, with details like: entry point, target, stop loss and the reason of it.",
+      label_intro_p2: "Here, I'll expose all my operations, with details like: entry point, target, stop loss and the reason of it.",
       label_intro_p3: "Be aware that they",
       label_intro_notRecommendation: "are not recommendations",
       label_intro_p4: "but I believe you could use my experience to analyze and learning with it.",
@@ -749,7 +749,7 @@ const strings = {
       label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can bring you strategies and indicators that are available there! ;)",
       btn_goToWallets: "Go to Wallets",
 
-      label_noStrategies_p1: "Hey... Are you ready to start saving time and always having the best opportunities at one click?",
+      label_noStrategies_p1: "Are you ready to start saving time and always having the best opportunities at one click?",
       label_noStrategies_p2: "Go ahead and create your first Strategy !",
       label_noStrategies_p3: "Ah! I hope you enjoy the journey... Once you get used to it, there is no way back! ;)",
 
@@ -1452,7 +1452,7 @@ const strings = {
     phitrader: {
       title: "Phi Trader",
       label_intro_p1: "Olá! Sou o Phi, a Inteligência Artificial por trás das estratégias de mercado do PHIOON...",
-      label_intro_p2: "Aqui, vou expor minhas operações pessoais, com detalhes como: alvo, stop loss e o motivo de ter entrado na operação.",
+      label_intro_p2: "Aqui, vou expor todas as minhas operações, com detalhes como: alvo, stop loss e o motivo de ter entrado na operação.",
       label_intro_p3: "Elas",
       label_intro_notRecommendation: "não são recomendações",
       label_intro_p4: "mas acredito que você pode aproveitar a minha experiência para analisar e aprender com elas.",
@@ -1665,9 +1665,9 @@ const strings = {
       label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua, para trazer estratégias e indicadores disponíveis por lá! ;)",
       btn_goToWallets: "Ir para Carteiras",
 
-      label_noStrategies_p1: "Opa... Está preparado para começar a economizar tempo e ainda ter as melhores oportunidades do mercado à um clique?",
+      label_noStrategies_p1: "Está preparado para começar a economizar tempo e ainda ter as melhores oportunidades do mercado à um clique?",
       label_noStrategies_p2: "Então comece criando a sua primeira Estratégia !",
-      label_noStrategies_p3: "Ah! Espero que aproveite a experiência... Uma vez acostumado, não tem mais volta! ;)",
+      label_noStrategies_p3: "Ah! Espero que aproveite a experiência... Uma vez que se acostuma, não tem mais volta! ;)",
 
       card_results_title: "Resultados",
 

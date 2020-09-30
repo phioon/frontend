@@ -29,9 +29,7 @@ class ProfitabilityOverTime extends Component {
     this.state = {
       compId: this.constructor.name.toLowerCase(),
       langId: props.prefs.langId,
-      pageFirstLoading: props.pageFirstLoading,
 
-      chart: props.chart,
       interval: "monthly",
       selected: "overall",
 
@@ -45,30 +43,15 @@ class ProfitabilityOverTime extends Component {
   static getDerivedStateFromProps(props, state) {
     if (props.prefs.langId !== state.langId)
       return { langId: props.prefs.langId }
-    if (props.pageFirstLoading !== state.pageFirstLoading)
-      return {
-        pageFirstLoading: props.pageFirstLoading,
-        chart: props.chart,
-        measures: props.measures,
-        currency: props.currency
-      }
-    if (props.chart !== state.chart)
-      return {
-        pageFirstLoading: props.pageFirstLoading,
-        chart: props.chart,
-        measures: props.measures,
-        currency: props.currency
-      }
 
     return null
   }
-  componentDidUpdate() {
-    let { pageFirstLoading, chart, interval } = this.state
-
-    // If user has less than 50 days of data, show daily interval 
-    if (!pageFirstLoading && interval != "daily")
-      if (chart.daily.overall.data.labels.length <= 50)
+  componentDidUpdate(prevProps) {
+    if (prevProps.pageFirstLoading !== this.props.pageFirstLoading)
+      if (this.props.chart.daily.overall.data.labels.length <= 50) {
+        // User has less than 50 days of data, so show daily interval
         this.changeChart("daily", undefined)
+      }
   }
 
   changeChart(interval, selected) {
@@ -101,8 +84,15 @@ class ProfitabilityOverTime extends Component {
   }
 
   render() {
-    let { getString } = this.props;
-    let { langId, pageFirstLoading, chart, interval, selected, measures, dimensionsLimit } = this.state;
+    let {
+      getString,
+      pageFirstLoading,
+      chart,
+      measures,
+      currency
+    } = this.props;
+
+    let { langId, interval, selected, dimensionsLimit } = this.state;
 
     return (
       <Card className="card-stats">

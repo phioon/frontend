@@ -21,6 +21,8 @@ import {
   TabPane,
   UncontrolledTooltip
 } from "reactstrap";
+// react component used to flip cards
+import ReactCardFlip from 'react-card-flip';
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
 // Used to create a Sortable container
@@ -415,19 +417,19 @@ class ModalStrategy extends React.Component {
               <hr />
             </CardHeader>
             <CardBody>
-              {ws.showExplainer ?
-                <RulesExplainer
-                  managers={this.props.managers}
-                  prefs={this.props.prefs}
-                  getString={this.props.getString}
-                  workspace={ws} /> :
+              <ReactCardFlip isFlipped={ws.showExplainer} flipDirection="vertical">
                 <SortableRulesBasic
                   context={ws.id}
                   items={ws.items}
                   onUpdateItem={this.updateIndicatorClick}
                   onRemoveItem={this.onWSCommit}
                   onSortableChange={this.onWSCommit} />
-              }
+                <RulesExplainer
+                  managers={this.props.managers}
+                  prefs={this.props.prefs}
+                  getString={this.props.getString}
+                  workspace={ws} />
+              </ReactCardFlip>
             </CardBody>
             <CardFooter>
               <Row>
@@ -488,19 +490,19 @@ class ModalStrategy extends React.Component {
               <hr />
             </CardHeader>
             <CardBody>
-              {ws.showExplainer ?
-                <RulesExplainer
-                  managers={this.props.managers}
-                  prefs={this.props.prefs}
-                  getString={this.props.getString}
-                  workspace={ws} /> :
+              <ReactCardFlip isFlipped={ws.showExplainer} flipDirection="vertical">
                 <SortableRulesBasic
                   context={ws.id}
                   items={ws.items}
                   onUpdateItem={this.updateIndicatorClick}
                   onRemoveItem={this.onWSCommit}
                   onSortableChange={this.onWSCommit} />
-              }
+                <RulesExplainer
+                  managers={this.props.managers}
+                  prefs={this.props.prefs}
+                  getString={this.props.getString}
+                  workspace={ws} />
+              </ReactCardFlip>
             </CardBody>
             <CardFooter>
               <Row>
@@ -816,6 +818,7 @@ class ModalStrategy extends React.Component {
           confirmBtnBsStyle="primary"
         >
           {this.props.getString(this.state.langId, this.state.compId, "alert_created_text_p1")}
+          {" "}
           {this.props.getString(this.state.langId, this.state.compId, "alert_created_text_p2")}
         </ReactBSAlert>
       )
@@ -1150,6 +1153,7 @@ class ModalStrategy extends React.Component {
               }
             </FormGroup>
             <br />
+
             {/* Workspaces */}
             <p className="card-category">
               {getString(langId, compId, "label_workspaces")}

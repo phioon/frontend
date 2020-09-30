@@ -63,15 +63,15 @@ def AssetList(request):
     data = request.data
 
     try:
-        r = requests.get(backendRequest,
-                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
-                         params=params)
+        r = requests.post(backendRequest,
+                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                          data=data,
+                          params=params)
     except requests.exceptions.Timeout:
-        r = requests.get(backendRequest,
-                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
-                         params=params)
+        r = requests.post(backendRequest,
+                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                          data=data,
+                          params=params)
     except requests.exceptions.RequestException as ex:
         obj_res = {'message': str(ex)}
         return Response(obj_res, status=status.HTTP_503_SERVICE_UNAVAILABLE)
@@ -122,8 +122,8 @@ def D_RawList(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-def D_RawLatestList(request):
-    backendRequest = __backendHost__ + '/api/market/d/raw/latest/'
+def D_QuoteLatestList(request):
+    backendRequest = __backendHost__ + '/api/market/d/quote/latest/'
 
     params = request.query_params
     data = request.data

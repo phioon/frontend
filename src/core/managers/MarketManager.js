@@ -72,6 +72,22 @@ class MarketManager {
         method: "get",
         request: "/api/market/<timeInterval>/phibo/"
       },
+      wsQuote: {
+        options: {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": ""
+          },
+          params: {
+            stockExchange: undefined,
+            interval: undefined,
+            instances: undefined,
+            lastPeriods: undefined
+          }
+        },
+        method: "get",
+        request: "/api/market/<timeInterval>/quote/"
+      },
       wsRaw: {
         options: {
           headers: {
@@ -430,7 +446,7 @@ class MarketManager {
       return result
     }
 
-    let wsInfo = this.getApi("wsRaw")
+    let wsInfo = this.getApi("wsQuote")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
     wsInfo.request += "latest/"
     wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
