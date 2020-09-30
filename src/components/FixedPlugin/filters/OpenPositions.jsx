@@ -6,7 +6,7 @@ import { Col, Row, Tooltip } from "reactstrap";
 // Filters
 import WalletFilter from "../../cards/filters/WalletFilter";
 import AssetFilter from "../../cards/filters/AssetFilter";
-import OpeningIntervalFilter from "../../cards/filters/OpeningIntervalFilter";
+import OpenIntervalFilter from "../../cards/filters/OpenIntervalFilter";
 
 import { sleep } from "../../../core/utils";
 
@@ -108,7 +108,7 @@ class FixedFilter extends Component {
             <Row>
               {/* Time Interval */}
               <Col className="col-md-3 ml-auto mr-auto">
-                <OpeningIntervalFilter
+                <OpenIntervalFilter
                   getString={getString}
                   prefs={this.props.prefs}
                   onSelectionChange={this.props.onSelectionChange}

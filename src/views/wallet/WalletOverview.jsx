@@ -10,9 +10,9 @@ import FixedFilter from "../../components/FixedPlugin/filters/Overview";
 
 // Measures
 import AmountPositions from "../../components/cards/measures/AmountPositions";
-import ClosingVolume from "../../components/cards/measures/ClosingVolume";
+import CloseVolume from "../../components/cards/measures/CloseVolume";
 import OpCost from "../../components/cards/measures/OpCost";
-import OpeningVolume from "../../components/cards/measures/OpeningVolume";
+import OpenVolume from "../../components/cards/measures/OpenVolume";
 import Profitability from "../../components/cards/measures/Profitability";
 import Winners from "../../components/cards/measures/Winners";
 // Charts
@@ -56,10 +56,10 @@ class WalletOverview extends React.Component {
       measures: {
         positions: {
           rawData: { selection: [], daily: [], monthly: [] },
-          closingVolume: { id: "closingVolume" },
+          closeVolume: { id: "closeVolume" },
           count: { id: "count" },
           opCost: { id: "opCost" },
-          openingVolume: { id: "openingVolume" },
+          openVolume: { id: "openVolume" },
           result: { id: "result" },
           winners: { id: "winners" },
         }
@@ -193,15 +193,15 @@ class WalletOverview extends React.Component {
       if (!positionsDisabled.includes(x))
         selection.push(positionsData[x])
 
-    // Closing Volume
-    measures.positions.closingVolume.currency = await this.props.managers.measure.closingVolumeAsKpi(selection, "currency")
+    // Close Volume
+    measures.positions.closeVolume.currency = await this.props.managers.measure.closeVolumeAsKpi(selection, "currency")
     // Count
     measures.positions.count.number = await this.props.managers.measure.countAsKpi(selection, "number")
     // Operational Cost
     measures.positions.opCost.currency = await this.props.managers.measure.opCostAsKpi(selection, "currency")
     measures.positions.opCost.percentage = await this.props.managers.measure.opCostAsKpi(selection, "percentage")
-    // Opening Volume
-    measures.positions.openingVolume.currency = await this.props.managers.measure.openingVolumeAsKpi(selection, "currency")
+    // Open Volume
+    measures.positions.openVolume.currency = await this.props.managers.measure.openVolumeAsKpi(selection, "currency")
     // Result
     measures.positions.result.currency = await this.props.managers.measure.resultAsKpi(selection, "currency")
     measures.positions.result.percentage = await this.props.managers.measure.resultAsKpi(selection, "percentage")
@@ -695,22 +695,22 @@ class WalletOverview extends React.Component {
         {/* Measures */}
         <Row className="justify-content-center">
           <Col xl="3" lg="4" md="6" sm="6">
-            <OpeningVolume
+            <OpenVolume
               getString={getString}
               prefs={prefs}
               managers={managers}
               pageFirstLoading={measureFirstLoading}
-              measure={measures.positions.openingVolume}
+              measure={measures.positions.openVolume}
               currency={currency}
             />
           </Col>
           <Col xl="3" lg="4" md="6" sm="6">
-            <ClosingVolume
+            <CloseVolume
               getString={getString}
               prefs={prefs}
               managers={managers}
               pageFirstLoading={measureFirstLoading}
-              measure={measures.positions.closingVolume}
+              measure={measures.positions.closeVolume}
               currency={currency}
             />
           </Col>

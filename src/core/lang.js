@@ -106,8 +106,8 @@ const strings = {
     },
     dimensions: {
       assets: "Asset",
-      positionDates: "Opening Interval",
-      positionMonths: "Month (Opening)",
+      positionDates: "Open Interval",
+      positionMonths: "Month (Open)",
       positions: "Position",
       positionTypes: "Type",
       wallets: "Wallet"
@@ -230,21 +230,21 @@ const strings = {
       amountInvested_percentage_hint: "Amount Invested divided by wallet's balance.",
       amountInvested_alert_walletBallance: "Amount Invested is higher than Wallet's balance. Check wallet's balance to correct this metric.",
 
-      closingVolume_kpi_label: "Closing Volume",
-      closingVolume_title_hint: "Taking into account only closed Positions, it's the sum of closing value. For example, for an PURCHASE operation, I'll sum up its sale's price.",
-      closingVolume_currency_hint: "Closing Volume of your operations.",
+      closeVolume_kpi_label: "Close Volume",
+      closeVolume_title_hint: "Taking into account only closed Positions, it's the sum of close value. For example, for an PURCHASE operation, I'll sum up its sale's price.",
+      closeVolume_currency_hint: "Close Volume of your operations.",
 
       count_kpi_label: "Positions",
       count_number_hint: "Amount of Positions in current selection.",
 
       opCost_kpi_label: "Operational Cost",
-      opCost_title_hint: "Here, I'm including both opening and closing operational costs.",
+      opCost_title_hint: "Here, I'm including both open and close operational costs.",
       opCost_currency_hint: "Taxes, fees, comissions...",
       opCost_percentage_hint: "Operational Cost divided by Amount Invested.",
 
-      openingVolume_kpi_label: "Opening Volume",
-      openingVolume_title_hint: "Amount invested in your operations. Operational cost not included.",
-      openingVolume_currency_hint: "Opening Volume of your operations.",
+      openVolume_kpi_label: "Open Volume",
+      openVolume_title_hint: "Amount invested in your operations. Operational cost not included.",
+      openVolume_currency_hint: "Open Volume of your operations.",
 
       result_kpi_label: "Profitability",
       result_title_hint: "Net profit. That's right, I've already considered your Operational Cost.",
@@ -263,7 +263,7 @@ const strings = {
     },
     modalopenposition: {
       title: "Open a new Position",
-      hint: "A Position is made of 2 Transactions: Opening (e.g Buy) and Closing (e.g Sale). For now, only opening info is needed.",
+      hint: "A Position is made of 2 Transactions: Open (e.g Buy) and Close (e.g Sale). For now, only open info is needed.",
 
       input_type_buy: "BUY",
       input_type_sell: "SELL",
@@ -293,11 +293,11 @@ const strings = {
     },
     modalupdateposition: {
       title: "Update Position",
-      label_intro_p1: "A Position is made of 2 events: Opening and Closing.",
-      label_intro_p2: "I understand that a Position is closed once the fields under CLOSING tab are filled. ;)",
+      label_intro_p1: "A Position is made of 2 events: Open and Close.",
+      label_intro_p2: "I understand that a Position is closed once the fields under CLOSE tab are filled. ;)",
 
-      tab_openingInfo: "OPENING",
-      tab_closingInfo: "CLOSING",
+      tab_openInfo: "OPEN",
+      tab_closeInfo: "CLOSE",
 
       input_type: "Type",
       input_type_buy: "BUY",
@@ -511,8 +511,8 @@ const strings = {
       "11": "Nov",
       "12": "Dec",
     },
-    openingintervalfilter: {
-      label_title: "Opening Interval",
+    openintervalfilter: {
+      label_title: "Open Interval",
       title_hint: "It's related to the date positions were opened.",
 
       input_dateFrom: "From...",
@@ -1134,9 +1134,9 @@ const strings = {
       amountInvested_percentage_hint: "Valor Aplicado dividido pelo Saldo da Carteira.",
       amountInvested_alert_walletBallance: "Valor Aplicado é maior que o Saldo da Carteira. Dê uma olhada no Saldo da Carteira para corrigir esta métrica.",
 
-      closingVolume_kpi_label: "Vol. Fechamento",
-      closingVolume_title_hint: "Considerando apenas as Posições fechadas, eu somo o valor de fechamento. Por exemplo, para uma operação de COMPRA, vou somar seu valor de venda.",
-      closingVolume_currency_hint: "Volume de Fechamento de suas Operações.",
+      closeVolume_kpi_label: "Vol. Fechamento",
+      closeVolume_title_hint: "Considerando apenas as Posições fechadas, eu somo o valor de fechamento. Por exemplo, para uma operação de COMPRA, vou somar seu valor de venda.",
+      closeVolume_currency_hint: "Volume de Fechamento de suas Operações.",
 
       count_kpi_label: "Posições",
       count_number_hint: "Quantidade de Posições na seleção atual.",
@@ -1146,9 +1146,9 @@ const strings = {
       opCost_currency_hint: "Taxas, impostos, comissões, emolumentos...",
       opCost_percentage_hint: "Custo Operacional dividido pelo Valor Aplicado.",
 
-      openingVolume_kpi_label: "Vol. Abertura",
-      openingVolume_title_hint: "Valor aplicado em suas Operações. Custo operacional não incluso.",
-      openingVolume_currency_hint: "Volume de Abertura de suas operações.",
+      openVolume_kpi_label: "Vol. Abertura",
+      openVolume_title_hint: "Valor aplicado em suas Operações. Custo operacional não incluso.",
+      openVolume_currency_hint: "Volume de Abertura de suas operações.",
 
       result_kpi_label: "Rentabilidade",
       result_title_hint: "Rentabilidade liquida. Isso mesmo, já descontei seu Custo Operacional.",
@@ -1225,8 +1225,8 @@ const strings = {
       label_intro_p1: "Uma posição possui 2 eventos: Abertura e Fechamento.",
       label_intro_p2: "Eu entendo que uma Posição está fechada quando os campos da aba FECHAMENTO estão preenchidos. ;)",
 
-      tab_openingInfo: "ABERTURA",
-      tab_closingInfo: "FECHAMENTO",
+      tab_openInfo: "ABERTURA",
+      tab_closeInfo: "FECHAMENTO",
 
       input_type: "Tipo",
       input_type_buy: "COMPRA",
@@ -1440,7 +1440,7 @@ const strings = {
       "11": "Nov",
       "12": "Dez",
     },
-    openingintervalfilter: {
+    openintervalfilter: {
       label_title: "Intervalo Abertura",
       title_hint: "Relacionado às datas em que as Posições foram abertas.",
 

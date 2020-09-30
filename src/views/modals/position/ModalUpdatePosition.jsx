@@ -1053,7 +1053,7 @@ class ModalUpdatePosition extends React.Component {
                       className={activeNavId == "start" ? "active" : ""}
                       onClick={() => this.toggleNavLink("activeNavId", "start")}
                     >
-                      {getString(langId, compId, "tab_openingInfo")}
+                      {getString(langId, compId, "tab_openInfo")}
                     </NavLink>
                   </NavItem>
                   {/* END */}
@@ -1063,7 +1063,7 @@ class ModalUpdatePosition extends React.Component {
                       className={activeNavId == "end" ? "active" : ""}
                       onClick={() => this.toggleNavLink("activeNavId", "end")}
                     >
-                      {getString(langId, compId, "tab_closingInfo")}
+                      {getString(langId, compId, "tab_closeInfo")}
                     </NavLink>
                   </NavItem>
                 </Nav>

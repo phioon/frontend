@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { Button, Card, CardBody, CardTitle, CardFooter, Col, Row, UncontrolledTooltip } from "reactstrap";
 import Skeleton from "react-loading-skeleton";
 
-class ClosingVolume extends Component {
+class OpenVolume extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -52,7 +52,7 @@ class ClosingVolume extends Component {
           <Row>
             <Col xl="2" lg="2" md="3" xs="4">
               <div className="icon-big text-center">
-                <i className="nc-icon nc-cart-simple text-success" />
+                <i className="nc-icon nc-basket text-primary" />
               </div>
             </Col>
             <Col xl="10" lg="10" md="9" xs="8">
@@ -113,9 +113,9 @@ class ClosingVolume extends Component {
   }
 }
 
-export default ClosingVolume;
+export default OpenVolume;
 
-ClosingVolume.propTypes = {
+OpenVolume.propTypes = {
   getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
   managers: PropTypes.object.isRequired,

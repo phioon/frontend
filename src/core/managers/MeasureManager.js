@@ -81,7 +81,7 @@ class MeasureManager {
     return strKpi
   }
 
-  opening_cost_currency(selection) {
+  open_cost_currency(selection) {
     let cost = 0.00
 
     for (var obj of selection)
@@ -89,7 +89,7 @@ class MeasureManager {
 
     return round(cost, 2)
   }
-  closing_cost_currency(selection) {
+  close_cost_currency(selection) {
     let cost = 0.00
 
     for (var obj of selection)
@@ -137,7 +137,7 @@ class MeasureManager {
     if (onlyHintId)
       return "amountInvested_currency_hint"
 
-    let totalCost = this.opening_cost_currency(selection) + this.opCost_currency(selection)
+    let totalCost = this.open_cost_currency(selection) + this.opCost_currency(selection)
 
     return round(totalCost, 2)
   }
@@ -172,31 +172,31 @@ class MeasureManager {
     return round(balance, 2)
   }
 
-  closingVolume_currency(selection, onlyHintId) {
+  closeVolume_currency(selection, onlyHintId) {
     if (onlyHintId)
-      return "closingVolume_currency_hint"
+      return "closeVolume_currency_hint"
 
-    let closingVolume = this.closing_cost_currency(selection)
+    let closeVolume = this.close_cost_currency(selection)
 
-    return closingVolume
+    return closeVolume
   }
   totalVolume_currency(selection, onlyHintId) {
     if (onlyHintId)
       return "totalVolume_currency_hint"
 
-    let totalVolume = this.opening_cost_currency(selection)
-    totalVolume += this.closing_cost_currency(selection)
+    let totalVolume = this.open_cost_currency(selection)
+    totalVolume += this.close_cost_currency(selection)
 
     return totalVolume
   }
 
-  openingVolume_currency(selection, onlyHintId) {
+  openVolume_currency(selection, onlyHintId) {
     if (onlyHintId)
-      return "openingVolume_currency_hint"
+      return "openVolume_currency_hint"
 
-    let openingVolume = this.opening_cost_currency(selection)
+    let openVolume = this.open_cost_currency(selection)
 
-    return openingVolume
+    return openVolume
   }
 
   async result_currency(selection, onlyHintId) {
@@ -478,13 +478,13 @@ class MeasureManager {
 
     return kpi
   }
-  async closingVolumeAsKpi(selection, kpiFormat) {
+  async closeVolumeAsKpi(selection, kpiFormat) {
     let kpi = {}
 
     switch (kpiFormat) {
       case "currency":
-        kpi[this.config.keys.strHintId] = this.closingVolume_currency(undefined, true)
-        kpi[this.config.keys.strData] = this.closingVolume_currency(selection)
+        kpi[this.config.keys.strHintId] = this.closeVolume_currency(undefined, true)
+        kpi[this.config.keys.strData] = this.closeVolume_currency(selection)
         break;
       default:
         break;
@@ -509,13 +509,13 @@ class MeasureManager {
 
     return kpi
   }
-  async openingVolumeAsKpi(selection, kpiFormat) {
+  async openVolumeAsKpi(selection, kpiFormat) {
     let kpi = {}
 
     switch (kpiFormat) {
       case "currency":
-        kpi[this.config.keys.strHintId] = this.openingVolume_currency(undefined, true)
-        kpi[this.config.keys.strData] = this.openingVolume_currency(selection)
+        kpi[this.config.keys.strHintId] = this.openVolume_currency(undefined, true)
+        kpi[this.config.keys.strData] = this.openVolume_currency(selection)
         break;
       default:
         break;

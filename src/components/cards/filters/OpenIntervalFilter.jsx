@@ -7,9 +7,8 @@ import TagsInput from "react-tagsinput";
 // react plugin used to create datetimepicker
 import ReactDatetime from "react-datetime";
 import LabelAlert from "../../LabelAlert";
-import TimeManager from "../../../core/managers/TimeManager";
 
-class OpeningIntervalFilter extends Component {
+class OpenIntervalFilter extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -50,8 +49,8 @@ class OpeningIntervalFilter extends Component {
     switch (fieldName) {
       case "dateFrom":
         newState[fieldName + "State"] = ""
-        newState.openingInterval_alertState = ""
-        newState.openingInterval_alertMsg = ""
+        newState.openInterval_alertState = ""
+        newState.openInterval_alertMsg = ""
 
         if (value) {
           if (value._isAMomentObject) {
@@ -66,8 +65,8 @@ class OpeningIntervalFilter extends Component {
             newState[fieldName + "State"] = "has-danger"
 
           if (iSelected.length == 0) {
-            newState.openingInterval_alertState = "has-danger"
-            newState.openingInterval_alertMsg = this.props.getString(langId, compId, "alert_timeInterval_noPositions")
+            newState.openInterval_alertState = "has-danger"
+            newState.openInterval_alertMsg = this.props.getString(langId, compId, "alert_timeInterval_noPositions")
           }
         }
 
@@ -76,8 +75,8 @@ class OpeningIntervalFilter extends Component {
 
       case "dateTo":
         newState[fieldName + "State"] = ""
-        newState.openingInterval_alertState = ""
-        newState.openingInterval_alertMsg = ""
+        newState.openInterval_alertState = ""
+        newState.openInterval_alertMsg = ""
 
         if (value) {
           if (value._isAMomentObject) {
@@ -92,8 +91,8 @@ class OpeningIntervalFilter extends Component {
             newState[fieldName + "State"] = "has-danger"
 
           if (iSelected.length == 0) {
-            newState.openingInterval_alertState = "has-danger"
-            newState.openingInterval_alertMsg = this.props.getString(langId, compId, "alert_timeInterval_noPositions")
+            newState.openInterval_alertState = "has-danger"
+            newState.openInterval_alertMsg = this.props.getString(langId, compId, "alert_timeInterval_noPositions")
           }
         }
 
@@ -149,8 +148,8 @@ class OpeningIntervalFilter extends Component {
       dateFromState,
       dateTo,
       dateToState,
-      openingInterval_alertMsg,
-      openingInterval_alertState,
+      openInterval_alertMsg,
+      openInterval_alertState,
     } = this.state;
 
     return (
@@ -211,16 +210,16 @@ class OpeningIntervalFilter extends Component {
               closeOnSelect
             />
           </FormGroup>
-          <LabelAlert alertState={openingInterval_alertState} alertMsg={openingInterval_alertMsg} />
+          <LabelAlert alertState={openInterval_alertState} alertMsg={openInterval_alertMsg} />
         </CardBody>
       </Card>
     )
   }
 }
 
-export default OpeningIntervalFilter;
+export default OpenIntervalFilter;
 
-OpeningIntervalFilter.propTypes = {
+OpenIntervalFilter.propTypes = {
   getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
   onSelectionChange: PropTypes.func.isRequired,

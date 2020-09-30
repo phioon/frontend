@@ -25,6 +25,7 @@ import ModalUpdatePosition from "../modals/position/ModalUpdatePosition";
 import {
   convertFloatToCurrency,
   convertFloatToPercentage,
+  getDistinctValuesFromList,
   integerWithThousandsSeparator,
   orderBy,
   percentage,
@@ -117,12 +118,15 @@ class Positions extends React.Component {
     let positions = await this.props.managers.app.positionList()
 
     if (positions.data) {
+      let assets = getDistinctValuesFromList(positions.data, "asset_symbol")
+      assets = await this.props.managers.market.assetList(false, assets)
+
       for (var obj of positions.data) {
         obj.wallet = await this.props.managers.app.walletRetrieve(obj.wallet)
         obj.wallet.value = obj.wallet.id
         obj.wallet.label = obj.wallet.name
 
-        obj.asset = await this.props.managers.market.assetRetrieve(obj.asset_symbol)
+        obj.asset = assets[obj.asset_symbol].data
         obj.asset = { value: obj.asset.asset_symbol, label: obj.asset.asset_label }
 
         obj.currency = await this.props.managers.app.currencyRetrieve(obj.wallet.currency)
