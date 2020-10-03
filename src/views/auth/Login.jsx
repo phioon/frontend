@@ -233,6 +233,12 @@ class Login extends React.Component {
                     <LabelAlert alertState={alertState} alertMsg={alertMsg} />
                     <br />
                     {
+                        <Button className="btn-link btn-neutral" color="default" href="/auth/register">
+                          {getString(langId, compId, "btn_signup")}
+                        </Button>
+                    }
+                    <br />
+                    {
                       btnSendConfirmation_isHidden ?
                         <Button className="btn-link btn-neutral" color="default" href="forgotpassword">
                           {getString(langId, compId, "btn_forgotPassword")}?
