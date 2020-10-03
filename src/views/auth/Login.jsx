@@ -234,7 +234,7 @@ class Login extends React.Component {
                     <br />
                     {
                         <Button className="btn-link btn-neutral" color="default" href="/auth/register">
-                          {getString(langId, compId, "btn_signup")}
+                          {getString(langId, compId, "btn_signUp")}
                         </Button>
                     }
                     <br />
