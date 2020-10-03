@@ -214,7 +214,7 @@ const strings = {
 
       btn_login: "Login",
       btn_forgotPassword: "Forgot Password",
-      btn_signup: "Sign Up",
+      btn_signUp: "Sign Up",
       btn_resendEmail: "Resend Email",
 
       label_emailSent: "I've emailed you instructions for confirming your email again. Please, check if you received it. ;)"
@@ -1118,7 +1118,7 @@ const strings = {
       input_password: "Senha",
 
       btn_login: "Login",
-      btn_signup: "Criar Conta",
+      btn_signUp: "Criar Conta",
       btn_forgotPassword: "Esqueceu a Senha",
       btn_resendEmail: "Reenviar E-mail",
       
