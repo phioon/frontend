@@ -62,7 +62,7 @@
     "react-scripts": "3.4.3",
     "react-select": "3.1.0",
     "react-sortable-hoc": "1.11.0",
-    "react-table-v6": "^6.8.6",
+    "react-table-v6": "6.8.6",
     "react-tagsinput": "3.19.0",
     "react-text-mask": "5.4.3",
     "text-mask-addons": "3.8.0"
