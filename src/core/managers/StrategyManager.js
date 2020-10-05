@@ -1,5 +1,5 @@
 import jsonLogic from "json-logic-js";
-import { joinContentObjLists, retrieveObjFromObjList, sleep } from "../utils";
+import { joinContentObjLists, retrieveObjFromObjList } from "../utils";
 
 class StrategyManager {
   constructor(marketManager) {
@@ -100,6 +100,9 @@ class StrategyManager {
   // 2. Apply logical rules into a list of objects
   applyRules(data, jsonRules) {
     let result = []
+
+    console.log(data)
+    console.log(jsonRules)
 
     for (var obj of data) {
       let itMatches = jsonLogic.apply(jsonRules, obj)

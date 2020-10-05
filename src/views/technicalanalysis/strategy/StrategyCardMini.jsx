@@ -103,8 +103,6 @@ class StrategyCardMini extends React.Component {
     let { getString, strategy } = this.props;
     let { langId, compId } = this.state;
 
-    console.log(strategy)
-
     return (
       <Card className="card-stats-mini">
         <CardBody>
@@ -154,6 +152,7 @@ class StrategyCardMini extends React.Component {
             </Col>
           </Row>
 
+          <Row className="mt-3" />
           {/* Action buttons */}
           {this.renderBtnActions()}
 
