@@ -2,11 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 
 // react component for creating dynamic tables
-import ReactTable from "react-table";
+import ReactTable from "react-table-v6";
 
 import TimeManager from "../../../core/managers/TimeManager";
 import {
   convertFloatToCurrency,
+  rtDefaultFilter,
   getDistinctValuesFromList,
   integerWithThousandsSeparator,
   orderBy
@@ -92,6 +93,7 @@ class StrategyResults extends React.Component {
       <ReactTable
         data={tableData}
         filterable={tableData.length > 0 ? true : false}
+        defaultFilterMethod={rtDefaultFilter}
         columns={[
           {
             Header: getString(langId, compId, "header_asset"),
@@ -105,22 +107,23 @@ class StrategyResults extends React.Component {
           {
             className: "text-right",
             Header: getString(langId, compId, "header_quote"),
+            filterable: false,
             accessor: "price",
             Cell: (cell) => { return convertFloatToCurrency(cell.value, currency) },
             width: 100,
-            filterable: false
           },
           {
             className: "text-right",
             Header: getString(langId, compId, "header_volume"),
+            filterable: false,
             accessor: "avg_volume_10d",
             Cell: (cell) => { return integerWithThousandsSeparator(cell.value, currency.thousands_separator_symbol) },
-            width: 120,
-            filterable: false
+            width: 120
           },
           {
             Header: getString(langId, compId, "header_lastTradeTime"),
             accessor: "last_trade_time",
+            filterable: false,
             Cell: (cell) => {
               let tzDatetime = TimeManager.tzConvert(stockExchange.se_timezone, cell.value, true)
               tzDatetime.locale(getString(langId, "locales", langId))

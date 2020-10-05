@@ -61,11 +61,11 @@ const config = {
       version: 0.16
     },
     dEma: {
-      syncLimit: 0.0060,
+      syncLimit: 60,
       version: 0.03
     },
     dQuote: {
-      syncLimit: 0.0015,
+      syncLimit: 15,
       version: 0.03
     },
     dPhibo: {

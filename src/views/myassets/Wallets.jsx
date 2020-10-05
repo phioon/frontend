@@ -14,14 +14,14 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 // react component for creating dynamic tables
-import ReactTable from "react-table";
+import ReactTable from "react-table-v6";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
 import FixedButton from "../../components/FixedPlugin/FixedButton";
 
 import ModalCreateWallet from "../modals/wallet/ModalCreateWallet";
 import ModalUpdateWallet from "../modals/wallet/ModalUpdateWallet";
-import { convertFloatToCurrency, getValueListFromObjList, orderBy } from "../../core/utils";
+import { convertFloatToCurrency, getValueListFromObjList, orderBy, rtDefaultFilter } from "../../core/utils";
 
 class Wallets extends React.Component {
   constructor(props) {
@@ -290,6 +290,7 @@ class Wallets extends React.Component {
             <ReactTable
               data={data}
               filterable={data.length > 0 ? true : false}
+              defaultFilterMethod={rtDefaultFilter}
               columns={[
                 {
                   Header: getString(langId, compId, "header_name"),
@@ -306,7 +307,8 @@ class Wallets extends React.Component {
                 {
                   Header: getString(langId, compId, "header_balance"),
                   accessor: "balance",
-                  className: "text-right"
+                  className: "text-right",
+                  filterable: false
                 },
                 {
                   Header: getString(langId, compId, "header_actions"),

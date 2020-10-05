@@ -11,7 +11,7 @@ import { getDistinctValuesFromList, getObjsFieldNull } from "../core/utils";
 
 import routes from "routes.js";
 
-var ps;
+export var ps;
 
 class AppLayout extends React.Component {
   constructor(props) {
@@ -25,6 +25,7 @@ class AppLayout extends React.Component {
       sidebarMini: false,
     };
 
+    this.mainPanelRef = React.createRef()
     this.setNavbarTitleId = this.setNavbarTitleId.bind(this)
   }
   static getDerivedStateFromProps(props, state) {
@@ -33,26 +34,50 @@ class AppLayout extends React.Component {
     return null
   }
   componentDidMount() {
-    if (navigator.platform.indexOf("Win") > -1) {
-      document.documentElement.className += " perfect-scrollbar-on";
-      document.documentElement.classList.remove("perfect-scrollbar-off");
-      ps = new PerfectScrollbar(this.refs.mainPanel);
-    }
+    this.mountPerfectScrollbar()
 
     this.storageManagerInitiator()
   }
   componentWillUnmount() {
-    if (navigator.platform.indexOf("Win") > -1) {
-      ps.destroy();
-      document.documentElement.className += " perfect-scrollbar-off";
-      document.documentElement.classList.remove("perfect-scrollbar-on");
-    }
+    this.destroyPerfectScrollbar()
   }
   componentDidUpdate(e) {
     if (e.history.action === "PUSH") {
       document.documentElement.scrollTop = 0;
       document.scrollingElement.scrollTop = 0;
-      this.refs.mainPanel.scrollTop = 0;
+      this.mainPanelRef.current.scrollTop = 0;
+
+      let isStrategies = this.props.location.pathname.indexOf("/strategies") > -1
+
+      if (isStrategies)
+        this.destroyPerfectScrollbar()
+      else
+        this.mountPerfectScrollbar()
+    }
+  }
+
+  // Perfect Scrollbar
+  mountPerfectScrollbar() {
+    let isWindows = navigator.platform.indexOf("Win") > -1
+    let isMounted = document.documentElement.classList.contains("perfect-scrollbar-on")
+    let isStrategies = this.props.location.pathname.indexOf("/strategies") > -1
+
+    if (isStrategies)
+      return
+    else if (isWindows && !isMounted) {
+      document.documentElement.className += " perfect-scrollbar-on";
+      document.documentElement.classList.remove("perfect-scrollbar-off");
+      ps = new PerfectScrollbar(this.mainPanelRef.current);
+    }
+  }
+  destroyPerfectScrollbar() {
+    let isWindows = navigator.platform.indexOf("Win") > -1
+    let isMounted = document.documentElement.classList.contains("perfect-scrollbar-on")
+
+    if (isWindows && isMounted) {
+      ps.destroy();
+      document.documentElement.className += " perfect-scrollbar-off";
+      document.documentElement.classList.remove("perfect-scrollbar-on");
     }
   }
 
@@ -141,7 +166,7 @@ class AppLayout extends React.Component {
           activeColor={this.state.activeColor}
           managers={managers}
         />
-        <div className="main-panel" ref="mainPanel">
+        <div className="main-panel" ref={this.mainPanelRef}>
           <AppNavBar
             {...this.props}
             handleMiniClick={this.handleMiniClick}

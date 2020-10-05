@@ -433,8 +433,8 @@ const strings = {
       label_basic_0_intro: "How indicators should be aligned now?",
       label_basic_1: "Before",
       label_basic_1_intro: "How indicators should be aligned on the previous candle?",
-      btn_goToRules_hint: "See rules...",
-      btn_goToExplainer_hint: "See explanation...",
+      btn_goToRules: "See rules...",
+      btn_goToExplainer: "See explanation...",
 
       title_wsDestination_add: "Add",
       title_wsDestination_to: "to",
@@ -675,8 +675,8 @@ const strings = {
       priceLimit_hint: "Price Limit suggested for this operation. It may be different connsidering your Risk Management.",
       stopLoss_hint: "Here is a safety spot where I believe price won't reach again. If it happens, leave the operation and wait for a new opportunity.",
       target_hint: "It is a projection to estimate where price may reach. Most of the time, I use Fibonacci sequence.",
-      gainPercent_hint: "Price Suggested divided by Target.",
-      lossPercent_hint: "Price Suggested divided by Stop Loss.",
+      gainPercent_hint: "If everything goes well, that'll be the profit.",
+      lossPercent_hint: "If everything goes well, that'll be the profit.",
       riskReward_hint: "Target divided by Stop Loss represents the correlation between Risk and Reward. The higher this number is, the better.",
       startedOn_hint: "Operation started on:",
 
@@ -759,7 +759,7 @@ const strings = {
       input_stockExchange: "Stock Exchange",
       input_stockExchange_hint: "Which Stock Exchange are we talking about?",
       input_timeInterval: "Interval",
-      input_timeInterval_hint: "Which time interval are we working with?",
+      input_timeInterval_hint: "Which time interval the Strategy's rules should be applied in?",
 
       btn_alert_cancel: "Cancel",
       btn_alert_confirm: "Confirm",
@@ -777,12 +777,23 @@ const strings = {
       icon_type_buy_hint: "Purchase Strategy.",
       icon_type_sell_hint: "Sale Strategy.",
 
-      label_logic: "LOGIC",
-      label_logic_hint: "A Dynamic Strategy can be applied to any time interval (d, m60). It can become a Static one if the time interval is set in one of its rules.",
-      label_dynamic: "Dynamic",
-      label_static: "Static",
+      label_cat_basic: "Basic",
+      label_cat_basic_hint: "It looks for a specific ordering in the latest period (candle) only.",
+      label_cat_transition: "Transition",
+      label_cat_transition_hint: "It looks for moviments in the last 2 periods (candles). Example: price became above EMA 34.",
+      label_cat_advanced: "Advanced",
+      label_cat_advanced_hint: "It's well planned to catch specific moviments.",
 
-      btn_run_hint: "Run it!",
+      label_type: "Type",
+      label_type_hint: "A Dynamic Strategy can be applied to any time interval (d, m60). It can become a Static one if the time interval is set in one of its rules.",
+      label_dynamic: "Dynamic",
+      label_dynamic_hint: "It can be completly applied to any time interval (weekly, daily, m60...)",
+      label_static: "Static",
+      label_static_hint: "Some rules are fixed to a specific time interval.",
+      label_category: "Category",
+      label_owner: "Owner",
+
+      btn_run_hint: "Run Strategy.",
       btn_view_hint: "View Strategy.",
       btn_update_hint: "Update Strategy.",
       btn_delete_hint: "Delete Strategy.",
@@ -794,7 +805,7 @@ const strings = {
       header_volume: "Volume Avg.",
       header_lastTradeTime: "Last trade time",
 
-      table_firstLoad: "Run a Strategy and let's see what I can find... ;)",
+      table_firstLoad: "Run a Strategy and let's see what we can find... ;)",
       table_emptyData: "Right now, there are no assets matching this technical condition. Maybe later...",
       table_noDataFound: "hmm... Did I miss something?! Please, check your filters. ;)"
     },
@@ -1121,7 +1132,7 @@ const strings = {
       btn_signUp: "Criar Conta",
       btn_forgotPassword: "Esqueceu a Senha",
       btn_resendEmail: "Reenviar E-mail",
-      
+
 
       label_emailSent: "Envei um e-mail para você com instruções para confirmação de seu e-mail. Dê uma olhada lá, por gentileza. ;)"
     },
@@ -1364,8 +1375,8 @@ const strings = {
       label_basic_0_intro: "Como os indicadores deveriam estar alinhados agora?",
       label_basic_1: "Antes",
       label_basic_1_intro: "Como os indicadores deveriam estar alinhados no candle anterior?",
-      btn_goToRules_hint: "Ver regras...",
-      btn_goToExplainer_hint: "Ver explicação...",
+      btn_goToRules: "Ver regras...",
+      btn_goToExplainer: "Ver explicação...",
 
       title_wsDestination_add: "Adicionar",
       title_wsDestination_to: "em",
@@ -1552,6 +1563,12 @@ const strings = {
       btn_createAccount: "Criar conta",
       btn_forgotPassword: "Esqueceu a Senha",
     },
+    rulesexplainer: {
+      label_basic_noItems_p1: "hmm... Parece que não há indicadores por aqui ainda...",
+      label_basic_noItems_p2: "Tente arrasta-los para esta área.",
+      label_basic_onlyOneItem: "Estamos quase lá... Continue arrastando os indicadores para esta área. Preciso de ao menos dois deles aqui. ;)",
+      label_explain_gte: ">=",
+    },
     sectors: {
       basic_materials: "Materiais Básicos",
       communication_services: "Comunicações",
@@ -1593,8 +1610,8 @@ const strings = {
       priceLimit_hint: "Preço Limite sugerido para esta operação. Este pode mudar, considerando seu Gerenciamento de Risco.",
       stopLoss_hint: "Aqui é um ponto de segurança onde acredito que o Preço não alcance novamente. Se isso acontecer, saia da operação e aguarde uma nova oportunidade.",
       target_hint: "Alvo é uma projeção para estimar onde o Preço pode chegar. Na maioria das vezes, utilizo sequência de Fibonacci.",
-      gainPercent_hint: "Preço Limite dividido pelo Alvo.",
-      lossPercent_hint: "Preço Limite dividido pelo Stop Loss.",
+      gainPercent_hint: "Se tudo der certo, este será o lucro.",
+      lossPercent_hint: "Se tudo der certo, este será o lucro.",
       riskReward_hint: "Alvo dividido pelo Stop Loss representa a relação Risco x Retorno da operação. Quanto maior este número, melhor.",
       startedOn_hint: "Data de Início da Operação.",
 
@@ -1677,7 +1694,7 @@ const strings = {
       input_stockExchange: "Bolsa de Valores",
       input_stockExchange_hint: "Estamos falando de qual Bolsa de Valores?",
       input_timeInterval: "Intervalo",
-      input_timeInterval_hint: "Vamos trabalhar com qual tempo gráfico?",
+      input_timeInterval_hint: "As regras da estratégia devem ser aplicada em qual tempo gráfico?",
 
       btn_alert_cancel: "Cancelar",
       btn_alert_confirm: "Confirmar",
@@ -1695,10 +1712,22 @@ const strings = {
       icon_type_buy_hint: "Estratégia de Compra.",
       icon_type_sell_hint: "Estratégia de Venda.",
 
-      label_dynamic: "Dinâmica",
-      label_static: "Estática",
+      label_cat_basic: "Básica",
+      label_cat_basic_hint: "Verifica a ordem dos indicadores no último período (candle) apenas.",
+      label_cat_transition: "Transição",
+      label_cat_transition_hint: "Procura por movimentos dentro dos 2 últimos períodos (candles). Exemplo: \"preço superou MME 34.\"",
+      label_cat_advanced: "Avançada",
+      label_cat_advanced_hint: "Geralmente, é bem planejada para identificar movimentos específicos.",
 
-      btn_run_hint: "Executar!",
+      label_logic: "Lógica",
+      label_dynamic: "Dinâmica",
+      label_dynamic_hint: "Se aplica completamente a qualquer tempo gráfico (semanal, diário, m60...)",
+      label_static: "Estática",
+      label_static_hint: "Algumas regras estão fixadas para tempos gráficos específicos.",
+      label_category: "Categoria",
+      label_owner: "Criador",
+
+      btn_run_hint: "Executar Estratégia.",
       btn_view_hint: "Visualizar Estratégia.",
       btn_update_hint: "Atualizar Estratégia.",
       btn_delete_hint: "Deletar Estratégia.",

@@ -19,7 +19,7 @@ import {
   Col,
   FormGroup,
   Row,
-  UncontrolledTooltip,
+  UncontrolledTooltip
 } from "reactstrap";
 // react plugin used to create DropdownMenu for selecting items
 import Select from "react-select";
@@ -31,7 +31,7 @@ import StrategyResults from "./StrategyResults";
 import ModalStrategy from "../../modals/strategy/ModalStrategy";
 import CarouselSkeleton from "./CarouselSkeleton";
 import CarouselEmpty from "./CarouselEmpty";
-import { orderBy, getDistinctValuesFromList, deepCloneObj, retrieveObjFromObjList } from "../../../core/utils";
+import { orderBy, getDistinctValuesFromList, deepCloneObj, retrieveObjFromObjList, sleep } from "../../../core/utils";
 
 class Strategies extends React.Component {
   constructor(props) {
@@ -71,9 +71,7 @@ class Strategies extends React.Component {
       strategies: [],
       sStrategyNames: [],
       alert: null,
-    }
-
-    this.resultRef = React.createRef()
+    };
 
     this.resize = this.resize.bind(this);
     this.prepareCarousel = this.prepareCarousel.bind(this);
@@ -117,7 +115,8 @@ class Strategies extends React.Component {
       return 12
   }
   scrollPage(elementId) {
-    document.getElementById(elementId).scrollIntoView();
+    let element = document.getElementById(elementId)
+    element.scrollIntoView({ behavior: "smooth" });
   }
 
   async prepareRequirements() {
@@ -300,10 +299,12 @@ class Strategies extends React.Component {
     }
   }
 
-  onClick(action, obj) {
+  async onClick(action, obj) {
     switch (action) {
       case "run":
         this.runClick(obj)
+        await sleep(250)          // Wait a bit or smooth scroll will get stuck
+        this.scrollPage("strategyresults")
         break;
       case "create":
         this.createClick()
@@ -323,7 +324,6 @@ class Strategies extends React.Component {
 
     selected.strategy = obj
 
-    this.scrollPage("strategyresults")
     this.setState({ selected, isLoading: true })
   }
   createClick() {
@@ -443,6 +443,7 @@ class Strategies extends React.Component {
         <div className="header text-center">
           <h3 className="title">{getString(langId, compId, "title")}</h3>
         </div>
+        <br />
 
         {pageFirstLoading ?
           // Carousel Skeleton
@@ -557,8 +558,7 @@ class Strategies extends React.Component {
                       </div>
                     </Col>
                   </Row>
-                </CardHeader>
-                <CardBody>
+                  {/* Filters */}
                   <Row className="justify-content-center">
                     {/* Stock Exchange */}
                     <Col xl="3" lg="3" md="4" xs="6">
@@ -603,7 +603,8 @@ class Strategies extends React.Component {
                       </FormGroup>
                     </Col>
                   </Row>
-                  <Row className="mt-4" />
+                </CardHeader>
+                <CardBody>
                   <StrategyResults
                     {...this.props}
                     toggleLoading={this.toggleLoading}
@@ -612,6 +613,7 @@ class Strategies extends React.Component {
                     filters={selected.filters}
                   />
                 </CardBody>
+                <CardFooter />
               </Card>
             </>
         }

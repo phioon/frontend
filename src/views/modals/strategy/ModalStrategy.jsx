@@ -433,13 +433,12 @@ class ModalStrategy extends React.Component {
             </CardBody>
             <CardFooter>
               <Row>
-                <Col xs="8" />
-                <Col xs="4" className="text-right">
+                <Col className="text-right">
                   <Button
-                    className="btn-icon btn-neutral"
+                    className="btn-neutral"
                     color="primary"
                     id={ws.id + "__explainer_hint"}
-                    // size="sm"
+                    size="sm"
                     type="button"
                     onClick={() => ws.showExplainer ?
                       this.onWSChange(ws.id, "showExplainer", false) :
@@ -447,16 +446,10 @@ class ModalStrategy extends React.Component {
                     }
                   >
                     {ws.showExplainer ?
-                      <i className="nc-icon nc-bullet-list-67" /> :
-                      <i className="nc-icon nc-alert-circle-i" />
+                      getString(langId, compId, "btn_goToRules") :
+                      getString(langId, compId, "btn_goToExplainer")
                     }
                   </Button>
-                  <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={ws.id + "__explainer_hint"}>
-                    {ws.showExplainer ?
-                      getString(langId, compId, "btn_goToRules_hint") :
-                      getString(langId, compId, "btn_goToExplainer_hint")
-                    }
-                  </UncontrolledTooltip>
                 </Col>
               </Row>
             </CardFooter>
@@ -506,13 +499,12 @@ class ModalStrategy extends React.Component {
             </CardBody>
             <CardFooter>
               <Row>
-                <Col xs="8" />
-                <Col xs="4" className="text-right">
+                <Col className="text-right">
                   <Button
-                    className="btn-icon btn-neutral"
+                    className="btn-neutral"
                     color="primary"
                     id={ws.id + "__explainer_hint"}
-                    // size="sm"
+                    size="sm"
                     type="button"
                     onClick={() => ws.showExplainer ?
                       this.onWSChange(ws.id, "showExplainer", false) :
@@ -520,16 +512,10 @@ class ModalStrategy extends React.Component {
                     }
                   >
                     {ws.showExplainer ?
-                      <i className="nc-icon nc-bullet-list-67" /> :
-                      <i className="nc-icon nc-alert-circle-i" />
+                      getString(langId, compId, "btn_goToRules") :
+                      getString(langId, compId, "btn_goToExplainer")
                     }
                   </Button>
-                  <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={ws.id + "__explainer_hint"}>
-                    {ws.showExplainer ?
-                      getString(langId, compId, "btn_goToRules_hint") :
-                      getString(langId, compId, "btn_goToExplainer_hint")
-                    }
-                  </UncontrolledTooltip>
                 </Col>
               </Row>
             </CardFooter>

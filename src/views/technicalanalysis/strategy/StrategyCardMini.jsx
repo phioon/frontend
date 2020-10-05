@@ -7,10 +7,10 @@ import {
   Card,
   CardBody,
   CardTitle,
+  Col,
+  Row,
   UncontrolledTooltip
 } from "reactstrap";
-// react component used to flip cards
-import ReactCardFlip from 'react-card-flip';
 
 class StrategyCardMini extends React.Component {
   constructor(props) {
@@ -19,8 +19,6 @@ class StrategyCardMini extends React.Component {
     this.state = {
       compId: this.constructor.name.toLowerCase(),
       langId: props.prefs.langId,
-
-      isFlipped: false,
     }
   }
   static getDerivedStateFromProps(props, state) {
@@ -29,113 +27,145 @@ class StrategyCardMini extends React.Component {
     return null
   }
 
-  formatLongText(desc) {
-    let descLimit = 72
-    desc = String(desc)
+  getCategoryId(strRules) {
+    let rules = JSON.parse(strRules)
 
-    if (desc.length > descLimit) {
-      desc = desc.substring(0, descLimit)
-      desc += "..."
-    }
+    if (Object.keys(rules.advanced).length > 0)
+      return "label_cat_advanced"
+    else if (Object.keys(rules.basic_1).length > 0)
+      return "label_cat_transition"
+    else
+      return "label_cat_basic"
+  }
 
-    return desc
+  renderBtnActions() {
+    let { getString, strategy, isLoading, isOwner } = this.props;
+    let { langId, compId } = this.state;
+
+    return (
+      <div className="text-right">
+        {/* Run */}
+        <Button
+          className="btn-icon btn-link"
+          color="success"
+          id={"run__" + strategy.id}
+          size="sm"
+          type="button"
+          disabled={isLoading}
+          onClick={() => this.props.onClick("run", strategy)}
+        >
+          <i className="nc-icon nc-button-play" />
+        </Button>
+        <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"run__" + strategy.id}>
+          {getString(langId, compId, "btn_run_hint")}
+        </UncontrolledTooltip>
+        {/* Edit */}
+        {isOwner ?
+          <>
+            <Button
+              className="btn-icon btn-link"
+              color="warning"
+              id={"update__" + strategy.id}
+              size="sm"
+              type="button"
+              onClick={() => this.props.onClick("update", strategy)}
+            >
+              <i className="fa fa-edit" />
+            </Button>
+            <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"update__" + strategy.id}>
+              {getString(langId, compId, "btn_update_hint")}
+            </UncontrolledTooltip>
+          </> : null
+        }
+        {/* Delete */}
+        {isOwner ?
+          <>
+            <Button
+              className="btn-icon btn-link remove"
+              color="danger"
+              id={"delete__" + strategy.id}
+              size="sm"
+              type="button"
+              onClick={() => this.props.onClick("delete", strategy)}
+            >
+              <i className="fa fa-times" />
+            </Button>
+            <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"delete__" + strategy.id}>
+              {getString(langId, compId, "btn_delete_hint")}
+            </UncontrolledTooltip>
+          </> : null
+        }
+      </div>
+    )
   }
 
   render() {
-    let { getString, strategy, isLoading, isOwner } = this.props;
-    let {
-      langId,
-      compId,
+    let { getString, strategy } = this.props;
+    let { langId, compId } = this.state;
 
-      isFlipped,
-    } = this.state;
+    console.log(strategy)
 
     return (
-      <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
-        {/* Front */}
-        <Card className="card-stats-mini" onClick={() => this.setState({ isFlipped: !isFlipped })}>
-          <CardBody>
-            {/* Name */}
-            <CardTitle>{strategy.name}</CardTitle>
+      <Card className="card-stats-mini">
+        <CardBody>
+          {/* Name */}
+          <CardTitle>{strategy.name}</CardTitle>
 
-            <div className="text-right">
-              {/* Logic Type */}
-              <label>{strategy.is_dynamic ?
-                getString(langId, compId, "label_dynamic") :
-                getString(langId, compId, "label_static")}
+          {/* category */}
+          <Row>
+            <Col>
+              <label>{getString(langId, compId, "label_category")}</label>
+            </Col>
+            <Col className="text-right">
+              <label id={"category__" + strategy.id}>
+                {getString(langId, compId, this.getCategoryId(strategy.rules))}
               </label>
-              <br />
+            </Col>
+            <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"category__" + strategy.id}>
+              {getString(langId, compId, [this.getCategoryId(strategy.rules) + "_hint"])}
+            </UncontrolledTooltip>
+          </Row>
+          {/* Logic */}
+          <Row>
+            <Col>
+              <label>{getString(langId, compId, "label_logic")}</label>
+            </Col>
+            <Col className="text-right">
+              <label id={"logic__" + strategy.id}>
+                {strategy.is_dynamic ?
+                  getString(langId, compId, "label_dynamic") :
+                  getString(langId, compId, "label_static")}
+              </label>
+            </Col>
+            <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"logic__" + strategy.id}>
+              {strategy.is_dynamic ?
+                getString(langId, compId, "label_dynamic_hint") :
+                getString(langId, compId, "label_static_hint")
+              }
+            </UncontrolledTooltip>
+          </Row>
+          {/* Owner */}
+          <Row>
+            <Col>
+              <label>{getString(langId, compId, "label_owner")}</label>
+            </Col>
+            <Col className="text-right">
               <label>@{strategy.owner_username}</label>
-            </div>
-          </CardBody>
-          {/* Background Icon */}
-          <div className={classnames("bg-icon", strategy.type == "buy" ? "icon-success" : "icon-danger")}>
-            {strategy.type == "buy" ?
-              <i className="nc-icon nc-spaceship" /> :
-              <i className="nc-icon nc-spaceship fa-rotate-90" />
-            }
-          </div>
-        </Card>
-        <Card className="card-stats-mini" onClick={() => this.setState({ isFlipped: !isFlipped })}>
-          <CardBody>
-            {/* Name */}
-            <CardTitle>{strategy.name}</CardTitle>
-            <div className="text-center">
-              {/* Run */}
-              <Button
-                className="btn-icon btn-link"
-                color="success"
-                id={"run__" + strategy.id}
-                size="sm"
-                type="button"
-                disabled={isLoading}
-                onClick={() => this.props.onClick("run", strategy)}
-              >
-                <i className="nc-icon nc-button-play" />
-              </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"run__" + strategy.id}>
-                {getString(langId, compId, "btn_run_hint")}
-              </UncontrolledTooltip>
-              {/* Edit */}
-              {isOwner ?
-                <>
-                  <Button
-                    className="btn-icon btn-link"
-                    color="warning"
-                    id={"update__" + strategy.id}
-                    size="sm"
-                    type="button"
-                    onClick={() => this.props.onClick("update", strategy)}
-                  >
-                    <i className="fa fa-edit" />
-                  </Button>
-                  <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"update__" + strategy.id}>
-                    {getString(langId, compId, "btn_update_hint")}
-                  </UncontrolledTooltip>
-                </> : null
-              }
-              {/* Delete */}
-              {isOwner ?
-                <>
-                  <Button
-                    className="btn-icon btn-link remove"
-                    color="danger"
-                    id={"delete__" + strategy.id}
-                    size="sm"
-                    type="button"
-                    onClick={() => this.props.onClick("delete", strategy)}
-                  >
-                    <i className="fa fa-times" />
-                  </Button>
-                  <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"delete__" + strategy.id}>
-                    {getString(langId, compId, "btn_delete_hint")}
-                  </UncontrolledTooltip>
-                </> : null
-              }
-            </div>
-          </CardBody>
-        </Card>
-      </ReactCardFlip>
+            </Col>
+          </Row>
+
+          {/* Action buttons */}
+          {this.renderBtnActions()}
+
+        </CardBody>
+        {/* Background Icon */}
+        <div className={classnames("bg-icon", strategy.type == "buy" ? "icon-success" : "icon-danger")}>
+          {strategy.type == "buy" ?
+            <i className="nc-icon nc-spaceship" /> :
+            <i className="nc-icon nc-spaceship fa-rotate-90" />
+          }
+        </div>
+      </Card>
     )
   }
 }

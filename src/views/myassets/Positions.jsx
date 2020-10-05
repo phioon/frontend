@@ -14,7 +14,7 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 // react component for creating dynamic tables
-import ReactTable from "react-table";
+import ReactTable from "react-table-v6";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
 import FixedButton from "../../components/FixedPlugin/FixedButton";
@@ -29,7 +29,8 @@ import {
   integerWithThousandsSeparator,
   orderBy,
   percentage,
-  round
+  round,
+  rtDefaultFilter
 } from "../../core/utils";
 import TimeManager from "../../core/managers/TimeManager";
 import { getString } from "../../core/lang";
@@ -392,6 +393,7 @@ class Positions extends React.Component {
             <ReactTable
               data={data}
               filterable={data.length > 0 ? true : false}
+              defaultFilterMethod={rtDefaultFilter}
               columns={[
                 {
                   Header: getString(langId, compId, "header_startedOn"),
@@ -421,17 +423,20 @@ class Positions extends React.Component {
                 {
                   Header: getString(langId, compId, "header_price"),
                   accessor: "s_price",
-                  className: "text-right"
+                  className: "text-right",
+                  filterable: false
                 },
                 {
                   Header: getString(langId, compId, "header_opCost"),
                   accessor: "total_opCost",
-                  className: "text-right"
+                  className: "text-right",
+                  filterable: false
                 },
                 {
                   Header: getString(langId, compId, "header_totalCost"),
                   accessor: "s_totalCost",
-                  className: "text-right"
+                  className: "text-right",
+                  filterable: false
                 },
                 {
                   Header: getString(langId, compId, "header_actions"),

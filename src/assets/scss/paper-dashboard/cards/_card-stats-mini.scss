@@ -51,15 +51,16 @@
 
     &.icon-danger{
         color: $danger-color;
-        opacity: 7%;
+        opacity: 15%;
     }
     &.icon-success{
         color: $success-color;
-        opacity: 12%;
+        opacity: 25%;
     }
 
     i {
-      font-size: 618%;
+      margin: 10px 15px;
+      font-size: 250%;
     }
     p {
       margin-bottom: 0;

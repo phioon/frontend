@@ -268,6 +268,15 @@ function arrayMoveMutate(array, from, to) {
   return array
 }
 
+// Used by React Table
+export function rtDefaultFilter(filter, row, column) {
+  let id = filter.pivotId || filter.id
+
+  return row[id] !== undefined ?
+    String(row[id]).toLowerCase().includes(filter.value.toLowerCase()) :
+    true
+}
+
 // Converting
 export function convertMaskedStringToFloat(strNumber, currency) {
   let number = String(strNumber).replace(/[^0-9.,]/g, "")
@@ -365,7 +374,18 @@ export function round(value, decimals) {
   return value
 }
 
-// Validators
+// String
+export function substringText(text, maxLength) {
+  text = String(text)
+  maxLength = maxLength - 3
+
+  if (text.length > maxLength) {
+    text = text.substring(0, maxLength)
+    text += "..."
+  }
+
+  return text
+}
 // function that verifies if two objects are equal
 export function areObjsEqual(obj1, obj2) {
   return JSON.stringify(obj1) == JSON.stringify(obj2)
@@ -376,21 +396,21 @@ export function compare(string1, string2) {
     return true;
   }
   return false;
-};
+}
 // function that returns true if value is email, false otherwise
 export function verifyEmail(value) {
   var emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (emailRex.test(value))
     return true;
   return false;
-};
+}
 // function that verifies if a number is greater than another number
 export function verifyGreaterThan(value, gt) {
   if (value > gt) {
     return true;
   }
   return false;
-};
+}
 // function that verifies if a string has a given length or not
 export function verifyLength(value, minLen, maxLen = undefined) {
   if (value.length >= minLen) {
@@ -402,7 +422,7 @@ export function verifyLength(value, minLen, maxLen = undefined) {
       return true;
   }
   return false;
-};
+}
 // function that verifies if a string has only letters
 export function verifyOnlyLetters(value) {
   return /^[a-zA-Z- ]+$/.test(value);
@@ -416,7 +436,7 @@ export function verifyIfInteger(value) {
   if (value % 1 == 0)
     return true;
   return false;
-};
+}
 
 export function orderBy(objList, fields = ["id"]) {
   return objList.sort(function (a, b) {

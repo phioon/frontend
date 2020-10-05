@@ -1,16 +1,3 @@
-/*!
-
-=========================================================
-* Paper Dashboard PRO React - v1.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-pro-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-*/
 import React from "react";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
@@ -31,6 +18,8 @@ class AuthLayout extends React.Component {
     this.state = {
       langId: props.prefs.langId
     }
+
+    this.authPagesRef = React.createRef();
   }
   static getDerivedStateFromProps(props, state) {
     if (props.prefs.langId !== state.langId)
@@ -38,15 +27,27 @@ class AuthLayout extends React.Component {
     return null
   }
   componentDidMount() {
-    if (navigator.platform.indexOf("Win") > -1) {
-      ps = new PerfectScrollbar(this.refs.fullPages);
-    }
+    this.setPerfectScrollbar()
   }
   componentWillUnmount() {
+    this.destroyPerfectScrollbar()
+  }
+  // Perfect Scrollbar
+  setPerfectScrollbar() {
     if (navigator.platform.indexOf("Win") > -1) {
-      ps.destroy();
+      document.documentElement.className += " perfect-scrollbar-on";
+      document.documentElement.classList.remove("perfect-scrollbar-off");
+      ps = new PerfectScrollbar(this.authPagesRef.current);
     }
   }
+  destroyPerfectScrollbar() {
+    if (navigator.platform.indexOf("Win") > -1) {
+      ps.destroy();
+      document.documentElement.className += " perfect-scrollbar-off";
+      document.documentElement.classList.remove("perfect-scrollbar-on");
+    }
+  }
+
   getRoutes = routes => {
     return routes.map((prop, key) => {
       if (prop.collapse) {
@@ -75,7 +76,7 @@ class AuthLayout extends React.Component {
     return (
       <>
         <AuthNavbar {...this.props} />
-        <div className="wrapper wrapper-full-page" ref="fullPages">
+        <div className="wrapper wrapper-full-page" ref={this.authPagesRef}>
           <div className="full-page section-image">
             <Switch>
               {this.getRoutes(routes)}

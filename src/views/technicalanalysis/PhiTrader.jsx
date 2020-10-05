@@ -13,9 +13,9 @@ import {
 import Skeleton from "react-loading-skeleton";
 
 import TimeManager from "../../core/managers/TimeManager";
-import { getDistinctValuesFromList, retrieveObjFromObjList } from "../../core/utils";
 import SetupCard from "./SetupCard";
 import FixedFilter from "../../components/FixedPlugin/filters/PhiTrader";
+import { getDistinctValuesFromList, retrieveObjFromObjList } from "../../core/utils";
 
 class PhiTrader extends React.Component {
   constructor(props) {

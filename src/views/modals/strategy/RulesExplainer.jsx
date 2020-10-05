@@ -1,5 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
+import {
+  Col,
+  Row
+} from "reactstrap";
 
 class RulesExplainer extends React.Component {
   constructor(props) {
@@ -38,17 +42,19 @@ class RulesExplainer extends React.Component {
         return (
           <div key={ws.id + "_rule_" + key}>
             {ws.items.length > key + 1 &&
-              <li>
-                <label>
-                  <b>{getString(langId, "indicators", rule.id)}</b>
-                  {" "}
+              <Row className="text-center">
+                <Col>
+                  {getString(langId, "indicators", rule.id)}
+                </Col>
+                <Col xs="2">
                   {getString(langId, compId, "label_explain_gte")}
-                  {" "}
-                  <b>{getString(langId, "indicators", ws.items[key + 1].id)}</b>
-                  {"."}
-                </label>
-              </li>
+                </Col>
+                <Col>
+                  {getString(langId, "indicators", ws.items[key + 1].id)}
+                </Col>
+              </Row>
             }
+            <Row className="mt-4" />
           </div>
         )
       })
