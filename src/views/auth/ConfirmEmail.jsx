@@ -31,7 +31,7 @@ class ConfirmEmail extends React.Component {
       compId: this.constructor.name.toLowerCase(),
       langId: props.prefs.langId,
       pageFirstLoading: true,
-      redirectToLogin: false,
+      redirectToLogin: undefined,
       isEmailConfirmed: false,
 
       isLoading: false,

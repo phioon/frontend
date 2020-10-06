@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import { Redirect } from "react-router-dom";
+
 // reactstrap components
 import {
   Button,
@@ -48,7 +50,7 @@ class Register extends React.Component {
       compId: this.constructor.name.toLowerCase(),
       langId: props.prefs.langId,
       isLoading: false,
-
+      redirectToForgotPassword: undefined,
       // Any change in user object must be reflected at this.clearInputFields()
       user: {
         data: {
@@ -295,7 +297,7 @@ class Register extends React.Component {
       langId,
       compId,
       isLoading,
-
+      redirectToForgotPassword,
       user,
 
       nationalities,
@@ -496,9 +498,13 @@ class Register extends React.Component {
                   </Button>
                   <LabelAlert alertState={alertState} alertMsg={alertMsg} />
                   <br />
+                  {redirectToForgotPassword ? <Redirect to="forgotpassword" /> : null}
                   {btnForgotPassword_isHidden ?
                     null :
-                    <Button className="btn-link btn-neutral" color="default" href="forgotpassword">
+                    <Button 
+                      className="btn-link btn-neutral" 
+                      color="default" 
+                      onClick={() => this.setState({redirectToForgotPassword:true})}>
                       {getString(langId, compId, "btn_forgotPassword")}?
                     </Button>
                   }

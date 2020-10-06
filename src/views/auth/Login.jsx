@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+
+import { Redirect } from "react-router-dom";
 // reactstrap components
 import {
   Button,
@@ -34,6 +36,8 @@ class Login extends React.Component {
       langId: props.prefs.langId,
       isLoading: false,
       resendEmail_isLoading: false,
+      redirectToRegister: undefined,
+      redirectToForgotPassword: undefined,
 
       email: "",
       password: "",
@@ -157,6 +161,8 @@ class Login extends React.Component {
       compId,
       isLoading,
       resendEmail_isLoading,
+      redirectToRegister,
+      redirectToForgotPassword, 
 
       email,
       emailState,
@@ -232,15 +238,21 @@ class Login extends React.Component {
                     <br />
                     <LabelAlert alertState={alertState} alertMsg={alertMsg} />
                     <br />
-                    {
-                        <Button className="btn-link btn-neutral" color="default" href="/auth/register">
-                          {getString(langId, compId, "btn_signUp")}
-                        </Button>
-                    }
+                    {redirectToRegister ? <Redirect to="/auth/register" /> : null}
+                    <Button 
+                      className="btn-link btn-neutral" 
+                      color="default"
+                      onClick={() => this.setState({redirectToRegister:true})}>                      
+                      {getString(langId, compId, "btn_signUp")}                      
+                    </Button>
                     <br />
+                    {redirectToForgotPassword ? <Redirect to="forgotpassword" /> : null}
                     {
                       btnSendConfirmation_isHidden ?
-                        <Button className="btn-link btn-neutral" color="default" href="forgotpassword">
+                        <Button 
+                          className="btn-link btn-neutral" 
+                          color="default" 
+                          onClick={() => this.setState({redirectToForgotPassword:true})}>
                           {getString(langId, compId, "btn_forgotPassword")}?
                         </Button> :
                         <Button
