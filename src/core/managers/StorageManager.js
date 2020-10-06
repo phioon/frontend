@@ -58,7 +58,7 @@ const config = {
     },
     indicators: {
       syncLimit: 8460,
-      version: 0.17
+      version: 0.18
     },
     dEma: {
       syncLimit: 60,
