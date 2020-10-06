@@ -1,5 +1,5 @@
 import jsonLogic from "json-logic-js";
-import { joinContentObjLists, retrieveObjFromObjList, sleep } from "../utils";
+import { joinContentObjLists, retrieveObjFromObjList } from "../utils";
 
 class StrategyManager {
   constructor(marketManager) {
@@ -22,16 +22,16 @@ class StrategyManager {
     for (var [k, v] of Object.entries(iSummary)) {
       switch (k) {
         case "quote":
-          rawData.push(this.managers.market.dQuoteData(stockExchange, v.interval, v.instances, v.lastPeriods))
+          rawData.push(this.managers.market.quoteData(stockExchange, v.interval, v.instances, v.lastPeriods))
           break;
         case "ema":
-          rawData.push(this.managers.market.dEmaData(stockExchange, v.interval, v.instances, v.lastPeriods))
+          rawData.push(this.managers.market.emaData(stockExchange, v.interval, v.instances, v.lastPeriods))
           break;
         case "pvpc":
-          rawData.push(this.managers.market.dPhiboData(stockExchange, v.interval, v.instances, v.lastPeriods))
+          rawData.push(this.managers.market.phiboData(stockExchange, v.interval, v.instances, v.lastPeriods))
           break;
         case "roc":
-          rawData.push(this.managers.market.dRocData(stockExchange, v.interval, v.instances, v.lastPeriods))
+          rawData.push(this.managers.market.rocData(stockExchange, v.interval, v.instances, v.lastPeriods))
           break;
         default:
           break;
@@ -40,9 +40,9 @@ class StrategyManager {
 
     rawData = await Promise.all(rawData)
 
-    result = rawData[0].instances
+    result = rawData[0].data
     for (var x = 1; x < rawData.length; x++)
-      result = joinContentObjLists(result, rawData[x].instances, "asset_symbol")
+      result = joinContentObjLists(result, rawData[x].data, "asset_symbol")
 
     return result
   }
@@ -100,12 +100,23 @@ class StrategyManager {
   // 2. Apply logical rules into a list of objects
   applyRules(data, jsonRules) {
     let result = []
+    let variables = this.getDistinctVariableList(jsonRules)
 
     for (var obj of data) {
-      let itMatches = jsonLogic.apply(jsonRules, obj)
+      let isValidated = true
 
-      if (itMatches)
-        result.push(obj)
+      for (var v of variables)
+        if (!(v in obj)) {
+          isValidated = false
+          break;
+        }
+
+      if (isValidated) {
+        let itMatches = jsonLogic.apply(jsonRules, obj)
+
+        if (itMatches)
+          result.push(obj)
+      }
     }
 
     return result

@@ -174,10 +174,14 @@ const strings = {
       // Zero Line
       zero_line: "Zero Line",
       // Indicators
+      ema_close8: "EMA 8",
+      ema_close9: "EMA 9",
       ema_close17: "EMA 17",
       ema_close34: "EMA 34",
+      ema_close50: "EMA 50",
       ema_close72: "EMA 72",
       ema_close144: "EMA 144",
+      ema_close200: "EMA 200",
       ema_close305: "EMA 305",
       ema_close610: "EMA 610",
       ema_close1292: "EMA 1292",
@@ -190,10 +194,14 @@ const strings = {
       pc305: "Phibo PC 305",
       pc1292: "Phibo PC 1292",
 
+      roc_emaclose8: "ROC EMA 8",
+      roc_emaclose9: "ROC EMA 9",
       roc_emaclose17: "ROC EMA 17",
       roc_emaclose34: "ROC EMA 34",
+      roc_emaclose50: "ROC EMA 50",
       roc_emaclose72: "ROC EMA 72",
       roc_emaclose144: "ROC EMA 144",
+      roc_emaclose200: "ROC EMA 200",
       roc_emaclose305: "ROC EMA 305",
       roc_emaclose610: "ROC EMA 610",
       roc_emaclose1292: "ROC EMA 1292",
@@ -780,7 +788,7 @@ const strings = {
       label_cat_basic: "Basic",
       label_cat_basic_hint: "It looks for a specific ordering in the latest period (candle) only.",
       label_cat_transition: "Transition",
-      label_cat_transition_hint: "It looks for moviments in the last 2 periods (candles). Example: price became above EMA 34.",
+      label_cat_transition_hint: "It looks for moviments in the last 2 periods (candles). Example: \"Price overcoming EMA 34\".",
       label_cat_advanced: "Advanced",
       label_cat_advanced_hint: "It's well planned to catch specific moviments.",
 
@@ -791,7 +799,6 @@ const strings = {
       label_static: "Static",
       label_static_hint: "Some rules are fixed to a specific time interval.",
       label_category: "Category",
-      label_owner: "Owner",
 
       btn_run_hint: "Run Strategy.",
       btn_view_hint: "View Strategy.",
@@ -1090,10 +1097,14 @@ const strings = {
       // Zero Line
       zero_line: "Linha Zero",
       // Indicators
+      ema_close8: "MME 8",
+      ema_close9: "MME 9",
       ema_close17: "MME 17",
       ema_close34: "MME 34",
+      ema_close50: "MME 50",
       ema_close72: "MME 72",
       ema_close144: "MME 144",
+      ema_close200: "MME 200",
       ema_close305: "MME 305",
       ema_close610: "MME 610",
       ema_close1292: "MME 1292",
@@ -1106,10 +1117,14 @@ const strings = {
       pc305: "Phibo PC 305",
       pc1292: "Phibo PC 1292",
 
+      roc_emaclose8: "ROC MME 8",
+      roc_emaclose9: "ROC MME 9",
       roc_emaclose17: "ROC MME 17",
       roc_emaclose34: "ROC MME 34",
+      roc_emaclose50: "ROC MME 50",
       roc_emaclose72: "ROC MME 72",
       roc_emaclose144: "ROC MME 144",
+      roc_emaclose200: "ROC MME 200",
       roc_emaclose305: "ROC MME 305",
       roc_emaclose610: "ROC MME 610",
       roc_emaclose1292: "ROC MME 1292",
@@ -1715,7 +1730,7 @@ const strings = {
       label_cat_basic: "Básica",
       label_cat_basic_hint: "Verifica a ordem dos indicadores no último período (candle) apenas.",
       label_cat_transition: "Transição",
-      label_cat_transition_hint: "Procura por movimentos dentro dos 2 últimos períodos (candles). Exemplo: \"preço superou MME 34.\"",
+      label_cat_transition_hint: "Procura por movimentos dentro dos 2 últimos períodos (candles). Exemplo: \"Preço superando MME 34.\"",
       label_cat_advanced: "Avançada",
       label_cat_advanced_hint: "Geralmente, é bem planejada para identificar movimentos específicos.",
 
@@ -1725,7 +1740,6 @@ const strings = {
       label_static: "Estática",
       label_static_hint: "Algumas regras estão fixadas para tempos gráficos específicos.",
       label_category: "Categoria",
-      label_owner: "Criador",
 
       btn_run_hint: "Executar Estratégia.",
       btn_view_hint: "Visualizar Estratégia.",

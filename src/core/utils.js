@@ -145,7 +145,7 @@ export function joinObjLists(objList0, objList1, keyField = "id") {
 }
 export function joinContentObjLists(objList0, objList1, keyField = "id") {
   // Both lists must have the keyField.
-  // Keys that doesn't exist on objList0, but exist on objList1, will be pushed into its object  main list.
+  // Keys that doesn't exist on objList0, but exist on objList1, will be pushed into its object (main list).
 
   for (var obj of objList0) {
     let key = obj[keyField]

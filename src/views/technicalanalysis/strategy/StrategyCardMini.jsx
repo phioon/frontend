@@ -103,8 +103,6 @@ class StrategyCardMini extends React.Component {
     let { getString, strategy } = this.props;
     let { langId, compId } = this.state;
 
-    console.log(strategy)
-
     return (
       <Card className="card-stats-mini">
         <CardBody>
@@ -145,15 +143,11 @@ class StrategyCardMini extends React.Component {
             </UncontrolledTooltip>
           </Row>
           {/* Owner */}
-          <Row>
-            <Col>
-              <label>{getString(langId, compId, "label_owner")}</label>
-            </Col>
-            <Col className="text-right">
-              <label>@{strategy.owner_username}</label>
-            </Col>
-          </Row>
+          <div className="text-right">
+            <label>@{strategy.owner_username}</label>
+          </div>
 
+          <Row className="mt-3" />
           {/* Action buttons */}
           {this.renderBtnActions()}
 

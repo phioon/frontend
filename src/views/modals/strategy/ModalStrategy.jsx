@@ -202,8 +202,6 @@ class ModalStrategy extends React.Component {
     let { getString, action, objData } = this.props;
     let { langId, compId, iItems, strategy, selected } = this.state;
 
-    console.log(`action: ${action}`)
-
     iItems = await this.props.managers.market.indicatorData()
 
     // iItems: Preparing to be read by Sortable
@@ -232,8 +230,6 @@ class ModalStrategy extends React.Component {
       default:
         break;
     }
-
-    console.log(strategy)
 
     this.setState({ iItems, strategy, selected })
   }
@@ -775,8 +771,6 @@ class ModalStrategy extends React.Component {
             object[k] = v
             break;
         }
-
-    // console.log(object)
 
     let result = await this.props.managers.app.strategyUpdate(object)
 

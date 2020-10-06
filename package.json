@@ -46,7 +46,7 @@
     "prop-types": "15.7.2",
     "react": "16.13.1",
     "react-big-calendar": "0.25.0",
-    "react-bootstrap-sweetalert": "5.1.11",
+    "react-bootstrap-sweetalert": "5.2.0",
     "react-bootstrap-switch": "15.5.3",
     "react-bootstrap-wizard": "0.0.7",
     "react-card-flip": "^1.0.11",
@@ -62,7 +62,7 @@
     "react-scripts": "3.4.3",
     "react-select": "3.1.0",
     "react-sortable-hoc": "1.11.0",
-    "react-table-v6": "^6.8.6",
+    "react-table-v6": "6.8.6",
     "react-tagsinput": "3.19.0",
     "react-text-mask": "5.4.3",
     "text-mask-addons": "3.8.0"
