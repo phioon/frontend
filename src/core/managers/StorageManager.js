@@ -58,23 +58,23 @@ const config = {
     },
     indicators: {
       syncLimit: 8460,
-      version: 0.16
+      version: 0.17
     },
     dEma: {
       syncLimit: 60,
-      version: 0.03
+      version: 0.06
     },
     dQuote: {
       syncLimit: 15,
-      version: 0.03
+      version: 0.06
     },
     dPhibo: {
       syncLimit: 60,
-      version: 0.03
+      version: 0.06
     },
     dRoc: {
       syncLimit: 60,
-      version: 0.03
+      version: 0.06
     },
     dSetups: {
       syncLimit: 60,
@@ -237,7 +237,8 @@ class StorageManager {
         else {
           // Market is Closed
           isIndicatorCached = MarketManager.isDIndicatorCached(result[strData], subKey)
-          console.log(`Is indicator '${sKey}' cached? ${isIndicatorCached}`)
+
+          // console.log(`${sKey}: isIndicatorCached? ${isIndicatorCached}`)
 
           isUpToDate = isIndicatorCached || (result.data && mTime &&
             TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit)
@@ -255,7 +256,8 @@ class StorageManager {
         if (dIndicators.includes(sKey)) {
           // It's a indicator storage (used by Strategy module)
           isIndicatorCached = MarketManager.isDIndicatorCached(result[strData], subKey)
-          console.log(`Is indicator '${sKey}' cached? ${isIndicatorCached}`)
+
+          // console.log(`${sKey}: isIndicatorCached? ${isIndicatorCached}`)
 
           isUpToDate = isIndicatorCached || (result.data && mTime &&
             TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit)

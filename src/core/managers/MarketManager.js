@@ -5,6 +5,7 @@ import {
   deepCloneObj,
   httpRequest,
   joinObjLists,
+  joinContentObjLists,
   orderBy,
   retrieveObjFromObjList,
   sleep
@@ -431,20 +432,47 @@ class MarketManager {
 
     return retrieveObjFromObjList(sData, "id", pk)
   }
-  // .. [d] Quote
-  async dQuoteList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    // 'stockExchange' or 'instances'. One of these 2 parameters are required.
-    if (!stockExchange && instances.length == 0)
+  // .. Quote
+  async quoteData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    let sItem = undefined
+    switch (interval) {
+      case "d":
+        sItem = await this.dQuoteList(stockExchange, instances, lastPeriods)
+        break;
+      default:
+        break;
+    }
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
+  }
+  async dQuoteList(stockExchange, instances = [], lastPeriods = 1) {
+    // Both 'stockExchange' and 'instances' are required.
+    if (!stockExchange || instances.length == 0)
       return {}
+
     const sKey = "dQuote"
+    const interval = "d"
     await this.startRequest(sKey)
 
-    let result = StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
+    let sItem = StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
+    let notCachedInstances = deepCloneObj(instances)
 
-    if (result) {
-      this.finishRequest(sKey)
-      return result
+    if (sItem) {
+      // sData is up to date
+      notCachedInstances = this.getNotCachedInstances(sItem.data.iSummary, instances, lastPeriods)
+
+      if (notCachedInstances.length == 0) {
+        // Everything is ready
+        this.finishRequest(sKey)
+        return sItem
+      }
     }
+
+    console.log(`notCachedInstances: ${notCachedInstances}`)
 
     let wsInfo = this.getApi("wsQuote")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
@@ -453,13 +481,24 @@ class MarketManager {
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
-      instances: instances.join(",")
+      instances: notCachedInstances.join(",")
     }
 
-    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
     if (result.status == 200) {
       result = result.data
+      result.stockExchange = stockExchange
+
+      if (sItem) {
+        // Stored data may be up to date, but stored instances are not enough. 
+        // So, we must sync the missing instances and join the data with the stored instances.
+        result.data = joinContentObjLists(result.data, sItem.data.data, "asset_symbol")
+        result.iSummary = this.iSummaryGenerator(sItem.data.iSummary, instances, lastPeriods)
+      }
+      else
+        result.iSummary = this.iSummaryGenerator({}, instances, lastPeriods)
+
       result = StorageManager.store(sKey, result, stockExchange)
     }
     else {
@@ -469,8 +508,16 @@ class MarketManager {
     this.finishRequest(sKey)
     return result
   }
-  async dQuoteData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    let sItem = await this.dQuoteList(stockExchange, interval, instances, lastPeriods)
+  // .. EMA
+  async emaData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    let sItem = undefined
+    switch (interval) {
+      case "d":
+        sItem = await this.dEmaList(stockExchange, instances, lastPeriods)
+        break;
+      default:
+        break;
+    }
 
     if (sItem && sItem.data)
       return sItem.data
@@ -478,19 +525,27 @@ class MarketManager {
     // Return it with http error details
     return sItem
   }
-  // .. [d] EMA
-  async dEmaList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    // 'stockExchange' or 'instances'. One of these 2 parameters are required.
-    if (!stockExchange && instances.length == 0)
+  async dEmaList(stockExchange, instances = [], lastPeriods = 1) {
+    // Both 'stockExchange' and 'instances' are required.
+    if (!stockExchange || instances.length == 0)
       return {}
+
     const sKey = "dEma"
+    const interval = "d"
     await this.startRequest(sKey)
 
-    let result = StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
+    let sItem = StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
+    let notCachedInstances = deepCloneObj(instances)
 
-    if (result) {
-      this.finishRequest(sKey)
-      return result
+    if (sItem) {
+      // sData is up to date
+      notCachedInstances = this.getNotCachedInstances(sItem.data.iSummary, instances, lastPeriods)
+
+      if (notCachedInstances.length == 0) {
+        // Everything is ready
+        this.finishRequest(sKey)
+        return sItem
+      }
     }
 
     let wsInfo = this.getApi("wsEma")
@@ -500,13 +555,24 @@ class MarketManager {
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
-      instances: instances.join(",")
+      instances: notCachedInstances.join(",")
     }
 
-    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
     if (result.status == 200) {
       result = result.data
+      result.stockExchange = stockExchange
+
+      if (sItem) {
+        // Stored data may be up to date, but stored instances are not enough. 
+        // So, we must sync the missing instances and join the data with the stored instances.
+        result.data = joinContentObjLists(result.data, sItem.data.data, "asset_symbol")
+        result.iSummary = this.iSummaryGenerator(sItem.data.iSummary, instances, lastPeriods)
+      }
+      else
+        result.iSummary = this.iSummaryGenerator({}, instances, lastPeriods)
+
       result = StorageManager.store(sKey, result, stockExchange)
     }
     else {
@@ -516,8 +582,16 @@ class MarketManager {
     this.finishRequest(sKey)
     return result
   }
-  async dEmaData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    let sItem = await this.dEmaList(stockExchange, interval, instances, lastPeriods)
+  // .. Phibo
+  async phiboData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    let sItem = undefined
+    switch (interval) {
+      case "d":
+        sItem = await this.dPhiboList(stockExchange, instances, lastPeriods)
+        break;
+      default:
+        break;
+    }
 
     if (sItem && sItem.data)
       return sItem.data
@@ -525,20 +599,30 @@ class MarketManager {
     // Return it with http error details
     return sItem
   }
-  // .. [d] Phibo
-  async dPhiboList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    // 'stockExchange' or 'instances'. One of these 2 parameters are required.
-    if (!stockExchange && instances.length == 0)
+  async dPhiboList(stockExchange, instances = [], lastPeriods = 1) {
+    // Both 'stockExchange' and 'instances' are required.
+    if (!stockExchange || instances.length == 0)
       return {}
+
     const sKey = "dPhibo"
+    const interval = "d"
     await this.startRequest(sKey)
 
-    let result = StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
+    let sItem = StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
+    let notCachedInstances = deepCloneObj(instances)
 
-    if (result) {
-      this.finishRequest(sKey)
-      return result
+    if (sItem) {
+      // sData is up to date
+      notCachedInstances = this.getNotCachedInstances(sItem.data.iSummary, instances, lastPeriods)
+
+      if (notCachedInstances.length == 0) {
+        // Everything is ready
+        this.finishRequest(sKey)
+        return sItem
+      }
     }
+
+    console.log(`notCachedInstances: ${notCachedInstances}`)
 
     let wsInfo = this.getApi("wsPhibo")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
@@ -547,13 +631,24 @@ class MarketManager {
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
-      instances: instances.join(",")
+      instances: notCachedInstances.join(",")
     }
 
-    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
     if (result.status == 200) {
       result = result.data
+      result.stockExchange = stockExchange
+
+      if (sItem) {
+        // Stored data may be up to date, but stored instances are not enough. 
+        // So, we must sync the missing instances and join the data with the stored instances.
+        result.data = joinContentObjLists(result.data, sItem.data.data, "asset_symbol")
+        result.iSummary = this.iSummaryGenerator(sItem.data.iSummary, instances, lastPeriods)
+      }
+      else
+        result.iSummary = this.iSummaryGenerator({}, instances, lastPeriods)
+
       result = StorageManager.store(sKey, result, stockExchange)
     }
     else {
@@ -563,8 +658,16 @@ class MarketManager {
     this.finishRequest(sKey)
     return result
   }
-  async dPhiboData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    let sItem = await this.dPhiboList(stockExchange, interval, instances, lastPeriods)
+  // .. ROC
+  async rocData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    let sItem = undefined
+    switch (interval) {
+      case "d":
+        sItem = await this.dRocList(stockExchange, instances, lastPeriods)
+        break;
+      default:
+        break;
+    }
 
     if (sItem && sItem.data)
       return sItem.data
@@ -572,20 +675,30 @@ class MarketManager {
     // Return it with http error details
     return sItem
   }
-  // .. [d] ROC
-  async dRocList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    // 'stockExchange' or 'instances'. One of these 2 parameters are required.
-    if (!stockExchange && instances.length == 0)
+  async dRocList(stockExchange, instances = [], lastPeriods = 1) {
+    // Both 'stockExchange' and 'instances' are required.
+    if (!stockExchange || instances.length == 0)
       return {}
+
     const sKey = "dRoc"
+    const interval = "d"
     await this.startRequest(sKey)
 
-    let result = StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
+    let sItem = StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
+    let notCachedInstances = deepCloneObj(instances)
 
-    if (result) {
-      this.finishRequest(sKey)
-      return result
+    if (sItem) {
+      // sData is up to date
+      notCachedInstances = this.getNotCachedInstances(sItem.data.iSummary, instances, lastPeriods)
+
+      if (notCachedInstances.length == 0) {
+        // Everything is ready
+        this.finishRequest(sKey)
+        return sItem
+      }
     }
+
+    console.log(`notCachedInstances: ${notCachedInstances}`)
 
     let wsInfo = this.getApi("wsRoc")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
@@ -594,13 +707,24 @@ class MarketManager {
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
-      instances: instances.join(",")
+      instances: notCachedInstances.join(",")
     }
 
-    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
     if (result.status == 200) {
       result = result.data
+      result.stockExchange = stockExchange
+
+      if (sItem) {
+        // Stored data may be up to date, but stored instances are not enough. 
+        // So, we must sync the missing instances and join the data with the stored instances.
+        result.data = joinContentObjLists(result.data, sItem.data.data, "asset_symbol")
+        result.iSummary = this.iSummaryGenerator(sItem.data.iSummary, instances, lastPeriods)
+      }
+      else
+        result.iSummary = this.iSummaryGenerator({}, instances, lastPeriods)
+
       result = StorageManager.store(sKey, result, stockExchange)
     }
     else {
@@ -609,15 +733,6 @@ class MarketManager {
 
     this.finishRequest(sKey)
     return result
-  }
-  async dRocData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    let sItem = await this.dRocList(stockExchange, interval, instances, lastPeriods)
-
-    if (sItem && sItem.data)
-      return sItem.data
-
-    // Return it with http error details
-    return sItem
   }
   // .. Functions
   static isDIndicatorCached(sData) {
@@ -645,6 +760,44 @@ class MarketManager {
     }
 
     return false
+  }
+  getNotCachedInstances(iSummary, instances, lastPeriods) {
+    let notCached = []
+
+    for (var iName of instances)
+      if (iSummary[iName]) {
+        // Instance is cached...
+        if (iSummary[iName].lastPeriods < lastPeriods) {
+          // But amount of periods is not enough
+          notCached.push(iName)
+        }
+      }
+      else {
+        // Instance isn't cached...
+        notCached.push(iName)
+      }
+
+    return notCached
+  }
+  iSummaryGenerator(iSummary, instances, lastPeriods) {
+    for (var iName of instances) {
+      if (iSummary[iName]) {
+        // Instance is already stored...
+        if (lastPeriods > iSummary[iName].lastPeriods) {
+          // Amount of periods has changed
+          iSummary[iName].lastPeriods = lastPeriods
+        }
+      }
+      else {
+        // Instance was not stored yet...
+        iSummary[iName] = {
+          id: iName,
+          lastPeriods: lastPeriods
+        }
+      }
+    }
+
+    return iSummary
   }
 
   // Setups (Phi Trader)

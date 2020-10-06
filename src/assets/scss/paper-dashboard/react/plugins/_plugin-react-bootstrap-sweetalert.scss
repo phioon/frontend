@@ -1,3 +1,7 @@
-.sweet-alert:focus{
-    outline: none;
+.sweet-alert{
+    margin: auto !important;
+    
+    &:focus{
+        outline: none;
+    }
 }
