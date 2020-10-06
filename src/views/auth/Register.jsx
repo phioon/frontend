@@ -498,7 +498,7 @@ class Register extends React.Component {
                   </Button>
                   <LabelAlert alertState={alertState} alertMsg={alertMsg} />
                   <br />
-                  {redirectToForgotPassword ? <Redirect to="forgotpassword" /> : null}
+                  {redirectToForgotPassword ? <Redirect to="/auth/forgotpassword" /> : null}
                   {btnForgotPassword_isHidden ?
                     null :
                     <Button 

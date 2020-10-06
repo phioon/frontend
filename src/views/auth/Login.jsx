@@ -246,7 +246,7 @@ class Login extends React.Component {
                       {getString(langId, compId, "btn_signUp")}                      
                     </Button>
                     <br />
-                    {redirectToForgotPassword ? <Redirect to="forgotpassword" /> : null}
+                    {redirectToForgotPassword ? <Redirect to="/auth/forgotpassword" /> : null}
                     {
                       btnSendConfirmation_isHidden ?
                         <Button 
