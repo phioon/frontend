@@ -31,22 +31,6 @@ class MarketManager {
         method: "post",
         request: "/api/market/assets/"
       },
-      wsEma: {
-        options: {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": ""
-          },
-          params: {
-            stockExchange: undefined,
-            interval: undefined,
-            instances: undefined,
-            lastPeriods: undefined
-          }
-        },
-        method: "get",
-        request: "/api/market/<timeInterval>/ema/"
-      },
       wsIndicators: {
         options: {
           headers: {
@@ -56,22 +40,6 @@ class MarketManager {
         },
         method: "get",
         request: "/api/market/indicators/"
-      },
-      wsPhibo: {
-        options: {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": ""
-          },
-          params: {
-            stockExchange: undefined,
-            interval: undefined,
-            instances: undefined,
-            lastPeriods: undefined
-          }
-        },
-        method: "get",
-        request: "/api/market/<timeInterval>/phibo/"
       },
       wsQuote: {
         options: {
@@ -88,6 +56,54 @@ class MarketManager {
         },
         method: "get",
         request: "/api/market/<timeInterval>/quote/"
+      },
+      wsSma: {
+        options: {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": ""
+          },
+          params: {
+            stockExchange: undefined,
+            interval: undefined,
+            instances: undefined,
+            lastPeriods: undefined
+          }
+        },
+        method: "get",
+        request: "/api/market/<timeInterval>/sma/"
+      },
+      wsEma: {
+        options: {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": ""
+          },
+          params: {
+            stockExchange: undefined,
+            interval: undefined,
+            instances: undefined,
+            lastPeriods: undefined
+          }
+        },
+        method: "get",
+        request: "/api/market/<timeInterval>/ema/"
+      },
+      wsPhibo: {
+        options: {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": ""
+          },
+          params: {
+            stockExchange: undefined,
+            interval: undefined,
+            instances: undefined,
+            lastPeriods: undefined
+          }
+        },
+        method: "get",
+        request: "/api/market/<timeInterval>/phibo/"
       },
       wsRaw: {
         options: {
@@ -503,6 +519,80 @@ class MarketManager {
     }
     else {
       this.getHttpTranslation(result, "dQuoteList", "dQuote", true)
+    }
+
+    this.finishRequest(sKey)
+    return result
+  }
+  // .. SMA
+  async smaData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
+    let sItem = undefined
+    switch (interval) {
+      case "d":
+        sItem = await this.dSmaList(stockExchange, instances, lastPeriods)
+        break;
+      default:
+        break;
+    }
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
+  }
+  async dSmaList(stockExchange, instances = [], lastPeriods = 1) {
+    // Both 'stockExchange' and 'instances' are required.
+    if (!stockExchange || instances.length == 0)
+      return {}
+
+    const sKey = "dSma"
+    const interval = "d"
+    await this.startRequest(sKey)
+
+    let sItem = StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
+    let notCachedInstances = deepCloneObj(instances)
+
+    if (sItem) {
+      // sData is up to date
+      notCachedInstances = this.getNotCachedInstances(sItem.data.iSummary, instances, lastPeriods)
+
+      if (notCachedInstances.length == 0) {
+        // Everything is ready
+        this.finishRequest(sKey)
+        return sItem
+      }
+    }
+
+    let wsInfo = this.getApi("wsSma")
+    wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
+    wsInfo.request += "latest/"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.params = {
+      stockExchange: stockExchange,
+      lastPeriods: lastPeriods,
+      instances: notCachedInstances.join(",")
+    }
+
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
+
+    if (result.status == 200) {
+      result = result.data
+      result.stockExchange = stockExchange
+
+      if (sItem) {
+        // Stored data may be up to date, but stored instances are not enough. 
+        // So, we must sync the missing instances and join the data with the stored instances.
+        result.data = joinContentObjLists(result.data, sItem.data.data, "asset_symbol")
+        result.iSummary = this.iSummaryGenerator(sItem.data.iSummary, instances, lastPeriods)
+      }
+      else
+        result.iSummary = this.iSummaryGenerator({}, instances, lastPeriods)
+
+      result = StorageManager.store(sKey, result, stockExchange)
+    }
+    else {
+      this.getHttpTranslation(result, "dSmaList", "dSma", true)
     }
 
     this.finishRequest(sKey)

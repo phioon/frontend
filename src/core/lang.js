@@ -174,6 +174,16 @@ const strings = {
       // Zero Line
       zero_line: "Zero Line",
       // Indicators
+      sma_close7: "SMA 7",
+      sma_close10: "SMA 10",
+      sma_close20: "SMA 20",
+      sma_close21: "SMA 21",
+      sma_close30: "SMA 30",
+      sma_close50: "SMA 50",
+      sma_close55: "SMA 55",
+      sma_close100: "SMA 100",
+      sma_close200: "SMA 200",
+
       ema_close8: "EMA 8",
       ema_close9: "EMA 9",
       ema_close17: "EMA 17",
@@ -377,6 +387,7 @@ const strings = {
       title: "Moving Average",
 
       label_ema: "Exponential",
+      label_sma: "Simple / Arithmetic",
 
       input_type: "Type",
       input_type_hint: "Which moving average are we talking about?",
@@ -792,8 +803,7 @@ const strings = {
       label_cat_advanced: "Advanced",
       label_cat_advanced_hint: "It's well planned to catch specific moviments.",
 
-      label_type: "Type",
-      label_type_hint: "A Dynamic Strategy can be applied to any time interval (d, m60). It can become a Static one if the time interval is set in one of its rules.",
+      label_logic: "Type",
       label_dynamic: "Dynamic",
       label_dynamic_hint: "It can be completly applied to any time interval (weekly, daily, m60...)",
       label_static: "Static",
@@ -1097,6 +1107,16 @@ const strings = {
       // Zero Line
       zero_line: "Linha Zero",
       // Indicators
+      sma_close7: "MMA 7",
+      sma_close10: "MMA 10",
+      sma_close20: "MMA 20",
+      sma_close21: "MMA 21",
+      sma_close30: "MMA 30",
+      sma_close50: "MMA 50",
+      sma_close55: "MMA 55",
+      sma_close100: "MMA 100",
+      sma_close200: "MMA 200",
+
       ema_close8: "MME 8",
       ema_close9: "MME 9",
       ema_close17: "MME 17",
@@ -1326,6 +1346,7 @@ const strings = {
       title: "Média Móvel",
 
       label_ema: "Exponencial",
+      label_sma: "Simples / Aritmética",
 
       input_type: "Tipo",
       input_type_hint: "Estamos falando de qual média móvel?",

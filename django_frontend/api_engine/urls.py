@@ -47,8 +47,9 @@ urlpatterns += [
 
     path('market/d/raw/', apiMarket.D_RawList, name='D_Raw data'),
     path('market/d/quote/latest/', apiMarket.D_QuoteLatestList, name='D_Quote latest data'),
-    path('market/d/phibo/latest/', apiMarket.D_PhiboLatestList, name='D_Phibo latest data'),
+    path('market/d/sma/latest/', apiMarket.D_SmaLatestList, name='D_Sma latest data'),
     path('market/d/ema/latest/', apiMarket.D_EmaLatestList, name='D_Ema latest data'),
+    path('market/d/phibo/latest/', apiMarket.D_PhiboLatestList, name='D_Phibo latest data'),
 
     path('market/d/setups/', apiMarket.D_setupList, name='D_setups data'),
     path('market/d/setupSummary/', apiMarket.D_setupSummaryList, name='D_setupSummary data'),

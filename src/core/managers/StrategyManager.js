@@ -24,6 +24,9 @@ class StrategyManager {
         case "quote":
           rawData.push(this.managers.market.quoteData(stockExchange, v.interval, v.instances, v.lastPeriods))
           break;
+        case "sma":
+          rawData.push(this.managers.market.smaData(stockExchange, v.interval, v.instances, v.lastPeriods))
+          break;
         case "ema":
           rawData.push(this.managers.market.emaData(stockExchange, v.interval, v.instances, v.lastPeriods))
           break;
