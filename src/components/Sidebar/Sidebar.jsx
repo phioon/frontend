@@ -23,6 +23,7 @@ import PerfectScrollbar from "perfect-scrollbar";
 
 // CORE
 import { project } from "../../core/projectData";
+import { isFunctionOrConstructorTypeNode } from "typescript";
 
 
 var ps;
@@ -35,6 +36,7 @@ class Sidebar extends React.Component {
       compId: this.constructor.name.toLowerCase(),
       user: undefined,
       userName: null,
+      fullName: undefined,
 
       ...this.getCollapseStates(props.routes)
     }
@@ -55,10 +57,18 @@ class Sidebar extends React.Component {
 
     let sUser = this.props.managers.auth.storedUser()
     let user = sUser.user
+    let fullName = `${user.first_name}${" "}${user.last_name}`
+    
+    let names = String(fullName).split(" ")
+    let fisrtName = names.shift()
+    let lastName = names.pop()
+    fullName = fisrtName + " " + lastName
+    fullName = fullName.toUpperCase()
+
     user.initials = `${user.first_name[0]}${user.last_name[0]}`
     user.initials = user.initials.toUpperCase()
 
-    this.setState({ user })
+    this.setState({ user, fullName })
   }
   componentWillUnmount() {
     // we need to destroy the false scrollbar when we navigate
@@ -168,7 +178,7 @@ class Sidebar extends React.Component {
   };
   render() {
     let { getString } = this.props;
-    let { langId, compId, user } = this.state;
+    let { langId, compId, user, fullName } = this.state;
 
     return (
       <div
@@ -208,7 +218,7 @@ class Sidebar extends React.Component {
                 onClick={() => this.setState({ openAvatar: !this.state.openAvatar })}
               >
                 <span>
-                  {user && `${user.first_name} ${user.last_name}`}
+                  {fullName}
                   <b className="caret" />
                 </span>
               </a>
