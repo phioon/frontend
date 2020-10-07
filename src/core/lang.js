@@ -885,7 +885,7 @@ const strings = {
       label_result_hint: "How much your money is earning.",
       // Premium
       label_phiOperations: "PHI TRADER",
-      label_phiOperations_hint: "Operations made by Phi since you joined us.",
+      label_phiOperations_hint: "Phi's operations since you joined us.",
 
       input_email: "Email",
       btn_changePassword: "Change Password",
@@ -1818,7 +1818,7 @@ const strings = {
       label_result_hint: "O quanto seu dinheiro está rendendo.",
       // Premium
       label_phiOperations: "PHI TRADER",
-      label_phiOperations_hint: "Operações feitas pelo Phi desde a data em que temos você com a gente.",
+      label_phiOperations_hint: "Operações do Phi desde a data em que temos você com a gente.",
 
       input_email: "E-mail",
       btn_changePassword: "Alterar Senha",
