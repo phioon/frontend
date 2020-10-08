@@ -31,7 +31,8 @@ import {
   getDistinctValuesFromList,
   verifyLength,
   verifyOnlyLetters,
-  verifyUsernameStr
+  verifyUsernameStr,
+  returnInitials
 } from "../../core/utils";
 
 class UserProfile extends React.Component {
@@ -124,9 +125,8 @@ class UserProfile extends React.Component {
 
     let user = await this.props.managers.auth.storedUser()
     user = user.user
-    user.initials = `${user.first_name[0]}${user.last_name[0]}`
-    user.initials = user.initials
-
+    user.initials = returnInitials(`${user.first_name} ${user.last_name}`)
+    
     subscription = await this.props.managers.app.subscriptionRetrieve(user.subscription)
     subscription.expiresOn = user.subscription_expires_on
     subscription.renewsOn = user.subscription_renews_on
@@ -242,9 +242,10 @@ class UserProfile extends React.Component {
       case "first_name":
         if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
           newState[type].states[fieldName] = "has-success";
-
-          newState[type].data.initials = `${value[0]}${newState[type].data.last_name[0]}`
-          newState[type].data.initials = newState[type].data.initials
+          
+          newState[type].data.initials = returnInitials(`${value} ${newState[type].data.last_name}`)
+          //newState[type].data.initials = `${value[0]}${newState[type].data.last_name[0]}`
+          //newState[type].data.initials = newState[type].data.initials
         }
         else
           newState[type].states[fieldName] = "has-danger";
@@ -253,8 +254,9 @@ class UserProfile extends React.Component {
         if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
           newState[type].states[fieldName] = "has-success";
 
-          newState[type].data.initials = `${newState[type].data.first_name[0]}${value[0]}`
-          newState[type].data.initials = newState[type].data.initials
+          newState[type].data.initials = returnInitials(`${newState[type].data.first_name} ${value}`)
+          //newState[type].data.initials = `${newState[type].data.first_name[0]}${value[0]}`
+          //newState[type].data.initials = newState[type].data.initials
         }
         else
           newState[type].states[fieldName] = "has-danger";

@@ -25,6 +25,10 @@ import PerfectScrollbar from "perfect-scrollbar";
 import { project } from "../../core/projectData";
 import { isFunctionOrConstructorTypeNode } from "typescript";
 
+import {
+  returnInitials
+} from "../../core/utils";
+
 
 var ps;
 
@@ -57,18 +61,26 @@ class Sidebar extends React.Component {
 
     let sUser = this.props.managers.auth.storedUser()
     let user = sUser.user
-    let fullName = `${user.first_name}${" "}${user.last_name}`
+    let fullName = this.getFullName(`${user.first_name} ${user.last_name}`)
     
-    let names = String(fullName).split(" ")
-    let fisrtName = names.shift()
-    let lastName = names.pop()
-    fullName = fisrtName + " " + lastName
-    fullName = fullName.toUpperCase()
-
-    user.initials = `${user.first_name[0]}${user.last_name[0]}`
-    user.initials = user.initials.toUpperCase()
-
+    user.initials = returnInitials(fullName)
+    
     this.setState({ user, fullName })
+  }
+
+  getFullName(fullName){
+    fullName = String(fullName)
+    let maxLength = 20
+
+    if (fullName.length > maxLength)
+    {
+      let names = String(fullName).split(" ")
+      let firstName = names.shift()
+      let lastName = names.pop().toUpperCase()
+      fullName = `${firstName} ${lastName[0]}.`
+
+    }
+    return fullName
   }
   componentWillUnmount() {
     // we need to destroy the false scrollbar when we navigate
