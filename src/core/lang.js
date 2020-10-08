@@ -449,9 +449,9 @@ const strings = {
       input_sell_hint: "Sale Strategy.",
 
       label_basic_0: "Now",
-      label_basic_0_intro: "How indicators should be aligned now?",
+      label_basic_0_intro: "How indicators should be aligned on the latest period (candle)?",
       label_basic_1: "Before",
-      label_basic_1_intro: "How indicators should be aligned on the previous candle?",
+      label_basic_1_intro: "How indicators should be aligned on the previous period (candle)?",
       btn_goToRules: "See rules...",
       btn_goToExplainer: "See explanation...",
 
@@ -1408,9 +1408,9 @@ const strings = {
       input_sell_hint: "Estratégia de Venda.",
 
       label_basic_0: "Agora",
-      label_basic_0_intro: "Como os indicadores deveriam estar alinhados agora?",
+      label_basic_0_intro: "Como os indicadores deveriam estar alinhados no último período (candle)?",
       label_basic_1: "Antes",
-      label_basic_1_intro: "Como os indicadores deveriam estar alinhados no candle anterior?",
+      label_basic_1_intro: "Como os indicadores deveriam estar alinhados no período anterior (candle)?",
       btn_goToRules: "Ver regras...",
       btn_goToExplainer: "Ver explicação...",
 

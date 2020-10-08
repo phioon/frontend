@@ -387,15 +387,13 @@ export function substringText(text, maxLength) {
 
   return text
 }
-trim
-export function returnInitials(fullName)
-{
+export function returnInitials(fullName) {
   var names = trim(String(fullName)).split(" ")
   var fisrtName = names.shift().toUpperCase()
   var lastName = names.pop().toUpperCase()
-    
+
   var initials = `${fisrtName[0]}${lastName[0]}`
- 
+
   return initials
 }
 // function that verifies if two objects are equal
