@@ -696,7 +696,7 @@ const strings = {
       target_hint: "It is a projection to estimate where price may reach. Most of the time, I use Fibonacci sequence.",
       gainPercent_hint: "If everything goes well, that'll be the profit.",
       lossPercent_hint: "If everything goes well, that'll be the profit.",
-      riskReward_hint: "Target divided by Stop Loss represents the correlation between Risk and Reward. The higher this number is, the better.",
+      riskReward_hint: "Potential Gain divided by Potential Loss represents the correlation between Risk and Reward. The higher this number is, the better.",
       startedOn_hint: "Operation started on:",
 
       successRate_hint: "Setup's success rate for this Asset in the last 4 years.",
@@ -1648,7 +1648,7 @@ const strings = {
       target_hint: "Alvo é uma projeção para estimar onde o Preço pode chegar. Na maioria das vezes, utilizo sequência de Fibonacci.",
       gainPercent_hint: "Se tudo der certo, este será o lucro.",
       lossPercent_hint: "Se tudo der certo, este será o lucro.",
-      riskReward_hint: "Alvo dividido pelo Stop Loss representa a relação Risco x Retorno da operação. Quanto maior este número, melhor.",
+      riskReward_hint: "Ganho Potencial dividido pela possível Perda representa a relação Risco x Retorno da operação. Quanto maior este número, melhor.",
       startedOn_hint: "Data de Início da Operação.",
 
       successRate_hint: "Taxa de Sucesso deste Setup para este Ativo nos últimos 4 anos.",
