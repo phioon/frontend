@@ -69,19 +69,28 @@ class Sidebar extends React.Component {
   }
 
   getFullName(fullName){
-    fullName = String(fullName)
-    let maxLength = 20
+    let maxLength = 18
 
+    let names = String(fullName).split(" ")
+    let firstName = names.shift()
+    let lastName = names.pop()
+    
+    let shortName = `${firstName} ${lastName}`
+    
     if (fullName.length > maxLength)
     {
-      let names = String(fullName).split(" ")
-      let firstName = names.shift()
-      let lastName = names.pop().toUpperCase()
-      fullName = `${firstName} ${lastName[0]}.`
-
+      if (shortName.length > maxLength)
+      {
+        fullName = `${firstName} ${lastName[0]}.`
+      }
+      else
+      {
+        fullName = shortName
+      }
     }
     return fullName
   }
+  
   componentWillUnmount() {
     // we need to destroy the false scrollbar when we navigate
     // to a page that doesn't have this component rendered
