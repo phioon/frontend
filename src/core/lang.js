@@ -1200,7 +1200,7 @@ const strings = {
       openVolume_currency_hint: "Volume de Abertura de suas operações.",
 
       result_kpi_label: "Rentabilidade",
-      result_title_hint: "Rentabilidade liquida. Isso mesmo, já descontei seu Custo Operacional.",
+      result_title_hint: "Rentabilidade líquida. Isso mesmo, já descontei seu Custo Operacional.",
       result_currency_hint: "O quanto seu dinheiro está rendendo.",
       result_percentage_hint: "Ganhos/Perdas divididos pelo Valor Aplicado.",
 
