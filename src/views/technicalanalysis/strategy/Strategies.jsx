@@ -505,9 +505,6 @@ class Strategies extends React.Component {
               <Card className="card-plain">
                 <CardHeader>
                   <Row>
-                    <Col>
-                      <CardTitle tag="h4">{getString(langId, compId, "card_title")}</CardTitle>
-                    </Col>
                     <Col className="text-right">
                       <Button
                         type="submit"

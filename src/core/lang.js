@@ -762,7 +762,7 @@ const strings = {
       label_title: "Stock Exchanges",
     },
     strategies: {
-      card_title: "Strategies",
+      title: "Strategies",
       btn_newStrategy: "New Strategy",
 
       label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
@@ -1714,7 +1714,7 @@ const strings = {
       label_title: "Bolsa de Valores",
     },
     strategies: {
-      card_title: "Estratégias",
+      title: "Estratégias",
       btn_newStrategy: "Nova Estratégia",
 
       label_noWallets_p1: "Hmm... Parece que você ainda tem Carteiras criadas por aqui... Que tal criar a primeira?",

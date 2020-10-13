@@ -23,7 +23,6 @@ import PerfectScrollbar from "perfect-scrollbar";
 
 // CORE
 import { project } from "../../core/projectData";
-import { isFunctionOrConstructorTypeNode } from "typescript";
 
 import {
   returnInitials
