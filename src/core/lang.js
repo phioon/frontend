@@ -546,7 +546,7 @@ const strings = {
       label_intro_p2: "Here, I'll expose all my operations, with details like: entry point, target, stop loss and the reason of it.",
       label_intro_p3: "Be aware that they",
       label_intro_notRecommendation: "are not recommendations",
-      label_intro_p4: "but I believe you could use my experience to analyze and learning with it.",
+      label_intro_p4: "but I believe you could use my experience to analyze and learning with them.",
 
       label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
       label_noWallets_p2: "That way, I'll know which Stock Exchange you work with, so I can share my operations with you! ;)",
