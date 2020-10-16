@@ -1,9 +1,14 @@
 from django.http import HttpResponse
 from rest_framework import generics, permissions
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+
 from api_engine.permissions import IsOwner
 from api_engine import serializers
 from app import models as app_models
 from django_engine.functions import generic
+from django_engine import settings
 
 from datetime import datetime
 from django.utils.timezone import make_aware
@@ -103,3 +108,24 @@ class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return app_models.Wallet.objects.filter(owner=self.request.user)
+
+
+# On-demand
+@api_view(['GET'])
+@permission_classes([permissions.IsAdminUser])
+def run_stock_split(request, symbol, split_date='2001-01-01', split_into=1, apiKey=None):
+    if apiKey == settings.API_KEY:
+        positions = app_models.Position.objects.filter(asset_symbol=symbol, started_on__lte=split_date)
+
+        for position in positions:
+            position.amount = position.amount * split_into
+            position.s_unit_price = round(position.s_unit_price / split_into, 2)
+
+            if position.ended_on:
+                position.e_unit_price = round(position.e_unit_price / split_into, 2)
+            position.save()
+
+        obj_res = {'message': "Positions updated: %s" % positions}
+        return Response(obj_res)
+    else:
+        return Response(status=status.HTTP_403_FORBIDDEN)

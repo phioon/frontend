@@ -18,6 +18,10 @@ urlpatterns = [
     path('app/currencies/', apiApp.CurrencyList.as_view()),
 
     path('app/initiator/<apiKey>', apiApp.app_init, name='App Initiator'),
+
+    # On demand
+    path('app/task/runStockSplit/<symbol>/<split_date>/<int:split_into>/<apiKey>',
+         apiApp.run_stock_split, name='Run adjustments on user positions when there is a Stock Split'),
 ]
 
 # Auth
