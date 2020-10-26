@@ -1165,7 +1165,7 @@ class MarketManager {
 
     if (result) {                     // Do we have it cached?
       if (detailed) {                 // Client is requesting detailed info?
-        if (result.data.d_volume) {   // We have detailed info?
+        if (result.data.d_open) {     // We have detailed info?
           this.finishRequest(sKey)
           return result               // Return it
         }

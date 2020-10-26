@@ -222,19 +222,33 @@ class Positions extends React.Component {
     }
   }
 
+  async onClick(action, obj) {
+    switch (action) {
+      case "create":
+        this.openPosition()
+        break;
+      case "update":
+        this.updateClick(obj)
+        break;
+      case "delete":
+        this.deleteClick(obj)
+        break;
+      default:
+        break;
+    }
+  }
   createWallet() {
     this.toggleModal("createWallet")
   }
   openPosition() {
     this.toggleModal("openPosition")
   }
-
-  async updateClick(positionData) {
-    let assetOptions = await this.props.managers.market.assetsForSelect(positionData.wallet.se_short)
-    let currency = await this.props.managers.app.currencyRetrieve(positionData.wallet.currency)
+  async updateClick(obj) {
+    let assetOptions = await this.props.managers.market.assetsForSelect(obj.wallet.se_short)
+    let currency = await this.props.managers.app.currencyRetrieve(obj.wallet.currency)
 
     let position = {
-      data: positionData,
+      data: obj,
       patch: {},
       states: {},
 
@@ -248,7 +262,6 @@ class Positions extends React.Component {
     })
     this.toggleModal("updatePosition")
   }
-
   deleteClick(obj) {
     this.setState({
       alert: (
@@ -382,7 +395,7 @@ class Positions extends React.Component {
                   className="btn-round"
                   outline
                   color="success"
-                  onClick={walletOptions.length == 0 ? this.createWallet : this.openPosition}
+                  onClick={() => walletOptions.length == 0 ? this.createWallet() : this.onClick("create")}
                 >
                   {getString(langId, compId, "btn_newPosition")}
                 </Button>
@@ -468,7 +481,7 @@ class Positions extends React.Component {
           id={"newPosition"}
           position="bottom"
           icon="fa fa-plus fa-2x"
-          onClick={walletOptions.length == 0 ? this.createWallet : this.openPosition}
+          onClick={() => walletOptions.length == 0 ? this.createWallet() : this.onClick("create")}
           showTooltip={pageFirstLoading ? false : data.length == 0 ? true : false}
         />
       </div>

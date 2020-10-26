@@ -219,7 +219,7 @@ const strings = {
     },
     languages: {
       enUS: "English",
-      ptBR: "Português (Brasil)",
+      ptBR: "Português",
     },
     locales: {
       enUS: "en-us",
@@ -280,73 +280,6 @@ const strings = {
       winners_number_hint: "Amount of Positions with positive result.",
       winners_percentage_hint: "Winner Positions divided by the amount of Positions."
     },
-    modalopenposition: {
-      title: "Open a new Position",
-      hint: "A Position is made of 2 Transactions: Open (e.g Buy) and Close (e.g Sale). For now, only open info is needed.",
-
-      input_type_buy: "BUY",
-      input_type_sell: "SELL",
-      input_wallet: "Wallet",
-      input_asset: "Asset",
-      input_asset_noOptions: "First, select a Wallet.",
-      input_amount: "Amount",
-      input_date: "Date",
-      input_date_hint: "When did this operation happen?",
-      input_price: "Price",
-      input_price_hint: "In case operation was fractionated into different prices, what about we use average price?",
-      input_cost: "Cost",
-      input_cost_hint: "Here, I multiply Amount by Price.",
-      input_opCost: "Operational Cost",
-      input_opCost_hint: "Taxes, emoluments, fees... Any extra cost in this operation.",
-      input_opCost_format: "Operational Cost format",
-      input_totalCost: "Total Cost",
-      input_totalCost_hint: "Cost + Operational Cost",
-
-      opCost_currency_hint: "Use Currency format for field Operational Cost.",
-      opCost_percentage_hint: "Use Percentage format for field Operational Cost.",
-
-      alert_created_title: "Created!",
-      alert_created_text: "Position has been created.",
-
-      btn_confirm: "Create",
-    },
-    modalupdateposition: {
-      title: "Update Position",
-      label_intro_p1: "A Position is made of 2 events: Open and Close.",
-      label_intro_p2: "I understand that a Position is closed once the fields under CLOSE tab are filled. ;)",
-
-      tab_openInfo: "OPEN",
-      tab_closeInfo: "CLOSE",
-
-      input_type: "Type",
-      input_type_buy: "BUY",
-      input_type_sell: "SELL",
-      input_wallet: "Wallet",
-      input_asset: "Asset",
-      input_amount: "Amount",
-      input_purchaseDate: "Purchase Date",
-      input_saleDate: "Sale Date",
-      input_price: "Price",
-      input_price_hint: "In case operation was fractionated into different prices, what about we use average price?",
-      input_cost: "Cost",
-      input_cost_hint: "Here, I multiply Amount by Price.",
-      input_opCost: "Operational Cost",
-      input_opCost_hint: "Taxes, emoluments, fees... Any extra cost in this operation.",
-      input_opCost_format: "Operational Cost format",
-      input_totalCost: "Total Cost",
-      input_totalCost_hint: "Cost + Operational Cost",
-
-      opCost_currency_hint: "Use Currency format for field Operational Cost.",
-      opCost_percentage_hint: "Use Percentage format for field Operational Cost.",
-
-      alert_updated_title: "Updated!",
-      alert_updated_text: "Position has been updated.",
-
-      alert_purchaseDateMissing: "Seems like you left the field 'Purchase Date' empty. Anyhow, Position will be updated, but it will be considered 'open' until field 'Purchase Date' is filled.",
-      alert_saleDateMissing: "Seems like you left the field 'Sale Date' empty. Anyhow, Position will be updated, but it will be considered 'open' until field 'Sale Date' is filled.",
-
-      btn_confirm: "Update",
-    },
     modalchangepassword: {
       title: "Change Password",
       label_intro_p1: "I know having a complex password may be difficult to remember later, but we are talking of your personal data here.",
@@ -397,6 +330,37 @@ const strings = {
 
       btn_add: "Add",
       btn_save: "Save",
+    },
+    modalopenposition: {
+      title: "Open a new Position",
+      hint: "A Position is made of 2 Transactions: Open (e.g Buy) and Close (e.g Sale). For now, only open info is needed.",
+
+      input_type_buy: "BUY",
+      input_type_sell: "SELL",
+
+      input_wallet: "Wallet",
+      input_asset: "Asset",
+      input_asset_noOptions: "First, select a Wallet.",
+      input_amount: "Amount",
+      input_date: "Date",
+      input_date_hint: "When did this operation happen?",
+      input_price: "Price",
+      input_price_hint: "In case operation was fractionated into different prices, what about we use average price?",
+      input_cost: "Cost",
+      input_cost_hint: "Here, I multiply Amount by Price.",
+      input_opCost: "Operational Cost",
+      input_opCost_hint: "Taxes, emoluments, fees... Any extra cost in this operation.",
+      input_opCost_format: "Operational Cost format",
+      input_totalCost: "Total Cost",
+      input_totalCost_hint: "Cost + Operational Cost",
+
+      opCost_currency_hint: "Use Currency format for field Operational Cost.",
+      opCost_percentage_hint: "Use Percentage format for field Operational Cost.",
+
+      alert_created_title: "Created!",
+      alert_created_text: "Position has been created.",
+
+      btn_confirm: "Create",
     },
     modalquotedetail: {
       title: "Quote",
@@ -473,6 +437,43 @@ const strings = {
       btn_add: "Add",
       btn_create: "Create",
       btn_update: "Update"
+    },
+    modalupdateposition: {
+      title: "Update Position",
+      label_intro_p1: "A Position is made of 2 events: Open and Close.",
+      label_intro_p2: "I understand that a Position is closed once the fields under CLOSE tab are filled. ;)",
+
+      tab_openInfo: "OPEN",
+      tab_closeInfo: "CLOSE",
+
+      input_type_buy: "BUY",
+      input_type_sell: "SELL",
+
+      input_wallet: "Wallet",
+      input_asset: "Asset",
+      input_amount: "Amount",
+      input_purchaseDate: "Purchase Date",
+      input_saleDate: "Sale Date",
+      input_price: "Price",
+      input_price_hint: "In case operation was fractionated into different prices, what about we use average price?",
+      input_cost: "Cost",
+      input_cost_hint: "Here, I multiply Amount by Price.",
+      input_opCost: "Operational Cost",
+      input_opCost_hint: "Taxes, emoluments, fees... Any extra cost in this operation.",
+      input_opCost_format: "Operational Cost format",
+      input_totalCost: "Total Cost",
+      input_totalCost_hint: "Cost + Operational Cost",
+
+      opCost_currency_hint: "Use Currency format for field Operational Cost.",
+      opCost_percentage_hint: "Use Percentage format for field Operational Cost.",
+
+      alert_updated_title: "Updated!",
+      alert_updated_text: "Position has been updated.",
+
+      alert_purchaseDateMissing: "Seems like you left the field 'Purchase Date' empty. Anyhow, Position will be updated, but it will be considered 'open' until field 'Purchase Date' is filled.",
+      alert_saleDateMissing: "Seems like you left the field 'Sale Date' empty. Anyhow, Position will be updated, but it will be considered 'open' until field 'Sale Date' is filled.",
+
+      btn_confirm: "Update",
     },
     modalupdatewallet: {
       title: "Update Wallet",
@@ -636,7 +637,8 @@ const strings = {
 
       card_header: "Create your account",
       info_orBeCassical: "or be classical",
-      input_fullName: "Full Name",
+      input_firstName: "First Name",
+      input_lastName: "Last Name",
       input_email: "Email",
       input_username: "Username",
       input_password: "Password",
@@ -1152,7 +1154,7 @@ const strings = {
     },
     languages: {
       enUS: "English",
-      ptBR: "Português (Brasil)",
+      ptBR: "Português",
     },
     locales: {
       enUS: "en-us",
@@ -1238,74 +1240,6 @@ const strings = {
       wallets_edit_hint: "Editar esta Carteira.",
       wallets_delete_hint: "Deletar esta Carteira."
     },
-    modalopenposition: {
-      title: "Abrir nova Posição",
-      hint: "Uma posição é feita de 2 Transações: Abertura (ex. Compra) e Fechamento (ex. Venda). Nesse momento, apenas os dados da abertura são necessários.",
-
-      input_wallet: "Carteira",
-      input_asset: "Ativo",
-      input_asset_noOptions: "Primeiro, selecione a Carteira.",
-      input_type: "Tipo",
-      input_type_buy: "COMPRA",
-      input_type_sell: "VENDA",
-      input_amount: "Quantidade",
-      input_date: "Data",
-      input_date_hint: "Quando a operação foi realizada?",
-      input_price: "Preço",
-      input_price_hint: "Caso a operação foi fracionada em diferentes preços, que tal usarmos preço médio?",
-      input_cost: "Custo",
-      input_cost_hint: "Aqui, multiplico Quantidade pelo Preço. ",
-      input_opCost: "Custo Operacional",
-      input_opCost_hint: "Impostos, emolumentos, taxas... Qualquer custo extra nesta operação.",
-      input_opCost_format: "Formato de Custo Operacional",
-      input_totalCost: "Custo Total",
-      input_totalCost_hint: "Custo + Custo Operacional",
-
-      opCost_currency_hint: "Use formato de Moeda para o campo Custo Operacional.",
-      opCost_percentage_hint: "Use formato de Porcentagem para o campo Custo Operacional.",
-
-      alert_created_title: "Criada!",
-      alert_created_text: "Posição foi criada com sucesso.",
-
-      btn_confirm: "Criar",
-    },
-    modalupdateposition: {
-      title: "Atualizar Posição",
-      label_intro_p1: "Uma posição possui 2 eventos: Abertura e Fechamento.",
-      label_intro_p2: "Eu entendo que uma Posição está fechada quando os campos da aba FECHAMENTO estão preenchidos. ;)",
-
-      tab_openInfo: "ABERTURA",
-      tab_closeInfo: "FECHAMENTO",
-
-      input_type: "Tipo",
-      input_type_buy: "COMPRA",
-      input_type_sell: "VENDA",
-      input_wallet: "Carteira",
-      input_asset: "Ativo",
-      input_amount: "Quantidade",
-      input_purchaseDate: "Data da Compra",
-      input_saleDate: "Data da Venda",
-      input_price: "Preço",
-      input_price_hint: "Caso a operação foi fracionada em diferentes preços, que tal usarmos preço médio?",
-      input_cost: "Custo",
-      input_cost_hint: "Aqui, multiplico Quantidade pelo Preço. ",
-      input_opCost: "Custo Operacional",
-      input_opCost_hint: "Impostos, emolumentos, taxas... Qualquer custo extra nesta operação.",
-      input_opCost_format: "Formato de Custo Operacional",
-      input_totalCost: "Custo Total",
-      input_totalCost_hint: "Custo + Custo Operacional",
-
-      opCost_currency_hint: "Use formato de Moeda para o campo Custo Operacional.",
-      opCost_percentage_hint: "Use formato de Porcentagem para o campo Custo Operacional.",
-
-      alert_created_title: "Atualizada!",
-      alert_created_text: "Posição foi atualizada com sucesso.",
-
-      alert_purchaseDateMissing: "Vejo que deixou o campo 'Data da Compra' vazio. Tudo bem, vou atualizar a Posição com esses dados, mas vou considera-la como 'Aberta' até que o campo 'Data da Compra' esteja preenchido. ;)",
-      alert_saleDateMissing: "Vejo que deixou o campo 'Data da Venda' vazio. Tudo bem, vou atualizar a Posição com esses dados, mas vou considera-la como 'Aberta' até que o campo 'Data da Venda' esteja preenchido. ;)",
-
-      btn_confirm: "Atualizar",
-    },
     modalchangepassword: {
       title: "Alterar Senha",
       label_intro_p1: "Eu entendo que uma senha complexa pode ser dificil de lembrar depois, mas estamos falando de seus dados pessoais aqui. ;)",
@@ -1356,6 +1290,37 @@ const strings = {
 
       btn_add: "Adicionar",
       btn_save: "Salvar",
+    },
+    modalopenposition: {
+      title: "Abrir nova Posição",
+      hint: "Uma posição é feita de 2 Transações: Abertura (ex. Compra) e Fechamento (ex. Venda). Nesse momento, apenas os dados da abertura são necessários.",
+
+      input_wallet: "Carteira",
+      input_asset: "Ativo",
+      input_asset_noOptions: "Primeiro, selecione a Carteira.",
+      input_type: "Tipo",
+      input_type_buy: "COMPRA",
+      input_type_sell: "VENDA",
+      input_amount: "Quantidade",
+      input_date: "Data",
+      input_date_hint: "Quando a operação foi realizada?",
+      input_price: "Preço",
+      input_price_hint: "Caso a operação foi fracionada em diferentes preços, que tal usarmos preço médio?",
+      input_cost: "Custo",
+      input_cost_hint: "Aqui, multiplico Quantidade pelo Preço. ",
+      input_opCost: "Custo Operacional",
+      input_opCost_hint: "Impostos, emolumentos, taxas... Qualquer custo extra nesta operação.",
+      input_opCost_format: "Formato de Custo Operacional",
+      input_totalCost: "Custo Total",
+      input_totalCost_hint: "Custo + Custo Operacional",
+
+      opCost_currency_hint: "Use formato de Moeda para o campo Custo Operacional.",
+      opCost_percentage_hint: "Use formato de Porcentagem para o campo Custo Operacional.",
+
+      alert_created_title: "Criada!",
+      alert_created_text: "Posição foi criada com sucesso.",
+
+      btn_confirm: "Criar",
     },
     modalquotedetail: {
       title: "Cotação",
@@ -1432,6 +1397,42 @@ const strings = {
       btn_add: "Adicionar",
       btn_create: "Criar",
       btn_update: "Atualizar"
+    },
+    modalupdateposition: {
+      title: "Atualizar Posição",
+      label_intro_p1: "Uma posição possui 2 eventos: Abertura e Fechamento.",
+      label_intro_p2: "Eu entendo que uma Posição está fechada quando os campos da aba FECHAMENTO estão preenchidos. ;)",
+
+      tab_openInfo: "ABERTURA",
+      tab_closeInfo: "FECHAMENTO",
+
+      input_type_buy: "COMPRA",
+      input_type_sell: "VENDA",
+      input_wallet: "Carteira",
+      input_asset: "Ativo",
+      input_amount: "Quantidade",
+      input_purchaseDate: "Data da Compra",
+      input_saleDate: "Data da Venda",
+      input_price: "Preço",
+      input_price_hint: "Caso a operação foi fracionada em diferentes preços, que tal usarmos preço médio?",
+      input_cost: "Custo",
+      input_cost_hint: "Aqui, multiplico Quantidade pelo Preço. ",
+      input_opCost: "Custo Operacional",
+      input_opCost_hint: "Impostos, emolumentos, taxas... Qualquer custo extra nesta operação.",
+      input_opCost_format: "Formato de Custo Operacional",
+      input_totalCost: "Custo Total",
+      input_totalCost_hint: "Custo + Custo Operacional",
+
+      opCost_currency_hint: "Use formato de Moeda para o campo Custo Operacional.",
+      opCost_percentage_hint: "Use formato de Porcentagem para o campo Custo Operacional.",
+
+      alert_created_title: "Atualizada!",
+      alert_created_text: "Posição foi atualizada com sucesso.",
+
+      alert_purchaseDateMissing: "Vejo que deixou o campo 'Data da Compra' vazio. Tudo bem, vou atualizar a Posição com esses dados, mas vou considera-la como 'Aberta' até que o campo 'Data da Compra' esteja preenchido. ;)",
+      alert_saleDateMissing: "Vejo que deixou o campo 'Data da Venda' vazio. Tudo bem, vou atualizar a Posição com esses dados, mas vou considera-la como 'Aberta' até que o campo 'Data da Venda' esteja preenchido. ;)",
+
+      btn_confirm: "Atualizar",
     },
     modalupdatewallet: {
       title: "Atualizar Carteira",
@@ -1587,7 +1588,9 @@ const strings = {
 
       card_header: "Crie sua conta",
       info_orBeCassical: "ou vá em modo clássico mesmo",
-      input_fullName: "Nome Completo",
+
+      input_firstName: "Primeiro Nome",
+      input_lastName: "Último Nome",
       input_email: "E-mail",
       input_username: "Usuário",
       input_password: "Senha",
@@ -1644,8 +1647,8 @@ const strings = {
       notAvailableData_hint: "Não tenho dados suficientes para calcular esta métrica. :/",
 
       priceLimit_hint: "Preço Limite sugerido para esta operação. Este pode mudar, considerando seu Gerenciamento de Risco.",
-      stopLoss_hint: "Aqui é um ponto de segurança onde acredito que o Preço não alcance novamente. Se isso acontecer, saia da operação e aguarde uma nova oportunidade.",
-      target_hint: "Alvo é uma projeção para estimar onde o Preço pode chegar. Na maioria das vezes, utilizo sequência de Fibonacci.",
+      stopLoss_hint: "Aqui é um ponto de segurança, onde acredito que o Preço não alcance novamente. Se isso acontecer, saia da operação e aguarde uma nova oportunidade.",
+      target_hint: "Uma projeção para estimar onde o Preço pode chegar. Na maioria das vezes, utilizo sequência de Fibonacci.",
       gainPercent_hint: "Se tudo der certo, este será o lucro.",
       lossPercent_hint: "Se tudo der certo, este será o lucro.",
       riskReward_hint: "Ganho Potencial dividido pela possível Perda representa a relação Risco x Retorno da operação. Quanto maior este número, melhor.",

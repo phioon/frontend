@@ -207,7 +207,7 @@ class Sidebar extends React.Component {
               <img
                 alt={project.img.branding.avatar.original.alt}
                 width={project.img.branding.avatar.original.width}
-                height={project.img.branding.avatar.original.heigth}
+                height={project.img.branding.avatar.original.height}
                 src={project.img.branding.avatar.original.src}
               />
             </div>
@@ -216,7 +216,7 @@ class Sidebar extends React.Component {
             <img
               alt={project.img.branding.logo.white.alt}
               width={project.img.branding.logo.white.width * 0.06}
-              height={project.img.branding.logo.white.heigth * 0.06}
+              height={project.img.branding.logo.white.height * 0.06}
               src={project.img.branding.logo.white.src}
             />
           </a>

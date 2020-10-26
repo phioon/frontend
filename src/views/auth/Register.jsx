@@ -54,7 +54,8 @@ class Register extends React.Component {
       // Any change in user object must be reflected at this.clearInputFields()
       user: {
         data: {
-          fullname: "",
+          firstname: "",
+          lastname: "",
           email: "",
           username: "",
           password: "",
@@ -62,7 +63,8 @@ class Register extends React.Component {
           cbTerms: false
         },
         states: {
-          fullname: "",
+          firstname: "",
+          lastname: "",
           email: "",
           username: "",
           password: "",
@@ -117,7 +119,8 @@ class Register extends React.Component {
   clearInputFields = () => {
     let user = {
       data: {
-        fullname: "",
+        firstname: "",
+        lastname: "",
         email: "",
         username: "",
         password: "",
@@ -125,7 +128,8 @@ class Register extends React.Component {
         cbTerms: false
       },
       states: {
-        fullname: "",
+        firstname: "",
+        lastname: "",
         email: "",
         username: "",
         password: "",
@@ -179,7 +183,14 @@ class Register extends React.Component {
     newState.user.data[fieldName] = value
 
     switch (fieldName) {
-      case "fullname":
+      case "firstname":
+        if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
+          newState.user.states[fieldName] = "has-success"
+        } else {
+          newState.user.states[fieldName] = "has-danger"
+        }
+        break;
+      case "lastname":
         if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
           newState.user.states[fieldName] = "has-success"
         } else {
@@ -240,14 +251,9 @@ class Register extends React.Component {
   async registerClick(user) {
     this.setState({ isLoading: true })
 
-    let names = String(user.data.fullname).split(" ")
-    let firstname = names[0]
-    names.shift()
-    let lastname = names.join(" ")
-
     let data = {
-      first_name: firstname,
-      last_name: lastname,
+      first_name: user.data.firstname,
+      last_name: user.data.lastname,
       username: user.data.username,
       email: user.data.email,
       password: user.data.password,
@@ -374,19 +380,34 @@ class Register extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <Form action="" className="form" method="">
-                    {/* Full Name */}
-                    <InputGroup className={`has-label ${user.states.fullname}`}>
+                    {/* First Name */}
+                    <InputGroup className={`has-label ${user.states.firstname}`}>
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>
                           <i className="nc-icon nc-single-02" />
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
-                        placeholder={getString(langId, compId, "input_fullName")}
+                        placeholder={getString(langId, compId, "input_firstName")}
                         type="text"
-                        name="fullname"
-                        value={user.data.fullname}
-                        onChange={e => this.onChange("fullname", e.target.value)}
+                        name="firstname"
+                        value={user.data.firstname}
+                        onChange={e => this.onChange("firstname", e.target.value)}
+                      />
+                    </InputGroup>
+                    {/* Last Name */}
+                    <InputGroup className={`has-label ${user.states.lastname}`}>
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="nc-icon nc-circle-10" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        placeholder={getString(langId, compId, "input_lastName")}
+                        type="text"
+                        name="lastname"
+                        value={user.data.lastname}
+                        onChange={e => this.onChange("lastname", e.target.value)}
                       />
                     </InputGroup>
                     <Row className="mt-4" />
@@ -501,10 +522,10 @@ class Register extends React.Component {
                   {redirectToForgotPassword ? <Redirect to="/auth/forgotpassword" /> : null}
                   {btnForgotPassword_isHidden ?
                     null :
-                    <Button 
-                      className="btn-link btn-neutral" 
-                      color="default" 
-                      onClick={() => this.setState({redirectToForgotPassword:true})}>
+                    <Button
+                      className="btn-link btn-neutral"
+                      color="default"
+                      onClick={() => this.setState({ redirectToForgotPassword: true })}>
                       {getString(langId, compId, "btn_forgotPassword")}?
                     </Button>
                   }

@@ -13,13 +13,13 @@ export const project = {
         original: {
           alt: "P H I O O N",
           width: 1080,
-          heigth: 1080,
+          height: 1080,
           src: "https://storage.googleapis.com/phioon-static/assets/img/branding/avatar/avatar_original.jpg"
         },
         green: {
           alt: "P H I O O N",
           width: 1080,
-          heigth: 1080,
+          height: 1080,
           src: "https://storage.googleapis.com/phioon-static/assets/img/branding/avatar/avatar_green.jpg"
         },
       },
@@ -27,19 +27,19 @@ export const project = {
         original: {
           alt: "P H I O O N",
           width: 1945,
-          heigth: 336,
+          height: 336,
           src: "https://storage.googleapis.com/phioon-static/assets/img/branding/logo/logo_original.png"
         },
         black: {
           alt: "P H I O O N",
           width: 1945,
-          heigth: 336,
+          height: 336,
           src: "https://storage.googleapis.com/phioon-static/assets/img/branding/logo/logo_black.png"
         },
         white: {
           alt: "P H I O O N",
           width: 1945,
-          heigth: 336,
+          height: 336,
           src: "https://storage.googleapis.com/phioon-static/assets/img/branding/logo/logo_white.png"
         }
       },
@@ -47,25 +47,25 @@ export const project = {
         original: {
           alt: "P H I O O N",
           width: 1470,
-          heigth: 1470,
+          height: 1470,
           src: "https://storage.googleapis.com/phioon-static/assets/img/branding/icon/icon_original.png"
         },
         green: {
           alt: "P H I O O N",
           width: 1470,
-          heigth: 1470,
+          height: 1470,
           src: "https://storage.googleapis.com/phioon-static/assets/img/branding/icon/icon_green.png"
         },
         black: {
           alt: "P H I O O N",
           width: 1470,
-          heigth: 1470,
+          height: 1470,
           src: "https://storage.googleapis.com/phioon-static/assets/img/branding/icon/icon_black.png"
         },
         white: {
           alt: "P H I O O N",
           width: 1470,
-          heigth: 1470,
+          height: 1470,
           src: "https://storage.googleapis.com/phioon-static/assets/img/branding/icon/icon_white.png"
         }
       }

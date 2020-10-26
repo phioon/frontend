@@ -115,7 +115,7 @@ class AuthNavbar extends React.Component {
               <img
                 alt={project.img.branding.logo.white.alt}
                 width={project.img.branding.logo.white.width * 0.09}
-                height={project.img.branding.logo.white.heigth * 0.09}
+                height={project.img.branding.logo.white.height * 0.09}
                 src={project.img.branding.logo.white.src}
               />
             </NavbarBrand>

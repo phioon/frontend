@@ -94,7 +94,7 @@ class WalletSerializer(serializers.ModelSerializer):
 
         if subscriptionPlan.name == 'basic':
             walletAmount = Wallet.objects.filter(owner=requestor).count()
-            if walletAmount >= 3:
+            if walletAmount >= 2:
                 raise serializers.ValidationError("Wallets limit reached.")
 
         wallet = Wallet.objects.create(

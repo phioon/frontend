@@ -28,6 +28,9 @@ import StrategyManager from "./core/managers/StrategyManager";
 
 export var isAuthenticated = undefined
 const hist = createBrowserHistory();
+var browserLanguage = window.navigator.userLanguage || window.navigator.language || window.navigator.languages[0];
+browserLanguage = String(browserLanguage).replace(/[^a-zA-Z0-9]+/g, "")
+browserLanguage = browserLanguage && browserLanguage.startsWith("pt") ? "ptBR" : "enUS"
 
 class App extends React.Component {
   constructor() {
@@ -35,7 +38,7 @@ class App extends React.Component {
 
     this.state = {
       prefs: {
-        langId: "ptBR",
+        langId: browserLanguage,
         currency: "BRL"
       },
 
@@ -281,6 +284,7 @@ class App extends React.Component {
 
   render() {
     let { prefs, isAuthenticated } = this.state
+
     return (
       <>
         <NotificationAlert ref="notificationAlert" />
@@ -290,7 +294,7 @@ class App extends React.Component {
               path="/auth"
               render={props =>
                 typeof isAuthenticated === 'undefined' ?
-                  <LoopCircleLoading color='#4f4f4f' /> :
+                  <LoopCircleLoading color='#07242b' /> :
                   isAuthenticated ?
                     <Redirect to="/app/wallet/openpositions" /> :
                     <AuthLayout {...props}
@@ -307,7 +311,7 @@ class App extends React.Component {
               path="/app"
               render={props =>
                 typeof isAuthenticated === 'undefined' ?
-                  <LoopCircleLoading color='#4f4f4f' /> :
+                  <LoopCircleLoading color='#07242b' /> :
                   !isAuthenticated ?
                     <Redirect to="/auth/login" /> :
                     <AppLayout {...props}
