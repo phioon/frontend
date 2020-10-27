@@ -442,7 +442,8 @@ class ModalUpdatePosition extends React.Component {
           position.started_on = TimeManager.getDatetimeString(v)
           break;
         case "endedOn":
-          position.ended_on = TimeManager.getDatetimeString(v)
+          // endedOn can be null (in case user wants to reopen the position)
+          position.ended_on = v ? TimeManager.getDatetimeString(v) : null
           break;
         case "e_price":
           position.e_unit_price = convertMaskedStringToFloat(v, currency)
@@ -523,11 +524,11 @@ class ModalUpdatePosition extends React.Component {
 
     switch (fieldName) {
       case "startedOn":
-        result = date.isBefore(today) ? true : false
+        result = date.isSameOrBefore(today) ? true : false
         break;
       case "endedOn":
         let startedOn = this.state.position.data.startedOn
-        result = date.isBefore(today) && date.isSameOrAfter(startedOn) ? true : false
+        result = date.isSameOrBefore(today) && date.isSameOrAfter(startedOn) ? true : false
         break;
       default:
         break;
@@ -563,6 +564,7 @@ class ModalUpdatePosition extends React.Component {
                   className: "form-control",
                   placeholder: getString(langId, "generic", "input_select")
                 }}
+                utc
                 locale={getString(langId, "locales", langId)}
                 value={position.data.startedOn}
                 onChange={value => this.onSelectChange("startedOn", value)}
@@ -749,6 +751,7 @@ class ModalUpdatePosition extends React.Component {
                   className: "form-control",
                   placeholder: getString(langId, "generic", "input_select")
                 }}
+                utc
                 locale={getString(langId, "locales", langId)}
                 value={position.data.endedOn}
                 onChange={value => this.onSelectChange("endedOn", value)}
@@ -972,7 +975,6 @@ class ModalUpdatePosition extends React.Component {
               <Col className="col-md-3">
                 <div
                   className={classnames("card-choice", { active: position.data.typeIsBuy })}
-                  // data-toggle="wizard-checkbox"
                   onClick={() => this.onChoiceChange("typeIsBuy", true)}
                 >
                   <input
@@ -990,7 +992,6 @@ class ModalUpdatePosition extends React.Component {
               <Col className="col-md-3">
                 <div
                   className={classnames("card-choice", { active: !position.data.typeIsBuy })}
-                  // data-toggle="wizard-checkbox"
                   onClick={() => this.onChoiceChange("typeIsBuy", false)}
                 >
                   <input

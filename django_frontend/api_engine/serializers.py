@@ -52,7 +52,7 @@ class PositionSerializer(serializers.ModelSerializer):
         else:
             started_on = self.context['view'].get_object().started_on
 
-        if started_on > value:
+        if value and started_on > value:
             raise serializers.ValidationError("Must be greater than started_on.")
         return value
 

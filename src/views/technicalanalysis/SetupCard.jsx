@@ -70,14 +70,26 @@ class SetupCard extends React.Component {
     }
     else {
       // Open Position
-      if (setup.price >= setup.target)
-        return "success"
-      else if (setup.price > setup.max_price)
-        return "success"
-      else if (setup.price > setup.stop_loss)
-        return "warning"
-      else if (setup.price <= setup.stop_loss)
-        return "danger"
+      if (setup.type == "purchase") {
+        if (setup.price >= setup.target)
+          return "success"
+        else if (setup.price > setup.max_price)
+          return "success"
+        else if (setup.price > setup.stop_loss)
+          return "warning"
+        else if (setup.price <= setup.stop_loss)
+          return "danger"
+      }
+      else {
+        if (setup.price <= setup.target)
+          return "success"
+        else if (setup.price < setup.max_price)
+          return "success"
+        else if (setup.price < setup.stop_loss)
+          return "warning"
+        else if (setup.price >= setup.stop_loss)
+          return "danger"
+      }
     }
   }
   progressText(setup) {
@@ -112,7 +124,6 @@ class SetupCard extends React.Component {
         else if (setup.price >= setup.stop_loss)
           return getString(langId, compId, "label_loss")
       }
-
     }
   }
 
