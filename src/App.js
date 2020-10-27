@@ -60,8 +60,13 @@ class App extends React.Component {
     this.msgQueue = []
   }
   componentDidMount() {
-    new StorageManager()
     this.prepareRequirements()
+  }
+  async prepareRequirements() {
+    let storage = new StorageManager()
+    await storage.initiator()
+
+    this.setAuthStatus(await this.managers.auth.isUserAuthenticated())
   }
 
   async notify(place, color, icon = "nc-icon nc-bell-55", msg, autoDismiss = 7) {
@@ -93,16 +98,12 @@ class App extends React.Component {
     this.msgQueue.splice(this.msgQueue.indexOf(msg), 1)
   }
 
-  async prepareRequirements() {
-    this.setAuthStatus(await this.managers.auth.isUserAuthenticated())
-  }
-
   // Set user authentication status and Prefs
-  setAuthStatus(value) {
+  async setAuthStatus(value) {
     let newState = {}
 
     if (this.state.isAuthenticated !== value) {
-      let prefs = this.managers.auth.storedPrefs()
+      let prefs = await this.managers.auth.storedPrefs()
 
       if (prefs)
         newState.prefs = prefs
@@ -223,8 +224,10 @@ class App extends React.Component {
 
         let isUserAuthenticated = await this.managers.auth.isUserAuthenticated()
 
-        if (!isUserAuthenticated)
-          window.location.reload()
+        console.log(`isUserAuthenticated: ${isUserAuthenticated}`)
+
+        // if (!isUserAuthenticated)
+        //   window.location.reload()
 
         this.setAuthStatus(isUserAuthenticated)
       }

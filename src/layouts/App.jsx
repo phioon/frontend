@@ -89,9 +89,10 @@ class AppLayout extends React.Component {
     this.props.managers.app.currencyList()                                // async call
     this.props.managers.app.subscriptionList()                            // async call
     this.props.managers.app.positionTypeList()                            // async call
-    this.props.managers.app.strategyList(syncFull)                        // async call
-    let wallets = await this.props.managers.app.walletList(syncFull)
-    let positions = await this.props.managers.app.positionList(syncFull)
+    this.props.managers.app.strategyList()
+
+    let wallets = await this.props.managers.app.walletList()
+    let positions = await this.props.managers.app.positionList()
 
     // Market
     let stockExchanges = getDistinctValuesFromList(wallets.data, "se_short")
@@ -103,7 +104,7 @@ class AppLayout extends React.Component {
     this.props.managers.market.assetList(detailed, assetsOpenPositions)   // async call
 
     // Premium
-    let sUser = this.props.managers.auth.storedUser()
+    let sUser = await this.props.managers.auth.storedUser()
     if (sUser.user.subscription != "basic") {
       this.props.managers.market.technicalConditionList()                 // async call
 

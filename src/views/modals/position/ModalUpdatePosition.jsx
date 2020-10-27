@@ -332,6 +332,11 @@ class ModalUpdatePosition extends React.Component {
           newState.position.states[fieldName] = ""
         }
         else if (value._isAMomentObject) {
+          if (!newState.position.states[fieldName]) {
+            // endedOn's state is being created for the first time
+            let now = new Date()
+            value.set({ hours: now.getHours(), minutes: now.getMinutes(), seconds: now.getSeconds() })
+          }
           newState.position.states[fieldName] = "has-success"
 
           if (newState.position.data.startedOn._isAMomentObject)
@@ -519,16 +524,16 @@ class ModalUpdatePosition extends React.Component {
   }
 
   isDateValid(fieldName, date) {
-    let today = new Date()
+    let now = new Date()
     let result = null
 
     switch (fieldName) {
       case "startedOn":
-        result = date.isSameOrBefore(today) ? true : false
+        result = date.isSameOrBefore(now, 'date') ? true : false
         break;
       case "endedOn":
         let startedOn = this.state.position.data.startedOn
-        result = date.isSameOrBefore(today) && date.isSameOrAfter(startedOn) ? true : false
+        result = date.isSameOrBefore(now, 'date') && date.isSameOrAfter(startedOn, 'date') ? true : false
         break;
       default:
         break;

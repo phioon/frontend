@@ -57,8 +57,11 @@ class Sidebar extends React.Component {
         suppressScrollY: false
       });
     }
+    this.prepareRequirements()
+  }
 
-    let sUser = this.props.managers.auth.storedUser()
+  async prepareRequirements() {
+    let sUser = await this.props.managers.auth.storedUser()
     let user = sUser.user
     let fullName = this.getFullName(`${user.first_name} ${user.last_name}`)
 

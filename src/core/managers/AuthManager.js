@@ -66,7 +66,7 @@ class AuthManager {
     let isAvailable = false
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "checkAvailability/"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
     wsInfo.method = "post"
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, data)
@@ -96,8 +96,8 @@ class AuthManager {
 
     if (result.status == 200) {
       result = result.data
-      this.storePrefs(result.user)
-      StorageManager.store(sKey, result)
+      await this.storePrefs(result.user)
+      await StorageManager.store(sKey, result)
       this.setAuthStatus(true)
       return result
     }
@@ -112,7 +112,7 @@ class AuthManager {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "logout/"
     wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
 
     StorageManager.removeData(sKey)
     StorageManager.removeData(sKey_wallets)
@@ -124,7 +124,7 @@ class AuthManager {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "changepassword/"
     wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
 
     return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, object)
   }
@@ -189,7 +189,7 @@ class AuthManager {
       wsInfo = this.getApi("wsUserCustom")
       wsInfo.request += "update/"
       wsInfo.method = "patch"
-      wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+      wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
 
       result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_userCustom)
 
@@ -201,7 +201,7 @@ class AuthManager {
       wsInfo = this.getApi("wsUser")
       wsInfo.request += "update/"
       wsInfo.method = "patch"
-      wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+      wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
 
       result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_user)
 
@@ -211,8 +211,8 @@ class AuthManager {
 
         let sUser = this.storedUser()
         sUser.user = result
-        this.storePrefs(sUser.user)
-        return StorageManager.store(sKey, sUser)
+        await this.storePrefs(sUser.user)
+        return await StorageManager.store(sKey, sUser)
       }
       else
         return result
@@ -222,8 +222,8 @@ class AuthManager {
   }
   async userRetrieve() {
     const sKey = "user"
-    let result = StorageManager.isUpToDate(this.sModule, sKey)
-    let sToken = AuthManager.storedToken()
+    let result = await StorageManager.isUpToDate(this.sModule, sKey)
+    let sToken = await AuthManager.storedToken()
 
     if (result.data)
       return result.data
@@ -238,11 +238,11 @@ class AuthManager {
       if (result.status == 200) {
         result = result.data
 
-        let sData = StorageManager.getData(sKey)
+        let sData = await StorageManager.getData(sKey)
         sData.user = result
-        this.storePrefs(sData.user)
+        await this.storePrefs(sData.user)
 
-        return StorageManager.store(sKey, sData)
+        return await StorageManager.store(sKey, sData)
       }
     }
     return null
@@ -260,7 +260,7 @@ class AuthManager {
   }
 
   // Prefs
-  storePrefs(user) {
+  async storePrefs(user) {
     const sKey = "user_prefs"
     let prefs = {
       langId: user.pref_langId,
@@ -268,24 +268,24 @@ class AuthManager {
     }
 
     this.setPrefs(prefs)
-    StorageManager.store(sKey, prefs)
+    await StorageManager.store(sKey, prefs)
   }
-  storedPrefs() {
+  async storedPrefs() {
     const sKey = "user_prefs"
-    return StorageManager.getData(sKey)
+    return await StorageManager.getData(sKey)
   }
 
-  static storedToken() {
+  static async storedToken() {
     const sKey = "user"
-    let sUser = StorageManager.getData(sKey)
+    let sUser = await StorageManager.getData(sKey)
 
     if (sUser)
       return sUser.token
     return null
   }
-  storedUser() {
+  async storedUser() {
     const sKey = "user"
-    return StorageManager.getData(sKey)
+    return await StorageManager.getData(sKey)
   }
   getApi(apiId) {
     if (apiId in this.apis)

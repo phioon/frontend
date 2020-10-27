@@ -39,7 +39,7 @@ const config = {
     user: {
       // 'syncLimit' could be the difference between TOKEN_TTL and MIN_REFRESH_INTERVAL (Django rest_framework),
       // but user is able to logout all devices.
-      syncLimit: 0,
+      syncLimit: 1,
       version: 0.01
     },
     user_prefs: {
@@ -99,6 +99,9 @@ const config = {
   },
 }
 let memData = {}
+
+var cache = undefined;    // To be defined by StorageManager.initiator()
+const cacheId = "phioon-app";
 const strVersion = "version";              // It goes into each sKey
 const strData = "data";                    // It goes into each sKey OR subKey
 const strModifiedTime = "modifiedTime";    // It goes into each sKey OR subKey
@@ -108,12 +111,62 @@ const err404 = { status: 404, message: "Storage is not managed: " }
 let isStorageDisabled = false
 
 class StorageManager {
-  constructor() {
-    this.initiator()
+  // CRUD
+  static getRequestId(key) {
+    return `/cache/${key}.json`
+  }
+  static async setItem(key, value) {
+    let options = {
+      headers: { 'content-type': 'application/json' }
+    }
+    return await cache.put(this.getRequestId(key), new Response(JSON.stringify(value), options))
+  }
+  static async getItem(sKey, subKey) {
+    let result = await cache.match(this.getRequestId(sKey)).then(r => r.json())
+
+    if (result && subKey)
+      result = result[subKey]
+
+    return result
+  }
+  static async getData(sKey, subKey) {
+    let result = await this.getItem(sKey)
+
+    if (result) {
+      if (subKey) {
+        if (result[subKey])
+          result = result[subKey][strData]
+        else
+          result = null
+      }
+      else
+        result = result[strData]
+    }
+
+    return result
+  }
+  static async removeItem(sKey, subKey) {
+    if (subKey) {
+      let sItem = await this.getItem(sKey)
+      delete sItem[subKey]
+      await this.setItem(sKey, sItem)
+    }
+    else {
+      await cache.delete(this.getRequestId(sKey))
+    }
+  }
+  static async removeData(sKey, subKey) {
+    let sItem = await this.getItem(sKey)
+
+    if (subKey)
+      sItem[subKey][strData] = null
+    else
+      sItem[strData] = null
+
+    await this.setItem(sKey, sItem)
   }
 
-  // CRUD
-  static setItem(key, value) {
+  static setItem_old(key, value) {
     if (isStorageDisabled)
       memData[key] = value
     else {
@@ -127,9 +180,8 @@ class StorageManager {
         }
       }
     }
-
   }
-  static getItem(sKey, subKey) {
+  static getItem_old(sKey, subKey) {
     if (isStorageDisabled) {
       if (subKey)
         return memData[sKey][subKey];
@@ -141,7 +193,7 @@ class StorageManager {
       return JSON.parse(localStorage.getItem(sKey));
     }
   }
-  static getData(sKey, subKey) {
+  static getData_old(sKey, subKey) {
     if (isStorageDisabled) {
       if (subKey)
         return memData[sKey][subKey] ? memData[sKey][subKey][strData] : null
@@ -153,7 +205,7 @@ class StorageManager {
       return JSON.parse(localStorage.getItem(sKey)) ? JSON.parse(localStorage.getItem(sKey))[strData] : null
     }
   }
-  static removeItem(sKey, subKey) {
+  static removeItem_old(sKey, subKey) {
     if (subKey) {
       let sItem = this.getItem(sKey)
       delete sItem[subKey]
@@ -166,7 +218,7 @@ class StorageManager {
         localStorage.removeItem(sKey)
     }
   }
-  static removeData(sKey, subKey) {
+  static removeData_old(sKey, subKey) {
     if (subKey) {
       if (isStorageDisabled)
         memData[sKey][subKey][strData] = {}
@@ -187,7 +239,7 @@ class StorageManager {
     }
   }
 
-  static isUpToDate(sModule, sKey, subKey, props) {
+  static async isUpToDate(sModule, sKey, subKey, props) {
     // props are only used by special modules: [dRaw, dEma]
 
     let mTime = null
@@ -198,7 +250,7 @@ class StorageManager {
     let isDRawCached = undefined
     let isIndicatorCached = undefined
 
-    let sItem = this.getItem(sKey)
+    let sItem = await this.getItem(sKey)
 
     if (!sItem)
       return false
@@ -216,7 +268,7 @@ class StorageManager {
 
     switch (sKey) {
       case "assets":
-        isMarketOpen = MarketManager.isMarketOpen(result[strData].stockExchange)
+        isMarketOpen = await MarketManager.isMarketOpen(result[strData].stockExchange)
 
         if (isMarketOpen) {
           // Market is Open
@@ -225,13 +277,13 @@ class StorageManager {
         }
         else {
           // Market is Closed
-          let isAssetUpToDate = MarketManager.isAssetUpToDate(result[strData].stockExchange, mTime)
+          let isAssetUpToDate = await MarketManager.isAssetUpToDate(result[strData].stockExchange, mTime)
           isUpToDate = isAssetUpToDate || (result.data && mTime &&
             TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit)
         }
         break;
       case "dQuote":
-        isMarketOpen = MarketManager.isMarketOpen(result[strData].stockExchange)
+        isMarketOpen = await MarketManager.isMarketOpen(result[strData].stockExchange)
 
         if (isMarketOpen) {
           // Market is Open
@@ -249,7 +301,7 @@ class StorageManager {
         }
         break;
       case "dRaw":
-        isDRawCached = MarketManager.isDRawCached(result[strData], props.dateFrom, props.dateTo)
+        isDRawCached = await MarketManager.isDRawCached(result[strData], props.dateFrom, props.dateTo)
 
         isUpToDate = isDRawCached || (result.data && mTime &&
           TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit)
@@ -259,7 +311,7 @@ class StorageManager {
 
         if (dIndicators.includes(sKey)) {
           // It's a indicator storage (used by Strategy module)
-          isIndicatorCached = MarketManager.isDIndicatorCached(result[strData], subKey)
+          isIndicatorCached = await MarketManager.isDIndicatorCached(result[strData], subKey)
 
           // console.log(`${sKey}: isIndicatorCached? ${isIndicatorCached}`)
 
@@ -283,8 +335,8 @@ class StorageManager {
     return false
   }
 
-  static store(sKey, data, subKey) {
-    let sItem = this.getItem(sKey)
+  static async store(sKey, data, subKey) {
+    let sItem = await this.getItem(sKey)
     let result = null
 
     for (let [k0, v0] of Object.entries(config)) {
@@ -301,17 +353,17 @@ class StorageManager {
           sItem[strModifiedTime] = TimeManager.getUTCDatetime()
           result = sItem
         }
-        this.setItem(sKey, sItem)
+        await this.setItem(sKey, sItem)
         return result
       }
     }
     return err404.message += sKey
   }
-  static cleanUp(sModule) {
+  static async cleanUp(sModule) {
     for (let [k0, v0] of Object.entries(config)) {
       if (k0 == sModule || sModule == "all") {
         for (let [k1, v1] of Object.entries(v0))
-          this.removeItem(k1)
+          await this.removeItem(k1)
       }
     }
   }
@@ -340,7 +392,9 @@ class StorageManager {
     }
     console.log("It started using memory.")
   }
-  initiator() {
+  async initiator() {
+    cache = await caches.open(cacheId)
+
     for (let [k0, v0] of Object.entries(config)) {
       for (let [k1, v1] of Object.entries(v0)) {
         let rebuildIt = null
@@ -348,7 +402,7 @@ class StorageManager {
         let sVersion = 0.00
 
         try {
-          storage = this.constructor.getItem(k1)
+          storage = await this.constructor.getItem(k1)
           sVersion = storage[strVersion]
           rebuildIt = sVersion === v1[strVersion] ? false : true
         } catch {
@@ -357,7 +411,7 @@ class StorageManager {
 
         if (rebuildIt) {
           try {
-            this.constructor.setItem(k1, { version: v1[strVersion] })
+            await this.constructor.setItem(k1, { version: v1[strVersion] })
           } catch (e) {
             console.log("Failed to create storage " + k1 + ": " + e)
             if (e == "QUOTA_EXCEEDED_ERR") {

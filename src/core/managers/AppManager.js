@@ -97,7 +97,7 @@ class AppManager {
   // Country
   async countryList() {
     const sKey = "countries"
-    let result = StorageManager.isUpToDate(this.sModule, sKey)
+    let result = await StorageManager.isUpToDate(this.sModule, sKey)
 
     if (result)
       return result
@@ -108,11 +108,11 @@ class AppManager {
 
     if (result.status == 200) {
       result = result.data
-      result = StorageManager.store(sKey, result)
+      result = await StorageManager.store(sKey, result)
     }
     else {
       this.getHttpTranslation(result, "countrylist", "country", true)
-      result = StorageManager.getItem(sKey)
+      result = await StorageManager.getItem(sKey)
     }
 
     return result
@@ -128,7 +128,7 @@ class AppManager {
   async currencyList() {
     const sKey = "currencies"
     await this.startRequest(sKey)
-    let result = StorageManager.isUpToDate(this.sModule, sKey)
+    let result = await StorageManager.isUpToDate(this.sModule, sKey)
 
     if (result) {
       this.finishRequest(sKey)
@@ -141,11 +141,11 @@ class AppManager {
 
     if (result.status == 200) {
       result = result.data
-      result = StorageManager.store(sKey, result)
+      result = await StorageManager.store(sKey, result)
     }
     else {
       this.getHttpTranslation(result, "currencylist", "currency", true)
-      result = StorageManager.getItem(sKey)
+      result = await StorageManager.getItem(sKey)
     }
 
     this.finishRequest(sKey)
@@ -179,7 +179,7 @@ class AppManager {
   // Subscription
   async subscriptionList() {
     const sKey = "subscriptions"
-    let result = StorageManager.isUpToDate(this.sModule, sKey)
+    let result = await StorageManager.isUpToDate(this.sModule, sKey)
 
     if (result)
       return result
@@ -190,11 +190,11 @@ class AppManager {
 
     if (result.status == 200) {
       result = result.data
-      result = StorageManager.store(sKey, result)
+      result = await StorageManager.store(sKey, result)
     }
     else {
       this.getHttpTranslation(result, "subscriptionlist", "subscription", true)
-      result = StorageManager.getItem(sKey)
+      result = await StorageManager.getItem(sKey)
     }
 
     return result
@@ -216,8 +216,8 @@ class AppManager {
     await this.startRequest(sKey)
 
     let lastModifiedTime = "2001-01-01T00:00:00Z"
-    let sData = StorageManager.getData(sKey)
-    let result = StorageManager.isUpToDate(this.sModule, sKey)
+    let sData = await StorageManager.getData(sKey)
+    let result = await StorageManager.isUpToDate(this.sModule, sKey)
 
     if (!syncFull) {
       if (result) {
@@ -230,7 +230,7 @@ class AppManager {
 
     let wsInfo = this.getApi("wsPositions")
     wsInfo.method = "get"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
     wsInfo.options.params = {
       dateFrom: lastModifiedTime
     }
@@ -244,11 +244,11 @@ class AppManager {
         result = joinObjLists(sData, result)
       result = orderBy(result, ["-last_modified"])   // Don't change the order. It's used to define 'lastModifiedTime'.
 
-      result = StorageManager.store(sKey, result)
+      result = await StorageManager.store(sKey, result)
     }
     else {
       this.getHttpTranslation(result, "positionlist", "position", true)
-      result = StorageManager.getItem(sKey)
+      result = await StorageManager.getItem(sKey)
     }
 
     this.finishRequest(sKey)
@@ -274,7 +274,7 @@ class AppManager {
   async positionCreate(position) {
     let wsInfo = this.getApi("wsPositions")
     wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, position)
 
@@ -290,7 +290,7 @@ class AppManager {
     let wsInfo = this.getApi("wsPositions")
     wsInfo.request += position.id + "/"
     wsInfo.method = "patch"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, position)
 
     if (result.status == 200) {
@@ -305,7 +305,7 @@ class AppManager {
     var wsInfo = this.getApi("wsPositions")
     wsInfo.request += pk + "/"
     wsInfo.method = "delete"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
@@ -636,7 +636,7 @@ class AppManager {
   // Position Type
   async positionTypeList() {
     const sKey = "positionTypes"
-    let result = StorageManager.isUpToDate(this.sModule, sKey)
+    let result = await StorageManager.isUpToDate(this.sModule, sKey)
 
     if (result)
       return result
@@ -646,10 +646,10 @@ class AppManager {
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 200)
-      result = StorageManager.store(sKey, result.data)
+      result = await StorageManager.store(sKey, result.data)
     else {
       this.getHttpTranslation(result, "positiontypelist", "positionType", true)
-      result = StorageManager.getItem(sKey)
+      result = await StorageManager.getItem(sKey)
     }
 
     return result
@@ -743,7 +743,7 @@ class AppManager {
     let result = null
 
     if (!syncFull) {
-      result = StorageManager.isUpToDate(this.sModule, sKey)
+      result = await StorageManager.isUpToDate(this.sModule, sKey)
       if (result) {
         this.finishRequest(sKey)
         return result
@@ -752,14 +752,14 @@ class AppManager {
 
     let wsInfo = this.getApi("wsWallets")
     wsInfo.method = "get"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 200)
-      result = StorageManager.store(sKey, result.data)
+      result = await StorageManager.store(sKey, result.data)
     else {
       this.getHttpTranslation(result, "walletlist", "wallet", true)
-      result = StorageManager.getItem(sKey)
+      result = await StorageManager.getItem(sKey)
     }
 
     this.finishRequest(sKey)
@@ -777,7 +777,7 @@ class AppManager {
   async walletCreate(wallet) {
     let wsInfo = this.getApi("wsWallets")
     wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, wallet)
 
     if (result.status == 201) {
@@ -797,7 +797,7 @@ class AppManager {
     let wsInfo = this.getApi("wsWallets")
     wsInfo.request += wallet.id + "/"
     wsInfo.method = "patch"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, wallet)
 
     if (result.status == 200) {
@@ -811,7 +811,7 @@ class AppManager {
     var wsInfo = this.getApi("wsWallets")
     wsInfo.request += pk + "/"
     wsInfo.method = "delete"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
@@ -908,7 +908,7 @@ class AppManager {
     let result = null
 
     if (!syncFull) {
-      result = StorageManager.isUpToDate(this.sModule, sKey)
+      result = await StorageManager.isUpToDate(this.sModule, sKey)
       if (result) {
         this.finishRequest(sKey)
         return result
@@ -917,14 +917,14 @@ class AppManager {
 
     let wsInfo = this.getApi("wsStrategies")
     wsInfo.method = "get"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 200)
-      result = StorageManager.store(sKey, result.data)
+      result = await StorageManager.store(sKey, result.data)
     else {
       this.getHttpTranslation(result, "strategylist", "strategy", true)
-      result = StorageManager.getItem(sKey)
+      result = await StorageManager.getItem(sKey)
     }
 
     this.finishRequest(sKey)
@@ -942,7 +942,7 @@ class AppManager {
   async strategyCreate(strategy) {
     let wsInfo = this.getApi("wsStrategies")
     wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
 
@@ -957,7 +957,7 @@ class AppManager {
     let wsInfo = this.getApi("wsStrategies")
     wsInfo.request += strategy.id + "/"
     wsInfo.method = "patch"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
 
     if (result.status == 200) {
@@ -971,7 +971,7 @@ class AppManager {
     var wsInfo = this.getApi("wsStrategies")
     wsInfo.request += pk + "/"
     wsInfo.method = "delete"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
