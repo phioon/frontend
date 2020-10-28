@@ -81,7 +81,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 
 class WalletSerializer(serializers.ModelSerializer):
-    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
     positions = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
@@ -145,8 +144,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['date_joined', 'username', 'email', 'first_name', 'last_name',
-                  'birthday', 'nationality',
+        fields = ['id', 'username', 'email', 'first_name', 'last_name',
+                  'date_joined', 'birthday', 'nationality',
                   'subscription', 'subscription_renews_on', 'subscription_expires_on',
                   'pref_langId', 'pref_currency']
         read_only_fields = ['email']

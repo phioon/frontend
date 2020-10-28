@@ -166,79 +166,6 @@ class StorageManager {
     await this.setItem(sKey, sItem)
   }
 
-  static setItem_old(key, value) {
-    if (isStorageDisabled)
-      memData[key] = value
-    else {
-      try {
-        localStorage.setItem(key, JSON.stringify(value))
-      } catch (e) {
-        console.log("Failed to update storage " + k1 + ": " + e)
-        if (e == "QUOTA_EXCEEDED_ERR") {
-          isStorageDisabled = true
-          this.constructor.loadIntoMemory()
-        }
-      }
-    }
-  }
-  static getItem_old(sKey, subKey) {
-    if (isStorageDisabled) {
-      if (subKey)
-        return memData[sKey][subKey];
-      return memData[sKey]
-    }
-    else {
-      if (subKey)
-        return JSON.parse(localStorage.getItem(sKey))[subKey];
-      return JSON.parse(localStorage.getItem(sKey));
-    }
-  }
-  static getData_old(sKey, subKey) {
-    if (isStorageDisabled) {
-      if (subKey)
-        return memData[sKey][subKey] ? memData[sKey][subKey][strData] : null
-      return memData[sKey] ? memData[sKey][strData] : null
-    }
-    else {
-      if (subKey)
-        return JSON.parse(localStorage.getItem(sKey))[subKey] ? JSON.parse(localStorage.getItem(sKey))[subKey][strData] : null
-      return JSON.parse(localStorage.getItem(sKey)) ? JSON.parse(localStorage.getItem(sKey))[strData] : null
-    }
-  }
-  static removeItem_old(sKey, subKey) {
-    if (subKey) {
-      let sItem = this.getItem(sKey)
-      delete sItem[subKey]
-      this.setItem(sKey, sItem)
-    }
-    else {
-      if (isStorageDisabled)
-        delete memData[sKey]
-      else
-        localStorage.removeItem(sKey)
-    }
-  }
-  static removeData_old(sKey, subKey) {
-    if (subKey) {
-      if (isStorageDisabled)
-        memData[sKey][subKey][strData] = {}
-      else {
-        let sItem = this.getItem(sKey)
-        sItem[subKey][strData] = null
-        this.setItem(sKey, sItem)
-      }
-    }
-    else {
-      if (isStorageDisabled)
-        memData[sKey][strData] = {}
-      else {
-        let sItem = this.getItem(sKey)
-        sItem[strData] = null
-        this.setItem(sKey, sItem)
-      }
-    }
-  }
-
   static async isUpToDate(sModule, sKey, subKey, props) {
     // props are only used by special modules: [dRaw, dEma]
 
@@ -409,18 +336,8 @@ class StorageManager {
           rebuildIt = true
         }
 
-        if (rebuildIt) {
-          try {
-            await this.constructor.setItem(k1, { version: v1[strVersion] })
-          } catch (e) {
-            console.log("Failed to create storage " + k1 + ": " + e)
-            if (e == "QUOTA_EXCEEDED_ERR") {
-              isStorageDisabled = true
-              this.constructor.loadIntoMemory()
-              break;
-            }
-          }
-        }
+        if (rebuildIt)
+          await this.constructor.setItem(k1, { version: v1[strVersion] })
       }
     }
   }

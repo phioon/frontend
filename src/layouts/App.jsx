@@ -82,17 +82,31 @@ class AppLayout extends React.Component {
   }
 
   async storageManagerInitiator() {
-    let syncFull = true
+    let syncFull = false
     let detailed = true
+
+    let sUser = this.props.managers.auth.instantUser()
+
     // App
     this.props.managers.app.countryList()                                 // async call
     this.props.managers.app.currencyList()                                // async call
     this.props.managers.app.subscriptionList()                            // async call
     this.props.managers.app.positionTypeList()                            // async call
-    this.props.managers.app.strategyList()
 
-    let wallets = await this.props.managers.app.walletList()
-    let positions = await this.props.managers.app.positionList()
+    let wallets = await this.props.managers.app.walletList()              // [First Call] Used to check if syncFull is needed
+
+    if (wallets.data) {
+      // Here, we'll check if last user logged is the same as the one logging in now.
+      // This situation is only valid if user was logged off by timeout. Otherwise, Phioon removes personal data automatically.
+      if (wallets.data.length === 0)
+        syncFull = true
+      else if (wallets.data[0].owner !== sUser.id)
+        syncFull = true
+    }
+
+    this.props.managers.app.strategyList(syncFull)                        // async call
+    wallets = await this.props.managers.app.walletList(syncFull)
+    let positions = await this.props.managers.app.positionList(syncFull)
 
     // Market
     let stockExchanges = getDistinctValuesFromList(wallets.data, "se_short")
@@ -104,8 +118,7 @@ class AppLayout extends React.Component {
     this.props.managers.market.assetList(detailed, assetsOpenPositions)   // async call
 
     // Premium
-    let sUser = await this.props.managers.auth.storedUser()
-    if (sUser.user.subscription != "basic") {
+    if (sUser.subscription != "basic") {
       this.props.managers.market.technicalConditionList()                 // async call
 
       for (var se_short of stockExchanges) {

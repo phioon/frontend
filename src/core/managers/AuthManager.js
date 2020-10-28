@@ -2,6 +2,9 @@ import StorageManager from "./StorageManager";
 import TimeManager from "./TimeManager";
 import { deepCloneObj, httpRequest, sleep } from "../utils";
 
+var __user = undefined;
+var __token = undefined;
+
 class AuthManager {
   constructor(getHttpTranslation, setAuthStatus, setPrefs) {
     this.getHttpTranslation = getHttpTranslation
@@ -66,7 +69,7 @@ class AuthManager {
     let isAvailable = false
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "checkAvailability/"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.method = "post"
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, data)
@@ -96,8 +99,13 @@ class AuthManager {
 
     if (result.status == 200) {
       result = result.data
+
+      this.instantUser(result.user)
+      AuthManager.instantToken(result.token)
+
       await this.storePrefs(result.user)
       await StorageManager.store(sKey, result)
+
       this.setAuthStatus(true)
       return result
     }
@@ -105,26 +113,19 @@ class AuthManager {
     return result
   }
   async userLogout() {
-    const sKey = "user"
-    const sKey_wallets = "wallets"
-    const sKey_positions = "positions"
-
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "logout/"
     wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
 
-    StorageManager.removeData(sKey)
-    StorageManager.removeData(sKey_wallets)
-    StorageManager.removeData(sKey_positions)
-
+    this.clearUserLocalData()
     return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
   }
   async userChangePassword(object) {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "changepassword/"
     wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
 
     return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, object)
   }
@@ -189,7 +190,7 @@ class AuthManager {
       wsInfo = this.getApi("wsUserCustom")
       wsInfo.request += "update/"
       wsInfo.method = "patch"
-      wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+      wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
 
       result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_userCustom)
 
@@ -201,7 +202,7 @@ class AuthManager {
       wsInfo = this.getApi("wsUser")
       wsInfo.request += "update/"
       wsInfo.method = "patch"
-      wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+      wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
 
       result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_user)
 
@@ -209,7 +210,8 @@ class AuthManager {
         this.getHttpTranslation(result, "profileupdate", "user", true)
         result = result.data
 
-        let sUser = this.storedUser()
+        this.instantUser(result)
+        let sUser = await StorageManager.getData(sKey)
         sUser.user = result
         await this.storePrefs(sUser.user)
         return await StorageManager.store(sKey, sUser)
@@ -222,26 +224,25 @@ class AuthManager {
   }
   async userRetrieve() {
     const sKey = "user"
-    let result = await StorageManager.isUpToDate(this.sModule, sKey)
     let sToken = await AuthManager.storedToken()
-
-    if (result.data)
-      return result.data
 
     if (sToken) {
       let wsInfo = this.getApi("wsUser")
       wsInfo.request += "retrieve/"
       wsInfo.method = "get"
       wsInfo.options.headers.Authorization = "token " + sToken
-      result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+      let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
       if (result.status == 200) {
         result = result.data
 
         let sData = await StorageManager.getData(sKey)
         sData.user = result
-        await this.storePrefs(sData.user)
 
+        this.instantUser(sData.user)
+        AuthManager.instantToken(sData.token)
+
+        await this.storePrefs(sData.user)
         return await StorageManager.store(sKey, sData)
       }
     }
@@ -257,6 +258,18 @@ class AuthManager {
 
     StorageManager.removeData(sKey)
     return false
+  }
+  async clearUserLocalData() {
+    const sKey = "user"
+    const sKey_wallets = "wallets"
+    const sKey_positions = "positions"
+
+    this.instantUser({})
+    AuthManager.instantToken({})
+
+    StorageManager.removeData(sKey)
+    StorageManager.removeData(sKey_wallets)
+    StorageManager.removeData(sKey_positions)
   }
 
   // Prefs
@@ -283,10 +296,25 @@ class AuthManager {
       return sUser.token
     return null
   }
-  async storedUser() {
-    const sKey = "user"
-    return await StorageManager.getData(sKey)
+
+  // Instant Data
+  instantUser(data) {
+    if (data)
+      __user = data
+    else
+      data = __user
+
+    return data
   }
+  static instantToken(data) {
+    if (data)
+      __token = data
+    else
+      data = __token
+
+    return data
+  }
+
   getApi(apiId) {
     if (apiId in this.apis)
       return deepCloneObj(this.apis[apiId]);

@@ -258,7 +258,7 @@ class MarketManager {
 
     if (syncList.length > 0) {
       let wsInfo = this.getApi("wsAssets")
-      wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+      wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
       wsInfo.options.data = {
         detailed: detailed,
         stockExchange: se_short,
@@ -319,7 +319,7 @@ class MarketManager {
   // .. Functions
   static async isAssetUpToDate(strStockExchange, mTime) {
     // Check if it's needed to update Asset ONLY when Market is closed.
-    let stockExchanges = StorageManager.getData("stockExchanges")
+    let stockExchanges = await StorageManager.getData("stockExchanges")
     let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", strStockExchange)
 
     if (stockExchange) {
@@ -408,7 +408,7 @@ class MarketManager {
       return result
     }
 
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
 
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
@@ -493,7 +493,7 @@ class MarketManager {
     let wsInfo = this.getApi("wsQuote")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
     wsInfo.request += "latest/"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
@@ -567,7 +567,7 @@ class MarketManager {
     let wsInfo = this.getApi("wsSma")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
     wsInfo.request += "latest/"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
@@ -641,7 +641,7 @@ class MarketManager {
     let wsInfo = this.getApi("wsEma")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
     wsInfo.request += "latest/"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
@@ -717,7 +717,7 @@ class MarketManager {
     let wsInfo = this.getApi("wsPhibo")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
     wsInfo.request += "latest/"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
@@ -793,7 +793,7 @@ class MarketManager {
     let wsInfo = this.getApi("wsRoc")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
     wsInfo.request += "latest/"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
@@ -905,7 +905,7 @@ class MarketManager {
     }
 
     wsInfo.request = wsInfo.request.replace("<timeInterval>", "d")
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange
     }
@@ -1120,7 +1120,7 @@ class MarketManager {
     }
 
     wsInfo.request = wsInfo.request.replace("<timeInterval>", "d")
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange
     }
@@ -1178,7 +1178,7 @@ class MarketManager {
 
     let wsInfo = this.getApi("wsRaw")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", "d")
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       detailed: detailed,
       asset: asset
@@ -1268,7 +1268,7 @@ class MarketManager {
       return result
     }
 
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 200) {
@@ -1352,7 +1352,7 @@ class MarketManager {
       return result
     }
 
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 200) {
