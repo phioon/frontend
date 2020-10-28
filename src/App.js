@@ -226,8 +226,8 @@ class App extends React.Component {
 
         console.log(`isUserAuthenticated: ${isUserAuthenticated}`)
 
-        // if (!isUserAuthenticated)
-        //   window.location.reload()
+        if (!isUserAuthenticated)
+          window.location.reload()
 
         this.setAuthStatus(isUserAuthenticated)
       }
