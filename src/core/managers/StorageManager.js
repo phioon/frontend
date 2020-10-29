@@ -19,11 +19,11 @@ const config = {
       version: 0.01
     },
     positions: {
-      syncLimit: 10,
+      syncLimit: 15,
       version: 0.01
     },
     strategies: {
-      syncLimit: 10,
+      syncLimit: 15,
       version: 0.04
     },
     subscriptions: {

@@ -59,7 +59,7 @@ class Winners extends Component {
               <div className="numbers">
                 <p className="card-category">
                   {pageFirstLoading ?
-                    <Skeleton /> :
+                    <span style={{ paddingLeft: "7%" }}><Skeleton /></span> :
                     getString(langId, "measures", measure.id + "_kpi_label")
                   }
                 </p>
@@ -67,7 +67,7 @@ class Winners extends Component {
                   !pageFirstLoading && measure.percentage.data < 20 ?
                     "text-danger" : "text-success"}>
                   {pageFirstLoading ?
-                    <Skeleton /> :
+                    <span style={{ paddingLeft: "7%" }}><Skeleton /></span> :
                     managers.measure.handleMeasurePresentation(measure, format, currency)
                   }
                 </CardTitle>
