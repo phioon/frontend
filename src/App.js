@@ -60,11 +60,16 @@ class App extends React.Component {
     this.msgQueue = []
   }
   componentDidMount() {
-    new StorageManager()
     this.prepareRequirements()
   }
+  async prepareRequirements() {
+    let storage = new StorageManager()
+    await storage.initiator()
 
-  async notify(place, color, icon = "nc-icon nc-bell-55", msg, autoDismiss = 7) {
+    this.setAuthStatus(await this.managers.auth.isUserAuthenticated())
+  }
+
+  async notify(place, color, icon = "nc-icon nc-bell-55", msgId, msgText, autoDismiss = 7) {
     var color = color
     var options = {};
 
@@ -74,7 +79,7 @@ class App extends React.Component {
         <div>
           <span data-notify="icon" className={icon} />
           <span>
-            {msg}
+            {msgText}
           </span>
         </div>
       ),
@@ -82,27 +87,28 @@ class App extends React.Component {
       autoDismiss: autoDismiss
     };
 
-    if (this.msgQueue.includes(msg)) {
-      return    // Message is being showed... No need to show again.
+    if (this.msgQueue.includes("general_unauthorizedCodes")) {
+      // User is being notified of unauthorized access... Probably, their token is expired.
+      return
+    }
+    if (this.msgQueue.includes(msgId)) {
+      // Message is being showed... No need to show it again.
+      return
     }
 
     this.refs.notificationAlert.notificationAlert(options);
 
-    this.msgQueue.push(msg)
+    this.msgQueue.push(msgId)
     await sleep(autoDismiss * 1000)
-    this.msgQueue.splice(this.msgQueue.indexOf(msg), 1)
-  }
-
-  async prepareRequirements() {
-    this.setAuthStatus(await this.managers.auth.isUserAuthenticated())
+    this.msgQueue.splice(this.msgQueue.indexOf(msgId), 1)
   }
 
   // Set user authentication status and Prefs
-  setAuthStatus(value) {
+  async setAuthStatus(value) {
     let newState = {}
 
     if (this.state.isAuthenticated !== value) {
-      let prefs = this.managers.auth.storedPrefs()
+      let prefs = await this.managers.auth.storedPrefs()
 
       if (prefs)
         newState.prefs = prefs
@@ -138,6 +144,10 @@ class App extends React.Component {
     this.setState({ prefs })
   }
 
+  async reloadApp(delay = 1) {
+    await sleep(delay * 1000)
+    window.location.reload()
+  }
   async getHttpTranslation(rResult, context, model, notify = false) {
     let { prefs } = this.state;
     let successCodes = [200, 201, 202, 203, 204]
@@ -223,8 +233,10 @@ class App extends React.Component {
 
         let isUserAuthenticated = await this.managers.auth.isUserAuthenticated()
 
-        if (!isUserAuthenticated)
-          window.location.reload()
+        if (!isUserAuthenticated) {
+          // Just to make sure user is using the latest version available...
+          this.reloadApp()
+        }
 
         this.setAuthStatus(isUserAuthenticated)
       }
@@ -277,7 +289,7 @@ class App extends React.Component {
 
 
     if (notify && msg.id)
-      this.notify("br", msg.color, msg.icon, msg.text, msg.autoDismiss)
+      this.notify("br", msg.color, msg.icon, msg.id, msg.text, msg.autoDismiss)
 
     return msg
   }

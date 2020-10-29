@@ -123,10 +123,9 @@ class UserProfile extends React.Component {
     let { getString, prefs: prefsFromProps } = this.props;
     let { langId, personalData, prefs, subscription } = this.state;
 
-    let user = await this.props.managers.auth.storedUser()
-    user = user.user
+    let user = await this.props.managers.auth.instantUser()
     user.initials = returnInitials(`${user.first_name} ${user.last_name}`)
-    
+
     subscription = await this.props.managers.app.subscriptionRetrieve(user.subscription)
     subscription.expiresOn = user.subscription_expires_on
     subscription.renewsOn = user.subscription_renews_on
@@ -242,7 +241,7 @@ class UserProfile extends React.Component {
       case "first_name":
         if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
           newState[type].states[fieldName] = "has-success";
-          
+
           newState[type].data.initials = returnInitials(`${value} ${newState[type].data.last_name}`)
           //newState[type].data.initials = `${value[0]}${newState[type].data.last_name[0]}`
           //newState[type].data.initials = newState[type].data.initials

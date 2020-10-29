@@ -59,7 +59,7 @@ class Profitability extends Component {
               <div className="numbers">
                 <p id="" className="card-category">
                   {pageFirstLoading ?
-                    <Skeleton /> :
+                    <span style={{ paddingLeft: "7%" }}><Skeleton /></span> :
                     <>
                       {getString(langId, "measures", measure.id + "_kpi_label") + " "}
                       <i id={measure.id + "_title_hint"} className="nc-icon nc-alert-circle-i" />
@@ -73,7 +73,7 @@ class Profitability extends Component {
                   !pageFirstLoading && measure[format].data < 0 ?
                     "text-danger" : "text-success"}>
                   {pageFirstLoading ?
-                    <Skeleton /> :
+                    <span style={{ paddingLeft: "7%" }}><Skeleton /></span> :
                     managers.measure.handleMeasurePresentation(measure, format, currency)
                   }
                 </CardTitle>

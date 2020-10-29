@@ -209,7 +209,7 @@ class Strategies extends React.Component {
 
   renderStrategyItem(slide) {
     return slide.map((strategy) => {
-      let isOwner = this.props.managers.auth.storedUser().user.username === strategy.owner_username
+      let isOwner = this.props.managers.auth.instantUser().username === strategy.owner_username
       return (
         <Col key={"strategy__" + strategy.id} xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
           <StrategyCardMini

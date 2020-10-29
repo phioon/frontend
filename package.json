@@ -33,7 +33,7 @@
   "dependencies": {
     "axios": "0.19.2",
     "bootstrap": "4.5.0",
-    "chart.js": "2.9.3",
+    "chart.js": "2.9.4",
     "classnames": "2.2.6",
     "history": "4.10.1",
     "json-logic-js": "1.2.2",
@@ -50,7 +50,7 @@
     "react-bootstrap-switch": "15.5.3",
     "react-bootstrap-wizard": "0.0.7",
     "react-card-flip": "^1.0.11",
-    "react-chartjs-2": "2.9.0",
+    "react-chartjs-2": "2.10.0",
     "react-datetime": "2.16.3",
     "react-dom": "16.13.1",
     "react-jvectormap": "0.0.12",

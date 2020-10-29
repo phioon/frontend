@@ -160,23 +160,36 @@ class PhiTrader extends React.Component {
       if (obj.ended_on)
         obj.ended_on = TimeManager.getLocaleDateString(obj.ended_on)
       else {
-        let high = assets[obj.asset_symbol].data.asset_high
-        let low = assets[obj.asset_symbol].data.asset_low
+        let high = assets[obj.asset_symbol].data.high
+        let low = assets[obj.asset_symbol].data.low
         let lastTradeDate = TimeManager.getLocaleDateString(assets[obj.asset_symbol].data.asset_lastTradeTime, false)
-        if (high && high >= obj.target) {
-          obj.is_success = true
-          obj.ended_on = lastTradeDate
+
+        if (obj.type === "purchase") {
+          if (high && high >= obj.target) {
+            obj.is_success = true
+            obj.ended_on = lastTradeDate
+          }
+          else if (low && low <= obj.stop_loss) {
+            obj.is_success = false
+            obj.ended_on = lastTradeDate
+          }
         }
-        else if (low && low <= obj.stop_loss) {
-          obj.is_success = false
-          obj.ended_on = lastTradeDate
+        else if (obj.type === "sale") {
+          if (low && low <= obj.target) {
+            obj.is_success = true
+            obj.ended_on = lastTradeDate
+          }
+          else if (high && high >= obj.stop_loss) {
+            obj.is_success = false
+            obj.ended_on = lastTradeDate
+          }
         }
       }
 
       obj.delta = {
-        stopLoss_maxPrice: tc.type == "purchase" ? obj.max_price - obj.stop_loss : obj.stop_loss - obj.max_price,
-        stopLoss_target: tc.type == "purchase" ? obj.target - obj.stop_loss : obj.stop_loss - obj.target,
-        stopLoss_assetPrice: tc.type == "purchase" ? obj.price - obj.stop_loss : obj.stop_loss - obj.price,
+        stopLoss_maxPrice: tc.type === "purchase" ? obj.max_price - obj.stop_loss : obj.stop_loss - obj.max_price,
+        stopLoss_target: tc.type === "purchase" ? obj.target - obj.stop_loss : obj.stop_loss - obj.target,
+        stopLoss_assetPrice: tc.type === "purchase" ? obj.price - obj.stop_loss : obj.stop_loss - obj.price,
       }
 
       obj.occurrencies = ss.occurrencies

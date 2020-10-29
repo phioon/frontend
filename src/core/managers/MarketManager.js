@@ -219,7 +219,7 @@ class MarketManager {
 
     // StockExchange: Prepare list of assets to be used forward.
     if (se_short) {
-      assets = StorageManager.getItem(sKey)
+      assets = await StorageManager.getItem(sKey)
       delete assets.version                 // Removes first position (key 'version')
 
       for (var [k, v] of Object.entries(assets))
@@ -232,7 +232,7 @@ class MarketManager {
     // Assets
     if (assets.length > 0)
       for (var a of assets) {
-        result = StorageManager.isUpToDate(this.sModule, sKey, a)
+        result = await StorageManager.isUpToDate(this.sModule, sKey, a)
 
         if (result) {                       // We have it cached and up to date?
           if (detailed) {                   // Client is requesting detailed info?
@@ -258,7 +258,7 @@ class MarketManager {
 
     if (syncList.length > 0) {
       let wsInfo = this.getApi("wsAssets")
-      wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+      wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
       wsInfo.options.data = {
         detailed: detailed,
         stockExchange: se_short,
@@ -268,10 +268,10 @@ class MarketManager {
 
       if (result.status == 200)
         for (let obj of result.data)
-          sData[obj.asset_symbol] = StorageManager.store(sKey, obj, obj.asset_symbol)
+          sData[obj.asset_symbol] = await StorageManager.store(sKey, obj, obj.asset_symbol)
       else {
         this.getHttpTranslation(result, "assetList", "asset", true)
-        sData = this.offlineAssetList(assets)
+        sData = await this.offlineAssetList(assets)
       }
     }
 
@@ -287,12 +287,12 @@ class MarketManager {
 
     return data
   }
-  offlineAssetList(assets) {
+  async offlineAssetList(assets) {
     const sKey = "assets"
     let sData = {}
 
     for (var a of assets)
-      sData[a] = StorageManager.getItem(sKey, a)
+      sData[a] = await StorageManager.getItem(sKey, a)
     return sData
   }
   async assetRetrieve(pk, detailed = false) {
@@ -317,9 +317,9 @@ class MarketManager {
     return options
   }
   // .. Functions
-  static isAssetUpToDate(strStockExchange, mTime) {
+  static async isAssetUpToDate(strStockExchange, mTime) {
     // Check if it's needed to update Asset ONLY when Market is closed.
-    let stockExchanges = StorageManager.getData("stockExchanges")
+    let stockExchanges = await StorageManager.getData("stockExchanges")
     let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", strStockExchange)
 
     if (stockExchange) {
@@ -401,24 +401,24 @@ class MarketManager {
     await this.startRequest(sKey)
 
     let wsInfo = this.getApi("wsIndicators")
-    let result = StorageManager.isUpToDate(this.sModule, sKey)
+    let result = await StorageManager.isUpToDate(this.sModule, sKey)
 
     if (result) {
       this.finishRequest(sKey)
       return result
     }
 
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
 
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.options.params)
 
     if (result.status == 200) {
       result = result.data
-      result = StorageManager.store(sKey, result)
+      result = await StorageManager.store(sKey, result)
     }
     else {
       this.getHttpTranslation(result, "indicatorList", undefined, true)
-      result = StorageManager.getItem(sKey)
+      result = await StorageManager.getItem(sKey)
     }
 
     this.finishRequest(sKey)
@@ -442,9 +442,9 @@ class MarketManager {
     // Return it with http error details
     return sItem
   }
-  offlineIndicatorRetrieve(pk) {
+  async offlineIndicatorRetrieve(pk) {
     let sKey = "indicators"
-    let sData = StorageManager.getData(sKey)
+    let sData = await StorageManager.getData(sKey)
 
     return retrieveObjFromObjList(sData, "id", pk)
   }
@@ -474,7 +474,7 @@ class MarketManager {
     const interval = "d"
     await this.startRequest(sKey)
 
-    let sItem = StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
+    let sItem = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
     let notCachedInstances = deepCloneObj(instances)
 
     if (sItem) {
@@ -493,7 +493,7 @@ class MarketManager {
     let wsInfo = this.getApi("wsQuote")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
     wsInfo.request += "latest/"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
@@ -515,7 +515,7 @@ class MarketManager {
       else
         result.iSummary = this.iSummaryGenerator({}, instances, lastPeriods)
 
-      result = StorageManager.store(sKey, result, stockExchange)
+      result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
       this.getHttpTranslation(result, "dQuoteList", "dQuote", true)
@@ -550,7 +550,7 @@ class MarketManager {
     const interval = "d"
     await this.startRequest(sKey)
 
-    let sItem = StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
+    let sItem = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
     let notCachedInstances = deepCloneObj(instances)
 
     if (sItem) {
@@ -567,7 +567,7 @@ class MarketManager {
     let wsInfo = this.getApi("wsSma")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
     wsInfo.request += "latest/"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
@@ -589,7 +589,7 @@ class MarketManager {
       else
         result.iSummary = this.iSummaryGenerator({}, instances, lastPeriods)
 
-      result = StorageManager.store(sKey, result, stockExchange)
+      result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
       this.getHttpTranslation(result, "dSmaList", "dSma", true)
@@ -624,7 +624,7 @@ class MarketManager {
     const interval = "d"
     await this.startRequest(sKey)
 
-    let sItem = StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
+    let sItem = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
     let notCachedInstances = deepCloneObj(instances)
 
     if (sItem) {
@@ -641,7 +641,7 @@ class MarketManager {
     let wsInfo = this.getApi("wsEma")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
     wsInfo.request += "latest/"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
@@ -663,7 +663,7 @@ class MarketManager {
       else
         result.iSummary = this.iSummaryGenerator({}, instances, lastPeriods)
 
-      result = StorageManager.store(sKey, result, stockExchange)
+      result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
       this.getHttpTranslation(result, "dEmaList", "dEma", true)
@@ -698,7 +698,7 @@ class MarketManager {
     const interval = "d"
     await this.startRequest(sKey)
 
-    let sItem = StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
+    let sItem = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
     let notCachedInstances = deepCloneObj(instances)
 
     if (sItem) {
@@ -717,7 +717,7 @@ class MarketManager {
     let wsInfo = this.getApi("wsPhibo")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
     wsInfo.request += "latest/"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
@@ -739,7 +739,7 @@ class MarketManager {
       else
         result.iSummary = this.iSummaryGenerator({}, instances, lastPeriods)
 
-      result = StorageManager.store(sKey, result, stockExchange)
+      result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
       this.getHttpTranslation(result, "dPhiboList", "dPhibo", true)
@@ -774,7 +774,7 @@ class MarketManager {
     const interval = "d"
     await this.startRequest(sKey)
 
-    let sItem = StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
+    let sItem = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
     let notCachedInstances = deepCloneObj(instances)
 
     if (sItem) {
@@ -793,7 +793,7 @@ class MarketManager {
     let wsInfo = this.getApi("wsRoc")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
     wsInfo.request += "latest/"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange,
       lastPeriods: lastPeriods,
@@ -815,7 +815,7 @@ class MarketManager {
       else
         result.iSummary = this.iSummaryGenerator({}, instances, lastPeriods)
 
-      result = StorageManager.store(sKey, result, stockExchange)
+      result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
       this.getHttpTranslation(result, "dRocList", "dRoc", true)
@@ -825,8 +825,8 @@ class MarketManager {
     return result
   }
   // .. Functions
-  static isDIndicatorCached(sData) {
-    let stockExchanges = StorageManager.getData("stockExchanges")
+  static async isDIndicatorCached(sData) {
+    let stockExchanges = await StorageManager.getData("stockExchanges")
     let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", sData.stockExchange)
 
     let syncToleranceDaily = (1440 * 1) + (60 * 20)
@@ -897,7 +897,7 @@ class MarketManager {
     await this.startRequest(sKey)
 
     let wsInfo = this.getApi("wsSetups")
-    let result = StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
+    let result = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
 
     if (result) {
       this.finishRequest(sKey)
@@ -905,7 +905,7 @@ class MarketManager {
     }
 
     wsInfo.request = wsInfo.request.replace("<timeInterval>", "d")
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange
     }
@@ -917,11 +917,11 @@ class MarketManager {
     if (result.status == 200) {
       result = result.data
       result = orderBy(result, ["-started_on"])
-      result = StorageManager.store(sKey, result, stockExchange)
+      result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
       this.getHttpTranslation(result, "dSetupList", "dSetup", true)
-      result = StorageManager.getItem(sKey, stockExchange)
+      result = await StorageManager.getItem(sKey, stockExchange)
     }
 
     this.finishRequest(sKey)
@@ -1112,7 +1112,7 @@ class MarketManager {
     await this.startRequest(sKey)
 
     let wsInfo = this.getApi("wsSetupSummary")
-    let result = StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
+    let result = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
 
     if (result) {
       this.finishRequest(sKey)
@@ -1120,7 +1120,7 @@ class MarketManager {
     }
 
     wsInfo.request = wsInfo.request.replace("<timeInterval>", "d")
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       stockExchange: stockExchange
     }
@@ -1129,11 +1129,11 @@ class MarketManager {
 
     if (result.status == 200) {
       result = result.data
-      result = StorageManager.store(sKey, result, stockExchange)
+      result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
       this.getHttpTranslation(result, "dSetupSummaryList", "dSetupSummary", true)
-      result = StorageManager.getItem(sKey, stockExchange)
+      result = await StorageManager.getItem(sKey, stockExchange)
     }
 
     this.finishRequest(sKey)
@@ -1155,13 +1155,13 @@ class MarketManager {
     const sKey = "dRaw"
     await this.startRequest(sKey)
 
-    let sData = StorageManager.getData(sKey, asset)
+    let sData = await StorageManager.getData(sKey, asset)
 
     let props = {
       dateFrom: dateFrom,
       dateTo: dateTo
     }
-    let result = StorageManager.isUpToDate(this.sModule, sKey, asset, props)
+    let result = await StorageManager.isUpToDate(this.sModule, sKey, asset, props)
 
     if (result) {                     // Do we have it cached?
       if (detailed) {                 // Client is requesting detailed info?
@@ -1178,7 +1178,7 @@ class MarketManager {
 
     let wsInfo = this.getApi("wsRaw")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", "d")
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     wsInfo.options.params = {
       detailed: detailed,
       asset: asset
@@ -1197,23 +1197,23 @@ class MarketManager {
         result = joinObjLists(result, sData, "d_datetime")
       result = orderBy(result, ["-d_datetime"])              // DESC order is used in MeasureManager
 
-      result = StorageManager.store(sKey, result, asset)
+      result = await StorageManager.store(sKey, result, asset)
     }
     else {
       this.getHttpTranslation(result, "dRawList", "dRaw", true)
-      result = StorageManager.getItem(sKey, asset)
+      result = await StorageManager.getItem(sKey, asset)
     }
 
     this.finishRequest(sKey)
     return result
   }
   // .. [d] Functions
-  static isDRawCached(sData, dateFrom, dateTo) {
+  static async isDRawCached(sData, dateFrom, dateTo) {
     sData = orderBy(sData, ["-d_datetime"])
 
     if (sData.length > 0 && dateFrom) {
-      let asset = StorageManager.getData("assets", sData[0].asset_symbol)
-      let stockExchanges = StorageManager.getData("stockExchanges")
+      let asset = await StorageManager.getData("assets", sData[0].asset_symbol)
+      let stockExchanges = await StorageManager.getData("stockExchanges")
       let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", asset.stockExchange)
 
       let syncToleranceDaily = (1440 * 2) + (60 * 8)
@@ -1261,23 +1261,23 @@ class MarketManager {
     await this.startRequest(sKey)
 
     let wsInfo = this.getApi("wsStockExchanges")
-    let result = StorageManager.isUpToDate(this.sModule, sKey)
+    let result = await StorageManager.isUpToDate(this.sModule, sKey)
 
     if (result) {
       this.finishRequest(sKey)
       return result
     }
 
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 200) {
       result = result.data
-      result = StorageManager.store(sKey, result)
+      result = await StorageManager.store(sKey, result)
     }
     else {
       this.getHttpTranslation(result, "stockExchangeList", "stockExchange", true)
-      result = StorageManager.getItem(sKey)
+      result = await StorageManager.getItem(sKey)
     }
 
     this.finishRequest(sKey)
@@ -1317,8 +1317,8 @@ class MarketManager {
     return options
   }
   // .. Functions
-  static isMarketOpen(strStockExchange) {
-    let stockExchanges = StorageManager.getData("stockExchanges")
+  static async isMarketOpen(strStockExchange) {
+    let stockExchanges = await StorageManager.getData("stockExchanges")
     let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", strStockExchange)
 
     if (stockExchange) {
@@ -1338,10 +1338,6 @@ class MarketManager {
 
     return false
   }
-  static tzStockExchange(strStockExchange) {
-    let stockExchange = StorageManager.getData("stockExchanges", strStockExchange)
-    return stockExchange.se_timezone
-  }
 
   // Technical Condition
   async technicalConditionList() {
@@ -1349,23 +1345,23 @@ class MarketManager {
     await this.startRequest(sKey)
 
     let wsInfo = this.getApi("wsTechnicalConditions")
-    let result = StorageManager.isUpToDate(this.sModule, sKey)
+    let result = await StorageManager.isUpToDate(this.sModule, sKey)
 
     if (result) {
       this.finishRequest(sKey)
       return result
     }
 
-    wsInfo.options.headers.Authorization = "token " + AuthManager.storedToken()
+    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 200) {
       result = result.data
-      result = StorageManager.store(sKey, result)
+      result = await StorageManager.store(sKey, result)
     }
     else {
       this.getHttpTranslation(result, "technicalConditionList", "technicalCondition", true)
-      result = StorageManager.getItem(sKey)
+      result = await StorageManager.getItem(sKey)
     }
 
     this.finishRequest(sKey)

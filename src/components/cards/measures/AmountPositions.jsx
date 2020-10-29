@@ -59,13 +59,13 @@ class AmountPositions extends Component {
               <div className="numbers">
                 <p className="card-category">
                   {pageFirstLoading ?
-                    <Skeleton /> :
+                    <span style={{ paddingLeft: "7%" }}><Skeleton /></span> :
                     getString(langId, "measures", measure.id + "_kpi_label")
                   }
                 </p>
                 <CardTitle tag="p">
                   {pageFirstLoading ?
-                    <Skeleton /> :
+                    <span style={{ paddingLeft: "7%" }}><Skeleton /></span> :
                     managers.measure.handleMeasurePresentation(measure, format, currency)
                   }
                 </CardTitle>

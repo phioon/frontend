@@ -59,7 +59,7 @@ class CloseVolume extends Component {
               <div className="numbers">
                 <p className="card-category">
                   {pageFirstLoading ?
-                    <Skeleton /> :
+                    <span style={{ paddingLeft: "7%" }}><Skeleton /></span> :
                     <>
                       {getString(langId, "measures", measure.id + "_kpi_label") + " "}
                       <i id={measure.id + "_title_hint"} className="nc-icon nc-alert-circle-i" />
@@ -71,7 +71,7 @@ class CloseVolume extends Component {
                 </p>
                 <CardTitle tag="p">
                   {pageFirstLoading ?
-                    <Skeleton /> :
+                    <span style={{ paddingLeft: "7%" }}><Skeleton /></span> :
                     managers.measure.handleMeasurePresentation(measure, format, currency)
                   }
                 </CardTitle>
