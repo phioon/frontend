@@ -299,6 +299,73 @@ class MarketManager {
     let sItem = await this.assetList(detailed, [pk])
     return sItem[pk] ? sItem[pk].data : null
   }
+  // .. Dimensions
+  async assetAsSelectDimension(assets = []) {
+    let sData = await this.assetData(assets)
+    let dimension = { id: "mAssets", data: [], selected: [], disabled: {} }
+    let data = []
+    let assetAsKey = {}
+    let pAssets = "pAssets"
+    let mAssets = "mAssets"
+    let dSectors = "sectors"
+
+    if (sData) {
+      for (var obj of Object.values(sData)) {
+        if (!assetAsKey[obj.asset_label]) {
+          assetAsKey[obj.asset_label] = {}
+
+          assetAsKey[obj.asset_label].value = obj.asset_symbol
+          assetAsKey[obj.asset_label].label = obj.asset_label
+
+          assetAsKey[obj.asset_label].links = {}
+          assetAsKey[obj.asset_label].links[pAssets] = []
+          assetAsKey[obj.asset_label].links[mAssets] = []
+          assetAsKey[obj.asset_label].links[dSectors] = []
+        }
+
+        assetAsKey[obj.asset_label].links[pAssets].push(obj.asset_symbol)
+        assetAsKey[obj.asset_label].links[mAssets].push(obj.asset_symbol)
+        assetAsKey[obj.asset_label].links[dSectors].push(obj.sector_id)
+      }
+
+      for (let [k, v] of Object.entries(assetAsKey))
+        data.push(v)
+
+      dimension.data = data
+    }
+
+    return dimension
+  }
+  async sectorAsSelectDimension(assets = []) {
+    let sData = await this.assetData(assets)
+    let dimension = { id: "sectors", data: [], selected: [], disabled: {} }
+    let data = []
+    let sectorAsKey = {}
+    let dAssets = "mAssets"
+
+    if (sData) {
+      for (var obj of Object.values(sData)) {
+        if (!sectorAsKey[obj.sector_id]) {
+          sectorAsKey[obj.sector_id] = {}
+
+          sectorAsKey[obj.sector_id].value = obj.sector_id
+          sectorAsKey[obj.sector_id].label = obj.sector_id
+
+          sectorAsKey[obj.sector_id].links = {}
+          sectorAsKey[obj.sector_id].links[dAssets] = []
+        }
+
+        sectorAsKey[obj.sector_id].links[dAssets].push(obj.asset_symbol)
+      }
+
+      for (let [k, v] of Object.entries(sectorAsKey))
+        data.push(v)
+
+      dimension.data = data
+    }
+
+    return dimension
+  }
   // .. Selects
   async assetsForSelect(se_short) {
     let options = []

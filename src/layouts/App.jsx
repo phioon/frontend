@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import AppNavBar from "components/Navbars/AppNavbar.jsx";
 import Footer from "components/Footer/Footer.jsx";
 import Sidebar from "components/Sidebar/Sidebar.jsx";
-import { getDistinctValuesFromList, getObjsFieldNull } from "../core/utils";
+import { getDistinctValuesFromList } from "../core/utils";
 
 import routes from "routes.js";
 

@@ -112,8 +112,13 @@ const strings = {
       positionTypes: "Type",
       wallets: "Wallet"
     },
-    fixedfilter: {
-      label_title: "Filters"
+    filtercard: {
+      label_title: "Filters",
+
+      label_wallet: "Wallet",
+      label_asset: "Asset",
+      label_type: "Type",
+      label_sector: "Sector",
     },
     fixedplugin: {
       newWallet_hint: "Create a Wallet.",
@@ -532,14 +537,9 @@ const strings = {
       "11": "Nov",
       "12": "Dec",
     },
-    openintervalfilter: {
-      label_title: "Open Interval",
-      title_hint: "It's related to the date positions were opened.",
-
-      input_dateFrom: "From...",
-      input_dateTo: "To...",
-
-      alert_timeInterval_noPositions: "Ops... I didn't find any Position opened within this time interval. Would you like to try another one?",
+    openpositions: {
+      item_buy: "Purchase",
+      item_sell: "Sale",
     },
     phitrader: {
       title: "Phi Trader",
@@ -558,6 +558,19 @@ const strings = {
 
       item_open: "On-going",
       item_closed: "Closed",
+    },
+    positionintervalfilter: {
+      label_title: "Open Interval",
+      title_hint: "It's related to the date positions were opened.",
+
+      input_dateFrom: "Open after...",
+      input_dateTo: "Open before...",
+
+      btn_useOpenInterval: "Use Open Interval",
+      btn_useCloseInterval: "Use Close Interval",
+
+      alert_timeInterval_noPositions: "Oops... I didn't find any Position opened within this time interval. Would you like to try another one?",
+      alert_timeInterval_invalidFormat: "Oops... Seems like the date format is not valid."
     },
     positions: {
       card_title: "Positions",
@@ -1045,8 +1058,13 @@ const strings = {
       positionTypes: "Tipo",
       wallets: "Carteira"
     },
-    fixedfilter: {
-      label_title: "Filtros"
+    filtercard: {
+      label_title: "Filtros",
+
+      label_wallet: "Carteira",
+      label_asset: "Ativo",
+      label_type: "Tipo",
+      label_sector: "Setor",
     },
     fixedplugin: {
       newWallet_hint: "Criar uma Carteira.",
@@ -1491,14 +1509,9 @@ const strings = {
       "11": "Nov",
       "12": "Dez",
     },
-    openintervalfilter: {
-      label_title: "Intervalo Abertura",
-      title_hint: "Relacionado às datas em que as Posições foram abertas.",
-
-      input_dateFrom: "A partir de...",
-      input_dateTo: "Até...",
-
-      alert_timeInterval_noPositions: "Oops... Não encontrei Posições que foram abertas neste intervalo de tempo. Gostaria de tentar outro intervalo?",
+    openpositions: {
+      item_buy: "Compra",
+      item_sell: "Venda",
     },
     phitrader: {
       title: "Phi Trader",
@@ -1517,6 +1530,19 @@ const strings = {
 
       item_open: "Em andamento",
       item_closed: "Fechado",
+    },
+    positionintervalfilter: {
+      label_title: "Intervalo Abertura",
+      title_hint: "Relacionado às datas em que as Posições foram abertas.",
+
+      input_dateFrom: "Abertura após...",
+      input_dateTo: "Abertura antes de...",
+
+      btn_useOpenInterval: "Usar Intervalo de Abertura",
+      btn_useCloseInterval: "Usar Intervalo de Fechamento",
+
+      alert_timeInterval_noPositions: "Oops... Não encontrei Posições que foram abertas neste intervalo de tempo. Gostaria de tentar outro intervalo?",
+      alert_timeInterval_invalidFormat: "Oops... Parece que o formato da data não é válido."
     },
     positions: {
       card_title: "Posições",

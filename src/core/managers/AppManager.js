@@ -334,10 +334,10 @@ class AppManager {
     let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
     let dimension = { id: "positions", data: [], items: [], selected: [], disabled: {} }
     let data = []
-    let dAssets = "assets"
+    let dAssets = "pAssets"
     let dDates = "dates"
-    let dTypes = "types"
     let dStatuses = "statuses"
+    let dTypes = "types"
     let dWallets = "wallets"
 
     if (sItem.data) {
@@ -364,9 +364,10 @@ class AppManager {
     let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
     let dimension = { id: "positions", data: [], selected: [], disabled: {} }
     let data = []
-    let dAssets = "assets"
+    let pAssets = "pAssets"
+    let mAssets = "mAssets"
     let dDates = "dates"
-    let dMonths = "months"
+    let dStatuses = "statuses"
     let dTypes = "types"
     let dWallets = "wallets"
 
@@ -375,9 +376,13 @@ class AppManager {
 
       for (var obj of sItem.data) {
         obj.links = {}
-        obj.links[dAssets] = [obj.asset_symbol]
+
+        obj.value = obj.id
+
+        obj.links[pAssets] = [obj.asset_symbol]
+        obj.links[mAssets] = [obj.asset_symbol]
         obj.links[dDates] = [obj.started_on]
-        obj.links[dMonths] = [TimeManager.getYearMonthString(obj.started_on)]
+        obj.links[dStatuses] = [obj.ended_on ? "closed" : "open"]
         obj.links[dTypes] = [obj.type]
         obj.links[dWallets] = [obj.wallet]
 
@@ -391,7 +396,7 @@ class AppManager {
   }
   async assetAsDimension(onlyOpen = false) {
     let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
-    let dimension = { id: "assets", data: [], items: [], selected: [], disabled: {} }
+    let dimension = { id: "pAssets", data: [], items: [], selected: [], disabled: {} }
     let data = []
     let assetAsKey = {}
     let dPositions = "positions"
@@ -425,10 +430,11 @@ class AppManager {
   }
   async assetAsSelectDimension(onlyOpen = false) {
     let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
-    let dimension = { id: "assets", data: [], selected: [], disabled: {} }
+    let dimension = { id: "pAssets", data: [], selected: [], disabled: {} }
     let data = []
     let assetAsKey = {}
     let dPositions = "positions"
+    let dAssets = "mAssets"
 
     if (sItem.data) {
       sItem.data = orderBy(sItem.data, ["asset_label"])
@@ -440,14 +446,13 @@ class AppManager {
           assetAsKey[obj.asset_label].value = obj.asset_symbol
           assetAsKey[obj.asset_label].label = obj.asset_label
 
-          assetAsKey[obj.asset_label].id = obj.asset_symbol
-          assetAsKey[obj.asset_label].name = obj.asset_label
-
           assetAsKey[obj.asset_label].links = {}
           assetAsKey[obj.asset_label].links[dPositions] = []
+          assetAsKey[obj.asset_label].links[dAssets] = []
         }
 
         assetAsKey[obj.asset_label].links[dPositions].push(obj.id)
+        assetAsKey[obj.asset_label].links[dAssets].push(obj.asset_symbol)
       }
 
       for (let [k, v] of Object.entries(assetAsKey))
@@ -475,8 +480,7 @@ class AppManager {
 
           dimension.items.push(strDate)
 
-          dateAsKey[strDate].id = strDate
-          dateAsKey[strDate].name = strDate
+          dateAsKey[strDate].value = strDate
 
           dateAsKey[strDate].links = {}
           dateAsKey[strDate].links[dPositions] = []
@@ -508,8 +512,8 @@ class AppManager {
         if (!dateAsKey[strDate]) {
           dateAsKey[strDate] = {}
 
-          dateAsKey[strDate].id = strDate
-          dateAsKey[strDate].name = strDate
+          dateAsKey[strDate].value = strDate
+          dateAsKey[strDate].label = strDate
 
           dateAsKey[strDate].links = {}
           dateAsKey[strDate].links[dPositions] = []
@@ -578,9 +582,6 @@ class AppManager {
 
           dateAsKey[strDate].value = strDate
           dateAsKey[strDate].label = strDate
-
-          dateAsKey[strDate].id = strDate
-          dateAsKey[strDate].name = strDate
 
           dateAsKey[strDate].links = {}
           dateAsKey[strDate].links[dPositions] = []
@@ -669,7 +670,7 @@ class AppManager {
     let positionType = retrieveObjFromObjList(sItem.data, "id", pk)
     return positionType
   }
-  async positionTypeAsDimension(onlyOpen = false) {
+  async positionTypeAsSelectDimension(onlyOpen = false) {
     let sItem = await this.positionTypeList()
     let sPositions = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
     let dimension = { id: "types", data: [], items: [], selected: [], disabled: {} }
@@ -685,7 +686,6 @@ class AppManager {
           positionTypeAsKey[obj.type] = {}
 
           positionTypeAsKey[obj.type].id = obj.type
-          positionTypeAsKey[obj.type].desc = null
 
           positionTypeAsKey[obj.type].links = {}
           positionTypeAsKey[obj.type].links[dPositions] = []
@@ -696,8 +696,8 @@ class AppManager {
       for (let [k, v] of Object.entries(positionTypeAsKey)) {
         for (var obj of sItem.data)
           if (v.id === obj.id) {
-            v.name = obj.name
-            v.desc = obj.desc
+            v.label = obj.name
+            v.value = obj.id
           }
 
         data.push(v)
@@ -722,10 +722,6 @@ class AppManager {
         let option = {
           value: obj.id,
           label: obj.name,
-
-          id: obj.id,
-          name: obj.name,
-          desc: obj.desc
         }
 
         options.push(option)

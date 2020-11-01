@@ -19,7 +19,8 @@
 
 .carousel{
     .carousel-inner{
-        min-height: 301px;
+        overflow: unset;
+        // min-height: 301px;
         // box-shadow: $box-shadow-raised;
     }
 

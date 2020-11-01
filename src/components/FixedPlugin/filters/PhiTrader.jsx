@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 import { Col, Row, UncontrolledTooltip } from "reactstrap";
 
 // Filters
-import AssetFilter from "../../cards/filters/AssetFilter";
-import SetupIntervalFilter from "../../cards/filters/SetupIntervalFilter";
-import StatusFilter from "../../cards/filters/StatusFilter";
-import StockExchangeFilter from "../../cards/filters/StockExchangeFilter";
+import AssetFilter from "../../cards/filters/lists/AssetFilter";
+import SetupIntervalFilter from "../../cards/filters/lists/SetupIntervalFilter";
+import StatusFilter from "../../cards/filters/lists/StatusFilter";
+import StockExchangeFilter from "../../cards/filters/lists/StockExchangeFilter";
 
 class FixedFilter extends Component {
   constructor(props) {

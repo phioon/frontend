@@ -122,10 +122,13 @@ class StorageManager {
     return await cache.put(this.getRequestId(key), new Response(JSON.stringify(value), options))
   }
   static async getItem(sKey, subKey) {
-    let result = await cache.match(this.getRequestId(sKey)).then(r => r.json())
+    let result = await cache.match(this.getRequestId(sKey))
 
-    if (result && subKey)
-      result = result[subKey]
+    if (result) {
+      result = await result.json()
+      if (subKey)
+        result = result[subKey]
+    }
 
     return result
   }
@@ -294,9 +297,6 @@ class StorageManager {
       }
     }
   }
-  static isStorageDisabled() {
-    return isStorageDisabled;
-  }
   static sConfigModule(sModule) {
     if (config[sModule])
       return config[sModule]
@@ -320,21 +320,22 @@ class StorageManager {
     console.log("It started using memory.")
   }
   async initiator() {
-    cache = await caches.open(cacheId)
+    if ('caches' in window)
+      cache = await window.caches.open(cacheId)
+    else if ('caches' in self)
+      cache = await self.caches.open(cacheId)
+    else
+      console.log(`Cache Storage not supported.`)
 
     for (let [k0, v0] of Object.entries(config)) {
       for (let [k1, v1] of Object.entries(v0)) {
-        let rebuildIt = null
-        let storage = null
-        let sVersion = 0.00
+        let storage = await this.constructor.getItem(k1)
+        let rebuildIt = undefined
 
-        try {
-          storage = await this.constructor.getItem(k1)
-          sVersion = storage[strVersion]
-          rebuildIt = sVersion === v1[strVersion] ? false : true
-        } catch {
+        if (storage && storage[strVersion] === v1[strVersion])
+          rebuildIt = false
+        else
           rebuildIt = true
-        }
 
         if (rebuildIt)
           await this.constructor.setItem(k1, { version: v1[strVersion] })

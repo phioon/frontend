@@ -525,6 +525,7 @@ class Strategies extends React.Component {
                       langId={langId}
                       compId={compId} /> :
                     <Carousel
+                      className="carousel-strategies"
                       activeIndex={carousel.activeIndex}
                       next={() => this.moveSlide("next")}
                       previous={() => this.moveSlide("previous")}
@@ -532,7 +533,8 @@ class Strategies extends React.Component {
                       <CarouselIndicators
                         items={Object.keys(carousel.slides)}
                         activeIndex={carousel.activeIndex}
-                        onClickHandler={index => this.moveSlide("goto", index)} />
+                        onClickHandler={index => this.moveSlide("goto", index)}
+                      />
                       {this.renderStrategySlides(carousel.slides)}
                       <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide("previous")} />
                       <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide("next")} />
