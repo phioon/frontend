@@ -114,11 +114,23 @@ const strings = {
     },
     filtercard: {
       label_title: "Filters",
+      label_clear: "Clear Filters",
 
       label_wallet: "Wallet",
       label_asset: "Asset",
       label_type: "Type",
+      label_status: "Status",
       label_sector: "Sector",
+      label_stockExchange: "Stock Exchange",
+
+      label_open_dateFrom: "Open after",
+      label_open_dateTo: "Open before",
+      label_close_dateFrom: "Closed after",
+      label_close_dateTo: "Close before",
+
+      alert_timeInterval_noPositionsOpened: "Oops... I didn't find any Position opened within this time interval. Try another one ;)",
+      alert_timeInterval_noPositionsClosed: "Oops... I didn't find any Position closed within this time interval. Try another one ;)",
+      alert_timeInterval_invalidFormat: "Oops... Seems like date/time format is not valid."
     },
     fixedplugin: {
       newWallet_hint: "Create a Wallet.",
@@ -559,19 +571,6 @@ const strings = {
       item_open: "On-going",
       item_closed: "Closed",
     },
-    positionintervalfilter: {
-      label_title: "Open Interval",
-      title_hint: "It's related to the date positions were opened.",
-
-      input_dateFrom: "Open after...",
-      input_dateTo: "Open before...",
-
-      btn_useOpenInterval: "Use Open Interval",
-      btn_useCloseInterval: "Use Close Interval",
-
-      alert_timeInterval_noPositions: "Oops... I didn't find any Position opened within this time interval. Would you like to try another one?",
-      alert_timeInterval_invalidFormat: "Oops... Seems like the date format is not valid."
-    },
     positions: {
       card_title: "Positions",
       btn_newPosition: "New Position",
@@ -925,13 +924,8 @@ const strings = {
       label_title: "Wallets",
     },
     walletoverview: {
-      label_format: "Format",
-      label_groupBy: "Group By",
-      label_assets: "Assets",
-      label_countries: "Countries",
-      label_sectors: "Sectors",
-      label_wallets: "Wallets",
-      label_overall: "Overall",
+      item_buy: "Purchase",
+      item_sell: "Sale",
 
       item_open: "Open",
       item_closed: "Closed",
@@ -1060,11 +1054,23 @@ const strings = {
     },
     filtercard: {
       label_title: "Filtros",
+      label_clear: "Limpar Filtros",
 
       label_wallet: "Carteira",
       label_asset: "Ativo",
       label_type: "Tipo",
+      label_status: "Status",
       label_sector: "Setor",
+      label_stockExchange: "Bolsa de Valores",
+
+      label_open_dateFrom: "Abertura após",
+      label_open_dateTo: "Abertura antes de",
+      label_close_dateFrom: "Fechamento após",
+      label_close_dateTo: "Fechamento antes de",
+
+      alert_timeInterval_noPositionsOpened: "Oops... Não encontrei Posições que foram abertas neste intervalo de tempo. Tente outro intervalo ;)",
+      alert_timeInterval_noPositionsClosed: "Oops... Não encontrei Posições que foram fechadas neste intervalo de tempo. Tente outro intervalo ;)",
+      alert_timeInterval_invalidFormat: "Oops... Parece que o formato da data não é válido."
     },
     fixedplugin: {
       newWallet_hint: "Criar uma Carteira.",
@@ -1531,19 +1537,6 @@ const strings = {
       item_open: "Em andamento",
       item_closed: "Fechado",
     },
-    positionintervalfilter: {
-      label_title: "Intervalo Abertura",
-      title_hint: "Relacionado às datas em que as Posições foram abertas.",
-
-      input_dateFrom: "Abertura após...",
-      input_dateTo: "Abertura antes de...",
-
-      btn_useOpenInterval: "Usar Intervalo de Abertura",
-      btn_useCloseInterval: "Usar Intervalo de Fechamento",
-
-      alert_timeInterval_noPositions: "Oops... Não encontrei Posições que foram abertas neste intervalo de tempo. Gostaria de tentar outro intervalo?",
-      alert_timeInterval_invalidFormat: "Oops... Parece que o formato da data não é válido."
-    },
     positions: {
       card_title: "Posições",
       btn_newPosition: "Nova PosiÇão",
@@ -1872,16 +1865,11 @@ const strings = {
       label_title: "Carteiras",
     },
     walletoverview: {
-      label_format: "Formato",
-      label_groupBy: "Agrupar por",
-      label_assets: "Ativos",
-      label_countries: "Países",
-      label_sectors: "Setores",
-      label_wallets: "Carteiras",
-      label_overall: "Geral",
-
       item_open: "Aberto",
       item_closed: "Fechado",
+
+      item_buy: "Compra",
+      item_sell: "Venda",
 
       position_new_hint: "Abrir uma nova Posição.",
     },

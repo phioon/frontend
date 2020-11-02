@@ -6,7 +6,7 @@ import { Col, Row, Tooltip } from "reactstrap";
 // Filters
 import WalletFilter from "../../cards/filters/lists/WalletFilter";
 import AssetFilter from "../../cards/filters/lists/AssetFilter";
-import PositionIntervalFilter from "../../cards/filters/selects/PositionIntervalFilter";
+import DimentionTimeInterval from "../../cards/filters/selects/DimensionTimeInterval";
 
 import { sleep } from "../../../core/utils";
 
@@ -108,7 +108,7 @@ class FixedFilter extends Component {
             <Row>
               {/* Time Interval */}
               <Col className="col-md-3 ml-auto mr-auto">
-                <PositionIntervalFilter
+                <DimentionTimeInterval
                   getString={getString}
                   prefs={this.props.prefs}
                   onSelectionChange={this.props.onSelectionChange}

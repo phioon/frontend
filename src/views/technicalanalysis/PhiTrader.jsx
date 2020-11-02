@@ -12,9 +12,13 @@ import {
 } from "reactstrap";
 import Skeleton from "react-loading-skeleton";
 
+// Filters
+import FilterCard from "../../components/cards/filters/FilterCard";
+import DimensionSelect from "../../components/cards/filters/selects/DimensionSelect";
+import DimentionTimeInterval from "../../components/cards/filters/selects/DimensionTimeInterval";
+
 import TimeManager from "../../core/managers/TimeManager";
 import SetupCard from "./SetupCard";
-import FixedFilter from "../../components/FixedPlugin/filters/PhiTrader";
 import { getDistinctValuesFromList, retrieveObjFromObjList } from "../../core/utils";
 
 class PhiTrader extends React.Component {
@@ -33,16 +37,15 @@ class PhiTrader extends React.Component {
 
       cWallets: 0,
       dimensions: {
-        assets: { data: [], items: [], selected: [], disabled: {} },
-        setups: { data: [], items: [], selected: [], disabled: {} },
-        dates: { data: [], items: [], selected: [], disabled: {} },
-        statuses: { data: [], items: [], selected: [], disabled: {} },
-        stockExchanges: { data: [], items: [], selected: [], disabled: {} },
+        mAssets: { data: [], items: [], selected: [] },
+        setups: { data: [], items: [], selected: [] },
+        openDates: { data: [], items: [], selected: [] },
+        statuses: { data: [], items: [], selected: [] },
+        stockExchanges: { data: [], items: [], selected: [] },
       }
     }
 
     this.onSelectionChange = this.onSelectionChange.bind(this)
-    this.loadDimensions = this.loadDimensionsAndCards.bind(this)
     this.toggleModal = this.toggleModal.bind(this);
   }
   static getDerivedStateFromProps(props, state) {
@@ -58,67 +61,62 @@ class PhiTrader extends React.Component {
   async prepareRequirements() {
     // Check User's subscription
 
-    this.loadDimensionsAndCards()
-  }
-
-  async loadDimensionsAndCards() {
     let dimensions = await this.prepareDimensions()
     dimensions.setups = await this.prepareCards(dimensions.setups)
 
-    // console.log(dimensions)
-
     this.setState({ dimensions, pageFirstLoading: false })
   }
+
   async prepareDimensions() {
-    let { dimensions } = this.state
+    let dimensions = { ...this.state.dimensions }
+    let rawData = []
 
     let wallets = await this.props.managers.app.walletList()
     let stockExchanges = getDistinctValuesFromList(wallets.data, "se_short")
 
-    for (var se of stockExchanges) {
-      // Assets
-      let assets = await this.props.managers.market.assetAsDimension(se)
-      dimensions.assets.id = assets.id
-      if (!assets.error) {
-        dimensions.assets.data = dimensions.assets.data.concat(assets.data)
-        dimensions.assets.items = dimensions.assets.items.concat(assets.items)
+    for (var se of stockExchanges)
+      for (var dimension of Object.keys(dimensions)) {
+        switch (dimension) {
+          case "mAssets":
+            rawData.push(this.props.managers.market.assetAsSelectDimension(se))
+            break;
+          case "setups":
+            rawData.push(this.props.managers.market.setupAsSelectDimension(se))
+            break;
+          case "openDates":
+            rawData.push(this.props.managers.market.openDateAsSelectDimension(se))
+            break;
+          case "statuses":
+            rawData.push(this.props.managers.market.statusAsSelectDimension(se))
+            break;
+          case "stockExchanges":
+            rawData.push(this.props.managers.market.stockExchangeAsSelectDimension(se))
+            break;
+        }
       }
+    rawData = await Promise.all(rawData)
 
-      // Setups
-      let setups = await this.props.managers.market.dSetupAsDimension(se)
-      dimensions.setups.id = setups.id
-      if (!setups.error) {
-        dimensions.setups.data = dimensions.setups.data.concat(setups.data)
-        dimensions.setups.items = dimensions.setups.items.concat(setups.items)
-      }
+    for (var dimension of Object.values(rawData)) {
+      switch (dimension.id) {
+        case "statuses":
+          if (!dimension.error) {
+            dimension.data = this.translateObjField(dimension.id, dimension.data, "label")
+          }
 
-      // Setup Dates
-      let dates = await this.props.managers.market.dateAsDimension(se)
-      dimensions.dates.id = dates.id
-      if (!dates.error) {
-        dimensions.dates.data = dimensions.dates.data.concat(dates.data)
-        dimensions.dates.items = dimensions.dates.items.concat(dates.items)
-      }
-
-      // Setup Statuses
-      let statuses = await this.props.managers.market.statusAsDimension(se)
-      dimensions.statuses.id = statuses.id
-      if (!statuses.error) {
-        dimensions.statuses.data = dimensions.statuses.data.concat(statuses.data)
-        dimensions.statuses.items = dimensions.statuses.items.concat(statuses.items)
-      }
-
-      // Stock Exchanges
-      let stockExchanges = await this.props.managers.market.stockExchangeAsDimension(se)
-      dimensions.stockExchanges.id = stockExchanges.id
-      if (!stockExchanges.error) {
-        dimensions.stockExchanges.data = dimensions.stockExchanges.data.concat(stockExchanges.data)
-        dimensions.stockExchanges.items = dimensions.stockExchanges.items.concat(stockExchanges.items)
+        // No breaks... It will continue to default...
+        // !!! ATENTION !!! If another case is added bellow this point, we need to copy default's content into this case statement.
+        default:
+          if (dimensions[dimension.id].id) {
+            // Dimension has been already created for another Stock Exchange...
+            dimensions[dimension.id].data = dimensions[dimension.id].data.concat(dimension.data)
+          }
+          else {
+            // Dimension will be created for the first time...
+            dimensions[dimension.id] = dimension
+          }
+          break;
       }
     }
-
-    // Translation
-    dimensions.statuses.items = this.translateItems(dimensions.statuses.items)
 
     return dimensions
   }
@@ -201,108 +199,113 @@ class PhiTrader extends React.Component {
 
     return dSetups
   }
+  translateObjField(dimensionId, objList, field) {
+    let { getString } = this.props
+    let { langId, compId } = this.state
+
+    switch (dimensionId) {
+      case "statuses":
+        for (var obj of objList)
+          obj[field] = getString(langId, compId, [`item_${obj[field]}`])
+        break;
+    }
+
+    return objList
+  }
 
   handleLinks(callers, dimensions, selection, tDimension) {
-    // Prevent infinite loops
-    if (callers.includes(tDimension))
+    if (callers.includes(tDimension)) {
+      // Prevent infinite loops
       return dimensions
+    }
 
-    // console.log("callers: " + callers + " || tDimension: " + tDimension)
-    // console.log(dimensions)
+    // console.log(`callers: ${callers} || tDimension: ${tDimension}`)
     // console.log(selection)
 
     let firstCaller = callers[0]
-    let currCaller = callers[callers.length - 1]
     let linkedIds = []
 
     let tSelection = []
     let tDimensionData = dimensions[tDimension].data
-    let tDisabled = dimensions[tDimension].disabled
-    let tSelected = dimensions[tDimension].selected
-    let refreshLinks = false
-
-    if (!tDisabled[firstCaller])
-      tDisabled[firstCaller] = []
 
     if (selection.length > 0)
-      for (var i of selection)
-        for (var id of i.links[tDimension])
-          if (!linkedIds.includes(id))
-            linkedIds.push(id)
+      for (var obj of selection)
+        for (var value of obj.links[tDimension])
+          if (!linkedIds.includes(value))
+            linkedIds.push(value)
 
-    for (var x = 0; x < tDimensionData.length; x++) {
-      //tSelection prepares selection for next loop (target dimension)
-      if ((selection.length == 0 && firstCaller == currCaller) || linkedIds.includes(tDimensionData[x].id)) {
-        tSelection.push(tDimensionData[x])
+    for (var obj of tDimensionData) {
+      // It prepares Target Selection to be used by next loop...
+      if (selection.length == 0 || linkedIds.includes(obj.value)) {
+        // Object will be selected...
+        tSelection.push(obj)
 
-        // If item was disabled by a past selection and
-        // became selected in this selection, remove it from Disabled array
-        if (tDisabled[firstCaller].includes(x))
-          tDisabled[firstCaller].splice(tDisabled[firstCaller].indexOf(x), 1)
-      }
-      else {
-        if (!tDisabled[firstCaller].includes(x)) {
-          tDisabled[firstCaller].push(x)              // Add index into disabled array
-
-          // If a dimension was changed by another firstCaller
-          // and items were selected before, unselect the item. 
-          // (prevent item to not get updated after the state change)
-          if (tSelected.includes(x)) {
-            tSelected.splice(tSelected.indexOf(x), 1)
-            refreshLinks = true
+        if (obj.isDisabled) {
+          // Object is disabled... 
+          if (obj.isDisabled.includes(firstCaller)) {
+            // Disabled by the firstCaller. So we can enable it.
+            obj.isDisabled.splice(obj.isDisabled.indexOf(firstCaller), 1)
           }
         }
       }
+      else {
+        // Object will be disabled...
+        if (obj.isDisabled) {
+          // Object is already disabled by another dimension...
+          if (!obj.isDisabled.includes(firstCaller))
+            obj.isDisabled.push(firstCaller)
+        }
+        else {
+          // Object is going to be disabled by the first time...
+          obj.isDisabled = [firstCaller]
+        }
+      }
+
+      if (obj.isDisabled && obj.isDisabled.length == 0) {
+        // There is no constraints for this object... Turn it available
+        obj.isDisabled = false
+      }
     }
 
-    if (refreshLinks)
-      dimensions = this.handleLinks([tDimension], dimensions, tSelection, "setups")
-
     callers.push(tDimension)
+
     switch (tDimension) {
-      case "assets":
+      case "mAssets":
         dimensions = this.handleLinks(callers, dimensions, tSelection, "setups")
         break;
       case "setups":
-        dimensions = this.handleLinks(callers, dimensions, tSelection, "assets")
-        dimensions = this.handleLinks(callers, dimensions, tSelection, "dates")
+        dimensions = this.handleLinks(callers, dimensions, tSelection, "mAssets")
+        dimensions = this.handleLinks(callers, dimensions, tSelection, "openDates")
         dimensions = this.handleLinks(callers, dimensions, tSelection, "statuses")
         dimensions = this.handleLinks(callers, dimensions, tSelection, "stockExchanges")
         break;
-      case "setupDates":
+      case "openDates":
         dimensions = this.handleLinks(callers, dimensions, tSelection, "setups")
         break;
-      case "setupStatuses":
+      case "statuses":
         dimensions = this.handleLinks(callers, dimensions, tSelection, "setups")
         break;
       case "stockExchanges":
         dimensions = this.handleLinks(callers, dimensions, tSelection, "setups")
         break;
-      default:
-        break;
     }
 
     return dimensions
   }
-  async onSelectionChange(callerDimension, iSelected) {
+  async onSelectionChange(callerDimension, selection) {
     let { dimensions } = this.state
-    let selection = []
 
-    dimensions[callerDimension].selected = iSelected
-
-    // Push selected objects accordingly to its index 
-    if (iSelected.length > 0)
-      for (var i of iSelected)
-        selection.push(dimensions[callerDimension].data[i])
+    dimensions[callerDimension].selected = selection
+    selection = selection || []
 
     switch (callerDimension) {
-      case "assets":
+      case "mAssets":
         dimensions = this.handleLinks([callerDimension], dimensions, selection, "setups")
         break;
       case "setups":
-        dimensions = this.handleLinks([], dimensions, selection, "assets")
+        dimensions = this.handleLinks([], dimensions, selection, "mAssets")
         break;
-      case "dates":
+      case "openDates":
         dimensions = this.handleLinks([callerDimension], dimensions, selection, "setups")
         break;
       case "statuses":
@@ -318,29 +321,18 @@ class PhiTrader extends React.Component {
     this.setState({ dimensions })
   }
 
-  translateItems(items) {
-    let { getString } = this.props
-    let { langId, compId } = this.state
-
-    for (var x = 0; x < items.length; x++)
-      items[x] = getString(langId, compId, ["item_" + items[x]])
-
-    return items
-  }
-
   TimelineItems(dSetups) {
     // SETUPS
-    let setupsData = dSetups.data
-    let setupsDisabled = [].concat.apply([], Object.values(dSetups.disabled))
-    let tSelection = []
-    for (var x = 0; x < setupsData.length; x++)
-      if (!setupsDisabled.includes(x))
-        tSelection.push(setupsData[x])
+    let selection = []
 
-    if (tSelection.length == 0)
+    for (var obj of dSetups.data)
+      if (!obj.isDisabled)
+        selection.push(obj)
+
+    if (selection.length == 0)
       return null
 
-    return tSelection.map((setup) => {
+    return selection.map((setup) => {
       return (
         <SetupCard
           {...this.props}
@@ -366,112 +358,146 @@ class PhiTrader extends React.Component {
       dimensions,
 
       pageFirstLoading,
-      modal_filters_isOpen,
 
     } = this.state;
 
     return (
-      <>
-        <div className="content">
-          <div className="header text-center">
-            <h3 className="title">{getString(langId, compId, "title")}</h3>
-            <Card className="card-plain centered">
-              <label>{getString(langId, compId, "label_intro_p1")}</label>
-              <label>{getString(langId, compId, "label_intro_p2")}</label>
-              <label>
-                {getString(langId, compId, "label_intro_p3")}
+      <div className="content">
+        <div className="header text-center">
+          <h3 className="title">{getString(langId, compId, "title")}</h3>
+          <Card className="card-plain centered">
+            <label>{getString(langId, compId, "label_intro_p1")}</label>
+            <label>{getString(langId, compId, "label_intro_p2")}</label>
+            <label>
+              {getString(langId, compId, "label_intro_p3")}
+              {" "}
+              <strong>{getString(langId, compId, "label_intro_notRecommendation")}</strong>,
                 {" "}
-                <strong>{getString(langId, compId, "label_intro_notRecommendation")}</strong>,
-                {" "}
-                {getString(langId, compId, "label_intro_p4")}
-              </label>
-            </Card>
-          </div>
+              {getString(langId, compId, "label_intro_p4")}
+            </label>
+          </Card>
+        </div>
 
-          {pageFirstLoading ?
-            <Card className="card-timeline card-plain">
-              <CardBody>
-                <ul className="timeline">
-                  <li className="">
-                    <div className="timeline-panel">
-                      <Skeleton height={420} />
-                    </div>
-                  </li>
-                  <li className="timeline-inverted">
-                    <div className="timeline-panel">
-                      <Skeleton height={420} />
-                    </div>
-                  </li>
-                </ul>
-              </CardBody>
-            </Card> :
-            cWallets == 0 ?
-              // No wallets
+        {/* Filters */}
+        <FilterCard
+          getString={getString}
+          prefs={this.props.prefs}
+          dimensions={dimensions}
+          clearSelection={this.clearSelection}
+        >
+          <Col key={`filter__openDates`} xs="12" md="6" xl={window.innerWidth > 1600 ? "4" : "6"}>
+            <DimentionTimeInterval
+              getString={this.props.getString}
+              prefs={this.props.prefs}
+              dimension={dimensions.openDates}
+              onSelectionChange={this.onSelectionChange}
+              dateFromTxtId="label_open_dateFrom"
+              dateToTxtId="label_open_dateTo"
+              alertInvalidFormatTxtId="alert_timeInterval_invalidFormat"
+              alertNoEntriesTxtId="alert_timeInterval_noPositionsOpened"
+            />
+          </Col>
+          <Col key={`filter__assets`} xs="6" md="3" xl={window.innerWidth > 1600 ? "2" : "3"}>
+            <DimensionSelect
+              getString={this.props.getString}
+              prefs={this.props.prefs}
+              titleTxtId="label_asset"
+              onSelectionChange={this.onSelectionChange}
+              dimension={dimensions.mAssets}
+            />
+          </Col>
+          <Col key={`filter__statuses`} xs="6" md="3" xl={window.innerWidth > 1600 ? "2" : "3"}>
+            <DimensionSelect
+              getString={this.props.getString}
+              prefs={this.props.prefs}
+              titleTxtId="label_status"
+              onSelectionChange={this.onSelectionChange}
+              dimension={dimensions.statuses}
+            />
+          </Col>
+          <Col key={`filter__stockExchanges`} xs="6" md="3" xl={window.innerWidth > 1600 ? "2" : "3"}>
+            <DimensionSelect
+              getString={this.props.getString}
+              prefs={this.props.prefs}
+              titleTxtId="label_stockExchange"
+              onSelectionChange={this.onSelectionChange}
+              dimension={dimensions.stockExchanges}
+            />
+          </Col>
+        </FilterCard>
+
+        {pageFirstLoading ?
+          <Card className="card-timeline card-plain">
+            <CardBody>
+              <ul className="timeline">
+                <li className="">
+                  <div className="timeline-panel">
+                    <Skeleton height={420} />
+                  </div>
+                </li>
+                <li className="timeline-inverted">
+                  <div className="timeline-panel">
+                    <Skeleton height={420} />
+                  </div>
+                </li>
+              </ul>
+            </CardBody>
+          </Card> :
+          cWallets == 0 ?
+            // No wallets
+            <Card className="card-stats">
+              <Row>
+                <Col xl="2" lg="2" md="3" xs="3" className="centered">
+                  <div className="icon-big text-center">
+                    <i className="nc-icon nc-alert-circle-i text-warning" />
+                  </div>
+                </Col>
+                <Col xl="10" lg="10" md="9" xs="9">
+                  <br />
+                  <p className="card-description">{getString(langId, compId, "label_noWallets_p1")}</p>
+                  <p className="card-description">{getString(langId, compId, "label_noWallets_p2")}</p>
+                </Col>
+              </Row>
+              <CardFooter className="centered">
+                <Button
+                  className="btn-round"
+                  color="success"
+                  data-dismiss="modal"
+                  type="submit"
+                  onClick={() => this.setState({ goToWallets: true })}
+                >
+                  {getString(langId, compId, "btn_goToWallets")}
+                </Button>
+                {this.state.goToWallets && <Redirect to="/app/myassets/wallets" />}
+              </CardFooter>
+            </Card>
+            :
+            dimensions.setups.data.length == 0 ?
+              // Empty Setups
               <Card className="card-stats">
                 <Row>
-                  <Col xl="2" lg="2" md="3" xs="3" className="centered">
+                  <Col xl="2" lg="2" md="3" xs="4" className="centered">
                     <div className="icon-big text-center">
-                      <i className="nc-icon nc-alert-circle-i text-warning" />
+                      <i className="nc-icon nc-zoom-split text-warning" />
                     </div>
                   </Col>
-                  <Col xl="10" lg="10" md="9" xs="9">
+                  <Col xl="10" lg="10" md="9" xs="8">
                     <br />
-                    <p className="card-description">{getString(langId, compId, "label_noWallets_p1")}</p>
-                    <p className="card-description">{getString(langId, compId, "label_noWallets_p2")}</p>
+                    <p className="card-description">{getString(langId, compId, "label_noNews_p1")}</p>
+                    <p className="card-description">{getString(langId, compId, "label_noNews_p2")}</p>
                   </Col>
                 </Row>
-                <CardFooter className="centered">
-                  <Button
-                    className="btn-round"
-                    color="success"
-                    data-dismiss="modal"
-                    type="submit"
-                    onClick={() => this.setState({ goToWallets: true })}
-                  >
-                    {getString(langId, compId, "btn_goToWallets")}
-                  </Button>
-                  {this.state.goToWallets && <Redirect to="/app/myassets/wallets" />}
-                </CardFooter>
+              </Card> :
+              // Setups
+              <Card className="card-timeline card-plain">
+                <CardBody>
+                  <ul className="timeline">
+                    {this.TimelineItems(dimensions.setups)}
+                  </ul>
+                </CardBody>
               </Card>
-              :
-              dimensions.setups.data.length == 0 ?
-                // Empty Setups
-                <Card className="card-stats">
-                  <Row>
-                    <Col xl="2" lg="2" md="3" xs="4" className="centered">
-                      <div className="icon-big text-center">
-                        <i className="nc-icon nc-zoom-split text-warning" />
-                      </div>
-                    </Col>
-                    <Col xl="10" lg="10" md="9" xs="8">
-                      <br />
-                      <p className="card-description">{getString(langId, compId, "label_noNews_p1")}</p>
-                      <p className="card-description">{getString(langId, compId, "label_noNews_p2")}</p>
-                    </Col>
-                  </Row>
-                </Card> :
-                // Setups
-                <Card className="card-timeline card-plain">
-                  <CardBody>
-                    <ul className="timeline">
-                      {this.TimelineItems(dimensions.setups)}
-                    </ul>
-                  </CardBody>
-                </Card>
-          }
-        </div>
-        <FixedFilter
-          {...this.props}
-          id={"filters"}
-          modalId="filters"
-          position="top"
-          icon="fa fa-filter fa-2x"
-          isOpen={modal_filters_isOpen}
-          toggleModal={this.toggleModal}
-          onSelectionChange={this.onSelectionChange}
-          dimensions={dimensions}
-        />
-      </>
+        }
+      </div>
     );
   }
 }

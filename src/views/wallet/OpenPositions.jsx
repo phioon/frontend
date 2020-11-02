@@ -4,12 +4,12 @@ import PropTypes from "prop-types";
 import {
   Row,
   Col,
-  Collapse,
 } from "reactstrap";
-import FixedButton from "../../components/FixedPlugin/FixedButton";
 
 // Filters
-import FilterCard from "../../components/cards/filters/OpenPositions";
+import FilterCard from "../../components/cards/filters/FilterCard";
+import DimensionSelect from "../../components/cards/filters/selects/DimensionSelect";
+import DimentionTimeInterval from "../../components/cards/filters/selects/DimensionTimeInterval";
 // Measures
 import AmountInvested from "../../components/cards/measures/AmountInvested";
 import AmountPositions from "../../components/cards/measures/AmountPositions";
@@ -21,6 +21,7 @@ import ChartManager from "../../core/managers/ChartManager"
 import ProfitabilityOverTime from "../../components/cards/charts/ProfitabilityOverTime";
 import Diversification from "../../components/cards/charts/Diversification";
 
+import FixedButton from "../../components/FixedPlugin/FixedButton";
 import ModalCreateWallet from "../modals/wallet/ModalCreateWallet";
 import ModalOpenPosition from "../modals/position/ModalOpenPosition";
 
@@ -38,7 +39,6 @@ class OpenPositions extends React.Component {
 
       walletOptions: [],
 
-      collapse_filters_isOpen: true,
       modal_createWallet_isOpen: false,
       modal_openPosition_isOpen: false,
 
@@ -49,7 +49,7 @@ class OpenPositions extends React.Component {
         types: { data: [], items: [], selected: [] },
         pAssets: { data: [], items: [], selected: [] },
         mAssets: { data: [], items: [], selected: [] },
-        dates: { data: [], items: [], selected: [] },
+        openDates: { data: [], items: [], selected: [] },
         positions: { data: [], items: [], selected: [] },
         sectors: { data: [], items: [], selected: [] },
         wallets: { data: [], items: [], selected: [] },
@@ -95,6 +95,7 @@ class OpenPositions extends React.Component {
 
     this.prepareRequirements = this.prepareRequirements.bind(this)
     this.onSelectionChange = this.onSelectionChange.bind(this)
+    this.clearSelection = this.clearSelection.bind(this)
     this.toggleModal = this.toggleModal.bind(this);
     this.createWallet = this.createWallet.bind(this);
     this.openPosition = this.openPosition.bind(this);
@@ -116,7 +117,6 @@ class OpenPositions extends React.Component {
     this.setState({ walletOptions, currency })
 
     let dimensions = await this.prepareDimensions()
-    console.log(dimensions)
     this.prepareMeasuresAndCharts(dimensions)
   }
 
@@ -137,8 +137,8 @@ class OpenPositions extends React.Component {
         case "positions":
           rawData.push(this.props.managers.app.positionAsSelectDimension(onlyOpen))
           break;
-        case "dates":
-          rawData.push(this.props.managers.app.dateAsSelectDimension(onlyOpen))
+        case "openDates":
+          rawData.push(this.props.managers.app.openDateAsSelectDimension(onlyOpen))
           break;
         case "pAssets":
           // Position Assets
@@ -414,16 +414,20 @@ class OpenPositions extends React.Component {
     return objList
   }
 
-  clearSelection(dimension) {
-    let { dimensions } = this.state
+  clearSelection() {
+    let dimensions = { ...this.state.dimensions };
+    let toBeClean = []
 
-    if (dimension)
-      this.onSelectionChange(dimension, [])
-    else {
-      let dimensions = Object.keys(dimensions)
-      for (var dimension of dimensions)
-        this.onSelectionChange(dimension, [])
+    for (var position of dimensions.positions.data) {
+      // For each position, bring which dimensions they are being disabled by (if there is any)
+      if (position.isDisabled)
+        for (var d of position.isDisabled)
+          if (!toBeClean.includes(d))
+            toBeClean.push(d)
     }
+
+    for (var dimensionId of toBeClean)
+      this.onSelectionChange(dimensionId, [])
   }
 
   handleLinks(callers, dimensions, selection, tDimension) {
@@ -490,13 +494,13 @@ class OpenPositions extends React.Component {
         dimensions = this.handleLinks(callers, dimensions, tSelection, "sectors")
         dimensions = this.handleLinks(callers, dimensions, tSelection, "pAssets")
         break;
-      case "dates":
+      case "openDates":
         dimensions = this.handleLinks(callers, dimensions, tSelection, "positions")
         break;
       case "positions":
         dimensions = this.handleLinks(callers, dimensions, tSelection, "pAssets")
         dimensions = this.handleLinks(callers, dimensions, tSelection, "mAssets")
-        dimensions = this.handleLinks(callers, dimensions, tSelection, "dates")
+        dimensions = this.handleLinks(callers, dimensions, tSelection, "openDates")
         dimensions = this.handleLinks(callers, dimensions, tSelection, "types")
         dimensions = this.handleLinks(callers, dimensions, tSelection, "wallets")
         break;
@@ -523,11 +527,8 @@ class OpenPositions extends React.Component {
       case "pAssets":
         dimensions = this.handleLinks([callerDimension], dimensions, selection, "positions")
         break;
-      case "dates":
+      case "openDates":
         dimensions = this.handleLinks([callerDimension], dimensions, selection, "positions")
-        break;
-      case "positions":
-        dimensions = this.handleLinks([], dimensions, selection, "pAssets")
         break;
       case "sectors":
         dimensions = this.handleLinks([callerDimension], dimensions, selection, "mAssets")
@@ -552,9 +553,6 @@ class OpenPositions extends React.Component {
   openPosition() {
     this.toggleModal("openPosition")
   }
-  toggleCollapse(collapseId) {
-    this.setState({ [`collapse_${collapseId}_isOpen`]: !this.state[`collapse_${collapseId}_isOpen`] })
-  }
   toggleModal(modalId) {
     this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
   };
@@ -573,7 +571,6 @@ class OpenPositions extends React.Component {
   render() {
     let { getString, prefs, managers } = this.props;
     let {
-      collapse_filters_isOpen,
       modal_createWallet_isOpen,
       modal_openPosition_isOpen,
 
@@ -609,17 +606,61 @@ class OpenPositions extends React.Component {
           runItIfSuccess={this.prepareRequirements}
         />
         {/* Filters */}
-        <Row>
-          <Col>
-            <Collapse isOpen={collapse_filters_isOpen}>
-              <FilterCard
-                {...this.props}
-                dimensions={dimensions}
-                onSelectionChange={this.onSelectionChange}
-              />
-            </Collapse>
+        <FilterCard
+          getString={getString}
+          prefs={this.props.prefs}
+          dimensions={dimensions}
+          clearSelection={this.clearSelection}
+        >
+          <Col key={`filter__wallets`} xs="6" md="3" xl={window.innerWidth > 1600 ? "2" : "3"}>
+            <DimensionSelect
+              getString={this.props.getString}
+              prefs={this.props.prefs}
+              titleTxtId="label_wallet"
+              onSelectionChange={this.onSelectionChange}
+              dimension={dimensions.wallets}
+            />
           </Col>
-        </Row>
+          <Col key={`filter__assets`} xs="6" md="3" xl={window.innerWidth > 1600 ? "2" : "3"}>
+            <DimensionSelect
+              getString={this.props.getString}
+              prefs={this.props.prefs}
+              titleTxtId="label_asset"
+              onSelectionChange={this.onSelectionChange}
+              dimension={dimensions.pAssets}
+            />
+          </Col>
+          <Col key={`filter__sectors`} xs="6" md="3" xl={window.innerWidth > 1600 ? "2" : "3"}>
+            <DimensionSelect
+              getString={this.props.getString}
+              prefs={this.props.prefs}
+              titleTxtId="label_sector"
+              onSelectionChange={this.onSelectionChange}
+              dimension={dimensions.sectors}
+            />
+          </Col>
+          <Col key={`filter__types`} xs="6" md="3" xl={window.innerWidth > 1600 ? "2" : "3"}>
+            <DimensionSelect
+              getString={this.props.getString}
+              prefs={this.props.prefs}
+              titleTxtId="label_type"
+              onSelectionChange={this.onSelectionChange}
+              dimension={dimensions.types}
+            />
+          </Col>
+          <Col key={`filter__openDates`} xs="12" md="6" xl={window.innerWidth > 1600 ? "4" : "6"}>
+            <DimentionTimeInterval
+              getString={this.props.getString}
+              prefs={this.props.prefs}
+              dimension={dimensions.openDates}
+              onSelectionChange={this.onSelectionChange}
+              dateFromTxtId="label_open_dateFrom"
+              dateToTxtId="label_open_dateTo"
+              alertInvalidFormatTxtId="alert_timeInterval_invalidFormat"
+              alertNoEntriesTxtId="alert_timeInterval_noPositionsOpened"
+            />
+          </Col>
+        </FilterCard>
         {/* Measures */}
         <Row className="justify-content-center">
           <Col xl="3" lg="4" md="6" sm="6">
@@ -710,14 +751,6 @@ class OpenPositions extends React.Component {
           onSelectionChange={this.onSelectionChange}
           showTooltip={measureFirstLoading ? false : dimensions.positions.data.length == 2 ? true : false}
         /> */}
-        <FixedButton
-          {...this.props}
-          id={"filters"}
-          position="top"
-          icon="fa fa-filter fa-2x"
-          onClick={() => this.toggleCollapse("filters")}
-          showTooltip={measureFirstLoading ? false : dimensions.positions.data.length == 2 ? true : false}
-        />
         <FixedButton
           {...this.props}
           id={"newPosition"}

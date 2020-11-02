@@ -3,6 +3,7 @@ import StorageManager from "./StorageManager";
 import TimeManager from "./TimeManager";
 import {
   deepCloneObj,
+  getObjsFieldNotNull,
   getObjsFieldNull,
   httpRequest,
   joinObjLists,
@@ -330,58 +331,27 @@ class AppManager {
   }
 
   // .. Dimensions
-  async positionAsDimension(onlyOpen = false) {
-    let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
-    let dimension = { id: "positions", data: [], items: [], selected: [], disabled: {} }
-    let data = []
-    let dAssets = "pAssets"
-    let dDates = "dates"
-    let dStatuses = "statuses"
-    let dTypes = "types"
-    let dWallets = "wallets"
-
-    if (sItem.data) {
-      sItem.data = orderBy(sItem.data)
-
-      for (var obj of sItem.data) {
-        dimension.items.push(obj.id)
-        obj.links = {}
-        obj.links[dAssets] = [obj.asset_symbol]
-        obj.links[dDates] = [obj.started_on]
-        obj.links[dStatuses] = [obj.ended_on ? 'closed' : 'open']
-        obj.links[dTypes] = [obj.type]
-        obj.links[dWallets] = [obj.wallet]
-
-        data.push(obj)
-      }
-
-      dimension.data = data
-    }
-
-    return dimension
-  }
   async positionAsSelectDimension(onlyOpen = false) {
     let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
-    let dimension = { id: "positions", data: [], selected: [], disabled: {} }
+    let dimension = { id: "positions", data: [], selected: [] }
     let data = []
     let pAssets = "pAssets"
     let mAssets = "mAssets"
-    let dDates = "dates"
+    let openDates = "openDates"
+    let closeDates = "closeDates"
     let dStatuses = "statuses"
     let dTypes = "types"
     let dWallets = "wallets"
 
     if (sItem.data) {
-      sItem.data = orderBy(sItem.data)
-
       for (var obj of sItem.data) {
-        obj.links = {}
-
         obj.value = obj.id
 
+        obj.links = {}
         obj.links[pAssets] = [obj.asset_symbol]
         obj.links[mAssets] = [obj.asset_symbol]
-        obj.links[dDates] = [obj.started_on]
+        obj.links[openDates] = [obj.started_on]
+        obj.links[closeDates] = [obj.ended_on]
         obj.links[dStatuses] = [obj.ended_on ? "closed" : "open"]
         obj.links[dTypes] = [obj.type]
         obj.links[dWallets] = [obj.wallet]
@@ -394,51 +364,15 @@ class AppManager {
 
     return dimension
   }
-  async assetAsDimension(onlyOpen = false) {
-    let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
-    let dimension = { id: "pAssets", data: [], items: [], selected: [], disabled: {} }
-    let data = []
-    let assetAsKey = {}
-    let dPositions = "positions"
-
-    if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["asset_label"])
-
-      for (var obj of sItem.data) {
-        if (!assetAsKey[obj.asset_label]) {
-          assetAsKey[obj.asset_label] = {}
-
-          dimension.items.push(obj.asset_label)
-
-          assetAsKey[obj.asset_label].id = obj.asset_symbol
-          assetAsKey[obj.asset_label].name = obj.asset_label
-
-          assetAsKey[obj.asset_label].links = {}
-          assetAsKey[obj.asset_label].links[dPositions] = []
-        }
-
-        assetAsKey[obj.asset_label].links[dPositions].push(obj.id)
-      }
-
-      for (let [k, v] of Object.entries(assetAsKey))
-        data.push(v)
-
-      dimension.data = data
-    }
-
-    return dimension
-  }
   async assetAsSelectDimension(onlyOpen = false) {
     let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
-    let dimension = { id: "pAssets", data: [], selected: [], disabled: {} }
+    let dimension = { id: "pAssets", data: [], selected: [] }
     let data = []
     let assetAsKey = {}
     let dPositions = "positions"
     let dAssets = "mAssets"
 
     if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["asset_label"])
-
       for (var obj of sItem.data) {
         if (!assetAsKey[obj.asset_label]) {
           assetAsKey[obj.asset_label] = {}
@@ -458,55 +392,20 @@ class AppManager {
       for (let [k, v] of Object.entries(assetAsKey))
         data.push(v)
 
+      data = orderBy(data, ["label"])
       dimension.data = data
     }
 
     return dimension
   }
-  async dateAsDimension(onlyOpen = false) {
+  async openDateAsSelectDimension(onlyOpen = false) {
     let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
-    let dimension = { id: "dates", data: [], items: [], selected: [], disabled: {} }
+    let dimension = { id: "openDates", data: [], selected: [] }
     let data = []
     let dateAsKey = {}
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["-started_on"])
-
-      for (var obj of sItem.data) {
-        let strDate = obj.started_on
-        if (!dateAsKey[strDate]) {
-          dateAsKey[strDate] = {}
-
-          dimension.items.push(strDate)
-
-          dateAsKey[strDate].value = strDate
-
-          dateAsKey[strDate].links = {}
-          dateAsKey[strDate].links[dPositions] = []
-        }
-
-        dateAsKey[strDate].links[dPositions].push(obj.id)
-      }
-
-      for (let [k, v] of Object.entries(dateAsKey))
-        data.push(v)
-
-      dimension.data = data
-    }
-
-    return dimension
-  }
-  async dateAsSelectDimension(onlyOpen = false) {
-    let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
-    let dimension = { id: "dates", data: [], selected: [], disabled: {} }
-    let data = []
-    let dateAsKey = {}
-    let dPositions = "positions"
-
-    if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["-started_on"])
-
       for (var obj of sItem.data) {
         let strDate = obj.started_on
         if (!dateAsKey[strDate]) {
@@ -530,25 +429,24 @@ class AppManager {
 
     return dimension
   }
-  async monthAsDimension(onlyOpen = false) {
-    let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
-    let dimension = { id: "months", data: [], items: [], selected: [], disabled: {} }
+  async closeDateAsSelectDimension() {
+    let sItem = await this.positionList()
+    let dimension = { id: "closeDates", data: [], selected: [] }
     let data = []
     let dateAsKey = {}
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["-started_on"])
+      sItem.data = getObjsFieldNotNull(sItem.data, "ended_on")
 
       for (var obj of sItem.data) {
-        let strDate = TimeManager.getYearMonthString(obj.started_on)
+        let strDate = obj.ended_on
+
         if (!dateAsKey[strDate]) {
           dateAsKey[strDate] = {}
 
-          dimension.items.push(strDate)
-
-          dateAsKey[strDate].id = strDate
-          dateAsKey[strDate].name = strDate
+          dateAsKey[strDate].value = strDate
+          dateAsKey[strDate].label = strDate
 
           dateAsKey[strDate].links = {}
           dateAsKey[strDate].links[dPositions] = []
@@ -567,14 +465,12 @@ class AppManager {
   }
   async monthAsSelectDimension(onlyOpen = false) {
     let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
-    let dimension = { id: "months", data: [], selected: [], disabled: {} }
+    let dimension = { id: "months", data: [], selected: [] }
     let data = []
     let dateAsKey = {}
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["-started_on"])
-
       for (var obj of sItem.data) {
         let strDate = TimeManager.getYearMonthString(obj.started_on)
         if (!dateAsKey[strDate]) {
@@ -598,16 +494,14 @@ class AppManager {
 
     return dimension
   }
-  async statusAsDimension() {
+  async statusAsSelectDimension() {
     let sItem = await this.positionList()
-    let dimension = { id: "statuses", data: [], items: [], selected: [], disabled: {} }
+    let dimension = { id: "statuses", data: [], items: [], selected: [] }
     let data = []
     let statusAsKey = {}
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["asset_label"])
-
       for (var obj of sItem.data) {
         obj.status = obj.ended_on ? 'closed' : 'open'
         if (!statusAsKey[obj.status]) {
@@ -615,8 +509,8 @@ class AppManager {
 
           dimension.items.push(obj.status)
 
-          statusAsKey[obj.status].id = obj.status
-          statusAsKey[obj.status].name = obj.status
+          statusAsKey[obj.status].value = obj.status
+          statusAsKey[obj.status].label = obj.status
 
           statusAsKey[obj.status].links = {}
           statusAsKey[obj.status].links[dPositions] = []
@@ -628,6 +522,7 @@ class AppManager {
       for (let [k, v] of Object.entries(statusAsKey))
         data.push(v)
 
+      data = orderBy(data, ["label"])
       dimension.data = data
     }
 
@@ -673,14 +568,12 @@ class AppManager {
   async positionTypeAsSelectDimension(onlyOpen = false) {
     let sItem = await this.positionTypeList()
     let sPositions = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
-    let dimension = { id: "types", data: [], items: [], selected: [], disabled: {} }
+    let dimension = { id: "types", data: [], items: [], selected: [] }
     let data = []
     let positionTypeAsKey = {}
     let dPositions = "positions"
 
     if (sItem.data && sPositions.data) {
-      sItem.data = orderBy(sItem.data, ["name"])
-
       for (var obj of sPositions.data) {
         if (!positionTypeAsKey[obj.type]) {
           positionTypeAsKey[obj.type] = {}
@@ -706,6 +599,7 @@ class AppManager {
       for (var obj of data)
         dimension.items.push(obj.name)
 
+      data = orderBy(data, ["label"])
       dimension.data = data
     }
 
@@ -824,28 +718,6 @@ class AppManager {
     return result
   }
   // .. Dimensions
-  async walletAsDimension() {
-    let sItem = await this.walletList()
-    let dimension = { id: "wallets", data: [], items: [], selected: [], disabled: {} }
-    let data = []
-    let dPositions = "positions"
-
-    if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["name"])
-
-      for (var obj of sItem.data) {
-        dimension.items.push(obj.name)
-        obj.links = {}
-        obj.links[dPositions] = obj.positions
-        delete obj.positions
-        data.push(obj)
-      }
-
-      dimension.data = data
-    }
-
-    return dimension
-  }
   async walletAsSelectDimension() {
     let sItem = await this.walletList()
     let dimension = { id: "wallets", data: [], selected: [], disabled: {} }
@@ -853,7 +725,6 @@ class AppManager {
     let dPositions = "positions"
 
     if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["name"])
 
       for (var obj of sItem.data) {
         obj.value = obj.id
@@ -865,6 +736,8 @@ class AppManager {
 
         data.push(obj)
       }
+
+      data = orderBy(data, ["label"])
       dimension.data = data
     }
 
