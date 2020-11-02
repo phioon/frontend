@@ -437,7 +437,7 @@ export function verifyLength(value, minLen, maxLen = undefined) {
 export function verifyOnlyLetters(value) {
   return /^[a-zA-Z- ]+$/.test(value);
 }
-// function that verifies if a string has only letters
+// function that verifies if a string is valid for username
 export function verifyUsernameStr(value) {
   return /^[0-9a-zA-Z_.]+$/.test(value);
 }

@@ -299,6 +299,73 @@ class MarketManager {
     let sItem = await this.assetList(detailed, [pk])
     return sItem[pk] ? sItem[pk].data : null
   }
+  // .. Dimensions
+  async assetAsSelectDimension(assets = []) {
+    let sData = await this.assetData(assets)
+    let dimension = { id: "mAssets", data: [], selected: [] }
+    let data = []
+    let assetAsKey = {}
+    let pAssets = "pAssets"
+    let mAssets = "mAssets"
+    let dSectors = "sectors"
+
+    if (sData) {
+      for (var obj of Object.values(sData)) {
+        if (!assetAsKey[obj.asset_label]) {
+          assetAsKey[obj.asset_label] = {}
+
+          assetAsKey[obj.asset_label].value = obj.asset_symbol
+          assetAsKey[obj.asset_label].label = obj.asset_label
+
+          assetAsKey[obj.asset_label].links = {}
+          assetAsKey[obj.asset_label].links[pAssets] = []
+          assetAsKey[obj.asset_label].links[mAssets] = []
+          assetAsKey[obj.asset_label].links[dSectors] = []
+        }
+
+        assetAsKey[obj.asset_label].links[pAssets].push(obj.asset_symbol)
+        assetAsKey[obj.asset_label].links[mAssets].push(obj.asset_symbol)
+        assetAsKey[obj.asset_label].links[dSectors].push(obj.sector_id)
+      }
+
+      for (let [k, v] of Object.entries(assetAsKey))
+        data.push(v)
+
+      dimension.data = data
+    }
+
+    return dimension
+  }
+  async sectorAsSelectDimension(assets = []) {
+    let sData = await this.assetData(assets)
+    let dimension = { id: "sectors", data: [], selected: [] }
+    let data = []
+    let sectorAsKey = {}
+    let dAssets = "mAssets"
+
+    if (sData) {
+      for (var obj of Object.values(sData)) {
+        if (!sectorAsKey[obj.sector_id]) {
+          sectorAsKey[obj.sector_id] = {}
+
+          sectorAsKey[obj.sector_id].value = obj.sector_id
+          sectorAsKey[obj.sector_id].label = obj.sector_id
+
+          sectorAsKey[obj.sector_id].links = {}
+          sectorAsKey[obj.sector_id].links[dAssets] = []
+        }
+
+        sectorAsKey[obj.sector_id].links[dAssets].push(obj.asset_symbol)
+      }
+
+      for (let [k, v] of Object.entries(sectorAsKey))
+        data.push(v)
+
+      dimension.data = data
+    }
+
+    return dimension
+  }
   // .. Selects
   async assetsForSelect(se_short) {
     let options = []
@@ -936,53 +1003,21 @@ class MarketManager {
     // Return it with http error details
     return sItem
   }
-  async dSetupAsDimension(stockExchange) {
-    let sItem = await this.dSetupList(stockExchange)
-    let dimension = { id: "setups", data: [], items: [], selected: [], disabled: {} }
-    let data = []
-    let dAssets = "assets"
-    let dDates = "dates"
-    let dStatuses = "statuses"
-    let dStockExchanges = "stockExchanges"
-
-    if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["-started_on"])
-
-      for (var obj of sItem.data) {
-        dimension.items.push(obj.id)
-        obj.links = {}
-        obj.links[dAssets] = [obj.asset_symbol]
-        obj.links[dDates] = [obj.started_on]
-        obj.links[dStatuses] = [obj.ended_on ? 'closed' : 'open']
-        obj.links[dStockExchanges] = [obj.se_short]
-
-        data.push(obj)
-      }
-
-      dimension.data = data
-    }
-
-    return dimension
-  }
   // .. [d] Dimensions
-  async assetAsDimension(stockExchange) {
+  async assetAsSelectDimension(stockExchange) {
     let sItem = await this.dSetupList(stockExchange)
-    let dimension = { id: "assets", data: [], items: [], selected: [], disabled: {} }
+    let dimension = { id: "mAssets", data: [], selected: [] }
     let data = []
     let assetAsKey = {}
     let dSetups = "setups"
 
     if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["asset_label"])
-
       for (var obj of sItem.data) {
         if (!assetAsKey[obj.asset_label]) {
           assetAsKey[obj.asset_label] = {}
 
-          dimension.items.push(obj.asset_label)
-
-          assetAsKey[obj.asset_label].id = obj.asset_symbol
-          assetAsKey[obj.asset_label].name = obj.asset_label
+          assetAsKey[obj.asset_label].value = obj.asset_symbol
+          assetAsKey[obj.asset_label].label = obj.asset_label
 
           assetAsKey[obj.asset_label].links = {}
           assetAsKey[obj.asset_label].links[dSetups] = []
@@ -994,35 +1029,62 @@ class MarketManager {
       for (let [k, v] of Object.entries(assetAsKey))
         data.push(v)
 
+      data = orderBy(data, ["label"])
       dimension.data = data
     }
 
     return dimension
   }
-  async dateAsDimension(stockExchange) {
+  async setupAsSelectDimension(stockExchange) {
     let sItem = await this.dSetupList(stockExchange)
-    let dimension = { id: "dates", data: [], items: [], selected: [], disabled: {} }
+    let dimension = { id: "setups", data: [], selected: [] }
+    let data = []
+    let dAssets = "mAssets"
+    let openDates = "openDates"
+    let dStatuses = "statuses"
+    let dStockExchanges = "stockExchanges"
+
+    if (sItem.data) {
+      for (var obj of sItem.data) {
+        obj.value = obj.id
+        obj.status = obj.ended_on ? "closed" : "open"
+
+        obj.links = {}
+        obj.links[dAssets] = [obj.asset_symbol]
+        obj.links[openDates] = [obj.started_on]
+        obj.links[dStatuses] = [obj.status]
+        obj.links[dStockExchanges] = [obj.se_short]
+
+        data.push(obj)
+      }
+
+      data = orderBy(data, ["-started_on"])
+      dimension.data = data
+    }
+
+    return dimension
+  }
+  async openDateAsSelectDimension(stockExchange) {
+    let sItem = await this.dSetupList(stockExchange)
+    let dimension = { id: "openDates", data: [], selected: [] }
     let data = []
     let dateAsKey = {}
     let dSetups = "setups"
 
     if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["asset_label"])
-
       for (var obj of sItem.data) {
-        if (!dateAsKey[obj.started_on]) {
-          dateAsKey[obj.started_on] = {}
+        let strDate = obj.started_on
+        if (!dateAsKey[strDate]) {
+          dateAsKey[strDate] = {}
 
-          dimension.items.push(obj.started_on)
+          dateAsKey[strDate].value = strDate
+          dateAsKey[strDate].label = strDate
 
-          dateAsKey[obj.started_on].id = obj.started_on
-          dateAsKey[obj.started_on].name = obj.started_on
-
-          dateAsKey[obj.started_on].links = {}
-          dateAsKey[obj.started_on].links[dSetups] = []
+          dateAsKey[strDate].links = {}
+          dateAsKey[strDate].links[dSetups] = []
         }
 
-        dateAsKey[obj.started_on].links[dSetups].push(obj.id)
+        dateAsKey[strDate].links[dSetups].push(obj.id)
       }
 
       for (let [k, v] of Object.entries(dateAsKey))
@@ -1033,45 +1095,43 @@ class MarketManager {
 
     return dimension
   }
-  async statusAsDimension(stockExchange) {
+  async statusAsSelectDimension(stockExchange) {
     let sItem = await this.dSetupList(stockExchange)
-    let dimension = { id: "statuses", data: [], items: [], selected: [], disabled: {} }
+    let dimension = { id: "statuses", data: [], selected: [] }
     let data = []
     let statusAsKey = {}
     let dSetups = "setups"
 
     if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["asset_label"])
-
       for (var obj of sItem.data) {
-        obj.status = obj.ended_on ? 'closed' : 'open'
-        if (!statusAsKey[obj.status]) {
-          statusAsKey[obj.status] = {}
+        let status = obj.ended_on ? "closed" : "open"
 
-          dimension.items.push(obj.status)
+        if (!statusAsKey[status]) {
+          statusAsKey[status] = {}
 
-          statusAsKey[obj.status].id = obj.status
-          statusAsKey[obj.status].name = obj.status
+          statusAsKey[status].value = status
+          statusAsKey[status].label = status
 
-          statusAsKey[obj.status].links = {}
-          statusAsKey[obj.status].links[dSetups] = []
+          statusAsKey[status].links = {}
+          statusAsKey[status].links[dSetups] = []
         }
 
-        statusAsKey[obj.status].links[dSetups].push(obj.id)
+        statusAsKey[status].links[dSetups].push(obj.id)
       }
 
       for (let [k, v] of Object.entries(statusAsKey))
         data.push(v)
 
+      data = orderBy(data, ["label"])
       dimension.data = data
     }
 
     return dimension
   }
-  async stockExchangeAsDimension(stockExchange) {
+  async stockExchangeAsSelectDimension(stockExchange) {
     let sItem = await this.dSetupList(stockExchange)
     let stockExchanges = await this.stockExchangeList()
-    let dimension = { id: "stockExchanges", data: [], items: [], selected: [], disabled: {} }
+    let dimension = { id: "stockExchanges", data: [], selected: [] }
     let data = []
     let stockExchangeAsKey = {}
     let dSetups = "setups"
@@ -1081,13 +1141,12 @@ class MarketManager {
 
       for (var obj of sItem.data) {
         stockExchange = retrieveObjFromObjList(stockExchanges.data, "se_short", obj.se_short)
+
         if (!stockExchangeAsKey[obj.se_short]) {
           stockExchangeAsKey[obj.se_short] = {}
 
-          dimension.items.push(stockExchange.se_name)
-
-          stockExchangeAsKey[obj.se_short].id = obj.se_short
-          stockExchangeAsKey[obj.se_short].name = stockExchange.se_name
+          stockExchangeAsKey[obj.se_short].value = obj.se_short
+          stockExchangeAsKey[obj.se_short].label = stockExchange.se_name
 
           stockExchangeAsKey[obj.se_short].links = {}
           stockExchangeAsKey[obj.se_short].links[dSetups] = []
@@ -1099,6 +1158,7 @@ class MarketManager {
       for (let [k, v] of Object.entries(stockExchangeAsKey))
         data.push(v)
 
+      data = orderBy(data, ["label"])
       dimension.data = data
     }
 

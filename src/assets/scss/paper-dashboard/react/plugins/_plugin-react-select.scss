@@ -25,12 +25,11 @@ This file was modified entirely by Creative Tim for React-Select v2.0.0
     box-sizing: border-box;
     max-height: 200px;
     position: absolute;
-    z-index: 2;
+    z-index: 20;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 10px;
     margin-bottom: unset;
     margin-top: unset;
-
     &:before{
       border-bottom: 11px solid #f1eae0;
       top: -11px;
@@ -41,6 +40,7 @@ This file was modified entirely by Creative Tim for React-Select v2.0.0
       position: absolute;
       right: 15px;
     }
+
     &:after{
       top: -10px;
       border-bottom: 11px solid #fffcf5;
@@ -60,20 +60,17 @@ This file was modified entirely by Creative Tim for React-Select v2.0.0
     position: relative;
   }
   .react-select__option {
-    font-size: 0.8571em;
+    font-size: $font-size-small;
     padding-top: .6rem;
     padding-bottom: .6rem;
     margin-top: 5px;
-    
     -webkit-transition: all 150ms linear;
     -moz-transition: all 150ms linear;
     -o-transition: all 150ms linear;
     -ms-transition: all 150ms linear;
     transition: all 150ms linear;
-
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-
+    padding-left: 1.2rem;
+    padding-right: 1.0rem;
     display: block;
     outline: none;
     color: #292b2c;
@@ -111,6 +108,7 @@ This file was modified entirely by Creative Tim for React-Select v2.0.0
     border-collapse: separate;
     display: table;
     width: 100%;
+    margin-top: 1.2px;
     &,&:hover{
       border: 1px solid $light-gray;
       box-shadow: none;
@@ -156,7 +154,7 @@ This file was modified entirely by Creative Tim for React-Select v2.0.0
       display: table-cell;
     }
     .react-select__indicators {
-      width: 60px;
+      width: 30px;
       padding-right: 10px;
       align-items: flex-end;
       vertical-align: middle;
@@ -357,15 +355,6 @@ This file was modified entirely by Creative Tim for React-Select v2.0.0
     }
     .react-select__control--is-disabled{
       background-color: #f9f9f9;
-    }
-  }
-
-  &.rt-pagination{
-    .react-select__menu{
-      max-height: 125px;
-    }
-    .react-select__menu-list {
-      max-height: 123px;
     }
   }
 }
