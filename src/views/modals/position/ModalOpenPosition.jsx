@@ -626,7 +626,8 @@ class ModalOpenPosition extends React.Component {
                       suffix: opCostIsPercentage ? " %" : "",
                       thousandsSeparatorSymbol: currency.thousands_separator_symbol,
                       decimalSymbol: currency.decimal_symbol,
-                      integerLimit: opCostIsPercentage ? 2 : 11
+                      integerLimit: opCostIsPercentage ? 2 : 11,
+                      decimalLimit: opCostIsPercentage ? 5 : 2
                     }}
                   />
                 </FormGroup>

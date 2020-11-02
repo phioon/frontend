@@ -214,7 +214,9 @@ class ModalUpdatePosition extends React.Component {
         newState.position.data.e_cost = convertFloatToCurrency(cost, currency)
         newState.position.data.e_totalCost = convertFloatToCurrency(totalCost, currency)
 
-        if (verifyGreaterThan(price, 0))
+        if (!newState.position.data.endedOn)
+          newState.position.states[stateName] = ""
+        else if (verifyGreaterThan(price, 0))
           newState.position.states[stateName] = "has-success"
         else
           newState.position.states[stateName] = "has-danger"
@@ -348,14 +350,21 @@ class ModalUpdatePosition extends React.Component {
         else
           newState.position.states[fieldName] = "has-danger"
 
-        if (!value && (
-          convertMaskedStringToFloat(newState.position.data.e_price, currency) > 0 ||
-          convertMaskedStringToFloat(newState.position.data.e_opCost, currency) > 0)) {
-
-          newState.alertState = ""
-          newState.alertMsg = this.props.getString(this.state.langId, this.state.compId,
-            newState.position.data.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
+        if (value) {
+          // Date is filled... So checks if e_price is valid
+          if (convertMaskedStringToFloat(newState.position.data.e_price, currency) === 0)
+            newState.position.states.e_price = "has-danger"
         }
+        else
+          if (convertMaskedStringToFloat(newState.position.data.e_price, currency) > 0 ||
+            convertMaskedStringToFloat(newState.position.data.e_opCost, currency) > 0) {
+            // Date is not filled... So, e_price doesn't need to be filled either.
+            newState.position.states.e_price = ""
+
+            newState.alertState = ""
+            newState.alertMsg = this.props.getString(this.state.langId, this.state.compId,
+              newState.position.data.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
+          }
 
         break;
       case "wallet":
@@ -662,7 +671,8 @@ class ModalUpdatePosition extends React.Component {
                   suffix: opCostIsPercentage ? " %" : "",
                   thousandsSeparatorSymbol: currency.thousands_separator_symbol,
                   decimalSymbol: currency.decimal_symbol,
-                  integerLimit: opCostIsPercentage ? 2 : 11
+                  integerLimit: opCostIsPercentage ? 2 : 11,
+                  decimalLimit: opCostIsPercentage ? 5 : 2
                 }}
               />
             </FormGroup>
@@ -849,7 +859,8 @@ class ModalUpdatePosition extends React.Component {
                   suffix: opCostIsPercentage ? " %" : "",
                   thousandsSeparatorSymbol: currency.thousande_separator_symbol,
                   decimalSymbol: currency.decimal_symbol,
-                  integerLimit: opCostIsPercentage ? 2 : 11
+                  integerLimit: opCostIsPercentage ? 2 : 11,
+                  decimalLimit: opCostIsPercentage ? 5 : 2
                 }}
               />
             </FormGroup>

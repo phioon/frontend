@@ -39,11 +39,11 @@ CurrencyInput.propTypes = {
     thousandsSeparatorSymbol: PropTypes.string,
     allowDecimal: PropTypes.boolean,
     decimalSymbol: PropTypes.string,
-    decimalLimit: PropTypes.string,
     requireDecimal: PropTypes.boolean,
     allowNegative: PropTypes.boolean,
     allowLeadingZeroes: PropTypes.boolean,
     integerLimit: PropTypes.number,
+    decimalLimit: PropTypes.number
   }),
 }
 
