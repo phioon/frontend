@@ -358,6 +358,7 @@ class MarketManager {
       for (let [k, v] of Object.entries(sectorAsKey))
         data.push(v)
 
+      data = orderBy(data, ["label"])
       dimension.data = data
     }
 

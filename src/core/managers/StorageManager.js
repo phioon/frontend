@@ -116,9 +116,7 @@ class StorageManager {
     return `/cache/${key}.json`
   }
   static async setItem(key, value) {
-    let options = {
-      headers: { 'content-type': 'application/json' }
-    }
+    let options = { headers: { 'content-type': 'application/json' } }
     return await cache.put(this.getRequestId(key), new Response(JSON.stringify(value), options))
   }
   static async getItem(sKey, subKey) {
