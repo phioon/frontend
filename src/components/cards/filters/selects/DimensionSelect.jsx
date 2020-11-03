@@ -25,6 +25,7 @@ class DimensionSelect extends Component {
             closeMenuOnSelect={false}
             value={dimension.selected}
             options={dimension.data}
+            noOptionsMessage={() => getString(prefs.langId, "filtercard", "input_periods_noOptions")}
             onChange={value => this.props.onSelectionChange(dimension.id, value)}
           />
         </FormGroup>

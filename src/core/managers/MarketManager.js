@@ -305,8 +305,7 @@ class MarketManager {
     let dimension = { id: "mAssets", data: [], selected: [] }
     let data = []
     let assetAsKey = {}
-    let pAssets = "pAssets"
-    let mAssets = "mAssets"
+    let dAssets = "pAssets"
     let dSectors = "sectors"
 
     if (sData) {
@@ -318,13 +317,11 @@ class MarketManager {
           assetAsKey[obj.asset_label].label = obj.asset_label
 
           assetAsKey[obj.asset_label].links = {}
-          assetAsKey[obj.asset_label].links[pAssets] = []
-          assetAsKey[obj.asset_label].links[mAssets] = []
+          assetAsKey[obj.asset_label].links[dAssets] = []
           assetAsKey[obj.asset_label].links[dSectors] = []
         }
 
-        assetAsKey[obj.asset_label].links[pAssets].push(obj.asset_symbol)
-        assetAsKey[obj.asset_label].links[mAssets].push(obj.asset_symbol)
+        assetAsKey[obj.asset_label].links[dAssets].push(obj.asset_symbol)
         assetAsKey[obj.asset_label].links[dSectors].push(obj.sector_id)
       }
 
@@ -1004,7 +1001,7 @@ class MarketManager {
     return sItem
   }
   // .. [d] Dimensions
-  async assetAsSelectDimension(stockExchange) {
+  async setupAssetAsSelectDimension(stockExchange) {
     let sItem = await this.dSetupList(stockExchange)
     let dimension = { id: "mAssets", data: [], selected: [] }
     let data = []
@@ -1064,7 +1061,7 @@ class MarketManager {
 
     return dimension
   }
-  async openDateAsSelectDimension(stockExchange) {
+  async setupOpenDateAsSelectDimension(stockExchange) {
     let sItem = await this.dSetupList(stockExchange)
     let dimension = { id: "openDates", data: [], selected: [] }
     let data = []
@@ -1095,7 +1092,7 @@ class MarketManager {
 
     return dimension
   }
-  async statusAsSelectDimension(stockExchange) {
+  async setupStatusAsSelectDimension(stockExchange) {
     let sItem = await this.dSetupList(stockExchange)
     let dimension = { id: "statuses", data: [], selected: [] }
     let data = []
@@ -1128,7 +1125,7 @@ class MarketManager {
 
     return dimension
   }
-  async stockExchangeAsSelectDimension(stockExchange) {
+  async setupStockExchangeAsSelectDimension(stockExchange) {
     let sItem = await this.dSetupList(stockExchange)
     let stockExchanges = await this.stockExchangeList()
     let dimension = { id: "stockExchanges", data: [], selected: [] }

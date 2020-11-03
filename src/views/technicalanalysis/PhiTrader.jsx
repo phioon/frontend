@@ -78,19 +78,19 @@ class PhiTrader extends React.Component {
       for (var dimension of Object.keys(dimensions)) {
         switch (dimension) {
           case "mAssets":
-            rawData.push(this.props.managers.market.assetAsSelectDimension(se))
+            rawData.push(this.props.managers.market.setupAssetAsSelectDimension(se))
             break;
           case "setups":
             rawData.push(this.props.managers.market.setupAsSelectDimension(se))
             break;
           case "openDates":
-            rawData.push(this.props.managers.market.openDateAsSelectDimension(se))
+            rawData.push(this.props.managers.market.setupOpenDateAsSelectDimension(se))
             break;
           case "statuses":
-            rawData.push(this.props.managers.market.statusAsSelectDimension(se))
+            rawData.push(this.props.managers.market.setupStatusAsSelectDimension(se))
             break;
           case "stockExchanges":
-            rawData.push(this.props.managers.market.stockExchangeAsSelectDimension(se))
+            rawData.push(this.props.managers.market.setupStockExchangeAsSelectDimension(se))
             break;
         }
       }

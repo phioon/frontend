@@ -128,6 +128,8 @@ const strings = {
       label_close_dateFrom: "Closed after",
       label_close_dateTo: "Close before",
 
+      input_periods_noOptions: "There are no open positions.",
+
       alert_timeInterval_noPositionsOpened: "Oops... I didn't find any Position opened within this time interval. Try another one ;)",
       alert_timeInterval_noPositionsClosed: "Oops... I didn't find any Position closed within this time interval. Try another one ;)",
       alert_timeInterval_invalidFormat: "Oops... Seems like date/time format is not valid."
@@ -1067,6 +1069,8 @@ const strings = {
       label_open_dateTo: "Abertura antes de",
       label_close_dateFrom: "Fechamento após",
       label_close_dateTo: "Fechamento antes de",
+
+      input_periods_noOptions: "Não há posições abertas.",
 
       alert_timeInterval_noPositionsOpened: "Oops... Não encontrei Posições que foram abertas neste intervalo de tempo. Tente outro intervalo ;)",
       alert_timeInterval_noPositionsClosed: "Oops... Não encontrei Posições que foram fechadas neste intervalo de tempo. Tente outro intervalo ;)",

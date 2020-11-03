@@ -69,24 +69,24 @@ class FilterCard extends Component {
 
   prepareCarousel() {
     // 1. Filter Elements
-    let filters = this.props.children;
+    let elements = this.props.children;
 
     // 2. Carousel
-    let carousel = this.prepareSlides(this.state.carousel, filters)
+    let carousel = this.prepareSlides(this.state.carousel, elements)
 
-    this.setState({ filters, carousel })
+    this.setState({ carousel })
   }
-  prepareSlides(carousel, filters) {
+  prepareSlides(carousel, elements) {
     let slides = []
     let items = []
     let maxItemsPerSlide = this.getMaxItemsPerSlide()
     let doubleElements = ["filter__openDates", "filter__closeDates"]
 
-    for (var x = 0; x < filters.length; x++) {
-      items.push(filters[x])
+    for (var x = 0; x < elements.length; x++) {
+      items.push(elements[x])
 
       // There are some elements that use more than 1 slot...
-      let extraSpace = doubleElements.includes(filters[x].key) ? 1 : 0
+      let extraSpace = doubleElements.includes(elements[x].key) ? 1 : 0
       if (extraSpace > 0)
         maxItemsPerSlide -= 1
 
