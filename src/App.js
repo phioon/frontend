@@ -25,6 +25,7 @@ import AppManager from "./core/managers/AppManager";
 import MarketManager from "./core/managers/MarketManager";
 import MeasureManager from "./core/managers/MeasureManager";
 import StrategyManager from "./core/managers/StrategyManager";
+import StripeManager from "./core/managers/StripeManager";
 
 export var isAuthenticated = undefined
 const hist = createBrowserHistory();
@@ -52,7 +53,8 @@ class App extends React.Component {
     this.managers = {
       auth: new AuthManager(this.getHttpTranslation, this.setAuthStatus, this.setPrefs),
       app: new AppManager(this.getHttpTranslation),
-      market: new MarketManager(this.getHttpTranslation)
+      market: new MarketManager(this.getHttpTranslation),
+      stripe: new StripeManager(this.getHttpTranslation)
     }
     this.managers.strategy = new StrategyManager(this.managers.market)
     this.managers.measure = new MeasureManager(this.managers.app, this.managers.market)

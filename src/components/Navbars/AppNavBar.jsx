@@ -225,12 +225,15 @@ class AppNavBar extends React.Component {
                     <i className="nc-icon nc-settings-gear-65" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-navbar" right tag="ul">
-                    <DropdownItem onClick={() => this.pushRouterHistory('/app/userprofile')}>
-                      {getString(langId, compId, "profile")}
+                    <DropdownItem onClick={() => this.pushRouterHistory('/app/user/profile')}>
+                      {getString(langId, compId, "label_profile")}
+                    </DropdownItem>
+                    <DropdownItem onClick={() => this.pushRouterHistory('/app/user/subscription')}>
+                      {getString(langId, compId, "label_subscription")}
                     </DropdownItem>
                     <DropdownItem divider tag="li" />
                     <DropdownItem onClick={() => this.logoutClick()}>
-                      {getString(langId, compId, "logout")}
+                      {getString(langId, compId, "label_logout")}
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>

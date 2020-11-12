@@ -1,11 +1,11 @@
-export const projName = "P H I O O N";
-export const projWebsite = "https://phioon.com";
-
-// imgs
 export const project = {
   info: {
     name: "P H I O O N",
     website: "https://phioon.com",
+
+    website_wallets: "https://phioon.com/products/wallets",
+    website_strategies: "https://phioon.com/products/strategies",
+    website_phitrader: "https://phioon.com/products/phitrader",
   },
   img: {
     branding: {

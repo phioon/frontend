@@ -19,6 +19,7 @@ import Login from "views/auth/Login.jsx";
 import SetPassword from "views/auth/SetPassword.jsx";
 import Register from "views/auth/Register.jsx";
 import UserProfile from "views/auth/UserProfile.jsx";
+import UserSubscription from "views/subscriptions/UserSubscription.jsx";
 
 // App
 import Strategies from "views/technicalanalysis/strategy/Strategies";
@@ -103,10 +104,24 @@ const routes = [
         layout: "/app"
       },
       {
-        path: "/userprofile",
+        path: "/user/profile",
         name: "userprofile",
         mini: "UP",
         component: UserProfile,
+        layout: "/app"
+      },
+      {
+        path: "/user/subscription",
+        name: "usersubscription",
+        mini: "UP",
+        component: UserSubscription,
+        layout: "/app"
+      },
+      {
+        path: "/order/success",
+        name: "ordersuccess",
+        mini: "OS",
+        component: UserSubscription,
         layout: "/app"
       }
     ]

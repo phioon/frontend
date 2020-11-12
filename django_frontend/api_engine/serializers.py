@@ -13,6 +13,7 @@ from django.utils.encoding import force_text
 from django.utils import timezone
 from datetime import datetime
 
+from app import models as app_models
 from app.models import Country, Currency, Strategy, Subscription, Position, PositionType, UserCustom, Wallet
 
 
@@ -75,9 +76,18 @@ class StrategySerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
+    # prices = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    prices = serializers.SerializerMethodField()
+
     class Meta:
         model = Subscription
         fields = '__all__'
+
+    def get_prices(self, obj):
+        prices = {}
+        for price in obj.prices.all():
+            prices[price.name] = price.id
+        return prices
 
 
 class WalletSerializer(serializers.ModelSerializer):
@@ -137,6 +147,7 @@ class UserSerializer(serializers.ModelSerializer):
     birthday = serializers.ReadOnlyField(source='userCustom.birthday')
     nationality = serializers.ReadOnlyField(source='userCustom.nationality.code')
     subscription = serializers.ReadOnlyField(source='userCustom.subscription.name')
+    subscription_type = serializers.ReadOnlyField(source='userCustom.subscription_type')
     subscription_expires_on = serializers.ReadOnlyField(source='userCustom.subscription_expires_on')
     subscription_renews_on = serializers.ReadOnlyField(source='userCustom.subscription_renews_on')
     pref_currency = serializers.ReadOnlyField(source='userCustom.pref_currency.code')
@@ -146,7 +157,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name',
                   'date_joined', 'birthday', 'nationality',
-                  'subscription', 'subscription_renews_on', 'subscription_expires_on',
+                  'subscription', 'subscription_type', 'subscription_renews_on', 'subscription_expires_on',
                   'pref_langId', 'pref_currency']
         read_only_fields = ['email']
 

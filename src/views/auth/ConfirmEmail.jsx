@@ -162,7 +162,7 @@ class ConfirmEmail extends React.Component {
     return (
       <div className="login-page">
         {alert}
-        {redirectToLogin ? <Redirect to="/auth/login" /> : null}
+        {redirectToLogin && <Redirect to="/auth/login" />}
         <Container>
           <Col className="ml-auto mr-auto" lg="4" md="6">
             <Form action="" className="form" method="">

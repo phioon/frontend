@@ -387,7 +387,7 @@ export function substringText(text, maxLength) {
 
   return text
 }
-export function returnInitials(fullName) {
+export function getInitials(fullName) {
   var names = trim(String(fullName)).split(" ")
   var fisrtName = names.shift().toUpperCase()
   var lastName = names.pop().toUpperCase()
@@ -396,9 +396,26 @@ export function returnInitials(fullName) {
 
   return initials
 }
+export function getFirstAndLastName(fullName) {
+  let maxLength = 18
+
+  let names = String(fullName).split(" ")
+  let firstName = names.shift()
+  let lastName = names.pop()
+
+  let shortName = `${firstName} ${lastName}`
+
+  if (fullName.length > maxLength)
+    if (shortName.length > maxLength)
+      fullName = `${firstName} ${lastName[0]}.`
+    else
+      fullName = shortName
+
+  return fullName
+}
 // function that verifies if two objects are equal
 export function areObjsEqual(obj1, obj2) {
-  return JSON.stringify(obj1) == JSON.stringify(obj2)
+  return JSON.stringify(obj1) === JSON.stringify(obj2)
 }
 // function that verifies if two strings are equal
 export function compare(string1, string2) {

@@ -1,20 +1,20 @@
-.card-user{
+.card-subscription{
     .image{
         position: relative;
         text-align: center;
         height: 130px;
 
-      img {
+        .img {
         border-radius: 12px;
-      }
+        }
     }
 
     .subscription{
-      font-size: 36px;
-      color: $default-body-bg;
-      position: absolute;
-      top: 8px;
-      right: 16px;
+        font-size: 24px;
+        color: $font-color;
+        position: absolute;
+        top: 16px;
+        right: 16px;
     }
 
     .author{
@@ -23,7 +23,7 @@
         margin-top: -77px;
 
         a +  p.description{
-            margin-top: -7px;
+        margin-top: -7px;
         }
     }
 
@@ -45,14 +45,14 @@
     }
 
     .card-body + .card-footer {
-      padding-top: 0;
+        padding-top: 0;
     }
 
     .card-footer {
-      h5 {
+        h5 {
         font-size: 1.2em;
         margin-bottom: 0;
-      }
+        }
     }
 
     .button-container{

@@ -51,11 +51,11 @@ class MeasureManager {
         let suffix = ""
 
         if (kpiValue > 1000000) {
-          kpiValue = round(kpiValue / 1000000, 0)
+          kpiValue = round(kpiValue / 1000000, 1)
           suffix = "M+"
         }
         else if (kpiValue > 1000) {
-          kpiValue = round(kpiValue / 1000, 0)
+          kpiValue = round(kpiValue / 1000, 1)
           suffix = "K+"
         }
         else
@@ -67,7 +67,7 @@ class MeasureManager {
         strKpi += convertFloatToCurrency(kpiValue, currency)
         break;
       case "nominal_percentage":
-        let value = round(kpiValue, 0)
+        let value = round(kpiValue, 1)
         strKpi += convertFloatToPercentage(value, currency.decimal_symbol)
         break;
       case "percentage":
