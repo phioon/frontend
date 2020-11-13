@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
-from api_engine import apiAuth, apiApp, apiMarket
+from api_engine import apiAuth, apiApp, apiMarket, apiStripe
 from knox import views as knox_views
 from rest_auth import views as rest_auth_views
 
@@ -44,19 +44,28 @@ urlpatterns += [
 
 # Market
 urlpatterns += [
-    path('market/technicalConditions/', apiMarket.TechnicalConditionList, name='Technical Conditions'),
-    path('market/stockExchanges/', apiMarket.StockExchangeList, name='StockExchanges'),
-    path('market/assets/', apiMarket.AssetList, name='Assets'),
-    path('market/indicators/', apiMarket.IndicatorList, name='Indicators available'),
+    path('market/technicalConditions/', apiMarket.TechnicalConditionList, name='technical_condition'),
+    path('market/stockExchanges/', apiMarket.StockExchangeList, name='stock-exchange'),
+    path('market/assets/', apiMarket.AssetList, name='asset'),
+    path('market/indicators/', apiMarket.IndicatorList, name='indicators'),
 
-    path('market/d/raw/', apiMarket.D_RawList, name='D_Raw data'),
-    path('market/d/quote/latest/', apiMarket.D_QuoteLatestList, name='D_Quote latest data'),
-    path('market/d/sma/latest/', apiMarket.D_SmaLatestList, name='D_Sma latest data'),
-    path('market/d/ema/latest/', apiMarket.D_EmaLatestList, name='D_Ema latest data'),
-    path('market/d/phibo/latest/', apiMarket.D_PhiboLatestList, name='D_Phibo latest data'),
+    path('market/d/raw/', apiMarket.D_RawList, name='d-raw_data'),
+    path('market/d/quote/latest/', apiMarket.D_QuoteLatestList, name='d-quote_latest_data'),
+    path('market/d/sma/latest/', apiMarket.D_SmaLatestList, name='d-sma_latest_data'),
+    path('market/d/ema/latest/', apiMarket.D_EmaLatestList, name='d-ema_latest_data'),
+    path('market/d/phibo/latest/', apiMarket.D_PhiboLatestList, name='d_phibo_latest_data'),
 
-    path('market/d/setups/', apiMarket.D_setupList, name='D_setups data'),
-    path('market/d/setupSummary/', apiMarket.D_setupSummaryList, name='D_setupSummary data'),
+    path('market/d/setups/', apiMarket.D_setupList, name='d-setup'),
+    path('market/d/setupSummary/', apiMarket.D_setupSummaryList, name='D-setup-summary'),
+]
+
+# Stripe
+urlpatterns += [
+    path('stripe/checkout/', apiStripe.create_checkout_session, name='create_checkout_session'),
+    path('stripe/checkout/<session_id>/', apiStripe.get_checkout_session, name='get_checkout_session'),
+    path('stripe/customer-portal/', apiStripe.create_customer_portal_session, name='create_customer_portal_session'),
+
+    path('stripe/webhook-listener/', apiStripe.webhook_listener, name='webhook_listener'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

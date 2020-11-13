@@ -32,13 +32,15 @@ const strings = {
       title_strategies: "Technical Analysis",
       title_phitrader: "Technical Analysis",
       title_userprofile: "My Profile",
+      title_usersubscription: "My Subscription",
       title_walletoverview: "Overview",
       title_wallets: "My Assets",
 
       placeholder_search: "Search...",
 
-      profile: "Profile",
-      logout: "Log out"
+      label_profile: "Profile",
+      label_subscription: "Subscription",
+      label_logout: "Log out"
     },
     assetfilter: {
       label_title: "Assets",
@@ -750,8 +752,8 @@ const strings = {
     sidebar: {
       profile: "Profile",
       profileMini: "P",
-      settings: "Settings",
-      settingsMini: "S",
+      subscription: "Subscription",
+      subscriptionMini: "S",
 
       myassets: "My Assets",
       wallets: "Wallets",
@@ -859,6 +861,87 @@ const strings = {
       platinum_desc_p2: "So, you need an intelligent platform for assets in the entire world",
       platinum_desc_p3: "I'm designed to help investors being more efficient and secure."
     },
+    subscriptionbasic: {
+      label_title: "BASIC",
+
+      label_month: "mon",
+
+      label_perDay: "per day",
+      label_runs: "runs",
+
+      label_stockExchange: "Stock Exchange",
+      label_stockExchange_hint: "Soon, other stock exchanges will be included in PHIOON. ;)",
+      label_wallets: "Wallets",
+      label_staticPanels: "Position Panels",
+      label_staticPanels_hint: "Auto-Refresh not available.",
+      label_strategyRuns: "Strategy runs",
+      label_strategies: "Strategies",
+
+      btn_downgrade: "Downgrade"
+    },
+    subscriptionpremium: {
+      label_title: "PREMIUM",
+
+      label_month: "mon",
+
+      label_stockExchange: "Stock Exchange",
+      label_stockExchange_hint: "Soon, other stock exchanges will be included in PHIOON. ;)",
+      label_stockExchanges: "Stock Exchanges",
+      label_stockExchanges_hint: "Soon, other stock exchanges will be included in PHIOON. ;)",
+      label_wallets: "Wallets",
+      label_dashboards: "Position Dashboards",
+      label_dashboards_hint: "Auto-Refresh included.",
+      label_strategies: "Strategies",
+      label_phiTrader: "Phi Trader",
+
+      btn_upgrade: "Upgrade",
+      btn_downgrade: "Downgrade"
+    },
+    subscriptionplatinum: {
+      label_title: "PLATINUM",
+
+      label_month: "mon",
+
+      label_stockExchange: "Stock Exchange",
+      label_stockExchange_hint: "Soon, other stock exchanges will be included in PHIOON. ;)",
+      label_stockExchanges: "Stock Exchanges",
+      label_stockExchanges_hint: "Soon, other stock exchanges will be included in PHIOON. ;)",
+      label_wallets: "Wallets",
+      label_dashboards: "Position Dashboards",
+      label_dashboards_hint: "Auto-Refresh included.",
+      label_strategies: "Strategies",
+      label_phiTrader: "Phi Trader",
+
+      btn_upgrade: "Upgrade",
+      btn_downgrade: "Downgrade"
+    },
+    subscriptioncurrent: {
+      label_joinedOn: "JOINED US ON",
+      label_subscription: "SUBSCRIPTION",
+      label_subscription_hint: "Your current plan.",
+      label_expiresOn: "EXPIRES ON",
+      label_expiresOn_hint: "It means your current subscription will last till this date.",
+      label_renewsOn: "RENEWS ON",
+      label_renewsOn_hint: "Probably, you will see a new transaction in your credit card on this date.",
+
+      label_monthly: "Monthly",
+      label_yearly: "Annual",
+      btn_manage: "Manage Subscription",
+
+      label_insights: "Insights",
+      // Basic
+      label_positions: "POSITIONS",
+      label_positions_hint: "Amount of Positions managed.",
+      label_volume: "TOTAL VOLUME",
+      label_volume_hint: "Total volume negotiated. It includes both purchase and sale operations.",
+      label_result: "RESULT",
+      label_result_hint: "How much your money has earned so far.",
+      // Premium
+      label_phiOperations: "PHI TRADER",
+      label_phiOperations_hint: "Phi operations since you joined us.",
+      label_strategies: "STRATEGIES",
+      label_strategies_hint: "Amount of favorite strategies.",
+    },
     technicalconditions: {
       "btl_ema_7__trend_ema_610+": "Price is getting more support and starting an upward trend. Moving Averages 34, 144 and 610 are aligned up and Price is breaking above EMA 34. Gains may vary between 7% and 23%.",
       "btl_ema_7__trend_ema_144+": "Price is getting more support and starting an upward trend. Moving Averages 34, 144 and 610 are aligned up and Price is breaking above EMA 34. Gains may vary between 7% and 23%.",
@@ -876,32 +959,9 @@ const strings = {
       phibo_305_down_p2: "Resistance Lines are aligned down, increasing the probability of starting a Wave 3.",
       phibo_72_down_p1: "Price reached a technical resistance after a retracement of 21% from the recent bottom and drew a Pivot Down, increasing the probability of, at least, testing last bottom again.",
     },
-    termsofuse: {
-      label_intro_p1: "",
-    },
     userprofile: {
       title_personalData: "Personal Data",
       title_prefs: "Preferences",
-
-      label_joinedOn: "JOINED US ON",
-      label_subscription: "SUBSCRIPTION",
-      label_subscription_hint: "Your current plan.",
-      label_expiresOn: "EXPIRES ON",
-      label_expiresOn_hint: "It means your current subscription will last till this date.",
-      label_renewsOn: "RENEWS ON",
-      label_renewsOn_hint: "Probably, you will see a new transaction in your credit card on this date.",
-
-      label_insights: "Insights",
-      // Basic
-      label_positions: "POSITIONS",
-      label_positions_hint: "Amount of Positions managed.",
-      label_volume: "TOTAL VOLUME",
-      label_volume_hint: "Total volume negotiated. It includes both purchase and sale operations.",
-      label_result: "RESULT",
-      label_result_hint: "How much your money is earning.",
-      // Premium
-      label_phiOperations: "PHI TRADER",
-      label_phiOperations_hint: "Phi's operations since you joined us.",
 
       input_email: "Email",
       btn_changePassword: "Change Password",
@@ -921,6 +981,15 @@ const strings = {
       error_username_couldNotCheck: "Something went wrong :/ Let's try again later.",
 
       btn_save: "Save"
+    },
+    usersubscription: {
+      label_monthly: "Monthly",
+      label_yearly: "Yearly",
+
+      alert_subscriptionDone_title: "Welcome to the next level!",
+      alert_subscriptionDone_text_p1: "I hope you will enjoy this new experience!",
+      alert_subscriptionDone_text_p2: "Within few minutes you will receive your invoice details by email. ;)",
+      btn_getStarted: "Get Started",
     },
     walletfilter: {
       label_title: "Wallets",
@@ -975,13 +1044,15 @@ const strings = {
       title_strategies: "Análise Técnica",
       title_phitrader: "Análise Técnica",
       title_userprofile: "Meu Perfil",
+      title_usersubscription: "Meu Plano",
       title_walletoverview: "Visão Geral",
       title_wallets: "Meus Ativos",
 
       placeholder_search: "Pesquisar...",
 
-      profile: "Perfil",
-      logout: "Sair"
+      label_profile: "Perfil",
+      label_subscription: "Plano",
+      label_logout: "Sair"
     },
     assetfilter: {
       label_title: "Ativos",
@@ -1712,8 +1783,8 @@ const strings = {
     sidebar: {
       profile: "Perfil",
       profileMini: "P",
-      settings: "Configurações",
-      settingsMini: "CFG",
+      subscription: "Plano",
+      subscriptionMini: "PL",
 
       myassets: "Meus Ativos",
       wallets: "Carteiras",
@@ -1804,6 +1875,94 @@ const strings = {
       table_emptyData: "Nesse momento, não há ativos nesta condição técnica. Talvez mais tarde...",
       table_noDataFound: "hmm... Será que perdi algo?! Por favor, dê uma olhada nos seus filtros. ;)"
     },
+    subscriptionbasic: {
+      label_title: "BASIC",
+
+      label_month: "mês",
+
+      label_perDay: "por dia",
+      label_runs: "execuções",
+
+      label_stockExchange: "Bolsa de Valores",
+      label_stockExchange_hint: "Em breve, mais mercados serão inclusos no PHIOON. ;)",
+      label_wallets: "Carteiras",
+      label_staticPanels: "Painéis de Posições",
+      label_staticPanels_hint: "Auto-Refresh não disponível.",
+      label_strategyRuns: "Execuções de Estratégias",
+      label_strategies: "Estratégias",
+
+      btn_downgrade: "Downgrade"
+    },
+    subscriptionpremium: {
+      label_title: "PREMIUM",
+
+      label_month: "mês",
+
+      label_perDay: "por dia",
+      label_runs: "execuções",
+
+      label_stockExchange: "Bolsa de Valores",
+      label_stockExchange_hint: "Em breve, mais mercados serão inclusos no PHIOON. ;)",
+      label_stockExchanges: "Bolsas de Valores",
+      label_stockExchanges_hint: "Em breve, mais mercados serão inclusos no PHIOON. ;)",
+      label_wallets: "Carteiras",
+      label_dashboards: "Dashboards de Posições",
+      label_dashboards_hint: "Auto-Refresh incluso.",
+      label_strategyRuns: "Execuções de Estratégias",
+      label_strategies: "Estratégias",
+      label_phiTrader: "Phi Trader",
+
+      btn_upgrade: "Upgrade",
+      btn_downgrade: "Downgrade"
+    },
+    subscriptionplatinum: {
+      label_title: "PLATINUM",
+
+      label_month: "mês",
+
+      label_perDay: "por dia",
+      label_runs: "execuções",
+
+      label_stockExchange: "Bolsa de Valores",
+      label_stockExchange_hint: "Em breve, mais mercados serão inclusos no PHIOON. ;)",
+      label_stockExchanges: "Bolsas de Valores",
+      label_stockExchanges_hint: "Em breve, mais mercados serão inclusos no PHIOON. ;)",
+      label_wallets: "Carteiras",
+      label_dashboards: "Dashboards de Posições",
+      label_dashboards_hint: "Auto-Refresh incluso.",
+      label_strategyRuns: "Execuções de Estratégias",
+      label_strategies: "Estratégias",
+      label_phiTrader: "Phi Trader",
+
+      btn_upgrade: "Upgrade"
+    },
+    subscriptioncurrent: {
+      label_joinedOn: "MEMBRO DESDE",
+      label_subscription: "ASSINATURA",
+      label_subscription_hint: "Seu plano atual.",
+      label_expiresOn: "EXPIRA EM",
+      label_expiresOn_hint: "Sua assinatura permanecerá ativa até esta data.",
+      label_renewsOn: "RENOVAÇÃO EM",
+      label_renewsOn_hint: "Provavelmente, você verá uma nova transação em seu cartão de crédito nesta data.",
+
+      label_monthly: "Mensal",
+      label_yearly: "Anual",
+      btn_manage: "Gerenciar Assinatura",
+
+      label_insights: "Insights",
+      // Basic
+      label_positions: "POSIÇÕES",
+      label_positions_hint: "Quantidade de Posições gerenciadas.",
+      label_volume: "VOLUME TOTAL",
+      label_volume_hint: "Volume total negociado. Inclui ambas operações de compra e venda.",
+      label_result: "RESULTADO",
+      label_result_hint: "O quanto seu dinheiro rendeu até hoje.",
+      // Premium
+      label_phiOperations: "PHI TRADER",
+      label_phiOperations_hint: "Quantidade de operações do Phi desde a data em que temos você com a gente.",
+      label_strategies: "ESTRATÉGIAS",
+      label_strategies_hint: "Quantidade de Estratégias favoritas.",
+    },
     technicalconditions: {
       "btl_ema_7__trend_ema_610+": "Preço está ganhando mais suporte e iniciando uma tendência de alta. Médias Móveis 34, 144 e 610 estão alinhadas para cima e o Preço está rompendo acima da MME 34. Ganhos podem variar entre 7% e 23%.",
       "btl_ema_7__trend_ema_144+": "Preço está ganhando mais suporte e iniciando uma tendência de alta. Médias Móveis 34, 144 e 610 estão alinhadas para cima e o Preço está rompendo acima da MME 34. Ganhos podem variar entre 7% e 23%.",
@@ -1826,26 +1985,6 @@ const strings = {
       title_personalData: "Dados Pessoais",
       title_prefs: "Preferências",
 
-      label_joinedOn: "MEMBRO DESDE",
-      label_subscription: "ASSINATURA",
-      label_subscription_hint: "Seu plano atual.",
-      label_expiresOn: "EXPIRA EM",
-      label_expiresOn_hint: "Sua assinatura permanecerá ativa até esta data.",
-      label_renewsOn: "RENOVAÇÃO EM",
-      label_renewsOn_hint: "Provavelmente, você verá uma nova transação em seu cartão de crédito nesta data.",
-
-      label_insights: "Insights",
-      // Basic
-      label_positions: "POSIÇÕES",
-      label_positions_hint: "Quantidade de Posições gerenciadas.",
-      label_volume: "VOLUME TOTAL",
-      label_volume_hint: "Volume total negociado. Inclui ambas operações de compra e venda.",
-      label_result: "RESULTADO",
-      label_result_hint: "O quanto seu dinheiro está rendendo.",
-      // Premium
-      label_phiOperations: "PHI TRADER",
-      label_phiOperations_hint: "Operações do Phi desde a data em que temos você com a gente.",
-
       input_email: "E-mail",
       btn_changePassword: "Alterar Senha",
       input_username: "Usuário",
@@ -1857,13 +1996,22 @@ const strings = {
 
       input_currency: "Moeda Principal",
       input_currency_hint: "Investe em diferentes países? Posso converter outras moedas para a de sua preferência em relatórios e dashboards. ",
-      input_language: "Língua",
+      input_language: "Idioma",
 
       error_username_minReq: "Letras (a-z), números (0-9), underscores (_) e pontos (.)",
       error_username_taken: "Nome de usuário em uso :/",
       error_username_couldNotCheck: "Algo deu errado :/ Vamos tentar novamente mais tarde.",
 
       btn_save: "Salvar"
+    },
+    usersubscription: {
+      label_monthly: "Mensal",
+      label_yearly: "Anual",
+
+      alert_subscriptionDone_title: "Bem vindo ao próximo nível!",
+      alert_subscriptionDone_text_p1: "Espero que aproveite essa nova experiência!",
+      alert_subscriptionDone_text_p2: "Dentro de alguns minutos, você receberá os detalhes da sua fatura por e-mail. ;)",
+      btn_getStarted: "Vamos começar",
     },
     walletfilter: {
       label_title: "Carteiras",

@@ -19,6 +19,10 @@ if os.getenv('GAE_APPLICATION', None):
     DB_DEFAULT['HOST'] = '/cloudsql/phioon:southamerica-east1:phioon-pgsql'
     DB_DEFAULT['NAME'] = 'frontend_prd'
     DB_DEFAULT['USER'] = 'frontend_prd'
+
+    STRIPE_API_KEY = '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'
+    STRIPE_ENDPOINT_SECRET = 'whsec_HDQTLvk9KtZz5N7Jh50SW8yHHQ20AwBS'
+
 else:
     # [DEV] environment
     DEBUG = True
@@ -26,6 +30,8 @@ else:
     REDIRECT_MARKET_API_TO_PRD = False      # Set 'True' to redirect market calls to PRD (assetList, StockExchangeList)
 
     DB_DEFAULT['HOST'] = '127.0.0.1'
+    STRIPE_API_KEY = 'sk_test_51HkbgHHiGSreEiGHJaeuPY9Vu4eVBNqCR8PCgSSs6PuHPB7UBlS9mz4mW72nrZ71ykyVdG6Ey5VUk6M7mfIHa0ON00hfr4vW3j'
+    STRIPE_ENDPOINT_SECRET = 'whsec_jtWf54O3AMiVXQxK41fnPUdUFGXoxVCi'
 
     # Database
     if ACCESS_PRD_DB:

@@ -25,7 +25,8 @@ import PerfectScrollbar from "perfect-scrollbar";
 import { project } from "../../core/projectData";
 
 import {
-  returnInitials
+  getInitials,
+  getFirstAndLastName
 } from "../../core/utils";
 
 
@@ -62,29 +63,11 @@ class Sidebar extends React.Component {
 
   prepareRequirements() {
     let user = this.props.managers.auth.instantUser()
-    let fullName = this.getFullName(`${user.first_name} ${user.last_name}`)
+    let fullName = getFirstAndLastName(`${user.first_name} ${user.last_name}`)
 
-    user.initials = returnInitials(fullName)
+    user.initials = getInitials(fullName)
 
     this.setState({ user, fullName })
-  }
-
-  getFullName(fullName) {
-    let maxLength = 18
-
-    let names = String(fullName).split(" ")
-    let firstName = names.shift()
-    let lastName = names.pop()
-
-    let shortName = `${firstName} ${lastName}`
-
-    if (fullName.length > maxLength)
-      if (shortName.length > maxLength)
-        fullName = `${firstName} ${lastName[0]}.`
-      else
-        fullName = shortName
-
-    return fullName
   }
 
   componentWillUnmount() {
@@ -242,9 +225,15 @@ class Sidebar extends React.Component {
               <Collapse isOpen={this.state.openAvatar}>
                 <ul className="nav">
                   <li>
-                    <NavLink to="/app/userprofile" activeClassName="">
+                    <NavLink to="/app/user/profile" activeClassName="">
                       <span className="sidebar-mini-icon">{getString(langId, compId, 'profileMini')}</span>
                       <span className="sidebar-normal">{getString(langId, compId, 'profile')}</span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/app/user/subscription" activeClassName="">
+                      <span className="sidebar-mini-icon">{getString(langId, compId, 'subscriptionMini')}</span>
+                      <span className="sidebar-normal">{getString(langId, compId, 'subscription')}</span>
                     </NavLink>
                   </li>
                 </ul>

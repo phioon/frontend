@@ -231,7 +231,7 @@ class AppManager {
 
     let wsInfo = this.getApi("wsPositions")
     wsInfo.method = "get"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     wsInfo.options.params = {
       dateFrom: lastModifiedTime
     }
@@ -275,7 +275,7 @@ class AppManager {
   async positionCreate(position) {
     let wsInfo = this.getApi("wsPositions")
     wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, position)
 
@@ -291,7 +291,7 @@ class AppManager {
     let wsInfo = this.getApi("wsPositions")
     wsInfo.request += position.id + "/"
     wsInfo.method = "patch"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, position)
 
     if (result.status == 200) {
@@ -306,7 +306,7 @@ class AppManager {
     var wsInfo = this.getApi("wsPositions")
     wsInfo.request += pk + "/"
     wsInfo.method = "delete"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
@@ -642,7 +642,7 @@ class AppManager {
 
     let wsInfo = this.getApi("wsWallets")
     wsInfo.method = "get"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 200) {
@@ -669,7 +669,7 @@ class AppManager {
   async walletCreate(wallet) {
     let wsInfo = this.getApi("wsWallets")
     wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, wallet)
 
     if (result.status == 201) {
@@ -689,7 +689,7 @@ class AppManager {
     let wsInfo = this.getApi("wsWallets")
     wsInfo.request += wallet.id + "/"
     wsInfo.method = "patch"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, wallet)
 
     if (result.status == 200) {
@@ -703,7 +703,7 @@ class AppManager {
     var wsInfo = this.getApi("wsWallets")
     wsInfo.request += pk + "/"
     wsInfo.method = "delete"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
@@ -788,7 +788,7 @@ class AppManager {
 
     let wsInfo = this.getApi("wsStrategies")
     wsInfo.method = "get"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 200)
@@ -813,7 +813,7 @@ class AppManager {
   async strategyCreate(strategy) {
     let wsInfo = this.getApi("wsStrategies")
     wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
 
@@ -828,7 +828,7 @@ class AppManager {
     let wsInfo = this.getApi("wsStrategies")
     wsInfo.request += strategy.id + "/"
     wsInfo.method = "patch"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
 
     if (result.status == 200) {
@@ -842,7 +842,7 @@ class AppManager {
     var wsInfo = this.getApi("wsStrategies")
     wsInfo.request += pk + "/"
     wsInfo.method = "delete"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 

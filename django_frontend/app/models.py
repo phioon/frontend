@@ -90,6 +90,35 @@ class Subscription (models.Model):
             defaults={'label': 'Platinum'})
 
 
+class SubscriptionPrice (models.Model):
+    # Remember to update prices here accordingly to Stripe's platform.
+    # Otherwise, the webhook_listener will not be able to address the correct subscription to the users.
+
+    id = models.CharField(max_length=64, primary_key=True)
+    subscription = models.ForeignKey(Subscription, related_name='prices', on_delete=models.DO_NOTHING)
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.name
+
+    def init(self):
+        premium = Subscription.objects.get(name='premium')
+        platinum = Subscription.objects.get(name='platinum')
+
+        SubscriptionPrice.objects.update_or_create(
+            id='price_1HlGJHHiGSreEiGHeSF2r4Ph',
+            defaults={'subscription': premium, 'name': 'premium_month'})
+        SubscriptionPrice.objects.update_or_create(
+            id='price_1HlGVWHiGSreEiGHqhcodS13',
+            defaults={'subscription': premium, 'name': 'premium_year'})
+        SubscriptionPrice.objects.update_or_create(
+            id='price_1HlGNpHiGSreEiGHkOvzJ4tx',
+            defaults={'subscription': platinum, 'name': 'platinum_month'})
+        SubscriptionPrice.objects.update_or_create(
+            id='price_1HlGNqHiGSreEiGHIqP4vHzW',
+            defaults={'subscription': platinum, 'name': 'platinum_year'})
+
+
 class PositionType (models.Model):
     name = models.CharField(max_length=12, unique=True)
     desc = models.CharField(max_length=512, null=True)
@@ -114,12 +143,14 @@ class UserCustom (models.Model):
     user = models.OneToOneField(User, related_name='userCustom', on_delete=models.CASCADE)
     birthday = models.DateField(null=True)
     nationality = models.ForeignKey(Country, on_delete=models.DO_NOTHING)
+    stripe_customer_id = models.CharField(max_length=32, null=True, unique=True)
     # subscription
     subscription = models.ForeignKey(Subscription, on_delete=models.DO_NOTHING)
+    subscription_status = models.CharField(max_length=16, default='undefined')
     subscription_expires_on = models.DateField(null=True, db_index=True)
     subscription_renews_on = models.DateField(null=True, db_index=True)
     # prefs
-    pref_langId = models.CharField(max_length=8)
+    pref_langId = models.CharField(max_length=8)        # Used by apiStripe.update_stripe_customer()
     pref_currency = models.ForeignKey(Currency, on_delete=models.DO_NOTHING)
 
     def __str__(self):

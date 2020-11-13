@@ -21,6 +21,7 @@ from knox.settings import knox_settings
 from .serializers import UserSerializer, UserRegisterSerializer, UserCustomSerializer
 from . import serializers
 
+from api_engine import apiStripe
 from app.models import Country, UserCustom, Subscription
 
 
@@ -95,11 +96,11 @@ class UserRegisterAPIView(generics.GenericAPIView):
                         to_email=user.email,
                         html_email_template_name=html_email_template_name
                     )
-
                     if obj_res['status'] == status.HTTP_200_OK:
                         obj_res['result'] = {"message": "User has been created. Confirmation email sent!"}
                     else:
                         obj_res['result'] = {"message": "User has been created, but confirmation email could not be sent."}
+
                     return Response(data=obj_res['result'], status=obj_res['status'])
 
 
@@ -126,6 +127,12 @@ class UserCustomUpdateAPIView(generics.UpdateAPIView):
 
     def get_object(self):
         return UserCustom.objects.get(user=self.request.user)
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+
+        if instance.stripe_customer_id:
+            apiStripe.update_stripe_customer(instance.stripe_customer_id, serializer.validated_data)
 
 
 class LoginAPIView(KnoxLoginView):

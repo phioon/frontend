@@ -15,7 +15,6 @@ import {
   Spinner,
   UncontrolledTooltip
 } from "reactstrap";
-import Skeleton from "react-loading-skeleton";
 // react plugin used to create datetimepicker
 import ReactDatetime from "react-datetime";
 import Select from "react-select";
@@ -23,16 +22,14 @@ import Select from "react-select";
 import ModalChangePassword from "../modals/auth/ModalChangePassword";
 
 import TimeManager from "../../core/managers/TimeManager";
-import { project } from "../../core/projectData";
 import { getLangList } from "../../core/lang";
 import {
   areObjsEqual,
   deepCloneObj,
-  getDistinctValuesFromList,
   verifyLength,
   verifyOnlyLetters,
   verifyUsernameStr,
-  returnInitials
+  getInitials
 } from "../../core/utils";
 
 class UserProfile extends React.Component {
@@ -42,12 +39,9 @@ class UserProfile extends React.Component {
     this.state = {
       compId: this.constructor.name.toLowerCase(),
       langId: props.prefs.langId,
-      pageFirstLoading: true,
       isCheckingUsername: false,
 
       modal_changePassword_isOpen: false,
-
-      subscription: {},
 
       personalData: {
         data: {
@@ -74,23 +68,6 @@ class UserProfile extends React.Component {
         isLoading: false,
         isValidated: undefined
       },
-
-      measures: {
-        positions: {
-          amount: {},
-          amountInvested: { id: "amountInvested" },
-          result: { id: "result" },
-          winners: { id: "winners" },
-        }
-      },
-
-      insights: {
-        phiOperations: {
-          amount: {}
-        }
-      },
-
-      currency: { code: "BRL", symbol: "R$", thousands_separator_symbol: ".", decimal_symbol: "," },
       currencies: [],
       languages: []
     }
@@ -107,29 +84,14 @@ class UserProfile extends React.Component {
     this.prepareRequirements()
   }
   async prepareRequirements() {
-    let { measures, insights, currency } = this.state
-
     await this.prepareUserData()
-
-    currency = await this.props.managers.app.currencyRetrieve(this.props.prefs.currency)
-    measures = await this.prepareMeasures()
-
-    if (this.state.subscription.name != "basic")
-      insights = await this.prepareInsights()
-
-    this.setState({ pageFirstLoading: false, measures, insights, currency })
   }
   async prepareUserData() {
     let { getString, prefs: prefsFromProps } = this.props;
-    let { langId, personalData, prefs, subscription } = this.state;
+    let { langId, personalData, prefs } = this.state;
 
     let user = await this.props.managers.auth.instantUser()
-    user.initials = returnInitials(`${user.first_name} ${user.last_name}`)
-
-    subscription = await this.props.managers.app.subscriptionRetrieve(user.subscription)
-    subscription.expiresOn = user.subscription_expires_on
-    subscription.renewsOn = user.subscription_renews_on
-    subscription.userJoinedOn = user.date_joined
+    user.initials = getInitials(`${user.first_name} ${user.last_name}`)
 
     for (var [k, v] of Object.entries(user)) {
       if (Object.keys(personalData.data).includes(k))
@@ -162,48 +124,10 @@ class UserProfile extends React.Component {
     prefs.initial = deepCloneObj(prefs.data)
 
     this.setState({
-      subscription,
       personalData,
       prefs,
       currencies, languages,
     })
-  }
-  async prepareMeasures() {
-    let { measures } = this.state
-    let selection = await this.props.managers.app.positionData()
-
-    // Amount of Positions
-    measures.positions.amount.data = selection.length
-    // Amount Invested
-    measures.positions.amountInvested.currency = await this.props.managers.measure.totalVolumeAsKpi(selection, "currency")
-    // Result
-    measures.positions.result.percentage = await this.props.managers.measure.resultAsKpi(selection, "percentage")
-
-    return measures
-  }
-  async prepareInsights() {
-    let { subscription, insights } = this.state
-    insights.phiOperations.amount.data = 0
-    let wallets = await this.props.managers.app.walletData()
-    let stockExchanges = getDistinctValuesFromList(wallets, "se_short")
-    let dSetups = []
-
-    let userJoinedOn = TimeManager.getMoment(subscription.userJoinedOn)
-
-    for (var se_short of stockExchanges) {
-      let ds = await this.props.managers.market.dSetupList(se_short)
-      if (ds.data)
-        dSetups = dSetups.concat(ds.data)
-    }
-
-    for (var obj of dSetups) {
-      let startedOn = TimeManager.getMoment(obj.started_on)
-
-      if (startedOn.isSameOrAfter(userJoinedOn))
-        insights.phiOperations.amount.data += 1
-    }
-
-    return insights
   }
 
   onChange(type, fieldName, value) {
@@ -242,7 +166,7 @@ class UserProfile extends React.Component {
         if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
           newState[type].states[fieldName] = "has-success";
 
-          newState[type].data.initials = returnInitials(`${value} ${newState[type].data.last_name}`)
+          newState[type].data.initials = getInitials(`${value} ${newState[type].data.last_name}`)
           //newState[type].data.initials = `${value[0]}${newState[type].data.last_name[0]}`
           //newState[type].data.initials = newState[type].data.initials
         }
@@ -253,7 +177,7 @@ class UserProfile extends React.Component {
         if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
           newState[type].states[fieldName] = "has-success";
 
-          newState[type].data.initials = returnInitials(`${newState[type].data.first_name} ${value}`)
+          newState[type].data.initials = getInitials(`${newState[type].data.first_name} ${value}`)
           //newState[type].data.initials = `${newState[type].data.first_name[0]}${value[0]}`
           //newState[type].data.initials = newState[type].data.initials
         }
@@ -285,18 +209,14 @@ class UserProfile extends React.Component {
           newState[type].states[fieldName] = "has-danger"
         break;
       case "pref_currency":
-        // this.props.setPrefs({ pref_currency: value.value })
         newState[type].states[fieldName] = "has-success"
         break;
       case "pref_langId":
-        // this.props.setPrefs({ pref_langId: value.value })
         newState[type].states[fieldName] = "has-success"
-        break;
-      default:
         break;
     }
 
-    newState[type].isValidated = this.isValidated(type, newState[type])
+    newState[type].isValidated = this.isValidated(newState[type])
 
     this.setState(newState)
   }
@@ -377,20 +297,13 @@ class UserProfile extends React.Component {
     let {
       langId,
       compId,
-      pageFirstLoading,
       isCheckingUsername,
 
       modal_changePassword_isOpen,
 
-      subscription,
-
       personalData,
       prefs,
 
-      measures,
-      insights,
-
-      currency,
       currencies,
       languages,
 
@@ -408,175 +321,6 @@ class UserProfile extends React.Component {
           />
           {alert}
           <Row>
-            {/* Subscription */}
-            <Col lg="4" md="5">
-              <Card className="card-user">
-                <div className="image">
-                  <img
-                    alt="..."
-                    src={project.img.bg.app_clean_reverse.src}
-                  />
-                  <div className="subscription">{String(subscription.name).toUpperCase()}</div>
-                </div>
-                <CardBody>
-                  <div className="author">
-                    {/* Avatar */}
-                    <a className="centered">
-                      <span className="avatar border-gray centered">
-                        <span color="primary">{String(personalData.data.initials).toUpperCase()}</span>
-                      </span>
-                    </a>
-                    {/* Full Name */}
-                    <a href="" onClick={e => e.preventDefault()}>
-                      <h5 className="title">{personalData.data.first_name}{" "}{personalData.data.last_name}</h5>
-                    </a>
-                  </div>
-                  <br />
-                  <div>
-                    {/* Joined On */}
-                    <Row className="justify-content-center">
-                      <Col md="7" sm="7" xs="7">
-                        <label>{getString(langId, compId, "label_joinedOn")}</label>
-                      </Col>
-                      <Col md="5" sm="5" xs="5" className="text-right">
-                        <label>{TimeManager.getLocaleDateString(subscription.userJoinedOn, false)}</label>
-                      </Col>
-                    </Row>
-                    <br />
-                    {/* Subscription Label */}
-                    <Row className="justify-content-center">
-                      <Col md="7" sm="7" xs="7">
-                        <label>
-                          {getString(langId, compId, "label_subscription")}
-                          {" "}
-                          <i id={"subscription_hint"} className="nc-icon nc-alert-circle-i" />
-                        </label>
-                        <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"subscription_hint"}>
-                          {getString(langId, compId, "label_subscription_hint")}
-                        </UncontrolledTooltip>
-                      </Col>
-                      <Col md="5" sm="5" xs="5" className="text-right">
-                        <label>{subscription.label}</label>
-                      </Col>
-                    </Row>
-                    {/* Expires On */}
-                    {subscription.expiresOn &&
-                      <Row className="justify-content-center">
-                        <Col md="7" sm="7" xs="7">
-                          <label>
-                            {getString(langId, compId, "label_expiresOn")}
-                            {" "}
-                            <i id={"label_expiresOn_hint"} className="nc-icon nc-alert-circle-i" />
-                          </label>
-                          <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"label_expiresOn_hint"}>
-                            {getString(langId, compId, "label_expiresOn_hint")}
-                          </UncontrolledTooltip>
-                        </Col>
-                        <Col md="5" sm="5" xs="5" className="text-right">
-                          <label>{TimeManager.getLocaleDateString(subscription.expiresOn, false)}</label>
-                        </Col>
-                      </Row>
-                    }
-                    {/* Renews On */}
-                    {subscription.renewsOn &&
-                      <Row className="justify-content-center">
-                        <Col md="7" sm="7" xs="7">
-                          <label>
-                            {getString(langId, compId, "label_renewsOn")}
-                            {" "}
-                            <i id={"label_renewsOn_hint"} className="nc-icon nc-alert-circle-i" />
-                          </label>
-                          <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"label_renewsOn_hint"}>
-                            {getString(langId, compId, "label_renewsOn_hint")}
-                          </UncontrolledTooltip>
-                        </Col>
-                        <Col md="5" sm="5" xs="5" className="text-right">
-                          <label>{TimeManager.getLocaleDateString(subscription.renewsOn, false)}</label>
-                        </Col>
-                      </Row>
-                    }
-                  </div>
-                </CardBody>
-                <CardFooter>
-                  <hr />
-                  {/* Insights */}
-                  <p className="description text-center">
-                    {subscription.label}{" "}{getString(langId, compId, "label_insights")}
-                  </p>
-                  <div className="text-center">
-                    {/* Basic Insights */}
-                    <Row>
-                      {/* # Positions */}
-                      <Col lg="6" md="6" sm="6" xs="6">
-                        <h6>
-                          {pageFirstLoading ?
-                            <Skeleton /> :
-                            measures.positions.amount.data
-                          }
-                          <br />
-                          <small>{getString(langId, compId, "label_positions")}</small>
-                          <br />
-                          <i id={"positions_hint"} className="nc-icon nc-alert-circle-i" />
-                        </h6>
-                        <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"positions_hint"}>
-                          {getString(langId, compId, "label_positions_hint")}
-                        </UncontrolledTooltip>
-                      </Col>
-                      {/* Result */}
-                      <Col lg="6" md="6" sm="6" xs="6">
-                        <h6>
-                          {pageFirstLoading ?
-                            <Skeleton /> :
-                            this.props.managers.measure.handleKpiPresentation("nominal_percentage", measures.positions.result.percentage.data, currency, true)
-                          }
-                          <br />
-                          <small>{getString(langId, compId, "label_result")}</small>
-                          <br />
-                          <i id={"result_hint"} className="nc-icon nc-alert-circle-i" />
-                          <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"result_hint"}>
-                            {getString(langId, compId, "label_result_hint")}
-                          </UncontrolledTooltip>
-                        </h6>
-                      </Col>
-                      {/* Volume */}
-                      <Col lg="6" md="6" sm="6" xs="6">
-                        <h6>
-                          {pageFirstLoading ?
-                            <Skeleton /> :
-                            this.props.managers.measure.handleKpiPresentation("nominal_currency", measures.positions.amountInvested.currency.data, currency)
-                          }
-                          <br />
-                          <small>{getString(langId, compId, "label_volume")}</small>
-                          <br />
-                          <i id={"volume_hint"} className="nc-icon nc-alert-circle-i" />
-                          <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"volume_hint"}>
-                            {getString(langId, compId, "label_volume_hint")}
-                          </UncontrolledTooltip>
-                        </h6>
-                      </Col>
-                      {/* Phi Trader */}
-                      {subscription.name != "basic" &&
-                        <Col lg="6" md="6" sm="6" xs="6">
-                          <h6>
-                            {pageFirstLoading ?
-                              <Skeleton /> :
-                              insights.phiOperations.amount.data
-                            }
-                            <br />
-                            <small>{getString(langId, compId, "label_phiOperations")}</small>
-                            <br />
-                            <i id={"phiOperations_hint"} className="nc-icon nc-alert-circle-i" />
-                          </h6>
-                          <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"phiOperations_hint"}>
-                            {getString(langId, compId, "label_phiOperations_hint")}
-                          </UncontrolledTooltip>
-                        </Col>
-                      }
-                    </Row>
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
             <Col lg="8" md="7">
               {/* Personal Data */}
               <Card>
@@ -701,7 +445,7 @@ class UserProfile extends React.Component {
                 </CardBody>
                 <CardFooter>
                   <Row className="centered">
-                    <Col lg="4" md="4" sm="6" xs="6">
+                    <Col lg="4" md="6" xs="6">
                       <Button
                         block
                         type="submit"
@@ -720,57 +464,51 @@ class UserProfile extends React.Component {
                   </Row>
                 </CardFooter>
               </Card>
+            </Col>
+            <Col lg="4" md="5">
               {/* Prefs */}
               <Card>
                 <CardHeader>
                   <h5 className="title">{getString(langId, compId, "title_prefs")}</h5>
                 </CardHeader>
                 <CardBody>
-                  <Form>
-                    <Row className="justify-content-center">
-                      {/* Language */}
-                      <Col md="6">
-                        <FormGroup>
-                          <label>{getString(langId, compId, "input_language")}</label>
-                          <Select
-                            className="react-select primary"
-                            classNamePrefix="react-select"
-                            name="pref_langId"
-                            value={prefs.data.pref_langId}
-                            onChange={value => this.onSelectChange("prefs", "pref_langId", value)}
-                            options={languages}
-                            placeholder={getString(langId, "generic", "input_select")}
-                          />
-                        </FormGroup>
-                      </Col>
-                      {/* Currency */}
-                      <Col md="6">
-                        <FormGroup>
-                          <label>
-                            {getString(langId, compId, "input_currency")}
-                            {" "}
-                            <i id="input_currency_hint" className="nc-icon nc-alert-circle-i" />
-                          </label>
-                          <UncontrolledTooltip delay={{ show: 200 }} placement="top" target="input_currency_hint">
-                            {getString(langId, compId, "input_currency_hint")}
-                          </UncontrolledTooltip>
-                          <Select
-                            className="react-select primary"
-                            classNamePrefix="react-select"
-                            name="pref_currency"
-                            value={prefs.data.pref_currency}
-                            onChange={value => this.onSelectChange("prefs", "pref_currency", value)}
-                            options={currencies}
-                            placeholder={getString(langId, "generic", "input_select")}
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  </Form>
+                  {/* Language */}
+                  <FormGroup>
+                    <label>{getString(langId, compId, "input_language")}</label>
+                    <Select
+                      className="react-select primary"
+                      classNamePrefix="react-select"
+                      name="pref_langId"
+                      value={prefs.data.pref_langId}
+                      onChange={value => this.onSelectChange("prefs", "pref_langId", value)}
+                      options={languages}
+                      placeholder={getString(langId, "generic", "input_select")}
+                    />
+                  </FormGroup>
+                  {/* Currency */}
+                  <FormGroup>
+                    <label>
+                      {getString(langId, compId, "input_currency")}
+                      {" "}
+                      <i id="input_currency_hint" className="nc-icon nc-alert-circle-i" />
+                    </label>
+                    <UncontrolledTooltip delay={{ show: 200 }} placement="top" target="input_currency_hint">
+                      {getString(langId, compId, "input_currency_hint")}
+                    </UncontrolledTooltip>
+                    <Select
+                      className="react-select primary"
+                      classNamePrefix="react-select"
+                      name="pref_currency"
+                      value={prefs.data.pref_currency}
+                      onChange={value => this.onSelectChange("prefs", "pref_currency", value)}
+                      options={currencies}
+                      placeholder={getString(langId, "generic", "input_select")}
+                    />
+                  </FormGroup>
                 </CardBody>
                 <CardFooter>
                   <Row className="centered">
-                    <Col lg="4" md="4" sm="6" xs="6">
+                    <Col lg="8" md="8" xs="6">
                       <Button
                         block
                         type="submit"

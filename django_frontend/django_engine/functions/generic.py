@@ -1,4 +1,4 @@
-from app.models import Currency, Country, Subscription, PositionType
+from app.models import Currency, Country, Subscription, SubscriptionPrice, PositionType
 
 
 def app_initiator():
@@ -8,9 +8,11 @@ def app_initiator():
     currency = Currency()
     country = Country()
     subscripton = Subscription()
+    subscriptonPrice = SubscriptionPrice()
     pType = PositionType()
 
     currency.init()
     country.init()
     subscripton.init()
+    subscriptonPrice.init()
     pType.init()

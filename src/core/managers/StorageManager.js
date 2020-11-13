@@ -28,7 +28,7 @@ const config = {
     },
     subscriptions: {
       syncLimit: 8640,
-      version: 0.01
+      version: 0.02
     },
     wallets: {
       syncLimit: 8640,

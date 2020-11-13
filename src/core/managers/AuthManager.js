@@ -69,7 +69,7 @@ class AuthManager {
     let isAvailable = false
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "checkAvailability/"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     wsInfo.method = "post"
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, data)
@@ -116,7 +116,7 @@ class AuthManager {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "logout/"
     wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
     this.clearUserLocalData()
     return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
@@ -125,7 +125,7 @@ class AuthManager {
     let wsInfo = this.getApi("wsUser")
     wsInfo.request += "changepassword/"
     wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
     return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, object)
   }
@@ -190,7 +190,7 @@ class AuthManager {
       wsInfo = this.getApi("wsUserCustom")
       wsInfo.request += "update/"
       wsInfo.method = "patch"
-      wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+      wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
       result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_userCustom)
 
@@ -202,7 +202,7 @@ class AuthManager {
       wsInfo = this.getApi("wsUser")
       wsInfo.request += "update/"
       wsInfo.method = "patch"
-      wsInfo.options.headers.Authorization = "token " + await AuthManager.instantToken()
+      wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
       result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_user)
 
