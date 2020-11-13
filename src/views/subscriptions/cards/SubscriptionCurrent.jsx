@@ -255,20 +255,22 @@ class SubscriptionCurrent extends React.Component {
               </Col>
             </Row>
           }
-          <Row className="mt-5" />
           {/* Manage Subscription */}
           {subscription.name !== "basic" &&
-            <Row className="justify-content-center">
-              <Button
-                color="success"
-                className="btn-simple btn-round"
-                onClick={() => this.onClick("manage")}>
-                {isLoading ?
-                  <Spinner size="sm" /> :
-                  getString(langId, compId, "btn_manage")
-                }
-              </Button>
-            </Row>
+            <>
+              <Row className="mt-5" />
+              <Row className="justify-content-center">
+                <Button
+                  color="success"
+                  className="btn-simple btn-round"
+                  onClick={() => this.onClick("manage")}>
+                  {isLoading ?
+                    <Spinner size="sm" /> :
+                    getString(langId, compId, "btn_manage")
+                  }
+                </Button>
+              </Row>
+            </>
           }
           {/* Insights */}
           <hr />

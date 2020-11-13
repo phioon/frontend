@@ -1,8 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 
-from django.core import exceptions
-
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -147,7 +145,7 @@ class UserSerializer(serializers.ModelSerializer):
     birthday = serializers.ReadOnlyField(source='userCustom.birthday')
     nationality = serializers.ReadOnlyField(source='userCustom.nationality.code')
     subscription = serializers.ReadOnlyField(source='userCustom.subscription.name')
-    subscription_type = serializers.ReadOnlyField(source='userCustom.subscription_type')
+    subscription_status = serializers.ReadOnlyField(source='userCustom.subscription_status')
     subscription_expires_on = serializers.ReadOnlyField(source='userCustom.subscription_expires_on')
     subscription_renews_on = serializers.ReadOnlyField(source='userCustom.subscription_renews_on')
     pref_currency = serializers.ReadOnlyField(source='userCustom.pref_currency.code')
@@ -157,7 +155,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name',
                   'date_joined', 'birthday', 'nationality',
-                  'subscription', 'subscription_type', 'subscription_renews_on', 'subscription_expires_on',
+                  'subscription', 'subscription_status', 'subscription_renews_on', 'subscription_expires_on',
                   'pref_langId', 'pref_currency']
         read_only_fields = ['email']
 

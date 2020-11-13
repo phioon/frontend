@@ -2,14 +2,13 @@ import AuthManager from "./AuthManager";
 import { deepCloneObj, httpRequest, sleep } from "../utils";
 
 import { loadStripe } from "@stripe/stripe-js";
-var stripe_api = undefined;
+var stripe_apiKey = undefined;
 if (process.env.NODE_ENV === "production")
-  stripe_api = "pk_test_51HkbgHHiGSreEiGHpC8mXSmf5R2YNkDfLEhQIFrICQ646F9YnnUUYFFJehSO4btkE4s032OnaFFWgI5W9idI94be00f9gieyx3"
-// stripe_api = "pk_live_51HkbgHHiGSreEiGHRC2RRIjONTMJOmfvsy3U857OtRm5s1FDM53EzjwocgrLWxZnxPMAP1rEej1aTurciVE7G9vj00FwTs4wTj"
+  stripe_apiKey = "pk_live_51HkbgHHiGSreEiGHRC2RRIjONTMJOmfvsy3U857OtRm5s1FDM53EzjwocgrLWxZnxPMAP1rEej1aTurciVE7G9vj00FwTs4wTj"
 else
-  stripe_api = "pk_test_51HkbgHHiGSreEiGHpC8mXSmf5R2YNkDfLEhQIFrICQ646F9YnnUUYFFJehSO4btkE4s032OnaFFWgI5W9idI94be00f9gieyx3"
+  stripe_apiKey = "pk_test_51HkbgHHiGSreEiGHpC8mXSmf5R2YNkDfLEhQIFrICQ646F9YnnUUYFFJehSO4btkE4s032OnaFFWgI5W9idI94be00f9gieyx3"
 
-const stripe = loadStripe(stripe_api);
+const stripe = loadStripe(stripe_apiKey);
 
 class StripeManager {
   constructor(getHttpTranslation) {

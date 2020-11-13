@@ -74,7 +74,7 @@ class UserSubscription extends React.Component {
 
   async onClick(action, data) {
     switch (action) {
-      // props.priceId needed
+      // priceId needed
       case "upgrade":
         if (this.state.subscription.name === "basic")
           await this.openCheckoutSession(data)
@@ -83,11 +83,9 @@ class UserSubscription extends React.Component {
         break;
       case "downgrade":
         await this.openCustomerPortal()
-        // Open manage
         break;
       case "manage":
         await this.openCustomerPortal()
-        // Open manage
         break;
     }
   }

@@ -150,7 +150,7 @@ class UserCustom (models.Model):
     subscription_expires_on = models.DateField(null=True, db_index=True)
     subscription_renews_on = models.DateField(null=True, db_index=True)
     # prefs
-    pref_langId = models.CharField(max_length=8)
+    pref_langId = models.CharField(max_length=8)        # Used by apiStripe.update_stripe_customer()
     pref_currency = models.ForeignKey(Currency, on_delete=models.DO_NOTHING)
 
     def __str__(self):

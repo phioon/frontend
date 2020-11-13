@@ -230,14 +230,12 @@ class Sidebar extends React.Component {
                       <span className="sidebar-normal">{getString(langId, compId, 'profile')}</span>
                     </NavLink>
                   </li>
-                  {user && ['f.couto', 'v.neto'].includes(user.username) &&
-                    <li>
-                      <NavLink to="/app/user/subscription" activeClassName="">
-                        <span className="sidebar-mini-icon">{getString(langId, compId, 'subscriptionMini')}</span>
-                        <span className="sidebar-normal">{getString(langId, compId, 'subscription')}</span>
-                      </NavLink>
-                    </li>
-                  }
+                  <li>
+                    <NavLink to="/app/user/subscription" activeClassName="">
+                      <span className="sidebar-mini-icon">{getString(langId, compId, 'subscriptionMini')}</span>
+                      <span className="sidebar-normal">{getString(langId, compId, 'subscription')}</span>
+                    </NavLink>
+                  </li>
                 </ul>
               </Collapse>
             </div>

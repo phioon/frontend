@@ -65,7 +65,7 @@ urlpatterns += [
     path('stripe/checkout/<session_id>/', apiStripe.get_checkout_session, name='get_checkout_session'),
     path('stripe/customer-portal/', apiStripe.create_customer_portal_session, name='create_customer_portal_session'),
 
-    path('stripe/webhook_listener/', apiStripe.webhook_listener, name='webhook_listener'),
+    path('stripe/webhook-listener/', apiStripe.webhook_listener, name='webhook_listener'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
