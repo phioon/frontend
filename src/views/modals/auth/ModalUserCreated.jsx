@@ -109,7 +109,7 @@ class ModalUserCreated extends React.Component {
         <Row className="mt-3" />
         <div className="modal-footer justify-content-center">
           <Button
-            className="btn-round"
+            className="btn-simple btn-round"
             color="primary"
             data-dismiss="modal"
             type="button"

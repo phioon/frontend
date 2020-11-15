@@ -339,7 +339,7 @@ class ModalCreateWallet extends React.Component {
           <CardFooter className="text-center">
             <LabelAlert alertState={alertState} alertMsg={alertMsg} />
             <Button
-              className="btn-round"
+              className="btn-simple btn-round"
               color="success"
               data-dismiss="modal"
               type="submit"

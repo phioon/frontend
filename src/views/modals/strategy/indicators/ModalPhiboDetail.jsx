@@ -221,7 +221,7 @@ class ModalPhiboDetail extends React.Component {
           </CardBody>
           <CardFooter className="text-center">
             <Button
-              className="btn-round"
+              className="btn-simple btn-round"
               color="success"
               data-dismiss="modal"
               type="submit"

@@ -498,7 +498,7 @@ class Register extends React.Component {
                 <CardFooter>
                   <Button
                     type="submit"
-                    className="btn-round"
+                    className="btn-simple btn-round"
                     color="primary"
                     disabled={user.isValidated ? false : true}
                     onClick={() => this.registerClick(user)}

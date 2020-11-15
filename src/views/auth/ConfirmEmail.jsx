@@ -180,7 +180,7 @@ class ConfirmEmail extends React.Component {
                   <Button
                     block
                     type="submit"
-                    className="btn-round"
+                    className="btn-simple btn-round"
                     color="primary"
                     name="btnLogin"
                     onClick={e => this.submitClick(e)}

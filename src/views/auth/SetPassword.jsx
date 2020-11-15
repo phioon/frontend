@@ -327,7 +327,7 @@ class SetPassword extends React.Component {
                       <Button
                         block
                         type="submit"
-                        className="btn-round"
+                        className="btn-simple btn-round"
                         color="primary"
                         name="btnLogin"
                         disabled={

@@ -441,7 +441,7 @@ class UserProfile extends React.Component {
                       <Button
                         block
                         type="submit"
-                        className="btn-round"
+                        className="btn-simple btn-round"
                         color="success"
                         name="btnSavePersonalData"
                         disabled={personalData.isValidated ? false : true}
@@ -504,7 +504,7 @@ class UserProfile extends React.Component {
                       <Button
                         block
                         type="submit"
-                        className="btn-round"
+                        className="btn-simple btn-round"
                         color="success"
                         name="btnSaveprefs"
                         disabled={preferences.isValidated ? false : true}
