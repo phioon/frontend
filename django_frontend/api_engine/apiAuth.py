@@ -22,7 +22,7 @@ from .serializers import UserSerializer, UserRegisterSerializer, UserCustomSeria
 from . import serializers
 
 from api_engine import apiStripe
-from app.models import Country, UserCustom, Subscription
+from app.models import Country, Currency, UserCustom, UserPreferences, Subscription
 
 
 @api_view(['POST'])
@@ -64,21 +64,24 @@ class UserRegisterAPIView(generics.GenericAPIView):
                         user=user,
                         nationality=nationality,
                         subscription=subscription,
-                        subscription_expires_on='2020-12-31',
-                        pref_currency=nationality.currency,
-                        pref_langId=request.data['langId'])
+                        subscription_expires_on='2020-12-31')
+
+                    UserPreferences.objects.create(
+                        user=user,
+                        locale=request.data['locale'],
+                        currency=nationality.currency)
                 except:
                     user.delete()
-                    obj_res = {"message": "Something went wrong. UserCustom couldn't be created."}
+                    obj_res = {"message": "Something went wrong. UserCustom could not be created."}
                     return Response(obj_res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
                 if userCustom:
                     # Send Confirmation Email
-                    subject_template_name = 'emails/<langId>/user_created_subject.txt'
-                    html_email_template_name = 'emails/<langId>/user_created_email.html'
+                    subject_template_name = 'emails/<locale>/user_created_subject.txt'
+                    html_email_template_name = 'emails/<locale>/user_created_email.html'
 
-                    subject_template_name = subject_template_name.replace('<langId>', request.data['langId'])
-                    html_email_template_name = html_email_template_name.replace('<langId>', request.data['langId'])
+                    subject_template_name = subject_template_name.replace('<locale>', request.data['locale'])
+                    html_email_template_name = html_email_template_name.replace('<locale>', request.data['locale'])
 
                     current_site = get_current_site(request)
                     context = {
@@ -198,27 +201,23 @@ class RequestEmailConfirmationView(generics.GenericAPIView):
 
         serializer = self.serializer_class(data=serializer_data, context={'request': request})
 
-        if User.objects.filter(email=serializer.initial_data['email']).exists():
-            user = User.objects.get(email=serializer.initial_data['email'])
-        else:
-            return Response()
+        user = get_object_or_404(User, email=serializer.initial_data['email'])
 
         # User is active already?
         if user.is_active:
             return Response()
 
         # Brings userCustom to get preferred language
-        langId = 'ptBR'
+        locale = 'ptBR'
         if UserCustom.objects.filter(user__email__exact=user.email).exists():
-            userCustom = UserCustom.objects.get(user__email__exact=user.email)
-            langId = userCustom.pref_langId
+            locale = user.userPrefs.locale
 
         # Send Confirmation Email
-        subject_template_name = 'emails/<langId>/email_confirmation_subject.txt'
-        html_email_template_name = 'emails/<langId>/email_confirmation_email.html'
+        subject_template_name = 'emails/<locale>/email_confirmation_subject.txt'
+        html_email_template_name = 'emails/<locale>/email_confirmation_email.html'
 
-        subject_template_name = subject_template_name.replace('<langId>', langId)
-        html_email_template_name = html_email_template_name.replace('<langId>', langId)
+        subject_template_name = subject_template_name.replace('<locale>', locale)
+        html_email_template_name = html_email_template_name.replace('<locale>', locale)
 
         current_site = get_current_site(request)
         context = {
@@ -246,6 +245,56 @@ class RequestEmailConfirmationView(generics.GenericAPIView):
 
 class ConfirmEmailView(rest_auth_views.PasswordResetConfirmView):
     serializer_class = serializers.ConfirmEmailSerializer
+
+
+@api_view(['PATCH'])
+@permission_classes([permissions.IsAuthenticated])
+def user_update(request):
+    user = request.user
+    serializer_class = UserSerializer
+    data = request.data
+
+    updatable_fields = [
+        'email', 'username', 'first_name', 'last_name',
+        'birthday', 'nationality']
+    user_updated = userCustom_updated = userPrefs_updated = None
+
+    for attr, value in data.items():
+        if attr in updatable_fields:
+            if hasattr(user, attr):
+                # User
+                user_updated = True
+                setattr(user, attr, value)
+
+            elif hasattr(user.userCustom, attr):
+                # User Custom
+                userCustom_updated = True
+
+                if attr == 'nationality':
+                    country = get_object_or_404(Country, pk=value)
+                    setattr(user.userCustom, attr, country)
+                else:
+                    setattr(user.userCustom, attr, value)
+
+        elif hasattr(user.userPrefs, attr):
+            # Preferences
+            userPrefs_updated = True
+
+            if attr == 'currency':
+                currency = get_object_or_404(Currency, pk=value)
+                setattr(user.userPrefs, attr, currency)
+            else:
+                setattr(user.userPrefs, attr, value)
+
+    if user_updated:
+        user.save()
+    if userCustom_updated:
+        user.userCustom.save()
+    if userPrefs_updated:
+        user.userPrefs.save()
+
+    serializer = serializer_class(instance=user)
+    return Response(serializer.data)
 
 
 @api_view(['GET'])

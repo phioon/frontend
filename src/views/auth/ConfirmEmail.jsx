@@ -26,10 +26,9 @@ import LabelAlert from "../../components/LabelAlert";
 class ConfirmEmail extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase()
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       pageFirstLoading: true,
       redirectToLogin: undefined,
       isEmailConfirmed: false,
@@ -41,12 +40,6 @@ class ConfirmEmail extends React.Component {
       alertMsg: "",
     }
   }
-
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
-  }
   componentDidMount() {
     document.body.classList.toggle("login-page");
     this.prepareRequirements()
@@ -55,7 +48,7 @@ class ConfirmEmail extends React.Component {
     document.body.classList.toggle("login-page");
   }
   async prepareRequirements() {
-    let { compId, pageFirstLoading, redirectToLogin, alertState, alertMsg } = this.state
+    let { pageFirstLoading, redirectToLogin, alertState, alertMsg } = this.state
     let uidb64 = undefined
     let token = undefined
 
@@ -79,14 +72,14 @@ class ConfirmEmail extends React.Component {
             this.emailConfirmed()
           else {
             // Something went wrong trying to update UserCustom
-            let msg = await this.props.getHttpTranslation(result, compId, "user")
+            let msg = await this.props.getHttpTranslation(result, this.compId, "user")
             alertState = "has-danger"
             alertMsg = msg.text
           }
         }
         else {
           // Token is invalid
-          let msg = await this.props.getHttpTranslation(result, compId, "user")
+          let msg = await this.props.getHttpTranslation(result, this.compId, "user")
           alertState = "has-danger"
           alertMsg = msg.text
         }
@@ -116,17 +109,19 @@ class ConfirmEmail extends React.Component {
   }
 
   emailConfirmed() {
+    let { prefs, getString } = this.props;
+
     this.setState({
       isLoading: false,
       alert: (
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_emailConfirmed_title")}
+          title={getString(prefs.locale, this.compId, "alert_emailConfirmed_title")}
           onConfirm={() => this.hideAlert()}
           confirmBtnBsStyle="success"
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_emailConfirmed_text")}
+          {getString(prefs.locale, this.compId, "alert_emailConfirmed_text")}
         </ReactBSAlert>
       )
     });
@@ -145,11 +140,9 @@ class ConfirmEmail extends React.Component {
   }
 
   render() {
-    let getString = this.props.getString;
+    let { getString, prefs } = this.props;
 
     let {
-      langId,
-      compId,
       pageFirstLoading,
       isLoading,
       redirectToLogin,
@@ -168,7 +161,7 @@ class ConfirmEmail extends React.Component {
             <Form action="" className="form" method="">
               <Card className="card-lock text-center">
                 <CardHeader>
-                  <h5 className="header text-center">{getString(langId, compId, "card_header")}</h5>
+                  <h5 className="header text-center">{getString(prefs.locale, this.compId, "card_header")}</h5>
                 </CardHeader>
                 <CardBody>
                   {pageFirstLoading ?
@@ -194,7 +187,7 @@ class ConfirmEmail extends React.Component {
                   >
                     {isLoading ?
                       <Spinner size="sm" /> :
-                      getString(langId, compId, "btn_login")
+                      getString(prefs.locale, this.compId, "btn_login")
                     }
                   </Button>
                 </CardFooter>
@@ -218,6 +211,5 @@ export default ConfirmEmail;
 ConfirmEmail.propTypes = {
   managers: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
-  prefs: PropTypes.object.isRequired,
-  setAuthStatus: PropTypes.func.isRequired
+  prefs: PropTypes.object.isRequired
 }

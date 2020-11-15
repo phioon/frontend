@@ -13,10 +13,6 @@ class AuthManager {
 
     this.sModule = "auth"
     this.apis = {
-      wsUserCustom: {
-        options: { headers: { "Content-Type": "application/json" } },
-        request: "/api/auth/usercustom/"
-      },
       wsUser: {
         options: { headers: { "Content-Type": "application/json" } },
         request: "/api/auth/user/"
@@ -103,7 +99,8 @@ class AuthManager {
       this.instantUser(result.user)
       AuthManager.instantToken(result.token)
 
-      await this.storePrefs(result.user)
+      await this.storePrefs(result.user.prefs)
+      this.setPrefs(result.user.prefs)
       await StorageManager.store(sKey, result)
 
       this.setAuthStatus(true)
@@ -165,62 +162,33 @@ class AuthManager {
     return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, object)
   }
 
-  async userUpdate(user) {
+  async userUpdate(data) {
     const sKey = "user"
-    let userFields = ["email", "username", "first_name", "last_name"]
-    let obj_user = {}
-    let obj_userCustom = {}
-
-    let wsInfo = null
     let result = {}
 
-    // Determines which fields are for User model and UserCustom model (Django)
-    for (let [k, v] of Object.entries(user))
-      if (userFields.includes(k))
-        obj_user[k] = v
-      else {
-        if (k == "birthday")
-          obj_userCustom[k] = v ? TimeManager.getDateString(v) : null
-        else
-          obj_userCustom[k] = v
-      }
+    // Data for UserSerializer
+    let wsInfo = this.getApi("wsUser")
+    wsInfo.request += "update/"
+    wsInfo.method = "patch"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
-    if (Object.keys(obj_userCustom).length > 0) {
-      // Data for UserCustomSerializer
-      wsInfo = this.getApi("wsUserCustom")
-      wsInfo.request += "update/"
-      wsInfo.method = "patch"
-      wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, data)
 
-      result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_userCustom)
-
+    if (result.status == 200) {
       this.getHttpTranslation(result, "profileupdate", "user", true)
-    }
+      result = result.data
 
-    if (Object.keys(obj_user).length > 0) {
-      // Data for UserSerializer
-      wsInfo = this.getApi("wsUser")
-      wsInfo.request += "update/"
-      wsInfo.method = "patch"
-      wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+      this.instantUser(result)
+      let sUser = await StorageManager.getData(sKey)
+      sUser.user = result
 
-      result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, obj_user)
-
-      if (result.status == 200) {
-        this.getHttpTranslation(result, "profileupdate", "user", true)
-        result = result.data
-
-        this.instantUser(result)
-        let sUser = await StorageManager.getData(sKey)
-        sUser.user = result
-        await this.storePrefs(sUser.user)
-        return await StorageManager.store(sKey, sUser)
-      }
-      else
-        return result
+      await this.storePrefs(sUser.user.prefs)
+      this.setPrefs(sUser.user.prefs)
+      return await StorageManager.store(sKey, sUser)
     }
     else
-      return await this.userRetrieve()
+      return result
+
   }
   async userRetrieve() {
     const sKey = "user"
@@ -242,7 +210,8 @@ class AuthManager {
         this.instantUser(sData.user)
         AuthManager.instantToken(sData.token)
 
-        await this.storePrefs(sData.user)
+        await this.storePrefs(sData.user.prefs)
+        this.setPrefs(sData.user.prefs)
         return await StorageManager.store(sKey, sData)
       }
     }
@@ -273,15 +242,13 @@ class AuthManager {
   }
 
   // Prefs
-  async storePrefs(user) {
+  async storePrefs(prefs) {
     const sKey = "user_prefs"
-    let prefs = {
-      langId: user.pref_langId,
-      currency: user.pref_currency
-    }
 
-    this.setPrefs(prefs)
-    await StorageManager.store(sKey, prefs)
+    let sData = await this.storedPrefs()
+    sData = { ...sData, ...prefs }
+
+    await StorageManager.store(sKey, sData)
   }
   async storedPrefs() {
     const sKey = "user_prefs"

@@ -42,10 +42,9 @@ import {
 class ModalOpenPosition extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       isOpen: props.isOpen,
       isLoading: false,
 
@@ -86,8 +85,6 @@ class ModalOpenPosition extends React.Component {
     }
   }
   static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
     if (props.isOpen !== state.isOpen)
       return {
         isOpen: props.isOpen,
@@ -306,7 +303,7 @@ class ModalOpenPosition extends React.Component {
   async confirmClick(e) {
     e.preventDefault();
     this.setState({ isLoading: true })
-    let { compId, position } = this.state
+    let { position } = this.state
 
     let positionTypes = await this.props.managers.app.positionTypeData()
     let type = undefined
@@ -338,7 +335,7 @@ class ModalOpenPosition extends React.Component {
       this.objectCreated()
     }
     else {
-      let msg = await this.props.getHttpTranslation(result, compId, "position")
+      let msg = await this.props.getHttpTranslation(result, this.compId, "position")
       this.setState({
         isLoading: false,
         alertState: "has-danger",
@@ -348,17 +345,19 @@ class ModalOpenPosition extends React.Component {
   }
 
   objectCreated() {
+    let { prefs, getString } = this.props;
+
     this.setState({
       isLoading: false,
       alert: (
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_created_title")}
+          title={getString(prefs.locale, this.compId, "alert_created_title")}
           onConfirm={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_created_text")}
+          {getString(prefs.locale, this.compId, "alert_created_text")}
         </ReactBSAlert>
       )
     });
@@ -404,9 +403,10 @@ class ModalOpenPosition extends React.Component {
   };
 
   render() {
-    let { getString, modalId } = this.props;
+    let { prefs, getString, modalId } = this.props;
     let {
-      langId, compId, isOpen, isLoading,
+      isOpen,
+      isLoading,
 
       currency,
 
@@ -436,7 +436,7 @@ class ModalOpenPosition extends React.Component {
               <i className="nc-icon nc-simple-remove" />
             </button>
             <h5 className="modal-title" id={modalId}>
-              {getString(langId, compId, "title")}
+              {getString(prefs.locale, this.compId, "title")}
             </h5>
             <hr />
           </CardHeader>
@@ -458,7 +458,7 @@ class ModalOpenPosition extends React.Component {
                   <div className="icon mm">
                     <i className="nc-icon nc-spaceship mm" />
                   </div>
-                  <label>{getString(langId, compId, "input_type_buy")}</label>
+                  <label>{getString(prefs.locale, this.compId, "input_type_buy")}</label>
                 </div>
               </Col>
               <Col md="3" xs="5">
@@ -475,18 +475,18 @@ class ModalOpenPosition extends React.Component {
                   <div className="icon mm">
                     <i className="nc-icon nc-spaceship fa-rotate-90 mm" />
                   </div>
-                  <label>{getString(langId, compId, "input_type_sell")}</label>
+                  <label>{getString(prefs.locale, this.compId, "input_type_sell")}</label>
                 </div>
               </Col>
             </Row>
             <br />
             {/* Wallet */}
             <FormGroup className={`has-label ${position.states.wallet}`}>
-              <label>{getString(langId, compId, "input_wallet")} *</label>
+              <label>{getString(prefs.locale, this.compId, "input_wallet")} *</label>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
-                placeholder={getString(langId, "generic", "input_select")}
+                placeholder={getString(prefs.locale, "generic", "input_select")}
                 name="wallet"
                 value={position.data.wallet}
                 options={walletOptions}
@@ -495,24 +495,25 @@ class ModalOpenPosition extends React.Component {
             </FormGroup>
             {/* Asset */}
             <FormGroup className={`has-label ${position.states.asset}`}>
-              <label>{getString(langId, compId, "input_asset")} *</label>
+              <label>{getString(prefs.locale, this.compId, "input_asset")} *</label>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
-                placeholder={getString(langId, "generic", "input_select")}
+                placeholder={getString(prefs.locale, "generic", "input_select")}
                 name="asset"
                 value={position.data.asset}
                 options={assetOptions}
                 onChange={value => this.onSelectChange("asset", value)}
-                noOptionsMessage={() => getString(langId, compId, "input_asset_noOptions")}
+                noOptionsMessage={() => getString(prefs.locale, this.compId, "input_asset_noOptions")}
               />
             </FormGroup>
             {/* Amount */}
             <FormGroup className={`has-label ${position.states.amount}`}>
-              <label>{getString(langId, compId, "input_amount")} *</label>
+              <label>{getString(prefs.locale, this.compId, "input_amount")} *</label>
               <Input
                 type="number"
                 name="amount"
+                autoComplete="off"
                 value={position.data.amount}
                 onChange={e => this.onChange(e, e.target.name)}
               />
@@ -522,19 +523,19 @@ class ModalOpenPosition extends React.Component {
               <Col xs="7" md="7">
                 <FormGroup className={`has-label ${position.states.startedOn}`}>
                   <label>
-                    {this.props.getString(langId, compId, "input_date")}
+                    {this.props.getString(prefs.locale, this.compId, "input_date")}
                     {" "}
                     <i id={"input_date_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
                   <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_date_hint"}>
-                    {getString(langId, compId, "input_date_hint")}
+                    {getString(prefs.locale, this.compId, "input_date_hint")}
                   </UncontrolledTooltip>
                   <ReactDatetime
                     inputProps={{
                       className: "form-control",
-                      placeholder: this.props.getString(langId, "generic", "input_select")
+                      placeholder: this.props.getString(prefs.locale, "generic", "input_select")
                     }}
-                    locale={getString(langId, "locales", langId)}
+                    locale={getString(prefs.locale, "locales", prefs.locale)}
                     value={position.data.startedOn}
                     onChange={value => this.onSelectChange("startedOn", value)}
                     isValidDate={this.isDateValid}
@@ -547,12 +548,12 @@ class ModalOpenPosition extends React.Component {
             <Row className="justify-content-center">
               <Col xs="7" md="7">
                 <FormGroup className={`has-label ${position.states.s_price}`}>
-                  <label>{this.props.getString(langId, compId, "input_price")}
+                  <label>{this.props.getString(prefs.locale, this.compId, "input_price")}
                     {" "}
                     <i id={"input_price_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
                   <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_price_hint"}>
-                    {getString(langId, compId, "input_price_hint")}
+                    {getString(prefs.locale, this.compId, "input_price_hint")}
                   </UncontrolledTooltip>
                   <CurrencyInput
                     className="form-control text-right"
@@ -575,12 +576,12 @@ class ModalOpenPosition extends React.Component {
             <Row className="justify-content-center">
               <Col xs="7" md="7">
                 <FormGroup>
-                  <label>{this.props.getString(langId, compId, "input_cost")}
+                  <label>{this.props.getString(prefs.locale, this.compId, "input_cost")}
                     {" "}
                     <i id={"input_cost_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
                   <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_cost_hint"}>
-                    {getString(langId, compId, "input_cost_hint")}
+                    {getString(prefs.locale, this.compId, "input_cost_hint")}
                   </UncontrolledTooltip>
                   <CurrencyInput
                     className="form-control text-right"
@@ -607,12 +608,12 @@ class ModalOpenPosition extends React.Component {
               </Col>
               <Col xs="7" md="7">
                 <FormGroup>
-                  <label>{this.props.getString(langId, compId, "input_opCost")}
+                  <label>{this.props.getString(prefs.locale, this.compId, "input_opCost")}
                     {" "}
                     <i id={"input_opCost_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
                   <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_opCost_hint"}>
-                    {getString(langId, compId, "input_opCost_hint")}
+                    {getString(prefs.locale, this.compId, "input_opCost_hint")}
                   </UncontrolledTooltip>
                   <CurrencyInput
                     className="form-control text-right"
@@ -646,7 +647,7 @@ class ModalOpenPosition extends React.Component {
                   %
                     </Button>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="opCost_percentage">
-                  {this.props.getString(langId, compId, "opCost_percentage_hint")}
+                  {this.props.getString(prefs.locale, this.compId, "opCost_percentage_hint")}
                 </UncontrolledTooltip>
                 <Button
                   className="btn-icon btn-link"
@@ -660,7 +661,7 @@ class ModalOpenPosition extends React.Component {
                   $
                     </Button>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="opCost_currency">
-                  {this.props.getString(langId, compId, "opCost_currency_hint")}
+                  {this.props.getString(prefs.locale, this.compId, "opCost_currency_hint")}
                 </UncontrolledTooltip>
               </Col>
             </Row>
@@ -671,12 +672,12 @@ class ModalOpenPosition extends React.Component {
               </Col>
               <Col xs="7" md="7">
                 <FormGroup>
-                  <label>{this.props.getString(langId, compId, "input_totalCost")}
+                  <label>{this.props.getString(prefs.locale, this.compId, "input_totalCost")}
                     {" "}
                     <i id={"input_totalCost_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
                   <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_totalCost_hint"}>
-                    {getString(langId, compId, "input_totalCost_hint")}
+                    {getString(prefs.locale, this.compId, "input_totalCost_hint")}
                   </UncontrolledTooltip>
                   <CurrencyInput
                     className="form-control text-right"
@@ -714,7 +715,7 @@ class ModalOpenPosition extends React.Component {
             >
               {isLoading ?
                 <Spinner size="sm" /> :
-                getString(langId, compId, "btn_confirm")
+                getString(prefs.locale, this.compId, "btn_confirm")
               }
             </Button>
           </CardFooter>
@@ -727,9 +728,9 @@ class ModalOpenPosition extends React.Component {
 export default ModalOpenPosition;
 
 ModalOpenPosition.propTypes = {
-  managers: PropTypes.object.isRequired,
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
+  managers: PropTypes.object.isRequired,
   getHttpTranslation: PropTypes.func.isRequired,
   modalId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,

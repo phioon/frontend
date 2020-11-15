@@ -7,7 +7,7 @@ import {
   percentage,
   orderBy,
 } from "../utils";
-import { getString } from "../lang";
+import { getTranslation } from "../locales";
 
 const colors = {
   cold: [],
@@ -447,7 +447,7 @@ class ChartManager {
         let country_code = ""
         for (var x = 0; x < labels.length; x++) {
           country_code = String(labels[x]).toLowerCase()
-          labels[x] = String(getString(langId, "countries", country_code))
+          labels[x] = String(getTranslation(langId, "countries", country_code))
         }
         break;
       case "date":
@@ -458,9 +458,9 @@ class ChartManager {
           let date = strDate[2]
 
           if (x == 0)
-            labels[x] = String(year + "-" + getString(langId, "monthShort", month) + "-" + date)
+            labels[x] = String(year + "-" + getTranslation(langId, "monthShort", month) + "-" + date)
           else
-            labels[x] = String(getString(langId, "monthShort", month) + "-" + date)
+            labels[x] = String(getTranslation(langId, "monthShort", month) + "-" + date)
         }
         break;
       case "month":
@@ -469,14 +469,14 @@ class ChartManager {
           let year = yearMonth[0]
           let month = yearMonth[1]
 
-          labels[x] = String(year + "-" + getString(langId, "monthShort", month))
+          labels[x] = String(year + "-" + getTranslation(langId, "monthShort", month))
         }
         break;
       case "sector_id":
         let sector_id = ""
         for (var x = 0; x < labels.length; x++) {
           sector_id = String(labels[x]).toLowerCase()
-          labels[x] = String(getString(langId, "sectors", sector_id))
+          labels[x] = String(getTranslation(langId, "sectors", sector_id))
         }
         break;
       default:

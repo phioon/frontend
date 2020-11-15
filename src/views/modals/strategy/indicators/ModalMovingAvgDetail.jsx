@@ -20,11 +20,9 @@ import { applyFilterToObjList, retrieveObjFromObjList, getDistinctValuesFromList
 class ModalMovingAvgDetail extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase()
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
-
       typeOptions: [],
       periodOptions: [],
 
@@ -42,12 +40,6 @@ class ModalMovingAvgDetail extends React.Component {
         isValidated: undefined
       },
     }
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-
-    return null
   }
   componentDidUpdate(prevProps) {
     if (prevProps.isOpen !== this.props.isOpen && this.props.isOpen)
@@ -79,8 +71,8 @@ class ModalMovingAvgDetail extends React.Component {
 
   prepareRequirements() {
     // Prepares the Component
-    let { getString, items, action, selectedItem } = this.props;
-    let { langId, compId, indicator } = this.state;
+    let { prefs, getString, items, action, selectedItem } = this.props;
+    let { indicator } = this.state;
 
     let distinctValues = []
     let typeOptions = []
@@ -90,7 +82,7 @@ class ModalMovingAvgDetail extends React.Component {
     for (var value of distinctValues)
       typeOptions.push({
         value: value,
-        label: getString(langId, compId, ["label_" + value])
+        label: getString(prefs.locale, this.compId, ["label_" + value])
       })
 
     switch (action) {
@@ -233,16 +225,8 @@ class ModalMovingAvgDetail extends React.Component {
   }
 
   render() {
-    let { getString, modalId, isOpen, action } = this.props;
-    let {
-      langId,
-      compId,
-
-      typeOptions,
-      periodOptions,
-
-      indicator,
-    } = this.state;
+    let { prefs, getString, modalId, isOpen, action } = this.props;
+    let { typeOptions, periodOptions, indicator } = this.state;
 
     return (
       <Modal isOpen={isOpen} size="xs" toggle={() => this.unmountAndToggle(modalId)}>
@@ -258,49 +242,49 @@ class ModalMovingAvgDetail extends React.Component {
               <i className="nc-icon nc-simple-remove" />
             </button>
             <h5 className="modal-title" id={modalId}>
-              {getString(langId, compId, "title")}
+              {getString(prefs.locale, this.compId, "title")}
             </h5>
             <hr />
           </CardHeader>
           <CardBody>
             {/* Type */}
             <FormGroup className={`has-label ${indicator.states.type}`}>
-              <label>{getString(langId, compId, "input_type")}
+              <label>{getString(prefs.locale, this.compId, "input_type")}
                 {" "}
                 <i id={"input_type_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_type_hint"}>
-                {getString(langId, compId, "input_type_hint")}
+                {getString(prefs.locale, this.compId, "input_type_hint")}
               </UncontrolledTooltip>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
                 name="type"
-                placeholder={getString(langId, "generic", "input_select")}
+                placeholder={getString(prefs.locale, "generic", "input_select")}
                 value={indicator.data.type}
                 options={typeOptions}
                 onChange={value => this.onSelectChange("type", value)}
-                noOptionsMessage={() => getString(langId, "generic", "input_noOptions")}
+                noOptionsMessage={() => getString(prefs.locale, "generic", "input_noOptions")}
               />
             </FormGroup>
             {/* Periods */}
             <FormGroup className={`has-label ${indicator.states.periods}`}>
-              <label>{getString(langId, compId, "input_periods")}
+              <label>{getString(prefs.locale, this.compId, "input_periods")}
                 {" "}
                 <i id={"input_periods_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_periods_hint"}>
-                {getString(langId, compId, "input_periods_hint")}
+                {getString(prefs.locale, this.compId, "input_periods_hint")}
               </UncontrolledTooltip>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
                 name="periods"
-                placeholder={getString(langId, "generic", "input_select")}
+                placeholder={getString(prefs.locale, "generic", "input_select")}
                 value={indicator.data.periods}
                 options={periodOptions}
                 onChange={value => this.onSelectChange("periods", value)}
-                noOptionsMessage={() => getString(langId, compId, "input_periods_noOptions")}
+                noOptionsMessage={() => getString(prefs.locale, this.compId, "input_periods_noOptions")}
               />
             </FormGroup>
           </CardBody>
@@ -321,8 +305,8 @@ class ModalMovingAvgDetail extends React.Component {
               }
             >
               {action == "add" ?
-                getString(langId, compId, "btn_add") :
-                getString(langId, compId, "btn_save")
+                getString(prefs.locale, this.compId, "btn_add") :
+                getString(prefs.locale, this.compId, "btn_save")
               }
             </Button>
           </CardFooter>
@@ -333,9 +317,9 @@ class ModalMovingAvgDetail extends React.Component {
 }
 
 ModalMovingAvgDetail.propTypes = {
-  managers: PropTypes.object.isRequired,
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
+  managers: PropTypes.object.isRequired,
   getHttpTranslation: PropTypes.func.isRequired,
 
   modalId: PropTypes.string.isRequired,

@@ -27,10 +27,9 @@ import LabelAlert from "../../components/LabelAlert";
 class ForgotPassword extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase()
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       isLoading: false,
 
       email: "",
@@ -38,12 +37,6 @@ class ForgotPassword extends React.Component {
       alertState: null,
       alertMsg: ""
     }
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
   }
   componentDidMount() {
     document.body.classList.toggle("login-page");
@@ -94,8 +87,7 @@ class ForgotPassword extends React.Component {
     e.preventDefault()
     this.setState({ isLoading: true })
 
-    let { getString } = this.props;
-    let { langId, compId } = this.state;
+    let { getString, prefs } = this.props;
 
     let user = { email: this.state.email }
 
@@ -105,11 +97,11 @@ class ForgotPassword extends React.Component {
       this.setState({
         isLoading: false,
         alertState: undefined,
-        alertMsg: getString(langId, compId, "label_emailSent")
+        alertMsg: getString(this.props.prefs.locale, this.compId, "label_emailSent")
       })
     }
     else {
-      let msg = await this.props.getHttpTranslation(result, compId, "user")
+      let msg = await this.props.getHttpTranslation(result, this.compId, "user")
       this.setState({
         isLoading: false,
         alertState: "has-danger",
@@ -121,9 +113,9 @@ class ForgotPassword extends React.Component {
   }
 
   render() {
-    let getString = this.props.getString;
+    let { getString, prefs } = this.props;
 
-    let { langId, compId, isLoading, email, emailState, alertState, alertMsg } = this.state;
+    let { isLoading, email, emailState, alertState, alertMsg } = this.state;
 
     return (
       <div className="login-page">
@@ -132,7 +124,7 @@ class ForgotPassword extends React.Component {
             <Form action="" className="form" method="">
               <Card className="card-lock text-center">
                 <CardHeader>
-                  <h5 className="header text-center">{getString(langId, compId, "card_header")}</h5>
+                  <h5 className="header text-center">{getString(prefs.locale, this.compId, "card_header")}</h5>
                 </CardHeader>
                 <CardBody>
                   <InputGroup className={`has-label ${emailState}`}>
@@ -142,7 +134,7 @@ class ForgotPassword extends React.Component {
                       </InputGroupText>
                     </InputGroupAddon>
                     <Input
-                      placeholder={getString(langId, compId, "input_email")}
+                      placeholder={getString(prefs.locale, this.compId, "input_email")}
                       type="email"
                       name="email"
                       value={email}
@@ -165,7 +157,7 @@ class ForgotPassword extends React.Component {
                   >
                     {isLoading ?
                       <Spinner size="sm" /> :
-                      getString(langId, compId, "btn_recover")
+                      getString(prefs.locale, this.compId, "btn_recover")
                     }
                   </Button>
                   <br />
@@ -192,5 +184,4 @@ ForgotPassword.propTypes = {
   managers: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
-  setAuthStatus: PropTypes.func.isRequired
 }

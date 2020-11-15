@@ -16,10 +16,9 @@ import {
 class StrategyResults extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       isLoading: false,
       firstLoad: true,
 
@@ -32,11 +31,6 @@ class StrategyResults extends React.Component {
       currency: { code: "BRL", symbol: "R$", thousands_separator_symbol: ".", decimal_symbol: "," },
       alert: null,
     }
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
   }
   componentDidUpdate(prevProps) {
     if (prevProps.strategy !== this.props.strategy)
@@ -86,8 +80,8 @@ class StrategyResults extends React.Component {
   }
 
   render() {
-    let { getString } = this.props;
-    let { langId, compId, firstLoad, isLoading, tableData, stockExchange, currency } = this.state;
+    let { prefs, getString } = this.props;
+    let { firstLoad, isLoading, tableData, stockExchange, currency } = this.state;
 
     return (
       <ReactTable
@@ -96,17 +90,17 @@ class StrategyResults extends React.Component {
         defaultFilterMethod={rtDefaultFilter}
         columns={[
           {
-            Header: getString(langId, compId, "header_asset"),
+            Header: getString(prefs.locale, this.compId, "header_asset"),
             accessor: "asset_label",
             width: 100
           },
           {
-            Header: getString(langId, compId, "header_name"),
+            Header: getString(prefs.locale, this.compId, "header_name"),
             accessor: "asset_name"
           },
           {
             className: "text-right",
-            Header: getString(langId, compId, "header_quote"),
+            Header: getString(prefs.locale, this.compId, "header_quote"),
             filterable: false,
             accessor: "price",
             Cell: (cell) => { return convertFloatToCurrency(cell.value, currency) },
@@ -114,26 +108,26 @@ class StrategyResults extends React.Component {
           },
           {
             className: "text-right",
-            Header: getString(langId, compId, "header_volume"),
+            Header: getString(prefs.locale, this.compId, "header_volume"),
             filterable: false,
             accessor: "avg_volume_10d",
             Cell: (cell) => { return integerWithThousandsSeparator(cell.value, currency.thousands_separator_symbol) },
             width: 120
           },
           {
-            Header: getString(langId, compId, "header_lastTradeTime"),
+            Header: getString(prefs.locale, this.compId, "header_lastTradeTime"),
             accessor: "last_trade_time",
             filterable: false,
             Cell: (cell) => {
               let tzDatetime = TimeManager.tzConvert(stockExchange.se_timezone, cell.value, true)
-              tzDatetime.locale(getString(langId, "locales", langId))
+              tzDatetime.locale(getString(prefs.locale, "locales", prefs.locale))
 
               let calendarTime = tzDatetime.calendar(null, {
-                sameDay: `[${getString(langId, "momentcalendar", "sameDay")}] LT`,
-                nextDay: `[${getString(langId, "momentcalendar", "nextDay")}] LT`,
-                nextWeek: `[${getString(langId, "momentcalendar", "next")}] dddd[,] LT`,
-                lastDay: `[${getString(langId, "momentcalendar", "lastDay")}] LT`,
-                lastWeek: `[${getString(langId, "momentcalendar", "last")}] dddd[,] LT`,
+                sameDay: `[${getString(prefs.locale, "momentcalendar", "sameDay")}] LT`,
+                nextDay: `[${getString(prefs.locale, "momentcalendar", "nextDay")}] LT`,
+                nextWeek: `[${getString(prefs.locale, "momentcalendar", "next")}] dddd[,] LT`,
+                lastDay: `[${getString(prefs.locale, "momentcalendar", "lastDay")}] LT`,
+                lastWeek: `[${getString(prefs.locale, "momentcalendar", "last")}] dddd[,] LT`,
                 sameElse: `L LT`
               })
               return calendarTime
@@ -141,17 +135,17 @@ class StrategyResults extends React.Component {
           }
         ]}
         defaultPageSize={10}
-        previousText={getString(langId, "reacttable", "label_previous")}
-        nextText={getString(langId, "reacttable", "label_next")}
-        pageText={getString(langId, "reacttable", "label_page")}
-        ofText={getString(langId, "reacttable", "label_of")}
-        rowsText={getString(langId, "reacttable", "label_rows")}
+        previousText={getString(prefs.locale, "reacttable", "label_previous")}
+        nextText={getString(prefs.locale, "reacttable", "label_next")}
+        pageText={getString(prefs.locale, "reacttable", "label_page")}
+        ofText={getString(prefs.locale, "reacttable", "label_of")}
+        rowsText={getString(prefs.locale, "reacttable", "label_rows")}
         noDataText={
-          firstLoad ? getString(langId, compId, "table_firstLoad") :
-            isLoading ? getString(langId, "generic", "label_loading") :
+          firstLoad ? getString(prefs.locale, this.compId, "table_firstLoad") :
+            isLoading ? getString(prefs.locale, "generic", "label_loading") :
               tableData.length == 0 ?
-                getString(langId, compId, "table_emptyData") :
-                getString(langId, compId, "table_noDataFound")
+                getString(prefs.locale, this.compId, "table_emptyData") :
+                getString(prefs.locale, this.compId, "table_noDataFound")
         }
         showPaginationBottom
         className="-striped -highlight default-pagination"
@@ -163,9 +157,9 @@ class StrategyResults extends React.Component {
 export default StrategyResults;
 
 StrategyResults.propTypes = {
-  managers: PropTypes.object.isRequired,
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
+  managers: PropTypes.object.isRequired,
 
   strategy: PropTypes.object.isRequired,
   filters: PropTypes.object.isRequired

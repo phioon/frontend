@@ -31,13 +31,9 @@ import { getDistinctValuesFromList } from "../../core/utils";
 class WalletOverview extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-
-      // Prefs
-      langId: props.prefs.langId,
-
       walletOptions: [],
 
       modal_filters_isOpen: false,
@@ -116,13 +112,8 @@ class WalletOverview extends React.Component {
     this.createWallet = this.createWallet.bind(this);
     this.openPosition = this.openPosition.bind(this);
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
-  }
   componentDidMount() {
-    this.props.setNavbarTitleId("title_" + this.state.compId)
+    this.props.setNavbarTitleId("title_" + this.compId)
     this.prepareRequirements()
   }
 
@@ -248,7 +239,8 @@ class WalletOverview extends React.Component {
     return measures
   }
   async handleCharts(selection, measures) {
-    let { langId, charts } = this.state
+    let { prefs } = this.props;
+    let { charts } = this.state
     let aggrProps, chartProps = {}
 
     // Raw Data for Charts
@@ -268,11 +260,11 @@ class WalletOverview extends React.Component {
     chartProps = {
       xDimension: "date",
       yDimension: undefined,
-      yTooltip: this.props.getString(langId, "charts", "chart_tooltip_profitability"),
+      yTooltip: this.props.getString(prefs.locale, "charts", "chart_tooltip_profitability"),
       colors: "default"
     }
     charts.positions.result.daily.overall = ChartManager.line_result(
-      langId,
+      prefs.locale,
       measures.positions.rawData.daily,
       aggrProps,
       chartProps
@@ -292,7 +284,7 @@ class WalletOverview extends React.Component {
       colors: "default"
     }
     charts.positions.result.daily.groupByAsset = ChartManager.line_result(
-      langId,
+      prefs.locale,
       measures.positions.rawData.daily,
       aggrProps,
       chartProps
@@ -312,7 +304,7 @@ class WalletOverview extends React.Component {
       colors: "default"
     }
     charts.positions.result.daily.groupByWallet = ChartManager.line_result(
-      langId,
+      prefs.locale,
       measures.positions.rawData.daily,
       aggrProps,
       chartProps
@@ -329,11 +321,11 @@ class WalletOverview extends React.Component {
     chartProps = {
       xDimension: "month",
       yDimension: undefined,
-      yTooltip: this.props.getString(langId, "charts", "chart_tooltip_profitability"),
+      yTooltip: this.props.getString(prefs.locale, "charts", "chart_tooltip_profitability"),
       colors: "default"
     }
     charts.positions.result.monthly.overall = ChartManager.line_result(
-      langId,
+      prefs.locale,
       measures.positions.rawData.monthly,
       aggrProps,
       chartProps
@@ -353,7 +345,7 @@ class WalletOverview extends React.Component {
       colors: "default"
     }
     charts.positions.result.monthly.groupByAsset = ChartManager.line_result(
-      langId,
+      prefs.locale,
       measures.positions.rawData.monthly,
       aggrProps,
       chartProps
@@ -373,7 +365,7 @@ class WalletOverview extends React.Component {
       colors: "default"
     }
     charts.positions.result.monthly.groupByWallet = ChartManager.line_result(
-      langId,
+      prefs.locale,
       measures.positions.rawData.monthly,
       aggrProps,
       chartProps
@@ -492,21 +484,20 @@ class WalletOverview extends React.Component {
     return charts
   }
   translateObjField(dimensionId, objList, field) {
-    let { getString } = this.props
-    let { langId, compId } = this.state
+    let { prefs, getString } = this.props
 
     switch (dimensionId) {
       case "types":
         for (var obj of objList)
-          obj[field] = getString(langId, compId, [`item_${obj[field]}`])
+          obj[field] = getString(prefs.locale, this.compId, [`item_${obj[field]}`])
         break;
       case "statuses":
         for (var obj of objList)
-          obj[field] = getString(langId, compId, [`item_${obj[field]}`])
+          obj[field] = getString(prefs.locale, this.compId, [`item_${obj[field]}`])
         break;
       case "sectors":
         for (var obj of objList)
-          obj[field] = getString(langId, "sectors", obj[field])
+          obj[field] = getString(prefs.locale, "sectors", obj[field])
         break;
     }
 
@@ -739,6 +730,8 @@ class WalletOverview extends React.Component {
           prefs={this.props.prefs}
           dimensions={dimensions}
           clearSelection={this.clearSelection}
+          pageFirstLoading={measureFirstLoading}
+          delayTriggerDimension={"positions"}
         >
           <Col key={`filter__openDates`} xs="12" md="6" xl={window.innerWidth > 1600 ? "4" : "6"}>
             <DimentionTimeInterval

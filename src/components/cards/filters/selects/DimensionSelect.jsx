@@ -15,17 +15,17 @@ class DimensionSelect extends Component {
     return (
       <CardBody>
         <FormGroup>
-          <label>{getString(prefs.langId, "filtercard", titleTxtId)}</label>
+          <label>{getString(prefs.locale, "filtercard", titleTxtId)}</label>
           <Select
             key={`${dimension.id}_${new Date().getTime()}`}
             isMulti
             className="react-select"
             classNamePrefix="react-select"
-            placeholder={getString(prefs.langId, "generic", "input_select")}
+            placeholder={getString(prefs.locale, "generic", "input_select")}
             closeMenuOnSelect={false}
             value={dimension.selected}
             options={dimension.data}
-            noOptionsMessage={() => getString(prefs.langId, "filtercard", "input_periods_noOptions")}
+            noOptionsMessage={() => getString(prefs.locale, "filtercard", "input_periods_noOptions")}
             onChange={value => this.props.onSelectionChange(dimension.id, value)}
           />
         </FormGroup>
@@ -38,8 +38,8 @@ class DimensionSelect extends Component {
 export default DimensionSelect;
 
 DimensionSelect.propTypes = {
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
   dimension: PropTypes.object.isRequired,
   onSelectionChange: PropTypes.func.isRequired,
   titleTxtId: PropTypes.string.isRequired,

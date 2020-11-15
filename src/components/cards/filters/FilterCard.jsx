@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
+import { sleep } from "../../../core/utils";
+
 import {
   Button,
   Card,
@@ -17,21 +19,14 @@ import {
 class FilterCard extends Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase()
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
-      collapseIsOpen: true,
+      isOpen: false,
 
       carousel: { slides: [], activeIndex: 0 },
     };
 
     this.resize = this.resize.bind(this);
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-
-    return null
   }
   componentDidMount() {
     window.addEventListener("resize", this.resize);
@@ -44,6 +39,8 @@ class FilterCard extends Component {
   componentDidUpdate(prevProps) {
     if (this.props.dimensions !== prevProps.dimensions)
       this.prepareCarousel()
+    if (this.props.pageFirstLoading !== prevProps.pageFirstLoading)
+      this.openDelay(this.props.delayTriggerDimension)
   }
 
   resize() {
@@ -65,6 +62,16 @@ class FilterCard extends Component {
       return 4
     else
       return 6
+  }
+
+  async openDelay(dimension) {
+    if (dimension in this.props.dimensions && this.props.dimensions[dimension].data.length > 0) {
+      this.moveSlide("next")
+      await sleep(1000)
+      this.setState({ isOpen: true })
+      await sleep(300)
+      this.moveSlide("previous")
+    }
   }
 
   prepareCarousel() {
@@ -157,21 +164,21 @@ class FilterCard extends Component {
   }
 
   render() {
-    let { getString } = this.props;
-    let { langId, compId, carousel, collapseIsOpen } = this.state;
+    let { getString, prefs } = this.props;
+    let { carousel, isOpen } = this.state;
 
     return (
       <Card className="card-plain">
         <CardBody>
           <CardTitle className="justify-content-end text-right">
             <Button className="btn-simple" size="sm" outline onClick={() => this.props.clearSelection()}>
-              <small>{getString(langId, compId, "label_clear")}</small>
+              <small>{getString(prefs.locale, this.compId, "label_clear")}</small>
             </Button>
-            <Button className="btn-icon btn-simple" size="sm" onClick={() => this.setState({ collapseIsOpen: !this.state.collapseIsOpen })}>
+            <Button className="btn-icon btn-simple" size="sm" onClick={() => this.setState({ isOpen: !this.state.isOpen })}>
               <i className="fa fa-filter" />
             </Button>
           </CardTitle>
-          <Collapse isOpen={collapseIsOpen}>
+          <Collapse isOpen={isOpen}>
             <Card>
               <Carousel
                 activeIndex={carousel.activeIndex}

@@ -15,16 +15,7 @@ class AuthLayout extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      langId: props.prefs.langId
-    }
-
     this.authPagesRef = React.createRef();
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
   }
   componentDidMount() {
     this.setPerfectScrollbar()
@@ -61,7 +52,6 @@ class AuthLayout extends React.Component {
               managers={this.props.managers}
               prefs={this.props.prefs}
               getHttpTranslation={this.props.getHttpTranslation}
-              setLangId={this.props.setLangId}
               getString={this.props.getString}
               setAuthStatus={this.props.setAuthStatus} />}
             key={key}

@@ -31,12 +31,9 @@ import { getDistinctValuesFromList } from "../../core/utils";
 class OpenPositions extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      // Prefs
-      langId: props.prefs.langId,
-
       walletOptions: [],
 
       modal_createWallet_isOpen: false,
@@ -100,13 +97,8 @@ class OpenPositions extends React.Component {
     this.createWallet = this.createWallet.bind(this);
     this.openPosition = this.openPosition.bind(this);
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
-  }
   componentDidMount() {
-    this.props.setNavbarTitleId("title_" + this.state.compId)
+    this.props.setNavbarTitleId("title_" + this.compId)
     this.prepareRequirements()
   }
 
@@ -220,7 +212,8 @@ class OpenPositions extends React.Component {
     return measures
   }
   async handleCharts(selection, measures) {
-    let { langId, charts } = this.state
+    let { prefs } = this.props;
+    let { charts } = this.state
     let aggrProps, chartProps = {}
 
     // Raw Data for Charts
@@ -238,11 +231,11 @@ class OpenPositions extends React.Component {
     chartProps = {
       xDimension: "date",
       yDimension: undefined,
-      yTooltip: this.props.getString(langId, "charts", "chart_tooltip_profitability"),
+      yTooltip: this.props.getString(prefs.locale, "charts", "chart_tooltip_profitability"),
       colors: "default"
     }
     charts.positions.result.daily.overall = ChartManager.line_result(
-      langId,
+      prefs.locale,
       measures.positions.rawData.daily,
       aggrProps,
       chartProps
@@ -260,7 +253,7 @@ class OpenPositions extends React.Component {
       colors: "default"
     }
     charts.positions.result.daily.groupByAsset = ChartManager.line_result(
-      langId,
+      prefs.locale,
       measures.positions.rawData.daily,
       aggrProps,
       chartProps
@@ -278,7 +271,7 @@ class OpenPositions extends React.Component {
       colors: "default"
     }
     charts.positions.result.daily.groupByWallet = ChartManager.line_result(
-      langId,
+      prefs.locale,
       measures.positions.rawData.daily,
       aggrProps,
       chartProps
@@ -293,11 +286,11 @@ class OpenPositions extends React.Component {
     chartProps = {
       xDimension: "month",
       yDimension: undefined,
-      yTooltip: this.props.getString(langId, "charts", "chart_tooltip_profitability"),
+      yTooltip: this.props.getString(prefs.locale, "charts", "chart_tooltip_profitability"),
       colors: "default"
     }
     charts.positions.result.monthly.overall = ChartManager.line_result(
-      langId,
+      prefs.locale,
       measures.positions.rawData.monthly,
       aggrProps,
       chartProps
@@ -315,7 +308,7 @@ class OpenPositions extends React.Component {
       colors: "default"
     }
     charts.positions.result.monthly.groupByAsset = ChartManager.line_result(
-      langId,
+      prefs.locale,
       measures.positions.rawData.monthly,
       aggrProps,
       chartProps
@@ -333,7 +326,7 @@ class OpenPositions extends React.Component {
       colors: "default"
     }
     charts.positions.result.monthly.groupByWallet = ChartManager.line_result(
-      langId,
+      prefs.locale,
       measures.positions.rawData.monthly,
       aggrProps,
       chartProps
@@ -352,7 +345,7 @@ class OpenPositions extends React.Component {
       colors: "default"
     }
     charts.positions.amountInvested.generic.groupByAsset = ChartManager.polar_amountInvested(
-      langId,
+      prefs.locale,
       measures.positions.rawData.selection,
       aggrProps,
       chartProps
@@ -369,7 +362,7 @@ class OpenPositions extends React.Component {
       colors: "default"
     }
     charts.positions.amountInvested.generic.groupByCountry = ChartManager.polar_amountInvested(
-      langId,
+      prefs.locale,
       measures.positions.rawData.selection,
       aggrProps,
       chartProps
@@ -386,7 +379,7 @@ class OpenPositions extends React.Component {
       colors: "default"
     }
     charts.positions.amountInvested.generic.groupBySector = ChartManager.polar_amountInvested(
-      langId,
+      prefs.locale,
       measures.positions.rawData.selection,
       aggrProps,
       chartProps
@@ -397,17 +390,16 @@ class OpenPositions extends React.Component {
     return charts
   }
   translateObjField(dimensionId, objList, field) {
-    let { getString } = this.props
-    let { langId, compId } = this.state
+    let { prefs, getString } = this.props
 
     switch (dimensionId) {
       case "types":
         for (var obj of objList)
-          obj[field] = getString(langId, compId, [`item_${obj[field]}`])
+          obj[field] = getString(prefs.locale, this.compId, [`item_${obj[field]}`])
         break;
       case "sectors":
         for (var obj of objList)
-          obj[field] = getString(langId, "sectors", obj[field])
+          obj[field] = getString(prefs.locale, "sectors", obj[field])
         break;
     }
 
@@ -611,7 +603,21 @@ class OpenPositions extends React.Component {
           prefs={this.props.prefs}
           dimensions={dimensions}
           clearSelection={this.clearSelection}
+          pageFirstLoading={measureFirstLoading}
+          delayTriggerDimension={"positions"}
         >
+          <Col key={`filter__openDates`} xs="12" md="6" xl={window.innerWidth > 1600 ? "4" : "6"}>
+            <DimentionTimeInterval
+              getString={this.props.getString}
+              prefs={this.props.prefs}
+              dimension={dimensions.openDates}
+              onSelectionChange={this.onSelectionChange}
+              dateFromTxtId="label_open_dateFrom"
+              dateToTxtId="label_open_dateTo"
+              alertInvalidFormatTxtId="alert_timeInterval_invalidFormat"
+              alertNoEntriesTxtId="alert_timeInterval_noPositionsOpened"
+            />
+          </Col>
           <Col key={`filter__wallets`} xs="6" md="3" xl={window.innerWidth > 1600 ? "2" : "3"}>
             <DimensionSelect
               getString={this.props.getString}
@@ -646,18 +652,6 @@ class OpenPositions extends React.Component {
               titleTxtId="label_type"
               onSelectionChange={this.onSelectionChange}
               dimension={dimensions.types}
-            />
-          </Col>
-          <Col key={`filter__openDates`} xs="12" md="6" xl={window.innerWidth > 1600 ? "4" : "6"}>
-            <DimentionTimeInterval
-              getString={this.props.getString}
-              prefs={this.props.prefs}
-              dimension={dimensions.openDates}
-              onSelectionChange={this.onSelectionChange}
-              dateFromTxtId="label_open_dateFrom"
-              dateToTxtId="label_open_dateTo"
-              alertInvalidFormatTxtId="alert_timeInterval_invalidFormat"
-              alertNoEntriesTxtId="alert_timeInterval_noPositionsOpened"
             />
           </Col>
         </FilterCard>
@@ -739,18 +733,6 @@ class OpenPositions extends React.Component {
             />
           </Col>
         </Row>
-        {/* <FixedFilter
-          {...this.props}
-          id={"filters"}
-          modalId="filters"
-          position="top"
-          icon="fa fa-filter fa-2x"
-          isOpen={modal_filters_isOpen}
-          toggleModal={this.toggleModal}
-          dimensions={dimensions}
-          onSelectionChange={this.onSelectionChange}
-          showTooltip={measureFirstLoading ? false : dimensions.positions.data.length == 2 ? true : false}
-        /> */}
         <FixedButton
           {...this.props}
           id={"newPosition"}
@@ -767,9 +749,10 @@ class OpenPositions extends React.Component {
 export default OpenPositions;
 
 OpenPositions.propTypes = {
-  managers: PropTypes.object.isRequired,
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
+  managers: PropTypes.object.isRequired,
+
   managers: PropTypes.object.isRequired,
   setNavbarTitleId: PropTypes.func.isRequired
 }

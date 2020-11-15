@@ -19,24 +19,15 @@ import { convertFloatToCurrency, convertFloatToPercentage } from "../../core/uti
 class SetupCard extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
 
       activeNavId: "summary",
 
       setup: props.setup,
       isPurchase: props.setup.type == "purchase" ? true : false,
     }
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return {
-        langId: props.prefs.langId,
-        setup: props.setup
-      }
-    return null
   }
 
   handleKpiPresentation(format, kpiValue, includePlusMinus = false) {
@@ -93,36 +84,35 @@ class SetupCard extends React.Component {
     }
   }
   progressText(setup) {
-    let { getString } = this.props
-    let { langId, compId } = this.state
+    let { prefs, getString } = this.props
 
     if (setup.ended_on) {
       // Closed Position
       if (setup.is_success)
-        return getString(langId, compId, "label_gain")
-      return getString(langId, compId, "label_loss")
+        return getString(prefs.locale, this.compId, "label_gain")
+      return getString(prefs.locale, this.compId, "label_loss")
     }
     else {
       // Open Position
       if (setup.type == "purchase") {
         if (setup.price >= setup.target)
-          return getString(langId, compId, "label_gain")
+          return getString(prefs.locale, this.compId, "label_gain")
         else if (setup.price > setup.max_price)
           return this.handleKpiPresentation("currency", setup.price)
         else if (setup.price > setup.stop_loss)
-          return getString(langId, compId, "label_buyingArea")
+          return getString(prefs.locale, this.compId, "label_buyingArea")
         else if (setup.price <= setup.stop_loss)
-          return getString(langId, compId, "label_loss")
+          return getString(prefs.locale, this.compId, "label_loss")
       }
       else {
         if (setup.price <= setup.target)
-          return getString(langId, compId, "label_gain")
+          return getString(prefs.locale, this.compId, "label_gain")
         else if (setup.price < setup.max_price)
           return this.handleKpiPresentation("currency", setup.price)
         else if (setup.price < setup.stop_loss)
-          return getString(langId, compId, "label_buyingArea")
+          return getString(prefs.locale, this.compId, "label_sellingArea")
         else if (setup.price >= setup.stop_loss)
-          return getString(langId, compId, "label_loss")
+          return getString(prefs.locale, this.compId, "label_loss")
       }
     }
   }
@@ -130,11 +120,10 @@ class SetupCard extends React.Component {
   makeDescriptionPretty(setup) {
     // It accepts only 1 variable per paragragh
 
-    let { getString } = this.props
-    let { langId } = this.state
+    let { prefs, getString } = this.props
     let p = 1
     let paragraphs = []
-    let paragraph = getString(langId, "technicalconditions", String(setup.tc_id + "_p" + p))
+    let paragraph = getString(prefs.locale, "technicalconditions", String(setup.tc_id + "_p" + p))
 
     while (paragraph) {
       let variable = paragraph.match(/<(.*)>/)
@@ -144,7 +133,7 @@ class SetupCard extends React.Component {
       paragraphs.push(paragraph)
 
       p += 1
-      paragraph = getString(langId, "technicalconditions", [setup.tc_id + "_p" + p])
+      paragraph = getString(prefs.locale, "technicalconditions", [setup.tc_id + "_p" + p])
     }
 
     return paragraphs.map((paragragh, key) => {
@@ -161,11 +150,8 @@ class SetupCard extends React.Component {
   }
 
   render() {
-    let { getString } = this.props;
+    let { prefs, getString } = this.props;
     let {
-      langId,
-      compId,
-
       activeNavId,
 
       setup,
@@ -189,7 +175,7 @@ class SetupCard extends React.Component {
               </Col>
               <Col className="text-right">
                 <label className={isPurchase ? "text-success" : "text-danger"}>
-                  {isPurchase ? getString(langId, compId, "label_buy") : getString(langId, compId, "label_sell")}
+                  {isPurchase ? getString(prefs.locale, this.compId, "label_buy") : getString(prefs.locale, this.compId, "label_sell")}
                 </label>
               </Col>
             </Row>
@@ -209,7 +195,7 @@ class SetupCard extends React.Component {
                       }
                       onClick={() => this.toggleNavLink("activeNavId", "summary")}
                     >
-                      {getString(langId, compId, "nav_summary")}
+                      {getString(prefs.locale, this.compId, "nav_summary")}
                     </NavLink>
                   </NavItem>
                   {/* Technical Condition */}
@@ -222,7 +208,7 @@ class SetupCard extends React.Component {
                       className={activeNavId === "technicalCondition" ? "active" : ""}
                       onClick={() => this.toggleNavLink("activeNavId", "technicalCondition")}
                     >
-                      {getString(langId, compId, "nav_technicalCondition")}
+                      {getString(prefs.locale, this.compId, "nav_technicalCondition")}
                     </NavLink>
                   </NavItem>
                   {/* Chart */}
@@ -236,7 +222,7 @@ class SetupCard extends React.Component {
                       }
                       onClick={() => this.toggleNavLink("activeNavId", "chart")}
                     >
-                      {getString(langId, compId, "nav_chart")}
+                      {getString(prefs.locale, this.compId, "nav_chart")}
                     </NavLink>
                   </NavItem>
                 </Nav>
@@ -249,12 +235,12 @@ class SetupCard extends React.Component {
                 <Row className="justify-content-center">
                   <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
-                      {isPurchase ? getString(langId, compId, "label_maxPrice") : getString(langId, compId, "label_minPrice")}
+                      {isPurchase ? getString(prefs.locale, this.compId, "label_maxPrice") : getString(prefs.locale, this.compId, "label_minPrice")}
                       {" "}
                       <i id={"priceLimit_hint_" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
                     <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"priceLimit_hint_" + setup.id}>
-                      {getString(langId, compId, "priceLimit_hint")}
+                      {getString(prefs.locale, this.compId, "priceLimit_hint")}
                     </UncontrolledTooltip>
                   </Col>
                   <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
@@ -265,12 +251,12 @@ class SetupCard extends React.Component {
                 <Row>
                   <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
-                      {getString(langId, compId, "label_stopLoss")}
+                      {getString(prefs.locale, this.compId, "label_stopLoss")}
                       {" "}
                       <i id={"stopLoss_hint_" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
                     <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"stopLoss_hint_" + setup.id}>
-                      {getString(langId, compId, "stopLoss_hint")}
+                      {getString(prefs.locale, this.compId, "stopLoss_hint")}
                     </UncontrolledTooltip>
                   </Col>
                   <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
@@ -281,12 +267,12 @@ class SetupCard extends React.Component {
                 <Row>
                   <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto" >
                     <label>
-                      {getString(langId, compId, "label_target")}
+                      {getString(prefs.locale, this.compId, "label_target")}
                       {" "}
                       <i id={"target_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
                     <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"target_hint" + setup.id}>
-                      {getString(langId, compId, "target_hint")}
+                      {getString(prefs.locale, this.compId, "target_hint")}
                     </UncontrolledTooltip>
                   </Col>
                   <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
@@ -298,16 +284,16 @@ class SetupCard extends React.Component {
                   <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label className={setup.ended_on ? setup.is_success === false ? "text-danger" : "text-success" : null}>
                       {setup.is_success === false ?
-                        getString(langId, compId, "label_lossPercent") :
-                        getString(langId, compId, "label_gainPercent")
+                        getString(prefs.locale, this.compId, "label_lossPercent") :
+                        getString(prefs.locale, this.compId, "label_gainPercent")
                       }
                       {" "}
                       <i id={"gainlossPercent_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
                     <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"gainlossPercent_hint" + setup.id}>
                       {setup.is_success === false ?
-                        getString(langId, compId, "lossPercent_hint") :
-                        getString(langId, compId, "gainPercent_hint")
+                        getString(prefs.locale, this.compId, "lossPercent_hint") :
+                        getString(prefs.locale, this.compId, "gainPercent_hint")
                       }
                     </UncontrolledTooltip>
                   </Col>
@@ -324,11 +310,11 @@ class SetupCard extends React.Component {
                 <Row>
                   <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
-                      {getString(langId, compId, "label_riskReward")}{" "}
+                      {getString(prefs.locale, this.compId, "label_riskReward")}{" "}
                       <i id={"riskReward_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
                     <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"riskReward_hint" + setup.id}>
-                      {getString(langId, compId, "riskReward_hint")}
+                      {getString(prefs.locale, this.compId, "riskReward_hint")}
                     </UncontrolledTooltip>
                   </Col>
                   <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
@@ -347,23 +333,23 @@ class SetupCard extends React.Component {
                 <Row>
                   <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
-                      {getString(langId, compId, "label_successRate")}{" "}
+                      {getString(prefs.locale, this.compId, "label_successRate")}{" "}
                       <i id={"successRate_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
                     <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"successRate_hint" + setup.id}>
-                      {getString(langId, compId, "successRate_hint")}
+                      {getString(prefs.locale, this.compId, "successRate_hint")}
                     </UncontrolledTooltip>
                   </Col>
                   <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
                     <label id={"successRate_value_hint" + setup.id} className="numbers">
                       {setup.success_rate ?
                         this.handleKpiPresentation("percentage", setup.success_rate) :
-                        getString(langId, compId, "label_notAvailableData")
+                        getString(prefs.locale, this.compId, "label_notAvailableData")
                       }
                     </label>
                     {!setup.success_rate &&
                       <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"successRate_value_hint" + setup.id}>
-                        {getString(langId, compId, "notAvailableData_hint")}
+                        {getString(prefs.locale, this.compId, "notAvailableData_hint")}
                       </UncontrolledTooltip>
                     }
                   </Col>
@@ -372,23 +358,23 @@ class SetupCard extends React.Component {
                 <Row>
                   <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
-                      {getString(langId, compId, "label_estimatedTime")}{" "}
+                      {getString(prefs.locale, this.compId, "label_estimatedTime")}{" "}
                       <i id={"estimatedTime_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
                     <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"estimatedTime_hint" + setup.id}>
-                      {getString(langId, compId, "estimatedTime_hint")}
+                      {getString(prefs.locale, this.compId, "estimatedTime_hint")}
                     </UncontrolledTooltip>
                   </Col>
                   <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
                     <label id={"estimatedTime_value_hint" + setup.id} className="numbers">
                       {setup.avg_duration_gain ?
-                        setup.avg_duration_gain + " " + getString(langId, "generic", "label_days") :
-                        getString(langId, compId, "label_notAvailableData")
+                        setup.avg_duration_gain + " " + getString(prefs.locale, "generic", "label_days") :
+                        getString(prefs.locale, this.compId, "label_notAvailableData")
                       }
                     </label>
                     {!setup.avg_duration_gain &&
                       <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"estimatedTime_value_hint" + setup.id}>
-                        {getString(langId, compId, "notAvailableData_hint")}
+                        {getString(prefs.locale, this.compId, "notAvailableData_hint")}
                       </UncontrolledTooltip>
                     }
                   </Col>
@@ -397,11 +383,11 @@ class SetupCard extends React.Component {
                 <Row>
                   <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
-                      {getString(langId, compId, "label_occurrencies")}{" "}
+                      {getString(prefs.locale, this.compId, "label_occurrencies")}{" "}
                       <i id={"occurrencies_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
                     <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"occurrencies_hint" + setup.id}>
-                      {getString(langId, compId, "occurrencies_hint")}
+                      {getString(prefs.locale, this.compId, "occurrencies_hint")}
                     </UncontrolledTooltip>
                   </Col>
                   <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
@@ -414,23 +400,23 @@ class SetupCard extends React.Component {
                 <Row>
                   <Col xl="7" lg="6" md="6" sm="6" className="ml-auto mr-auto">
                     <label>
-                      {getString(langId, compId, "label_lastOccurrence")}{" "}
+                      {getString(prefs.locale, this.compId, "label_lastOccurrence")}{" "}
                       <i id={"lastOccurrence_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
                     <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"lastOccurrence_hint" + setup.id}>
-                      {getString(langId, compId, "lastOccurrence_hint")}
+                      {getString(prefs.locale, this.compId, "lastOccurrence_hint")}
                     </UncontrolledTooltip>
                   </Col>
                   <Col xl="5" lg="6" md="5" sm="6" className="ml-auto mr-auto text-right">
                     <label id={"lastOccurrence_value_hint" + setup.id} className="numbers">
                       {setup.last_ended_occurrence ?
                         TimeManager.getLocaleDateString(setup.last_ended_occurrence, false) :
-                        getString(langId, compId, "label_notAvailableData")
+                        getString(prefs.locale, this.compId, "label_notAvailableData")
                       }
                     </label>
                     {!setup.last_ended_occurrence &&
                       <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"lastOccurrence_value_hint" + setup.id}>
-                        {getString(langId, compId, "notAvailableData_hint")}
+                        {getString(prefs.locale, this.compId, "notAvailableData_hint")}
                       </UncontrolledTooltip>
                     }
                   </Col>
@@ -438,7 +424,7 @@ class SetupCard extends React.Component {
               </TabPane>
               {/* Chart */}
               <TabPane className="text-center" tabId="chart" role="tabpanel">
-                <label>{getString(langId, "generic", "label_comingSoon")}</label>
+                <label>{getString(prefs.locale, "generic", "label_comingSoon")}</label>
               </TabPane>
             </TabContent>
           </div>
@@ -450,7 +436,7 @@ class SetupCard extends React.Component {
             {TimeManager.getLocaleDateString(setup.started_on, false)}
           </h6>
           <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"startedOn_hint_" + setup.id}>
-            {getString(langId, compId, "startedOn_hint")}
+            {getString(prefs.locale, this.compId, "startedOn_hint")}
           </UncontrolledTooltip>
           <br />
           {/* Data above Progress Bar */}
@@ -460,7 +446,7 @@ class SetupCard extends React.Component {
                 {this.handleKpiPresentation("currency", setup.stop_loss)}
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top-start" target={"progressBar_start_" + setup.id}>
-                {getString(langId, compId, "progressBar_stopLoss_hint")}
+                {getString(prefs.locale, this.compId, "progressBar_stopLoss_hint")}
               </UncontrolledTooltip>
             </Col>
             <Col className="text-right">
@@ -469,8 +455,8 @@ class SetupCard extends React.Component {
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top-end" target={"progressBar_end_" + setup.id}>
                 {setup.ended_on ?
-                  getString(langId, compId, "progressBar_endedOn_hint") :
-                  getString(langId, compId, "progressBar_target_hint")
+                  getString(prefs.locale, this.compId, "progressBar_endedOn_hint") :
+                  getString(prefs.locale, this.compId, "progressBar_target_hint")
                 }
               </UncontrolledTooltip>
             </Col>

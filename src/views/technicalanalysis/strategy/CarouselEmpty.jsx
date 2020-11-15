@@ -9,7 +9,6 @@ import {
 } from "reactstrap";
 
 function CarouselEmpty(props) {
-
   return (
     <Carousel
       activeIndex={0}
@@ -28,9 +27,9 @@ function CarouselEmpty(props) {
                 </Col>
                 <Col xl="10" lg="10" md="9" xs="9">
                   <br />
-                  <p className="card-description">{props.getString(props.langId, props.compId, "label_noStrategies_p1")}</p>
-                  <p className="card-description">{props.getString(props.langId, props.compId, "label_noStrategies_p2")}</p>
-                  <p className="card-description">{props.getString(props.langId, props.compId, "label_noStrategies_p3")}</p>
+                  <p className="card-description">{props.getString(props.prefs.locale, props.compId, "label_noStrategies_p1")}</p>
+                  <p className="card-description">{props.getString(props.prefs.locale, props.compId, "label_noStrategies_p2")}</p>
+                  <p className="card-description">{props.getString(props.prefs.locale, props.compId, "label_noStrategies_p3")}</p>
                 </Col>
               </Row>
             </Card>

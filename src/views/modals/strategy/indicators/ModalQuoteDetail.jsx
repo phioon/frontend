@@ -20,11 +20,9 @@ import { applyFilterToObjList, retrieveObjFromObjList, getDistinctValuesFromList
 class ModalQuoteDetail extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase()
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
-
       typeOptions: [],
 
       indicator: {
@@ -39,12 +37,6 @@ class ModalQuoteDetail extends React.Component {
         isValidated: undefined
       },
     }
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-
-    return null
   }
   componentDidUpdate(prevProps) {
     if (prevProps.isOpen !== this.props.isOpen && this.props.isOpen)
@@ -73,8 +65,8 @@ class ModalQuoteDetail extends React.Component {
 
   prepareRequirements() {
     // Prepares the Component
-    let { getString, items, action, workspace, selectedItem } = this.props;
-    let { langId, compId, indicator } = this.state;
+    let { prefs, getString, items, action, workspace, selectedItem } = this.props;
+    let { indicator } = this.state;
 
     let distinctValues = []
     let typeOptions = []
@@ -86,13 +78,13 @@ class ModalQuoteDetail extends React.Component {
         // If it's a selected item (being updated) or it isn't within origin WS yet...
         typeOptions.push({
           value: value,
-          label: getString(langId, "indicators", value)
+          label: getString(prefs.locale, "indicators", value)
         })
       }
       else
         typeOptions.push({
           value: value,
-          label: getString(langId, "indicators", value),
+          label: getString(prefs.locale, "indicators", value),
           isDisabled: true
         })
 
@@ -188,15 +180,8 @@ class ModalQuoteDetail extends React.Component {
   }
 
   render() {
-    let { getString, modalId, isOpen, action } = this.props;
-    let {
-      langId,
-      compId,
-
-      typeOptions,
-
-      indicator
-    } = this.state;
+    let { prefs, getString, modalId, isOpen, action } = this.props;
+    let { typeOptions, indicator } = this.state;
 
     return (
       <Modal isOpen={isOpen} size="xs" toggle={() => this.unmountAndToggle(modalId)}>
@@ -212,29 +197,29 @@ class ModalQuoteDetail extends React.Component {
               <i className="nc-icon nc-simple-remove" />
             </button>
             <h5 className="modal-title" id={modalId}>
-              {getString(langId, compId, "title")}
+              {getString(prefs.locale, this.compId, "title")}
             </h5>
             <hr />
           </CardHeader>
           <CardBody>
             {/* Type */}
             <FormGroup className={`has-label ${indicator.states.type}`}>
-              <label>{getString(langId, compId, "input_type")}
+              <label>{getString(prefs.locale, this.compId, "input_type")}
                 {" "}
                 <i id={"input_type_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_type_hint"}>
-                {getString(langId, compId, "input_type_hint")}
+                {getString(prefs.locale, this.compId, "input_type_hint")}
               </UncontrolledTooltip>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
                 name="type"
-                placeholder={getString(langId, "generic", "input_select")}
+                placeholder={getString(prefs.locale, "generic", "input_select")}
                 value={indicator.data.type}
                 options={typeOptions}
                 onChange={value => this.onSelectChange("type", value)}
-                noOptionsMessage={() => getString(langId, "generic", "input_noOptions")}
+                noOptionsMessage={() => getString(prefs.locale, "generic", "input_noOptions")}
               />
             </FormGroup>
           </CardBody>
@@ -255,8 +240,8 @@ class ModalQuoteDetail extends React.Component {
               }
             >
               {action == "add" ?
-                getString(langId, compId, "btn_add") :
-                getString(langId, compId, "btn_save")
+                getString(prefs.locale, this.compId, "btn_add") :
+                getString(prefs.locale, this.compId, "btn_save")
               }
             </Button>
           </CardFooter>
@@ -267,9 +252,9 @@ class ModalQuoteDetail extends React.Component {
 }
 
 ModalQuoteDetail.propTypes = {
-  managers: PropTypes.object.isRequired,
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
+  managers: PropTypes.object.isRequired,
   getHttpTranslation: PropTypes.func.isRequired,
 
   modalId: PropTypes.string.isRequired,

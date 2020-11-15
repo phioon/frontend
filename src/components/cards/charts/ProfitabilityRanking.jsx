@@ -24,21 +24,13 @@ import { convertFloatToCurrency, convertFloatToPercentage, deepCloneObj } from "
 class ProfitabilityRanking extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
 
+    this.state = {
       interval: "generic",
       selected: "groupByAsset",
       rankingType: "top",         // 'top' or 'bottom'
       rankingSize: "5",
     };
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-
-    return null
   }
 
   changeChart(interval, selected, rankingType, rankingSize) {
@@ -85,12 +77,13 @@ class ProfitabilityRanking extends Component {
 
   render() {
     let {
+      prefs,
       getString,
       pageFirstLoading,
       chart,
     } = this.props;
 
-    let { langId, interval, selected, rankingType, rankingSize } = this.state;
+    let { interval, selected, rankingType, rankingSize } = this.state;
 
     return (
       <Card className="card-stats">
@@ -112,19 +105,19 @@ class ProfitabilityRanking extends Component {
                   <DropdownItem
                     onClick={() => this.changeChart(undefined, undefined, undefined, "5")}
                   >
-                    {getString(langId, "charts", "dropdown_timeInterval_top5")}
+                    {getString(prefs.locale, "charts", "dropdown_timeInterval_top5")}
                   </DropdownItem>
                   <DropdownItem
                     onClick={() => this.changeChart(undefined, undefined, undefined, "10")}
                   >
-                    {getString(langId, "charts", "dropdown_timeInterval_top10")}
+                    {getString(prefs.locale, "charts", "dropdown_timeInterval_top10")}
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
             </Col>
             <Col className="text-right">
               <label className="stats">
-                {getString(langId, "charts", "label_order")}:
+                {getString(prefs.locale, "charts", "label_order")}:
               </label>
               {" "}
               <Button
@@ -142,8 +135,8 @@ class ProfitabilityRanking extends Component {
               </Button>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target="profitabilityRanking_orderBy_hint">
                 {rankingType == "top" ?
-                  getString(langId, "charts", "profitabilityRanking_lesser_hint") :
-                  getString(langId, "charts", "profitabilityRanking_greater_hint")
+                  getString(prefs.locale, "charts", "profitabilityRanking_lesser_hint") :
+                  getString(prefs.locale, "charts", "profitabilityRanking_greater_hint")
                 }
               </UncontrolledTooltip>
             </Col>
@@ -151,7 +144,7 @@ class ProfitabilityRanking extends Component {
         </CardHeader>
         <CardBody>
           <h6 className="big-title">
-            {getString(langId, "charts", "chart_title_profitabilityRanking")}
+            {getString(prefs.locale, "charts", "chart_title_profitabilityRanking")}
           </h6>
           {
             pageFirstLoading ?
@@ -169,7 +162,7 @@ class ProfitabilityRanking extends Component {
             <Col xl="4" md="4">
               <label className="stats">
                 <i className="fa fa-cube" />
-                {getString(langId, "charts", "label_groupBy")}:
+                {getString(prefs.locale, "charts", "label_groupBy")}:
               </label>
             </Col>
             <Col className="text-right">
@@ -181,10 +174,10 @@ class ProfitabilityRanking extends Component {
                 type="button"
                 onClick={() => this.changeChart(undefined, "groupByAsset")}
               >
-                {getString(langId, "charts", "label_assets")}
+                {getString(prefs.locale, "charts", "label_assets")}
               </Button>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="profitabilityRanking_groupByAsset">
-                {getString(langId, "charts", chart.generic.groupByAsset.hintId)}
+                {getString(prefs.locale, "charts", chart.generic.groupByAsset.hintId)}
               </UncontrolledTooltip>
               <Button
                 className="btn-link"
@@ -194,10 +187,10 @@ class ProfitabilityRanking extends Component {
                 type="button"
                 onClick={() => this.changeChart(undefined, "groupByWallet")}
               >
-                {getString(langId, "charts", "label_wallets")}
+                {getString(prefs.locale, "charts", "label_wallets")}
               </Button>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="profitabilityRanking_groupByWallet">
-                {getString(langId, "charts", chart.generic.groupByAsset.hintId)}
+                {getString(prefs.locale, "charts", chart.generic.groupByAsset.hintId)}
               </UncontrolledTooltip>
             </Col>
           </Row>
@@ -210,8 +203,8 @@ class ProfitabilityRanking extends Component {
 export default ProfitabilityRanking;
 
 ProfitabilityRanking.propTypes = {
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
   pageFirstLoading: PropTypes.bool.isRequired,
   chart: PropTypes.object.isRequired,
   currency: PropTypes.object.isRequired

@@ -7,35 +7,10 @@ import Skeleton from "react-loading-skeleton";
 class AmountPositions extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
-
-      pageFirstLoading: props.pageFirstLoading,
-
-      measure: props.measure,
       format: "number",
-
-      currency: props.currency,
     };
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    if (props.pageFirstLoading !== state.pageFirstLoading)
-      return {
-        pageFirstLoading: props.pageFirstLoading,
-        measure: props.measure,
-        currency: props.currency
-      }
-    if (props.measure !== state.measure)
-      return {
-        pageFirstLoading: props.pageFirstLoading,
-        measure: props.measure,
-        currency: props.currency
-      }
-
-    return null
   }
 
   changeKpiFormat(newFormat) {
@@ -43,8 +18,8 @@ class AmountPositions extends Component {
   }
 
   render() {
-    let { getString, managers } = this.props;
-    let { langId, pageFirstLoading, measure, format, currency } = this.state;
+    let { prefs, getString, managers, pageFirstLoading, measure, currency } = this.props;
+    let { format } = this.state;
 
     return (
       <Card className="card-stats">
@@ -60,7 +35,7 @@ class AmountPositions extends Component {
                 <p className="card-category">
                   {pageFirstLoading ?
                     <span style={{ paddingLeft: "7%" }}><Skeleton /></span> :
-                    getString(langId, "measures", measure.id + "_kpi_label")
+                    getString(prefs.locale, "measures", measure.id + "_kpi_label")
                   }
                 </p>
                 <CardTitle tag="p">
@@ -80,7 +55,7 @@ class AmountPositions extends Component {
             <Col>
               <label className="stats">
                 <i className="fa fa-wrench" />
-                {getString(langId, "measures", "label_format")}:
+                {getString(prefs.locale, "measures", "label_format")}:
               </label>
             </Col>
             <Col className="text-right">
@@ -96,7 +71,7 @@ class AmountPositions extends Component {
               </Button>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "__number"}>
                 {measure.number &&
-                  getString(langId, "measures", measure.number.hintId)
+                  getString(prefs.locale, "measures", measure.number.hintId)
                 }
               </UncontrolledTooltip>
             </Col>
@@ -110,8 +85,8 @@ class AmountPositions extends Component {
 export default AmountPositions;
 
 AmountPositions.propTypes = {
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
   managers: PropTypes.object.isRequired,
   pageFirstLoading: PropTypes.bool.isRequired,
   measure: PropTypes.object.isRequired,

@@ -33,15 +33,13 @@ import {
   rtDefaultFilter
 } from "../../core/utils";
 import TimeManager from "../../core/managers/TimeManager";
-import { getString } from "../../core/lang";
 
 class Positions extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       pageFirstLoading: true,
 
       modal_createWallet_isOpen: false,
@@ -95,13 +93,8 @@ class Positions extends React.Component {
     this.createWallet = this.createWallet.bind(this);
     this.openPosition = this.openPosition.bind(this);
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
-  }
   componentDidMount() {
-    this.props.setNavbarTitleId("title_" + this.state.compId)
+    this.props.setNavbarTitleId("title_" + this.compId)
     this.prepareRequirements()
   }
 
@@ -115,7 +108,7 @@ class Positions extends React.Component {
   }
 
   async prepareData() {
-    let { langId, compId } = this.state
+    let { prefs, getString } = this.props;
     let positions = await this.props.managers.app.positionList()
 
     if (positions.data) {
@@ -162,7 +155,7 @@ class Positions extends React.Component {
           asset_label: obj.asset_label,
           type: obj.type,
           typeIsBuy: obj.typeIsBuy,
-          type_label: obj.typeIsBuy ? getString(langId, compId, "item_buy") : getString(langId, compId, "item_sell"),
+          type_label: obj.typeIsBuy ? getString(prefs.locale, this.compId, "item_buy") : getString(prefs.locale, this.compId, "item_sell"),
           amount: integerWithThousandsSeparator(obj.amount, obj.currency.thousands_separator_symbol),
 
           total_opCost: convertFloatToCurrency(obj.total_opCost, obj.currency),
@@ -195,7 +188,7 @@ class Positions extends React.Component {
                 <i className="fa fa-edit" />
               </Button>{" "}
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"positions_edit_" + obj.id}>
-                {this.props.getString(this.state.langId, this.state.compId, "positions_edit_hint")}
+                {getString(prefs.locale, this.compId, "positions_edit_hint")}
               </UncontrolledTooltip>
               {/* use this button to remove the data row */}
               <Button
@@ -211,7 +204,7 @@ class Positions extends React.Component {
                 <i className="fa fa-times" />
               </Button>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"positions_delete_" + obj.id}>
-                {this.props.getString(this.state.langId, this.state.compId, "positions_delete_hint")}
+                {getString(prefs.locale, this.compId, "positions_delete_hint")}
               </UncontrolledTooltip>
             </div>
           )
@@ -263,21 +256,23 @@ class Positions extends React.Component {
     this.toggleModal("updatePosition")
   }
   deleteClick(obj) {
+    let { prefs, getString } = this.props;
+
     this.setState({
       alert: (
         <ReactBSAlert
           warning
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_confirming_title")}
+          title={getString(prefs.locale, this.compId, "alert_confirming_title")}
           onConfirm={() => this.deleteObject(obj)}
           onCancel={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
           cancelBtnBsStyle="danger"
-          confirmBtnText={this.props.getString(this.state.langId, this.state.compId, "btn_alert_confirm")}
-          cancelBtnText={this.props.getString(this.state.langId, this.state.compId, "btn_alert_cancel")}
+          confirmBtnText={getString(prefs.locale, this.compId, "btn_alert_confirm")}
+          cancelBtnText={getString(prefs.locale, this.compId, "btn_alert_cancel")}
           showCancel
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_confirming_text")}
+          {getString(prefs.locale, this.compId, "alert_confirming_text")}
         </ReactBSAlert>
       )
     });
@@ -291,16 +286,18 @@ class Positions extends React.Component {
       this.hideAlert()
   }
   objectDeleted() {
+    let { prefs, getString } = this.props;
+
     this.setState({
       alert: (
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_deleted_title")}
+          title={getString(prefs.locale, this.compId, "alert_deleted_title")}
           onConfirm={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_deleted_text")}
+          {getString(prefs.locale, this.compId, "alert_deleted_text")}
         </ReactBSAlert>
       )
     });
@@ -330,10 +327,8 @@ class Positions extends React.Component {
   };
 
   render() {
-    let { getString } = this.props;
+    let { prefs, getString } = this.props;
     let {
-      langId,
-      compId,
       pageFirstLoading,
 
       modal_createWallet_isOpen,
@@ -387,7 +382,7 @@ class Positions extends React.Component {
           <CardHeader>
             <Row>
               <Col>
-                <CardTitle tag="h4">{getString(langId, compId, "card_title")}</CardTitle>
+                <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_title")}</CardTitle>
               </Col>
               <Col className="text-right">
                 <Button
@@ -397,7 +392,7 @@ class Positions extends React.Component {
                   color="success"
                   onClick={() => walletOptions.length == 0 ? this.createWallet() : this.onClick("create")}
                 >
-                  {getString(langId, compId, "btn_newPosition")}
+                  {getString(prefs.locale, this.compId, "btn_newPosition")}
                 </Button>
               </Col>
             </Row>
@@ -409,67 +404,67 @@ class Positions extends React.Component {
               defaultFilterMethod={rtDefaultFilter}
               columns={[
                 {
-                  Header: getString(langId, compId, "header_startedOn"),
+                  Header: getString(prefs.locale, this.compId, "header_startedOn"),
                   accessor: "startedOn_label",
                 },
                 {
-                  Header: getString(langId, compId, "header_endedOn"),
+                  Header: getString(prefs.locale, this.compId, "header_endedOn"),
                   accessor: "endedOn_label",
                 },
                 {
-                  Header: getString(langId, compId, "header_wallet"),
+                  Header: getString(prefs.locale, this.compId, "header_wallet"),
                   accessor: "wallet_label",
                 },
                 {
-                  Header: getString(langId, compId, "header_asset"),
+                  Header: getString(prefs.locale, this.compId, "header_asset"),
                   accessor: "asset_label",
                 },
                 {
-                  Header: getString(langId, compId, "header_type"),
+                  Header: getString(prefs.locale, this.compId, "header_type"),
                   accessor: "type_label",
                 },
                 {
-                  Header: getString(langId, compId, "header_amount"),
+                  Header: getString(prefs.locale, this.compId, "header_amount"),
                   accessor: "amount",
                   className: "text-right"
                 },
                 {
-                  Header: getString(langId, compId, "header_price"),
+                  Header: getString(prefs.locale, this.compId, "header_price"),
                   accessor: "s_price",
                   className: "text-right",
                   filterable: false
                 },
                 {
-                  Header: getString(langId, compId, "header_opCost"),
+                  Header: getString(prefs.locale, this.compId, "header_opCost"),
                   accessor: "total_opCost",
                   className: "text-right",
                   filterable: false
                 },
                 {
-                  Header: getString(langId, compId, "header_totalCost"),
+                  Header: getString(prefs.locale, this.compId, "header_totalCost"),
                   accessor: "s_totalCost",
                   className: "text-right",
                   filterable: false
                 },
                 {
-                  Header: getString(langId, compId, "header_actions"),
+                  Header: getString(prefs.locale, this.compId, "header_actions"),
                   accessor: "actions",
                   sortable: false,
                   filterable: false
                 }
               ]}
               defaultPageSize={10}
-              previousText={getString(langId, "reacttable", "label_previous")}
-              nextText={getString(langId, "reacttable", "label_next")}
-              pageText={getString(langId, "reacttable", "label_page")}
-              ofText={getString(langId, "reacttable", "label_of")}
-              rowsText={getString(langId, "reacttable", "label_rows")}
+              previousText={getString(prefs.locale, "reacttable", "label_previous")}
+              nextText={getString(prefs.locale, "reacttable", "label_next")}
+              pageText={getString(prefs.locale, "reacttable", "label_page")}
+              ofText={getString(prefs.locale, "reacttable", "label_of")}
+              rowsText={getString(prefs.locale, "reacttable", "label_rows")}
               noDataText={
                 pageFirstLoading ?
-                  getString(langId, "generic", "label_loading") :
+                  getString(prefs.locale, "generic", "label_loading") :
                   data.length == 0 ?
-                    getString(langId, compId, "table_emptyData") :
-                    getString(langId, compId, "table_noDataFound")
+                    getString(prefs.locale, this.compId, "table_emptyData") :
+                    getString(prefs.locale, this.compId, "table_noDataFound")
               }
               showPaginationBottom
               className="-striped -highlight default-pagination"

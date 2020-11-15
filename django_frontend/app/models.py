@@ -97,6 +97,7 @@ class SubscriptionPrice (models.Model):
     id = models.CharField(max_length=64, primary_key=True)
     subscription = models.ForeignKey(Subscription, related_name='prices', on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=64)
+    is_active = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -149,12 +150,28 @@ class UserCustom (models.Model):
     subscription_status = models.CharField(max_length=16, default='undefined')
     subscription_expires_on = models.DateField(null=True, db_index=True)
     subscription_renews_on = models.DateField(null=True, db_index=True)
-    # prefs
-    pref_langId = models.CharField(max_length=8)        # Used by apiStripe.update_stripe_customer()
-    pref_currency = models.ForeignKey(Currency, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return self.user.username
+
+
+class UserPreferences (models.Model):
+    user = models.OneToOneField(User, related_name='userPrefs', on_delete=models.CASCADE)
+    locale = models.CharField(max_length=8)
+    currency = models.ForeignKey(Currency, on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return self.user.username
+
+    def get_field_list(self):
+        fields = []
+
+        ignore_fields = ['id', 'user']
+        for field in self._meta.fields:
+            if field.name not in ignore_fields:
+                fields.append(field.name)
+
+        return fields
 
 
 class Wallet (models.Model):

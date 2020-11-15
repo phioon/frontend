@@ -12,26 +12,17 @@ import {
 class ModalUserCreated extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
-      isOpen: props.isOpen,
+    this.compId = this.constructor.name.toLowerCase();
 
+    this.state = {
       userEmail: props.userEmail,
       redirectToLogin: false
     }
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    if (props.isOpen !== state.isOpen)
-      return { isOpen: props.isOpen }
-    return null
-  }
 
   render() {
-    let { getString, modalId } = this.props;
-    let { langId, compId, isOpen, redirectToLogin } = this.state;
+    let { isOpen, prefs, getString, modalId } = this.props;
+    let { redirectToLogin } = this.state;
 
     return (
       <Modal isOpen={isOpen} size="md" toggle={() => this.props.toggleModal(modalId)} ref="modal_userCreated">
@@ -47,7 +38,7 @@ class ModalUserCreated extends React.Component {
             <i className="nc-icon nc-simple-remove" />
           </button>
           <h5 className="modal-title">
-            {getString(langId, compId, "title")}
+            {getString(prefs.locale, this.compId, "title")}
           </h5>
         </div>
         <div className="card-stats modal-body">
@@ -56,10 +47,10 @@ class ModalUserCreated extends React.Component {
             <Row>
               <Col md="8">
                 <strong>
-                  {getString(langId, compId, "stepTitle1")}
+                  {getString(prefs.locale, this.compId, "stepTitle1")}
                 </strong>
                 <p className="description">
-                  {getString(langId, compId, "stepDesc1")}
+                  {getString(prefs.locale, this.compId, "stepDesc1")}
                 </p>
               </Col>
               <Col md="4">
@@ -74,10 +65,10 @@ class ModalUserCreated extends React.Component {
             <Row>
               <Col md="8">
                 <strong>
-                  {getString(langId, compId, "stepTitle2")}
+                  {getString(prefs.locale, this.compId, "stepTitle2")}
                 </strong>
                 <p className="description">
-                  {getString(langId, compId, "stepDesc2")}
+                  {getString(prefs.locale, this.compId, "stepDesc2")}
                 </p>
               </Col>
               <Col md="4">
@@ -92,21 +83,30 @@ class ModalUserCreated extends React.Component {
             <Row>
               <Col md="8">
                 <strong>
-                  {getString(langId, compId, "stepTitle3")}
+                  {getString(prefs.locale, this.compId, "stepTitle3")}
                 </strong>
                 <p className="description">
-                  {getString(langId, compId, "stepDesc3")}
+                  {getString(prefs.locale, this.compId, "stepDesc3")}
                 </p>
               </Col>
               <Col md="4">
                 <div className="icon-big centered">
-                  <i className="nc-icon nc-user-run text-default" />
+                  <i className="nc-icon nc-user-run text-warning" />
                 </div>
               </Col>
             </Row>
           </div>
-          <p className="mt-3">{getString(langId, compId, "footer")}</p>
+          <p className="mt-3">
+            {getString(prefs.locale, this.compId, "footer_p1")}
+            {" "}
+            <a href={`mailto:${getString(prefs.locale, "phioon", "email_support")}`}>
+              {getString(prefs.locale, "phioon", "email_support")}.
+            </a>
+            {" "}
+            {getString(prefs.locale, this.compId, "footer_p2")}
+          </p>
         </div>
+        <Row className="mt-3" />
         <div className="modal-footer justify-content-center">
           <Button
             className="btn-round"
@@ -115,7 +115,7 @@ class ModalUserCreated extends React.Component {
             type="button"
             onClick={() => this.setState({ redirectToLogin: true })}
           >
-            {getString(langId, compId, "btn_goToLogin")}
+            {getString(prefs.locale, this.compId, "btn_goToLogin")}
           </Button>
         </div>
       </Modal>
@@ -126,8 +126,8 @@ class ModalUserCreated extends React.Component {
 export default ModalUserCreated;
 
 ModalUserCreated.propTypes = {
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
   modalId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   toggleModal: PropTypes.func.isRequired

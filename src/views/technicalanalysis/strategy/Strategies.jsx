@@ -36,11 +36,9 @@ import { orderBy, getDistinctValuesFromList, deepCloneObj, retrieveObjFromObjLis
 class Strategies extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
-
       pageFirstLoading: true,
       isLoading: false,
       modal_strategyDetail_isOpen: false,
@@ -79,15 +77,10 @@ class Strategies extends React.Component {
     this.toggleLoading = this.toggleLoading.bind(this);
     this.onClick = this.onClick.bind(this);
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
-  }
   componentDidMount() {
     window.addEventListener("resize", this.resize);
 
-    this.props.setNavbarTitleId("title_" + this.state.compId)
+    this.props.setNavbarTitleId("title_" + this.compId)
     this.prepareRequirements()
   }
   componentWillUnmount() {
@@ -131,8 +124,7 @@ class Strategies extends React.Component {
     this.setState({ pageFirstLoading: false })
   }
   async prepareContext() {
-    let { getString } = this.props;
-    let { langId } = this.state;
+    let { prefs, getString } = this.props;
 
     let iItems = await this.props.managers.market.indicatorData()
 
@@ -160,7 +152,7 @@ class Strategies extends React.Component {
         if (!retrieveObjFromObjList(timeIntervalOptions, "value", instance.interval)) {
           let option = {
             value: instance.interval,
-            label: getString(langId, "indicators", instance.interval)
+            label: getString(prefs.locale, "indicators", instance.interval)
           }
           timeIntervalOptions.push(option)
 
@@ -345,21 +337,23 @@ class Strategies extends React.Component {
     this.toggleModal("strategyDetail")
   }
   deleteClick(obj) {
+    let { prefs, getString } = this.props;
+
     this.setState({
       alert: (
         <ReactBSAlert
           warning
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_confirming_title")}
+          title={getString(prefs.locale, this.compId, "alert_confirming_title")}
           onConfirm={() => this.deleteObject(obj)}
           onCancel={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
           cancelBtnBsStyle="danger"
-          confirmBtnText={this.props.getString(this.state.langId, this.state.compId, "btn_alert_confirm")}
-          cancelBtnText={this.props.getString(this.state.langId, this.state.compId, "btn_alert_cancel")}
+          confirmBtnText={getString(prefs.locale, this.compId, "btn_alert_confirm")}
+          cancelBtnText={getString(prefs.locale, this.compId, "btn_alert_cancel")}
           showCancel
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_confirming_text")}
+          {getString(prefs.locale, this.compId, "alert_confirming_text")}
         </ReactBSAlert>
       )
     });
@@ -373,16 +367,18 @@ class Strategies extends React.Component {
       this.hideAlert()
   }
   objectDeleted() {
+    let { prefs, getString } = this.props;
+
     this.setState({
       alert: (
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_deleted_title")}
+          title={getString(prefs.locale, this.compId, "alert_deleted_title")}
           onConfirm={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_deleted_text")}
+          {getString(prefs.locale, this.compId, "alert_deleted_text")}
         </ReactBSAlert>
       )
     });
@@ -403,11 +399,8 @@ class Strategies extends React.Component {
   };
 
   render() {
-    let { getString } = this.props;
+    let { prefs, getString } = this.props;
     let {
-      langId,
-      compId,
-
       pageFirstLoading,
       isLoading,
       modal_strategyDetail_isOpen,
@@ -441,7 +434,7 @@ class Strategies extends React.Component {
           runItIfSuccess={this.prepareCarousel}
         />
         <div className="header text-center">
-          <h3 className="title">{getString(langId, compId, "title")}</h3>
+          <h3 className="title">{getString(prefs.locale, this.compId, "title")}</h3>
         </div>
         <br />
 
@@ -451,7 +444,7 @@ class Strategies extends React.Component {
             <CardHeader>
               <Row>
                 <Col>
-                  <CardTitle tag="h4">{getString(langId, compId, "card_title")}</CardTitle>
+                  <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_title")}</CardTitle>
                 </Col>
                 <Col className="text-right">
                   <Button
@@ -461,7 +454,7 @@ class Strategies extends React.Component {
                     color="success"
                     onClick={() => this.onClick("create")}
                   >
-                    {getString(langId, compId, "btn_newStrategy")}
+                    {getString(prefs.locale, this.compId, "btn_newStrategy")}
                   </Button>
                 </Col>
               </Row>
@@ -482,8 +475,8 @@ class Strategies extends React.Component {
                 </Col>
                 <Col xl="10" lg="10" md="9" xs="9">
                   <br />
-                  <p className="card-description">{getString(langId, compId, "label_noWallets_p1")}</p>
-                  <p className="card-description">{getString(langId, compId, "label_noWallets_p2")}</p>
+                  <p className="card-description">{getString(prefs.locale, this.compId, "label_noWallets_p1")}</p>
+                  <p className="card-description">{getString(prefs.locale, this.compId, "label_noWallets_p2")}</p>
                 </Col>
               </Row>
               <CardFooter className="centered">
@@ -494,7 +487,7 @@ class Strategies extends React.Component {
                   type="submit"
                   onClick={() => this.setState({ goToWallets: true })}
                 >
-                  {getString(langId, compId, "btn_goToWallets")}
+                  {getString(prefs.locale, this.compId, "btn_goToWallets")}
                 </Button>
                 {this.state.goToWallets && <Redirect to="/app/myassets/wallets" />}
               </CardFooter>
@@ -513,7 +506,7 @@ class Strategies extends React.Component {
                         color="success"
                         onClick={() => this.onClick("create")}
                       >
-                        {getString(langId, compId, "btn_newStrategy")}
+                        {getString(prefs.locale, this.compId, "btn_newStrategy")}
                       </Button>
                     </Col>
                   </Row>
@@ -521,9 +514,9 @@ class Strategies extends React.Component {
                 <CardBody>
                   {carousel.slides.length == 0 ?
                     <CarouselEmpty
+                      prefs={prefs}
                       getString={getString}
-                      langId={langId}
-                      compId={compId} /> :
+                      compId={this.compId} /> :
                     <Carousel
                       className="carousel-strategies"
                       activeIndex={carousel.activeIndex}
@@ -547,7 +540,7 @@ class Strategies extends React.Component {
                 <CardHeader>
                   <Row>
                     <Col>
-                      <CardTitle tag="h5">{getString(langId, compId, "card_results_title")}</CardTitle>
+                      <CardTitle tag="h5">{getString(prefs.locale, this.compId, "card_results_title")}</CardTitle>
                     </Col>
                     <Col>
                       <div className="align-center pull-right">
@@ -562,18 +555,18 @@ class Strategies extends React.Component {
                     {/* Stock Exchange */}
                     <Col xl="3" lg="3" md="4" xs="6">
                       <FormGroup>
-                        <label>{getString(langId, compId, "input_stockExchange")}
+                        <label>{getString(prefs.locale, this.compId, "input_stockExchange")}
                           {" "}
                           <i id={"input_stockExchange_hint"} className="nc-icon nc-alert-circle-i" />
                         </label>
                         <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_stockExchange_hint"}>
-                          {getString(langId, compId, "input_stockExchange_hint")}
+                          {getString(prefs.locale, this.compId, "input_stockExchange_hint")}
                         </UncontrolledTooltip>
                         <Select
                           className="react-select"
                           classNamePrefix="react-select"
                           name="stockExchange"
-                          placeholder={getString(langId, "generic", "input_select")}
+                          placeholder={getString(prefs.locale, "generic", "input_select")}
                           value={selected.filters.general.stockExchange}
                           options={stockExchangeOptions}
                           onChange={value => this.onSelectChange("stockExchange", value)}
@@ -583,18 +576,18 @@ class Strategies extends React.Component {
                     {/* Time Interval */}
                     <Col xl="2" lg="3" md="3" xs="6">
                       <FormGroup>
-                        <label>{getString(langId, compId, "input_timeInterval")}
+                        <label>{getString(prefs.locale, this.compId, "input_timeInterval")}
                           {" "}
                           <i id={"input_timeInterval_hint"} className="nc-icon nc-alert-circle-i" />
                         </label>
                         <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_timeInterval_hint"}>
-                          {getString(langId, compId, "input_timeInterval_hint")}
+                          {getString(prefs.locale, this.compId, "input_timeInterval_hint")}
                         </UncontrolledTooltip>
                         <Select
                           className="react-select"
                           classNamePrefix="react-select"
                           name="timeInterval"
-                          placeholder={getString(langId, "generic", "input_select")}
+                          placeholder={getString(prefs.locale, "generic", "input_select")}
                           value={selected.filters.variables.interval}
                           options={timeIntervalOptions}
                           onChange={value => this.onSelectChange("timeInterval", value)}
@@ -624,8 +617,8 @@ class Strategies extends React.Component {
 export default Strategies;
 
 Strategies.propTypes = {
-  managers: PropTypes.object.isRequired,
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
+  managers: PropTypes.object.isRequired,
   setNavbarTitleId: PropTypes.func.isRequired
 }

@@ -16,7 +16,7 @@ import "assets/demo/demo.css";
 import NotificationAlert from "react-notification-alert";
 
 // CORE
-import { getLangList, getString } from "./core/lang";
+import { localeList, getTranslation } from "./core/locales";
 import { sleep } from "./core/utils";
 
 import StorageManager from "./core/managers/StorageManager";
@@ -39,7 +39,7 @@ class App extends React.Component {
 
     this.state = {
       prefs: {
-        langId: browserLanguage,
+        locale: browserLanguage,
         currency: "BRL"
       },
 
@@ -48,7 +48,7 @@ class App extends React.Component {
 
     this.setPrefs = this.setPrefs.bind(this)
     this.setAuthStatus = this.setAuthStatus.bind(this)
-    this.setLangId = this.setLangId.bind(this)
+    this.setLocale = this.setLocale.bind(this)
     this.getHttpTranslation = this.getHttpTranslation.bind(this)
     this.managers = {
       auth: new AuthManager(this.getHttpTranslation, this.setAuthStatus, this.setPrefs),
@@ -123,7 +123,7 @@ class App extends React.Component {
   }
   // Set Prefs
   setPrefs(obj_prefs) {
-    // prefs must be an object with at least one key of user's preferences. {langId: <value>}
+    // prefs must be an object with at least one key of user's preferences. {locale: <value>}
     let { prefs } = this.state
 
     if (obj_prefs) {
@@ -135,13 +135,16 @@ class App extends React.Component {
     }
   }
 
-  // Set new language. Only used by AuthNavBar (AppNavBar uses this.setPrefs())
-  setLangId(newLangId) {
+  setLocale(newLocale) {
+    // Set new language. Only used by AuthNavBar (AppNavBar uses this.setPrefs())
     let prefs = this.state.prefs
-    let langList = getLangList()
+    let locales = localeList()
 
-    if (prefs.langId !== newLangId && langList.includes(newLangId))
-      prefs.langId = newLangId
+    if (prefs.locale !== newLocale && locales.includes(newLocale)) {
+      prefs.locale = newLocale
+
+      this.managers.auth.storePrefs(prefs)
+    }
 
     this.setState({ prefs })
   }
@@ -285,7 +288,7 @@ class App extends React.Component {
     }
 
     if (msg.id)
-      msg.text = getString(prefs.langId, "httptranslation", msg.id)
+      msg.text = getTranslation(prefs.locale, "httptranslation", msg.id)
     else
       msg.text = rData
 
@@ -313,10 +316,10 @@ class App extends React.Component {
                     <Redirect to="/app/wallet/openpositions" /> :
                     <AuthLayout {...props}
                       managers={this.managers}
-                      getString={getString}
                       prefs={prefs}
+                      getString={getTranslation}
                       getHttpTranslation={this.getHttpTranslation}
-                      setLangId={this.setLangId}
+                      setLocale={this.setLocale}
                       setAuthStatus={this.setAuthStatus}
                     />
               }
@@ -330,13 +333,12 @@ class App extends React.Component {
                     <Redirect to="/auth/login" /> :
                     <AppLayout {...props}
                       managers={this.managers}
-                      getString={getString}
                       prefs={prefs}
+                      getString={getTranslation}
                       getHttpTranslation={this.getHttpTranslation}
                       isAuthenticated={isAuthenticated}
                       setPrefs={this.setPrefs}
-                      setLangId={this.setLangId}
-                      setCurrencyCode={this.setCurrencyCode}
+                      setLocale={this.setLocale}
                       setAuthStatus={this.setAuthStatus}
                     />
               }

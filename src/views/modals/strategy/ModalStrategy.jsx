@@ -49,10 +49,9 @@ import ModalPhiboDetail from "./indicators/ModalPhiboDetail";
 class ModalStrategy extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase()
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       isOpen: props.isOpen,
       isLoading: false,
 
@@ -125,12 +124,6 @@ class ModalStrategy extends React.Component {
     this.onSortableChange = this.onSortableChange.bind(this)
     this.toggleModal = this.toggleModal.bind(this)
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-
-    return null
-  }
   componentDidUpdate(prevProps) {
     if (prevProps.isOpen !== this.props.isOpen)
       if (this.props.isOpen)
@@ -199,21 +192,21 @@ class ModalStrategy extends React.Component {
   }
 
   async prepareRequirements() {
-    let { getString, action, objData } = this.props;
-    let { langId, compId, iItems, strategy, selected } = this.state;
+    let { prefs, getString, action, objData } = this.props;
+    let { iItems, strategy, selected } = this.state;
 
     iItems = await this.props.managers.market.indicatorData()
 
     // iItems: Preparing to be read by Sortable
     for (var obj of iItems) {
       obj.value = obj.id
-      obj.label = getString(langId, "indicators", obj.id)
+      obj.label = getString(prefs.locale, "indicators", obj.id)
     }
 
     // Workspaces: Preparing to be read by List
     for (var obj of strategy.workspaces) {
       obj.value = obj.id
-      obj.label = getString(langId, compId, ["label_" + obj.id])
+      obj.label = getString(prefs.locale, this.compId, ["label_" + obj.id])
 
       // Default WS
       if (obj.id == "basic_0")
@@ -380,7 +373,7 @@ class ModalStrategy extends React.Component {
             <CardBody className="centered">
               <i className="sortable-item-handle" />
               <Button size="sm" className="btn-neutral">
-                {this.props.getString(this.state.langId, "indicators", subcatId)}
+                {this.props.getString(this.props.prefs.locale, "indicators", subcatId)}
               </Button>
             </CardBody>
           </Card>
@@ -389,8 +382,8 @@ class ModalStrategy extends React.Component {
     });
   }
   renderBasicWS(workspaces) {
-    let { getString } = this.props;
-    let { langId, compId, isDragging } = this.state;
+    let { prefs, getString } = this.props;
+    let { isDragging } = this.state;
 
     let filters = { id: "basic_0" }
     let reversedWS = applyFilterToObjList(workspaces.slice(), filters)
@@ -404,10 +397,10 @@ class ModalStrategy extends React.Component {
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => this.onDrop(e, ws)}>
             <CardHeader>
-              <p className="card-category">{getString(langId, compId, ["label_" + ws.id])}</p>
+              <p className="card-category">{getString(prefs.locale, this.compId, ["label_" + ws.id])}</p>
               <div className="text-center">
                 <label>
-                  {getString(langId, compId, ["label_" + ws.id + "_intro"])}
+                  {getString(prefs.locale, this.compId, ["label_" + ws.id + "_intro"])}
                 </label>
               </div>
               <hr />
@@ -442,8 +435,8 @@ class ModalStrategy extends React.Component {
                     }
                   >
                     {ws.showExplainer ?
-                      getString(langId, compId, "btn_goToRules") :
-                      getString(langId, compId, "btn_goToExplainer")
+                      getString(prefs.locale, this.compId, "btn_goToRules") :
+                      getString(prefs.locale, this.compId, "btn_goToExplainer")
                     }
                   </Button>
                 </Col>
@@ -455,8 +448,8 @@ class ModalStrategy extends React.Component {
     })
   }
   renderTransitionWS(workspaces) {
-    let { getString } = this.props;
-    let { langId, compId, isDragging } = this.state;
+    let { prefs, getString } = this.props;
+    let { isDragging } = this.state;
 
     let filters = { type: "basic" }
     let reversedWS = applyFilterToObjList(workspaces.slice(), filters)
@@ -470,10 +463,10 @@ class ModalStrategy extends React.Component {
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => this.onDrop(e, ws)}>
             <CardHeader>
-              <p className="card-category">{getString(langId, compId, ["label_" + ws.id])}</p>
+              <p className="card-category">{getString(prefs.locale, this.compId, ["label_" + ws.id])}</p>
               <div className="text-center">
                 <label>
-                  {getString(langId, compId, ["label_" + ws.id + "_intro"])}
+                  {getString(prefs.locale, this.compId, ["label_" + ws.id + "_intro"])}
                 </label>
               </div>
               <hr />
@@ -508,8 +501,8 @@ class ModalStrategy extends React.Component {
                     }
                   >
                     {ws.showExplainer ?
-                      getString(langId, compId, "btn_goToRules") :
-                      getString(langId, compId, "btn_goToExplainer")
+                      getString(prefs.locale, this.compId, "btn_goToRules") :
+                      getString(prefs.locale, this.compId, "btn_goToExplainer")
                     }
                   </Button>
                 </Col>
@@ -728,8 +721,6 @@ class ModalStrategy extends React.Component {
   }
 
   async createObject(strategy) {
-    let { compId } = this.state;
-
     let object = {
       name: strategy.data.name,
       desc: strategy.data.desc,
@@ -745,7 +736,7 @@ class ModalStrategy extends React.Component {
       this.objectCreated()
     }
     else {
-      let msg = await this.props.getHttpTranslation(result, compId, "strategy")
+      let msg = await this.props.getHttpTranslation(result, this.compId, "strategy")
       this.setState({
         isLoading: false,
         alertState: "has-danger",
@@ -754,8 +745,6 @@ class ModalStrategy extends React.Component {
     }
   }
   async updateObject(strategy) {
-    let { compId } = this.state;
-
     let object = { id: strategy.data.id }
 
     for (var [k, v] of Object.entries(strategy.patch))
@@ -778,7 +767,7 @@ class ModalStrategy extends React.Component {
       this.objectUpdated()
     }
     else {
-      let msg = await this.props.getHttpTranslation(result, compId, "strategy")
+      let msg = await this.props.getHttpTranslation(result, this.compId, "strategy")
       this.setState({
         isLoading: false,
         alertState: "has-danger",
@@ -787,19 +776,21 @@ class ModalStrategy extends React.Component {
     }
   }
   objectCreated() {
+    let { prefs, getString } = this.props;
+
     this.setState({
       isLoading: false,
       alert: (
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_created_title")}
+          title={getString(prefs.locale, this.compId, "alert_created_title")}
           onConfirm={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_created_text_p1")}
+          {getString(prefs.locale, this.compId, "alert_created_text_p1")}
           {" "}
-          {this.props.getString(this.state.langId, this.state.compId, "alert_created_text_p2")}
+          {getString(prefs.locale, this.compId, "alert_created_text_p2")}
         </ReactBSAlert>
       )
     });
@@ -807,17 +798,19 @@ class ModalStrategy extends React.Component {
     this.props.runItIfSuccess()
   }
   objectUpdated() {
+    let { prefs, getString } = this.props;
+
     this.setState({
       isLoading: false,
       alert: (
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_updated_title")}
+          title={getString(prefs.locale, this.compId, "alert_updated_title")}
           onConfirm={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_updated_text")}
+          {getString(prefs.locale, this.compId, "alert_updated_text")}
         </ReactBSAlert>
       )
     });
@@ -841,9 +834,8 @@ class ModalStrategy extends React.Component {
   };
 
   render() {
-    let { getString, modalId, isOpen } = this.props;
+    let { prefs, getString, modalId, isOpen } = this.props;
     let {
-      langId, compId,
       isLoading,
 
       modal_chooseWS_isOpen,
@@ -879,11 +871,11 @@ class ModalStrategy extends React.Component {
                 <i className="nc-icon nc-simple-remove" />
               </button>
               <h5 className="modal-title">
-                {getString(langId, compId, "title_wsDestination_add")}
+                {getString(prefs.locale, this.compId, "title_wsDestination_add")}
                 {" "}
-                {getString(langId, "indicators", selected.subcatId)}
+                {getString(prefs.locale, "indicators", selected.subcatId)}
                 {" "}
-                {getString(langId, compId, "title_wsDestination_to")}
+                {getString(prefs.locale, this.compId, "title_wsDestination_to")}
                 ...
               </h5>
               <hr />
@@ -891,18 +883,18 @@ class ModalStrategy extends React.Component {
             <CardBody>
               {/* WS Destination */}
               <FormGroup>
-                <label>{getString(langId, compId, "input_wsDestination")}
+                <label>{getString(prefs.locale, this.compId, "input_wsDestination")}
                   {" "}
                   <i id={"input_wsDestination_hint"} className="nc-icon nc-alert-circle-i" />
                 </label>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_wsDestination_hint"}>
-                  {getString(langId, compId, "input_wsDestination_hint")}
+                  {getString(prefs.locale, this.compId, "input_wsDestination_hint")}
                 </UncontrolledTooltip>
                 <Select
                   className="react-select"
                   classNamePrefix="react-select"
                   name="wsDestination"
-                  placeholder={getString(langId, "generic", "input_select")}
+                  placeholder={getString(prefs.locale, "generic", "input_select")}
                   value={selected.workspace}
                   options={strategy.workspaces}
                   onChange={value => this.onSelectChange("wsDestination", value)}
@@ -922,7 +914,7 @@ class ModalStrategy extends React.Component {
                 }
                 onClick={() => this.openSubcategoryDetail("add", selected.workspace, selected.subcatId)}
               >
-                {getString(langId, compId, "btn_add")}
+                {getString(prefs.locale, this.compId, "btn_add")}
               </Button>
             </CardFooter>
           </Card>
@@ -978,12 +970,12 @@ class ModalStrategy extends React.Component {
               <i className="nc-icon nc-simple-remove" />
             </button>
             <h5 className="modal-title" id={modalId}>
-              {getString(langId, compId, ["title_" + this.props.action])}
+              {getString(prefs.locale, this.compId, ["title_" + this.props.action])}
             </h5>
             <hr />
             <label>
-              <p>{getString(langId, compId, "label_intro_p1")}</p>
-              <p>{getString(langId, compId, "label_intro_p2")}</p>
+              <p>{getString(prefs.locale, this.compId, "label_intro_p1")}</p>
+              <p>{getString(prefs.locale, this.compId, "label_intro_p2")}</p>
             </label>
             <hr />
           </CardHeader>
@@ -1004,10 +996,10 @@ class ModalStrategy extends React.Component {
                   <div id="radio_buy" className="icon mm">
                     <i className="nc-icon nc-spaceship mm" />
                   </div>
-                  <label>{getString(langId, compId, "input_buy")}</label>
+                  <label>{getString(prefs.locale, this.compId, "input_buy")}</label>
                 </div>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_buy"}>
-                  {getString(langId, compId, "input_buy_hint")}
+                  {getString(prefs.locale, this.compId, "input_buy_hint")}
                 </UncontrolledTooltip>
               </Col>
               <Col md="3" xs="5">
@@ -1023,10 +1015,10 @@ class ModalStrategy extends React.Component {
                   <div id="radio_sell" className="icon mm">
                     <i className="nc-icon nc-spaceship fa-rotate-90 mm" />
                   </div>
-                  <label>{getString(langId, compId, "input_sell")}</label>
+                  <label>{getString(prefs.locale, this.compId, "input_sell")}</label>
                 </div>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="right" target={"radio_sell"}>
-                  {getString(langId, compId, "input_sell_hint")}
+                  {getString(prefs.locale, this.compId, "input_sell_hint")}
                 </UncontrolledTooltip>
               </Col>
             </Row>
@@ -1047,10 +1039,10 @@ class ModalStrategy extends React.Component {
                   <div id="radio_public" className="icon mm">
                     <i className="nc-icon nc-world-2 mm" />
                   </div>
-                  <label>{getString(langId, compId, "input_public")}</label>
+                  <label>{getString(prefs.locale, this.compId, "input_public")}</label>
                 </div>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_public"}>
-                  {getString(langId, compId, "input_public_hint")}
+                  {getString(prefs.locale, this.compId, "input_public_hint")}
                 </UncontrolledTooltip>
               </Col>
               <Col md="3" xs="5">
@@ -1066,10 +1058,10 @@ class ModalStrategy extends React.Component {
                   <div id="radio_private" className="icon mm">
                     <i className="nc-icon nc-key-25 mm" />
                   </div>
-                  <label>{getString(langId, compId, "input_private")}</label>
+                  <label>{getString(prefs.locale, this.compId, "input_private")}</label>
                 </div>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_private"}>
-                  {getString(langId, compId, "input_private_hint")}
+                  {getString(prefs.locale, this.compId, "input_private_hint")}
                 </UncontrolledTooltip>
               </Col>
             </Row>
@@ -1079,16 +1071,17 @@ class ModalStrategy extends React.Component {
               {/* Name*/}
               <Col lg="9" xs="8">
                 <FormGroup className={`has-label ${strategy.states.name}`}>
-                  <label>{getString(langId, compId, "input_name")}</label>
+                  <label>{getString(prefs.locale, this.compId, "input_name")}</label>
                   <Input
                     type="text"
                     name="name"
+                    autoComplete="off"
                     value={strategy.data.name}
                     onChange={e => this.onChange(e.target.value, e.target.name)}
                   />
                   {strategy.states.name == "has-danger" &&
                     <label className="error">
-                      {getString(langId, compId, "error_name")}
+                      {getString(prefs.locale, this.compId, "error_name")}
                     </label>
                   }
                 </FormGroup>
@@ -1097,20 +1090,20 @@ class ModalStrategy extends React.Component {
               <Col lg="3" xs="4">
                 <FormGroup>
                   <label>
-                    {getString(langId, compId, "input_logic")}
+                    {getString(prefs.locale, this.compId, "input_logic")}
                     {" "}
                     <i id={"input_logic_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
                   <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_logic_hint"}>
-                    {getString(langId, compId, "input_logic_hint")}
+                    {getString(prefs.locale, this.compId, "input_logic_hint")}
                   </UncontrolledTooltip>
                   <Input
                     type="text"
                     name="isDynamic"
                     disabled
                     value={strategy.data.isDynamic ?
-                      getString(langId, compId, "label_logic_dynamic") :
-                      getString(langId, compId, "label_logic_static")
+                      getString(prefs.locale, this.compId, "label_logic_dynamic") :
+                      getString(prefs.locale, this.compId, "label_logic_static")
                     }
                   />
                 </FormGroup>
@@ -1118,17 +1111,17 @@ class ModalStrategy extends React.Component {
             </Row>
             {/* Description*/}
             <FormGroup className={`has-label ${strategy.states.desc}`}>
-              <label>{getString(langId, compId, "input_description")}</label>
+              <label>{getString(prefs.locale, this.compId, "input_description")}</label>
               <Input
                 type="textarea"
                 name="desc"
                 value={strategy.data.desc}
-                placeholder={getString(langId, compId, "label_description_placeholder")}
+                placeholder={getString(prefs.locale, this.compId, "label_description_placeholder")}
                 onChange={e => this.onChange(e.target.value, e.target.name)}
               />
               {strategy.states.desc == "has-danger" &&
                 <label className="error">
-                  {getString(langId, compId, "error_desc")}
+                  {getString(prefs.locale, this.compId, "error_desc")}
                 </label>
               }
             </FormGroup>
@@ -1136,7 +1129,7 @@ class ModalStrategy extends React.Component {
 
             {/* Workspaces */}
             <p className="card-category">
-              {getString(langId, compId, "label_workspaces")}
+              {getString(prefs.locale, this.compId, "label_workspaces")}
             </p>
             <Nav pills role="wsMode" className="nav-pills nav-pills-icons justify-content-center">
               {/* Basic */}
@@ -1148,7 +1141,7 @@ class ModalStrategy extends React.Component {
                   className={activeWsMode === "basic" ? "active" : ""}
                   onClick={() => this.toggleNavLink("activeWsMode", "basic")}
                 >
-                  {getString(langId, compId, "label_basic")}
+                  {getString(prefs.locale, this.compId, "label_basic")}
                 </NavLink>
               </NavItem>
               {/* Transition */}
@@ -1160,7 +1153,7 @@ class ModalStrategy extends React.Component {
                   className={activeWsMode === "transition" ? "active" : ""}
                   onClick={() => this.toggleNavLink("activeWsMode", "transition")}
                 >
-                  {getString(langId, compId, "label_transition")}
+                  {getString(prefs.locale, this.compId, "label_transition")}
                 </NavLink>
               </NavItem>
               {/* Advanced */}
@@ -1172,7 +1165,7 @@ class ModalStrategy extends React.Component {
                   className={activeWsMode === "advanced" ? "active" : ""}
                   onClick={() => this.toggleNavLink("activeWsMode", "advanced")}
                 >
-                  {getString(langId, compId, "label_advanced")}
+                  {getString(prefs.locale, this.compId, "label_advanced")}
                 </NavLink>
               </NavItem>
             </Nav>
@@ -1180,8 +1173,8 @@ class ModalStrategy extends React.Component {
               <TabPane tabId="basic">
                 <div className="text-center">
                   <label>
-                    <p>{getString(langId, compId, "label_basic_intro_p1")}</p>
-                    <p>{getString(langId, compId, "label_basic_intro_p2")}</p>
+                    <p>{getString(prefs.locale, this.compId, "label_basic_intro_p1")}</p>
+                    <p>{getString(prefs.locale, this.compId, "label_basic_intro_p2")}</p>
                   </label>
                 </div>
                 {/* Indicators */}
@@ -1198,8 +1191,8 @@ class ModalStrategy extends React.Component {
               <TabPane tabId="transition">
                 <div className="text-center">
                   <label>
-                    <p>{getString(langId, compId, "label_basic_intro_p1")}</p>
-                    <p>{getString(langId, compId, "label_basic_intro_p2")}</p>
+                    <p>{getString(prefs.locale, this.compId, "label_basic_intro_p1")}</p>
+                    <p>{getString(prefs.locale, this.compId, "label_basic_intro_p2")}</p>
                   </label>
                 </div>
                 {/* Indicators */}
@@ -1216,8 +1209,8 @@ class ModalStrategy extends React.Component {
               <TabPane tabId="advanced">
                 <div className="text-center">
                   <label>
-                    <p>{getString(langId, compId, "label_advanced_intro_p1")}</p>
-                    <p>{getString(langId, "generic", "label_comingSoon")}</p>
+                    <p>{getString(prefs.locale, this.compId, "label_advanced_intro_p1")}</p>
+                    <p>{getString(prefs.locale, "generic", "label_comingSoon")}</p>
                   </label>
                 </div>
               </TabPane>
@@ -1238,7 +1231,7 @@ class ModalStrategy extends React.Component {
             >
               {isLoading ?
                 <Spinner size="sm" /> :
-                getString(langId, compId, ["btn_" + this.props.action])
+                getString(prefs.locale, this.compId, ["btn_" + this.props.action])
               }
             </Button>
           </CardFooter>

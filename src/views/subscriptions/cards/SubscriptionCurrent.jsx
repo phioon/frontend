@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 // reactstrap components
 import {
-  Badge,
   Button,
   Card,
   CardHeader,
@@ -18,16 +17,15 @@ import TimeManager from "../../../core/managers/TimeManager";
 import {
   getDistinctValuesFromList,
   getInitials,
-  getFirstAndLastName
+  getFirstAndLastName,
 } from "../../../core/utils";
 
 class SubscriptionCurrent extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       pageFirstLoading: true,
       isLoading: undefined,
 
@@ -60,11 +58,6 @@ class SubscriptionCurrent extends React.Component {
       currency: { code: "BRL", symbol: "R$", thousands_separator_symbol: ".", decimal_symbol: "," },
     }
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
-  }
   componentDidMount() {
     this.prepareRequirements()
   }
@@ -86,11 +79,14 @@ class SubscriptionCurrent extends React.Component {
     user.initials = getInitials(`${user.first_name} ${user.last_name}`)
     user.full_name = getFirstAndLastName(`${user.first_name} ${user.last_name}`)
 
-    subscription = await this.props.managers.app.subscriptionRetrieve(user.subscription)
-    subscription.type = user.subscription_type
-    subscription.expiresOn = user.subscription_expires_on
-    subscription.renewsOn = user.subscription_renews_on
+    subscription = user.subscription
     subscription.userJoinedOn = user.date_joined
+    subscription = {
+      ...await this.props.managers.app.subscriptionRetrieve(user.subscription.name),
+      ...subscription,
+    }
+
+    console.log(subscription)
 
     for (var [k, v] of Object.entries(user))
       if (Object.keys(personalData.data).includes(k))
@@ -149,10 +145,8 @@ class SubscriptionCurrent extends React.Component {
   }
 
   render() {
-    let { getString } = this.props;
+    let { prefs, getString } = this.props;
     let {
-      langId,
-      compId,
       pageFirstLoading,
       isLoading,
 
@@ -194,7 +188,7 @@ class SubscriptionCurrent extends React.Component {
           {/* Joined On */}
           <Row>
             <Col md="7" sm="7" xs="7">
-              <label>{getString(langId, compId, "label_joinedOn")}</label>
+              <label>{getString(prefs.locale, this.compId, "label_joinedOn")}</label>
             </Col>
             <Col md="5" sm="5" xs="5" className="text-right">
               <label>{TimeManager.getLocaleDateString(subscription.userJoinedOn, false)}</label>
@@ -205,12 +199,12 @@ class SubscriptionCurrent extends React.Component {
           <Row>
             <Col md="7" sm="7" xs="7">
               <label>
-                {getString(langId, compId, "label_subscription")}
+                {getString(prefs.locale, this.compId, "label_subscription")}
                 {" "}
                 <i id={"subscription_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"subscription_hint"}>
-                {getString(langId, compId, "label_subscription_hint")}
+                {getString(prefs.locale, this.compId, "label_subscription_hint")}
               </UncontrolledTooltip>
             </Col>
             <Col md="5" sm="5" xs="5" className="text-right">
@@ -218,40 +212,40 @@ class SubscriptionCurrent extends React.Component {
             </Col>
           </Row>
           {/* Expires On */}
-          {subscription.expiresOn &&
+          {subscription.expires_on &&
             <Row>
               <Col md="7" sm="7" xs="7">
                 <label>
-                  {getString(langId, compId, "label_expiresOn")}
+                  {getString(prefs.locale, this.compId, "label_expiresOn")}
                   {" "}
                   <i id={"label_expiresOn_hint"} className="nc-icon nc-alert-circle-i" />
                 </label>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"label_expiresOn_hint"}>
-                  {getString(langId, compId, "label_expiresOn_hint")}
+                  {getString(prefs.locale, this.compId, "label_expiresOn_hint")}
                 </UncontrolledTooltip>
               </Col>
               <Col md="5" sm="5" xs="5" className="text-right">
                 <label className="text-warning">
-                  {TimeManager.getLocaleDateString(subscription.expiresOn, false)}
+                  {TimeManager.getLocaleDateString(subscription.expires_on, false)}
                 </label>
               </Col>
             </Row>
           }
           {/* Renews On */}
-          {subscription.renewsOn &&
+          {subscription.renews_on &&
             <Row>
               <Col md="7" sm="7" xs="7">
                 <label>
-                  {getString(langId, compId, "label_renewsOn")}
+                  {getString(prefs.locale, this.compId, "label_renewsOn")}
                   {" "}
                   <i id={"label_renewsOn_hint"} className="nc-icon nc-alert-circle-i" />
                 </label>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"label_renewsOn_hint"}>
-                  {getString(langId, compId, "label_renewsOn_hint")}
+                  {getString(prefs.locale, this.compId, "label_renewsOn_hint")}
                 </UncontrolledTooltip>
               </Col>
               <Col md="5" sm="5" xs="5" className="text-right">
-                <label>{TimeManager.getLocaleDateString(subscription.renewsOn, false)}</label>
+                <label>{TimeManager.getLocaleDateString(subscription.renews_on, false)}</label>
               </Col>
             </Row>
           }
@@ -266,7 +260,7 @@ class SubscriptionCurrent extends React.Component {
                   onClick={() => this.onClick("manage")}>
                   {isLoading ?
                     <Spinner size="sm" /> :
-                    getString(langId, compId, "btn_manage")
+                    getString(prefs.locale, this.compId, "btn_manage")
                   }
                 </Button>
               </Row>
@@ -275,7 +269,7 @@ class SubscriptionCurrent extends React.Component {
           {/* Insights */}
           <hr />
           <p className="description text-center">
-            {`${subscription.label} ${getString(langId, compId, "label_insights")}`}
+            {`${subscription.label} ${getString(prefs.locale, this.compId, "label_insights")}`}
           </p>
           <Row className="mt-4" />
           <div className="text-center">
@@ -289,12 +283,12 @@ class SubscriptionCurrent extends React.Component {
                     measures.positions.amount.data
                   }
                   <br />
-                  <small>{getString(langId, compId, "label_positions")}</small>
+                  <small>{getString(prefs.locale, this.compId, "label_positions")}</small>
                   <br />
                   <i id={"positions_hint"} className="nc-icon nc-alert-circle-i" />
                 </h6>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"positions_hint"}>
-                  {getString(langId, compId, "label_positions_hint")}
+                  {getString(prefs.locale, this.compId, "label_positions_hint")}
                 </UncontrolledTooltip>
               </Col>
               {/* Result */}
@@ -305,11 +299,11 @@ class SubscriptionCurrent extends React.Component {
                     this.props.managers.measure.handleKpiPresentation("nominal_percentage", measures.positions.result.percentage.data, currency, true)
                   }
                   <br />
-                  <small>{getString(langId, compId, "label_result")}</small>
+                  <small>{getString(prefs.locale, this.compId, "label_result")}</small>
                   <br />
                   <i id={"result_hint"} className="nc-icon nc-alert-circle-i" />
                   <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"result_hint"}>
-                    {getString(langId, compId, "label_result_hint")}
+                    {getString(prefs.locale, this.compId, "label_result_hint")}
                   </UncontrolledTooltip>
                 </h6>
               </Col>
@@ -324,11 +318,11 @@ class SubscriptionCurrent extends React.Component {
                     this.props.managers.measure.handleKpiPresentation("nominal_currency", measures.positions.amountInvested.currency.data, currency)
                   }
                   <br />
-                  <small>{getString(langId, compId, "label_volume")}</small>
+                  <small>{getString(prefs.locale, this.compId, "label_volume")}</small>
                   <br />
                   <i id={"volume_hint"} className="nc-icon nc-alert-circle-i" />
                   <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"volume_hint"}>
-                    {getString(langId, compId, "label_volume_hint")}
+                    {getString(prefs.locale, this.compId, "label_volume_hint")}
                   </UncontrolledTooltip>
                 </h6>
               </Col>
@@ -340,12 +334,12 @@ class SubscriptionCurrent extends React.Component {
                     insights.strategies.amount.data
                   }
                   <br />
-                  <small>{getString(langId, compId, "label_strategies")}</small>
+                  <small>{getString(prefs.locale, this.compId, "label_strategies")}</small>
                   <br />
                   <i id={"strategies_hint"} className="nc-icon nc-alert-circle-i" />
                 </h6>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"strategies_hint"}>
-                  {getString(langId, compId, "label_strategies_hint")}
+                  {getString(prefs.locale, this.compId, "label_strategies_hint")}
                 </UncontrolledTooltip>
               </Col>
             </Row>
@@ -360,12 +354,12 @@ class SubscriptionCurrent extends React.Component {
                       insights.phiOperations.amount.data
                     }
                     <br />
-                    <small>{getString(langId, compId, "label_phiOperations")}</small>
+                    <small>{getString(prefs.locale, this.compId, "label_phiOperations")}</small>
                     <br />
                     <i id={"phiOperations_hint"} className="nc-icon nc-alert-circle-i" />
                   </h6>
                   <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"phiOperations_hint"}>
-                    {getString(langId, compId, "label_phiOperations_hint")}
+                    {getString(prefs.locale, this.compId, "label_phiOperations_hint")}
                   </UncontrolledTooltip>
                 </Col>
               }
@@ -380,9 +374,9 @@ class SubscriptionCurrent extends React.Component {
 export default SubscriptionCurrent;
 
 SubscriptionCurrent.propTypes = {
-  managers: PropTypes.object.isRequired,
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
+  managers: PropTypes.object.isRequired,
   setAuthStatus: PropTypes.func.isRequired,
   onClick: PropTypes.func.isRequired,
 }

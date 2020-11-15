@@ -17,7 +17,6 @@ class AppLayout extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      langId: props.langId,
       navbarTitleId: "title_default",
 
       backgroundColor: "primary-dark",
@@ -27,11 +26,6 @@ class AppLayout extends React.Component {
 
     this.mainPanelRef = React.createRef()
     this.setNavbarTitleId = this.setNavbarTitleId.bind(this)
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
   }
   componentDidMount() {
     this.mountPerfectScrollbar()

@@ -18,31 +18,25 @@ import {
   UncontrolledDropdown
 } from "reactstrap";
 
-import { getLangList } from "../../core/lang";
+import { localeList } from "../../core/locales";
 import { project } from "../../core/projectData";
 
 class AuthNavbar extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase()
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       collapseOpen: false,
       color: "navbar-transparent",
 
-      langList: [],
+      locales: [],
     };
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
   }
   componentDidMount() {
     window.addEventListener("resize", this.updateColor());
 
-    let langList = getLangList()
-    this.setState({ langList })
+    let locales = localeList()
+    this.setState({ locales })
   }
   // function that adds color white/transparent to the navbar on resize (this is for the collapse)
   updateColor() {
@@ -84,25 +78,25 @@ class AuthNavbar extends React.Component {
   };
 
 
-  languageItems(langList) {
+  languageItems(locales) {
     let { getString } = this.props
 
-    return langList.map((langId, key) => {
+    return locales.map((locale, key) => {
       return (
-        <DropdownItem key={key} onClick={() => this.setLangId(langId)}>
-          {getString(langId, "languages", langId)}
+        <DropdownItem key={key} onClick={() => this.setLocale(locale)}>
+          {getString(locale, "languages", locale)}
         </DropdownItem>
       )
     });
   }
-  setLangId(langId) {
-    this.props.setLangId(langId)
+  setLocale(locale) {
+    this.props.setLocale(locale)
     this.setCollapse(false)
   }
 
   render() {
-    let { getString } = this.props;
-    let { langId, compId, langList } = this.state;
+    let { getString, prefs } = this.props;
+    let { locales } = this.state;
 
     return (
       <Navbar
@@ -151,19 +145,19 @@ class AuthNavbar extends React.Component {
                   <i className="nc-icon nc-world-2" />
                 </DropdownToggle>
                 <DropdownMenu aria-labelledby="dropdown_languages" right>
-                  {this.languageItems(langList)}
+                  {this.languageItems(locales)}
                 </DropdownMenu>
               </UncontrolledDropdown>
               <NavItem>
                 <NavLink to="/auth/register" className="nav-link" onClick={() => this.setCollapse(false)} replace>
                   <i className="nc-icon nc-book-bookmark" />
-                  {getString(langId, compId, "signUp")}
+                  {getString(prefs.locale, this.compId, "signUp")}
                 </NavLink>
               </NavItem>
               <NavItem>
                 <NavLink to="/auth/login" className="nav-link" onClick={() => this.setCollapse(false)} replace>
                   <i className="nc-icon nc-tap-01" />
-                  {getString(langId, compId, "login")}
+                  {getString(prefs.locale, this.compId, "login")}
                 </NavLink>
               </NavItem>
             </Nav>

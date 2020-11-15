@@ -23,35 +23,27 @@ import {
 // CORE
 import LabelAlert from "../../components/LabelAlert";
 import { project } from "../../core/projectData";
-import { verifyEmail, verifyLength } from "../../core/utils";
-import { getString } from "../../core/lang";
+import { verifyLength } from "../../core/utils";
 // -------------------
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase(),
 
-    this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
-      isLoading: false,
-      resendEmail_isLoading: false,
-      redirectToRegister: undefined,
-      redirectToForgotPassword: undefined,
+      this.state = {
+        isLoading: false,
+        resendEmail_isLoading: false,
+        redirectToRegister: undefined,
+        redirectToForgotPassword: undefined,
 
-      email: "",
-      password: "",
+        email: "",
+        password: "",
 
-      btnSendConfirmation_isHidden: true,
-      alertState: null,
-      alertMsg: ""
-    }
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
+        btnSendConfirmation_isHidden: true,
+        alertState: null,
+        alertMsg: ""
+      }
   }
   componentDidMount() {
     document.body.classList.toggle("login-page");
@@ -115,7 +107,7 @@ class Login extends React.Component {
     // When data is returned correctly from StorageManager, one of default properties is USER
     if (!result.user) {
       this.clearInputFields();
-      let msg = await this.props.getHttpTranslation(result, this.state.compId, "user")
+      let msg = await this.props.getHttpTranslation(result, this.compId, "user")
 
       this.setState({
         isLoading: false,
@@ -128,7 +120,7 @@ class Login extends React.Component {
 
   async resendEmailClick(e) {
     e.preventDefault()
-    let { langId, compId } = this.state
+    let { getString, prefs } = this.props;
     this.setState({ resendEmail_isLoading: true })
 
     let user = {
@@ -137,15 +129,15 @@ class Login extends React.Component {
 
     let result = await this.props.managers.auth.userRequestConfirmEmail(user)
 
-    if (result.status == 200) {
+    if ([200, 404].includes(result.status)) {
       this.setState({
         resendEmail_isLoading: false,
         alertState: undefined,
-        alertMsg: getString(langId, compId, "label_emailSent")
+        alertMsg: getString(prefs.locale, this.compId, "label_emailSent")
       })
     }
     else {
-      let msg = await this.props.getHttpTranslation(result, this.state.compId, "user")
+      let msg = await this.props.getHttpTranslation(result, this.compId, "user")
 
       this.setState({
         resendEmail_isLoading: false,
@@ -156,13 +148,12 @@ class Login extends React.Component {
   }
 
   render() {
-    let { getString } = this.props;
-    let { langId,
-      compId,
+    let { getString, prefs } = this.props;
+    let {
       isLoading,
       resendEmail_isLoading,
       redirectToRegister,
-      redirectToForgotPassword, 
+      redirectToForgotPassword,
 
       email,
       emailState,
@@ -182,7 +173,7 @@ class Login extends React.Component {
               <Form action="" className="form" method="">
                 <Card className="card-login">
                   <CardHeader>
-                    <h3 className="header text-center">{getString(langId, compId, "card_header")}</h3>
+                    <h3 className="header text-center">{getString(prefs.locale, this.compId, "card_header")}</h3>
                   </CardHeader>
                   <CardBody>
                     <InputGroup className={`has-label ${emailState}`}>
@@ -192,11 +183,11 @@ class Login extends React.Component {
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
-                        placeholder={getString(langId, compId, "input_email")}
+                        placeholder={getString(prefs.locale, this.compId, "input_email")}
                         type="email"
-                        name="email"
+                        name="phioon_username"
                         value={email}
-                        onChange={e => this.onChange(e, e.target.name, "email")}
+                        onChange={e => this.onChange(e, "email", "email")}
                       />
                     </InputGroup>
                     <InputGroup className={`has-label ${passwordState}`}>
@@ -206,12 +197,12 @@ class Login extends React.Component {
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
-                        placeholder={getString(langId, compId, "input_password")}
+                        placeholder={getString(prefs.locale, this.compId, "input_password")}
                         type="password"
                         autoComplete="off"
                         name="password"
                         value={password}
-                        onChange={e => this.onChange(e, e.target.name, "password")}
+                        onChange={e => this.onChange(e, "password", "password")}
                       />
                     </InputGroup>
                     <br />
@@ -232,36 +223,38 @@ class Login extends React.Component {
                     >
                       {isLoading ?
                         <Spinner size="sm" /> :
-                        getString(langId, compId, "btn_login")
+                        getString(prefs.locale, this.compId, "btn_login")
                       }
                     </Button>
                     <br />
                     <LabelAlert alertState={alertState} alertMsg={alertMsg} />
                     <br />
-                    {redirectToRegister ? <Redirect to="/auth/register" /> : null}
-                    <Button 
-                      className="btn-link btn-neutral" 
-                      color="default"
-                      onClick={() => this.setState({redirectToRegister:true})}>                      
-                      {getString(langId, compId, "btn_signUp")}                      
-                    </Button>
-                    <br />
-                    {redirectToForgotPassword ? <Redirect to="/auth/forgotpassword" /> : null}
+                    {redirectToRegister && <Redirect to="/auth/register" />}
+                    {redirectToForgotPassword && <Redirect to="/auth/forgotpassword" />}
                     {
                       btnSendConfirmation_isHidden ?
-                        <Button 
-                          className="btn-link btn-neutral" 
-                          color="default" 
-                          onClick={() => this.setState({redirectToForgotPassword:true})}>
-                          {getString(langId, compId, "btn_forgotPassword")}?
-                        </Button> :
+                        <>
+                          <Button
+                            className="btn-link btn-neutral"
+                            color="default"
+                            onClick={() => this.setState({ redirectToRegister: true })}>
+                            {getString(prefs.locale, this.compId, "btn_signUp")}
+                          </Button>
+                          <br />
+                          <Button
+                            className="btn-link btn-neutral"
+                            color="default"
+                            onClick={() => this.setState({ redirectToForgotPassword: true })}>
+                            {getString(prefs.locale, this.compId, "btn_forgotPassword")}?
+                          </Button>
+                        </> :
                         <Button
                           className="btn-link btn-neutral"
                           color="default"
                           onClick={e => this.resendEmailClick(e)}>
                           {resendEmail_isLoading ?
                             <Spinner size="sm" /> :
-                            getString(langId, compId, "btn_resendEmail")
+                            getString(prefs.locale, this.compId, "btn_resendEmail")
                           }
                         </Button>
                     }

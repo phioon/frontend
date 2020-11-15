@@ -26,10 +26,8 @@ import { convertFloatToCurrency, convertFloatToPercentage, deepCloneObj } from "
 class ProfitabilityOverTime extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
 
+    this.state = {
       interval: "monthly",
       selected: "overall",
 
@@ -39,12 +37,6 @@ class ProfitabilityOverTime extends Component {
 
       currency: props.currency,
     };
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-
-    return null
   }
   componentDidUpdate(prevProps) {
     if (prevProps.pageFirstLoading !== this.props.pageFirstLoading)
@@ -85,14 +77,14 @@ class ProfitabilityOverTime extends Component {
 
   render() {
     let {
+      prefs,
       getString,
       pageFirstLoading,
       chart,
-      measures,
-      currency
+      measures
     } = this.props;
 
-    let { langId, interval, selected, dimensionsLimit } = this.state;
+    let { interval, selected, dimensionsLimit } = this.state;
 
     return (
       <Card className="card-stats">
@@ -114,12 +106,12 @@ class ProfitabilityOverTime extends Component {
                   <DropdownItem
                     onClick={() => this.changeChart("daily", undefined)}
                   >
-                    {getString(langId, "charts", "dropdown_timeInterval_daily")}
+                    {getString(prefs.locale, "charts", "dropdown_timeInterval_daily")}
                   </DropdownItem>
                   <DropdownItem
                     onClick={() => this.changeChart("monthly", undefined)}
                   >
-                    {getString(langId, "charts", "dropdown_timeInterval_monthly")}
+                    {getString(prefs.locale, "charts", "dropdown_timeInterval_monthly")}
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
@@ -140,7 +132,7 @@ class ProfitabilityOverTime extends Component {
         </CardHeader>
         <CardBody>
           <h6 className="big-title">
-            {getString(langId, "charts", "chart_title_profitability")}
+            {getString(prefs.locale, "charts", "chart_title_profitability")}
           </h6>
           {
             pageFirstLoading ?
@@ -158,7 +150,7 @@ class ProfitabilityOverTime extends Component {
             <Col xl="4" md="4">
               <label className="stats">
                 <i className="fa fa-cube" />
-                {getString(langId, "charts", "label_groupBy")}:
+                {getString(prefs.locale, "charts", "label_groupBy")}:
               </label>
             </Col>
             <Col className="text-right">
@@ -176,14 +168,14 @@ class ProfitabilityOverTime extends Component {
                       true
                   }
                 >
-                  {getString(langId, "charts", "label_assets")}
+                  {getString(prefs.locale, "charts", "label_assets")}
                 </Button>
               </span>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="result_groupByAsset">
                 {chart.monthly.groupByAsset.data.datasets &&
                   chart.monthly.groupByAsset.data.datasets.length < dimensionsLimit ?
-                  getString(langId, "charts", chart.daily.groupByAsset.hintId) :
-                  getString(langId, "charts", "limitReached_asset_hint")
+                  getString(prefs.locale, "charts", chart.daily.groupByAsset.hintId) :
+                  getString(prefs.locale, "charts", "limitReached_asset_hint")
                 }
               </UncontrolledTooltip>
               <span id="result_groupByWallet">
@@ -200,15 +192,15 @@ class ProfitabilityOverTime extends Component {
                       true
                   }
                 >
-                  {getString(langId, "charts", "label_wallets")}
+                  {getString(prefs.locale, "charts", "label_wallets")}
                 </Button>
               </span>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="result_groupByWallet">
                 {
                   chart.monthly.groupByWallet.data.datasets &&
                     chart.monthly.groupByWallet.data.datasets.length < dimensionsLimit ?
-                    getString(langId, "charts", chart.daily.groupByWallet.hintId) :
-                    getString(langId, "charts", "limitReached_wallet_hint")
+                    getString(prefs.locale, "charts", chart.daily.groupByWallet.hintId) :
+                    getString(prefs.locale, "charts", "limitReached_wallet_hint")
                 }
               </UncontrolledTooltip>
               <Button
@@ -219,10 +211,10 @@ class ProfitabilityOverTime extends Component {
                 type="button"
                 onClick={() => this.changeChart(undefined, "overall")}
               >
-                {getString(langId, "charts", "label_overall")}
+                {getString(prefs.locale, "charts", "label_overall")}
               </Button>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="result_overall">
-                {getString(langId, "charts", chart.daily.overall.hintId)}
+                {getString(prefs.locale, "charts", chart.daily.overall.hintId)}
               </UncontrolledTooltip>
             </Col>
           </Row>

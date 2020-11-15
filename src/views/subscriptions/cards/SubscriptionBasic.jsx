@@ -16,16 +16,9 @@ import { project } from "../../../core/projectData";
 class SubscriptionBasic extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      langId: props.prefs.langId,
-      compId: this.constructor.name.toLowerCase()
+    this.compId = this.constructor.name.toLowerCase();
 
-    }
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
+    this.state = {}
   }
 
   async onClick(action, data) {
@@ -35,14 +28,14 @@ class SubscriptionBasic extends React.Component {
   }
 
   render() {
-    let { getString, submitActionId } = this.props;
-    let { langId, compId, isLoading } = this.state;
+    let { prefs, getString, submitActionId } = this.props;
+    let { isLoading } = this.state;
 
     return (
       <Card className="card-pricing">
         <CardHeader>
           <div className="subscription">
-            {getString(langId, compId, "label_title")}
+            {getString(prefs.locale, this.compId, "label_title")}
           </div>
         </CardHeader>
         <CardBody>
@@ -54,40 +47,40 @@ class SubscriptionBasic extends React.Component {
             {" "}
             {0}
             {" "}
-            <label><small>/{getString(langId, compId, "label_month")}</small></label>
+            <label><small>/{getString(prefs.locale, this.compId, "label_month")}</small></label>
           </CardTitle>
           <ul>
             {/* Stock Exchange */}
             <li>
               <b>1</b>
-              {` ${getString(langId, compId, "label_stockExchange")}`}
+              {` ${getString(prefs.locale, this.compId, "label_stockExchange")}`}
             </li>
             {/* Wallets */}
             <li>
               <b>2</b>
               {" "}
               <a href={project.info.website_wallets} target="_blank">
-                {`${getString(langId, compId, "label_wallets")}`}
+                {`${getString(prefs.locale, this.compId, "label_wallets")}`}
               </a>
             </li>
             {/* Static Panels */}
             <li>
-              {` ${getString(langId, compId, "label_staticPanels")}`}
+              {` ${getString(prefs.locale, this.compId, "label_staticPanels")}`}
               {" "}
               <i id={"label_staticPanels_hint"} className="nc-icon nc-alert-circle-i" />
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"label_staticPanels_hint"}>
-                {getString(langId, compId, "label_staticPanels_hint")}
+                {getString(prefs.locale, this.compId, "label_staticPanels_hint")}
               </UncontrolledTooltip>
             </li>
             {/* Strategies */}
             <li>
               <a href={project.info.website_strategies} target="_blank">
-                <b>{getString(langId, compId, "label_strategies")}</b>
+                <b>{getString(prefs.locale, this.compId, "label_strategies")}</b>
               </a>:
               {" "}
-              {` 5 ${getString(langId, compId, "label_runs")}`}
+              {` 5 ${getString(prefs.locale, this.compId, "label_runs")}`}
               {" "}
-              {getString(langId, compId, "label_perDay")}
+              {getString(prefs.locale, this.compId, "label_perDay")}
             </li>
           </ul>
         </CardBody>
@@ -99,7 +92,7 @@ class SubscriptionBasic extends React.Component {
           >
             {isLoading ?
               <Spinner size="sm" /> :
-              getString(langId, compId, `btn_${submitActionId}`)
+              getString(prefs.locale, this.compId, `btn_${submitActionId}`)
             }
           </Button>
         </CardFooter>
@@ -111,8 +104,8 @@ class SubscriptionBasic extends React.Component {
 export default SubscriptionBasic;
 
 SubscriptionBasic.propTypes = {
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
   onClick: PropTypes.func.isRequired,
   submitActionId: PropTypes.string.isRequired
 }

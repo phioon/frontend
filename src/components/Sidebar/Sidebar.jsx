@@ -35,20 +35,15 @@ var ps;
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
+
     this.state = {
-      langId: props.prefs.langId,
-      compId: this.constructor.name.toLowerCase(),
       user: undefined,
       userName: null,
       fullName: undefined,
 
       ...this.getCollapseStates(props.routes)
     }
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
   }
   componentDidMount() {
     // if you are using a Windows Machine, the scrollbars will have a Mac look
@@ -133,15 +128,15 @@ class Sidebar extends React.Component {
                 <>
                   <i className={prop.icon} />
                   <p>
-                    {this.props.getString(this.state.langId, this.state.compId, prop.name)}
+                    {this.props.getString(this.props.prefs.locale, this.compId, prop.name)}
                     <b className="caret" />
                   </p>
                 </>
               ) : (
                   <>
-                    <span className="sidebar-mini-icon">{this.props.getString(this.state.langId, this.state.compId, [prop.name + "Mini"])}</span>
+                    <span className="sidebar-mini-icon">{this.props.getString(this.props.prefs.locale, this.compId, [prop.name + "Mini"])}</span>
                     <span className="sidebar-normal">
-                      {this.props.getString(this.state.langId, this.state.compId, prop.name)}
+                      {this.props.getString(this.props.prefs.locale, this.compId, prop.name)}
                       <b className="caret" />
                     </span>
                   </>
@@ -159,12 +154,12 @@ class Sidebar extends React.Component {
             {prop.icon !== undefined ? (
               <>
                 <i className={prop.icon} />
-                <p>{this.props.getString(this.state.langId, this.state.compId, prop.name)} </p>
+                <p>{this.props.getString(this.props.prefs.locale, this.compId, prop.name)} </p>
               </>
             ) : (
                 <>
-                  <span className="sidebar-mini-icon">{this.props.getString(this.state.langId, this.state.compId, [prop.name + "Mini"])}</span>
-                  <span className="sidebar-normal">{this.props.getString(this.state.langId, this.state.compId, prop.name)}</span>
+                  <span className="sidebar-mini-icon">{this.props.getString(this.props.prefs.locale, this.compId, [prop.name + "Mini"])}</span>
+                  <span className="sidebar-normal">{this.props.getString(this.props.prefs.locale, this.compId, prop.name)}</span>
                 </>
               )}
           </NavLink>
@@ -177,8 +172,8 @@ class Sidebar extends React.Component {
     return this.props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
   };
   render() {
-    let { getString } = this.props;
-    let { langId, compId, user, fullName } = this.state;
+    let { prefs, getString } = this.props;
+    let { user, fullName } = this.state;
 
     return (
       <div
@@ -226,14 +221,14 @@ class Sidebar extends React.Component {
                 <ul className="nav">
                   <li>
                     <NavLink to="/app/user/profile" activeClassName="">
-                      <span className="sidebar-mini-icon">{getString(langId, compId, 'profileMini')}</span>
-                      <span className="sidebar-normal">{getString(langId, compId, 'profile')}</span>
+                      <span className="sidebar-mini-icon">{getString(prefs.locale, this.compId, 'profileMini')}</span>
+                      <span className="sidebar-normal">{getString(prefs.locale, this.compId, 'profile')}</span>
                     </NavLink>
                   </li>
                   <li>
                     <NavLink to="/app/user/subscription" activeClassName="">
-                      <span className="sidebar-mini-icon">{getString(langId, compId, 'subscriptionMini')}</span>
-                      <span className="sidebar-normal">{getString(langId, compId, 'subscription')}</span>
+                      <span className="sidebar-mini-icon">{getString(prefs.locale, this.compId, 'subscriptionMini')}</span>
+                      <span className="sidebar-normal">{getString(prefs.locale, this.compId, 'subscription')}</span>
                     </NavLink>
                   </li>
                 </ul>
@@ -250,7 +245,7 @@ class Sidebar extends React.Component {
 export default Sidebar;
 
 Sidebar.propTypes = {
+  prefs: PropTypes.object.isRequired,
   managers: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
-  prefs: PropTypes.object.isRequired
 }

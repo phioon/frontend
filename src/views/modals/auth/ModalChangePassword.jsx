@@ -20,11 +20,9 @@ import { verifyLength, compare } from "../../../core/utils";
 class ModalChangePassword extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
-      isOpen: props.isOpen,
+    this.compId = this.constructor.name.toLowerCase();
 
+    this.state = {
       isLoading: false,
 
       object: {
@@ -46,19 +44,15 @@ class ModalChangePassword extends React.Component {
       alertMsg: ""
     }
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    if (props.isOpen !== state.isOpen)
-      return {
-        isOpen: props.isOpen,
-        alertState: "",
-        alertMsg: ""
-      }
-    return null
+  componentDidUpdate(prevProps) {
+    if (prevProps.isOpen !== this.props.isOpen)
+      this.clearInputFields(true)
   }
 
-  clearInputFields = () => {
+  clearInputFields(clearAlerts) {
+    if (clearAlerts)
+      this.setState({ alertState: "", alertMsg: "" })
+
     this.setState({
       object: {
         data: {
@@ -125,7 +119,7 @@ class ModalChangePassword extends React.Component {
 
   async submitClick(e) {
     e.preventDefault()
-    let { compId, object } = this.state;
+    let { object } = this.state;
 
     this.setState({ isLoading: true })
 
@@ -140,7 +134,7 @@ class ModalChangePassword extends React.Component {
     if (result.status == 200)
       this.passwordChanged()
     else {
-      let msg = await this.props.getHttpTranslation(result, compId, "user")
+      let msg = await this.props.getHttpTranslation(result, this.compId, "user")
       this.setState({
         isLoading: false,
         alertState: "has-danger",
@@ -152,17 +146,19 @@ class ModalChangePassword extends React.Component {
   }
 
   passwordChanged() {
+    let { prefs, getString } = this.props;
+
     this.setState({
       isLoading: false,
       alert: (
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_passwordChanged_title")}
+          title={getString(prefs.locale, this.compId, "alert_passwordChanged_title")}
           onConfirm={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_passwordChanged_text")}
+          {getString(prefs.locale, this.compId, "alert_passwordChanged_text")}
         </ReactBSAlert>
       )
     });
@@ -174,11 +170,8 @@ class ModalChangePassword extends React.Component {
   };
 
   render() {
-    let { getString, modalId } = this.props;
+    let { prefs, getString, isOpen, modalId } = this.props;
     let {
-      langId,
-      compId,
-      isOpen,
       isLoading,
 
       object,
@@ -203,26 +196,26 @@ class ModalChangePassword extends React.Component {
               <i className="nc-icon nc-simple-remove" />
             </button>
             <h5 className="modal-title" id={modalId}>
-              {getString(langId, compId, "title")}
+              {getString(prefs.locale, this.compId, "title")}
             </h5>
             <hr />
             <label>
               <p>
-                {getString(langId, compId, "label_intro_p1")}
+                {getString(prefs.locale, this.compId, "label_intro_p1")}
                 <br />
-                {getString(langId, compId, "label_intro_p2")}
+                {getString(prefs.locale, this.compId, "label_intro_p2")}
               </p>
               <p>
-                {getString(langId, compId, "label_intro_p3")}
+                {getString(prefs.locale, this.compId, "label_intro_p3")}
                 <br />
-                {getString(langId, compId, "label_intro_p4")}
+                {getString(prefs.locale, this.compId, "label_intro_p4")}
               </p>
             </label>
           </CardHeader>
           <CardBody>
             {/* Old Password */}
             <FormGroup className={`has-label ${object.states.currentPasswordState}`}>
-              <label>{getString(langId, compId, "input_currentPassword")}</label>
+              <label>{getString(prefs.locale, this.compId, "input_currentPassword")}</label>
               <Input
                 type="password"
                 name="currentPassword"
@@ -232,7 +225,7 @@ class ModalChangePassword extends React.Component {
             </FormGroup>
             {/* New Password */}
             <FormGroup className={`has-label ${object.states.newPasswordState}`}>
-              <label>{getString(langId, compId, "input_newPassword")}</label>
+              <label>{getString(prefs.locale, this.compId, "input_newPassword")}</label>
               <Input
                 type="password"
                 name="newPassword"
@@ -242,7 +235,7 @@ class ModalChangePassword extends React.Component {
             </FormGroup>
             {/* Confirm Password */}
             <FormGroup className={`has-label ${object.states.confirmPasswordState}`}>
-              <label>{getString(langId, compId, "input_confirmPassword")}</label>
+              <label>{getString(prefs.locale, this.compId, "input_confirmPassword")}</label>
               <Input
                 type="password"
                 name="confirmPassword"
@@ -263,7 +256,7 @@ class ModalChangePassword extends React.Component {
             >
               {isLoading ?
                 <Spinner size="sm" /> :
-                getString(langId, compId, "btn_confirm")
+                getString(prefs.locale, this.compId, "btn_confirm")
               }
             </Button>
           </CardFooter>
@@ -276,8 +269,8 @@ class ModalChangePassword extends React.Component {
 export default ModalChangePassword;
 
 ModalChangePassword.propTypes = {
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
   modalId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   toggleModal: PropTypes.func.isRequired

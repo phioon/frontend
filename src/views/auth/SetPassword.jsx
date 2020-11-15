@@ -30,33 +30,26 @@ import LabelAlert from "../../components/LabelAlert";
 class SetPassword extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase(),
 
-    this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
-      pageFirstLoading: true,
-      isTokenExpired: true,
-      redirectToLogin: false,
+      this.state = {
+        pageFirstLoading: true,
+        isTokenExpired: true,
+        redirectToLogin: false,
 
-      isLoading: false,
+        isLoading: false,
 
-      password: "",
-      passwordState: "",
-      confirmPassword: "",
-      confirmPasswordState: "",
+        password: "",
+        passwordState: "",
+        confirmPassword: "",
+        confirmPasswordState: "",
 
-      alert: null,
-      alertState: "",
-      alertMsg: "",
-      tokenAlertState: "",
-      tokenAlertMsg: ""
-    }
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
+        alert: null,
+        alertState: "",
+        alertMsg: "",
+        tokenAlertState: "",
+        tokenAlertMsg: ""
+      }
   }
   componentDidMount() {
     document.body.classList.toggle("login-page");
@@ -66,7 +59,7 @@ class SetPassword extends React.Component {
     document.body.classList.toggle("login-page");
   }
   async prepareRequirements() {
-    let { compId, pageFirstLoading, isTokenExpired, redirectToLogin,
+    let { pageFirstLoading, isTokenExpired, redirectToLogin,
       alertState, alertMsg, tokenAlertState, tokenAlertMsg
     } = this.state
     let uidb64 = undefined
@@ -83,7 +76,7 @@ class SetPassword extends React.Component {
         if (result.status == 200)
           isTokenExpired = false
         else {
-          let msg = await this.props.getHttpTranslation(result, compId, "user")
+          let msg = await this.props.getHttpTranslation(result, this.compId, "user")
           tokenAlertState = "has-danger"
           tokenAlertMsg = msg.text
         }
@@ -170,7 +163,7 @@ class SetPassword extends React.Component {
 
   async submitClick(e) {
     e.preventDefault()
-    let { compId, uidb64, token, password, confirmPassword } = this.state;
+    let { uidb64, token, password, confirmPassword } = this.state;
 
     this.setState({ isLoading: true })
 
@@ -186,7 +179,7 @@ class SetPassword extends React.Component {
     if (result.status == 200)
       this.passwordReseted()
     else {
-      let msg = await this.props.getHttpTranslation(result, compId, "user")
+      let msg = await this.props.getHttpTranslation(result, this.compId, "user")
       this.setState({
         isLoading: false,
         alertState: "has-danger",
@@ -204,11 +197,11 @@ class SetPassword extends React.Component {
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_passwordReseted_title")}
+          title={this.props.getString(this.props.prefs.locale, this.compId, "alert_passwordReseted_title")}
           onConfirm={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_passwordReseted_text")}
+          {this.props.getString(this.props.prefs.locale, this.compId, "alert_passwordReseted_text")}
         </ReactBSAlert>
       )
     });
@@ -222,11 +215,9 @@ class SetPassword extends React.Component {
   };
 
   render() {
-    let getString = this.props.getString;
+    let { getString, prefs } = this.props;
 
     let {
-      langId,
-      compId,
       pageFirstLoading,
       isLoading,
       isTokenExpired,
@@ -253,7 +244,7 @@ class SetPassword extends React.Component {
             <Form action="" className="form" method="">
               <Card className="card-lock text-center">
                 <CardHeader>
-                  <h5 className="header text-center">{getString(langId, compId, "card_header")}</h5>
+                  <h5 className="header text-center">{getString(prefs.locale, this.compId, "card_header")}</h5>
                 </CardHeader>
                 {pageFirstLoading ?
                   // First Loading
@@ -277,7 +268,7 @@ class SetPassword extends React.Component {
                           </InputGroupText>
                         </InputGroupAddon>
                         <Input
-                          placeholder={getString(langId, compId, "input_password")}
+                          placeholder={getString(prefs.locale, this.compId, "input_password")}
                           id="password"
                           name="password"
                           type="password"
@@ -289,7 +280,7 @@ class SetPassword extends React.Component {
                         />
                         {passwordState === "has-danger" ? (
                           <label className="error">
-                            {getString(langId, compId, "error_passwordLength")}
+                            {getString(prefs.locale, this.compId, "error_passwordLength")}
                           </label>
                         ) : null}
                       </InputGroup>
@@ -300,7 +291,7 @@ class SetPassword extends React.Component {
                           </InputGroupText>
                         </InputGroupAddon>
                         <Input
-                          placeholder={getString(langId, compId, "input_confirmPassword")}
+                          placeholder={getString(prefs.locale, this.compId, "input_confirmPassword")}
                           equalto="#password"
                           id="confirmPassword"
                           name="confirmPassword"
@@ -313,7 +304,7 @@ class SetPassword extends React.Component {
                         />
                         {confirmPasswordState === "has-danger" ? (
                           <label className="error">
-                            {getString(langId, compId, "error_passwordMatch")}
+                            {getString(prefs.locale, this.compId, "error_passwordMatch")}
                           </label>
                         ) : null}
                       </InputGroup>
@@ -330,7 +321,7 @@ class SetPassword extends React.Component {
                         name="btnLogin"
                         onClick={() => this.setState({ redirectToLogin: true })}
                       >
-                        {getString(langId, compId, "btn_login")}
+                        {getString(prefs.locale, this.compId, "btn_login")}
                       </Button>
                       :
                       <Button
@@ -349,7 +340,7 @@ class SetPassword extends React.Component {
                       >
                         {isLoading ?
                           <Spinner size="sm" /> :
-                          getString(langId, compId, "btn_recover")
+                          getString(prefs.locale, this.compId, "btn_recover")
                         }
                       </Button>
                   }

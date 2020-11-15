@@ -14,34 +14,24 @@ import {
 } from "reactstrap";
 
 import PropTypes from "prop-types";
-import { getLangList } from "../../core/lang";
+import { localeList } from "../../core/locales";
 
 class AppNavBar extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase()
+
     this.state = {
-      langId: this.props.langId,
-      compId: this.constructor.name.toLowerCase(),
-      navbarTitleId: this.props.navbarTitleId,
       collapseOpen: false,
       color: "navbar-transparent",
 
       langList: [],
     };
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-
-    if (props.navbarTitleId !== state.navbarTitleId)
-      return { navbarTitleId: props.navbarTitleId }
-
-    return null
-  }
   componentDidMount() {
     window.addEventListener("resize", this.updateColor());
 
-    let langList = getLangList()
+    let langList = localeList()
     this.setState({ langList })
   }
   componentDidUpdate(e) {
@@ -104,16 +94,16 @@ class AppNavBar extends React.Component {
   languageItems(langList) {
     let { getString } = this.props
 
-    return langList.map((langId, key) => {
+    return langList.map((locale, key) => {
       return (
-        <DropdownItem key={key} onClick={() => this.setLangId(langId)}>
-          {getString(langId, "languages", langId)}
+        <DropdownItem key={key} onClick={() => this.setLocale(locale)}>
+          {getString(locale, "languages", locale)}
         </DropdownItem>
       )
     });
   }
-  setLangId(langId) {
-    this.props.managers.auth.userUpdate({ pref_langId: langId })
+  setLocale(locale) {
+    this.props.managers.auth.userUpdate({ locale })
     this.setCollapse(false)
   }
 
@@ -123,8 +113,8 @@ class AppNavBar extends React.Component {
   }
 
   render() {
-    let { getString } = this.props;
-    let { langId, compId, navbarTitleId, langList } = this.state;
+    let { getString, prefs, navbarTitleId } = this.props;
+    let { langList } = this.state;
 
     return (
       <>
@@ -159,10 +149,10 @@ class AppNavBar extends React.Component {
               </div>
               <NavbarBrand onClick={e => e.preventDefault()}>
                 <span className="d-none d-md-block">
-                  {getString(langId, compId, navbarTitleId)}
+                  {getString(prefs.locale, this.compId, navbarTitleId)}
                 </span>
                 <span className="d-block d-md-none">
-                  {getString(langId, compId, navbarTitleId)}
+                  {getString(prefs.locale, this.compId, navbarTitleId)}
                 </span>
               </NavbarBrand>
             </div>
@@ -195,7 +185,7 @@ class AppNavBar extends React.Component {
                   </DropdownToggle>
                   <DropdownMenu aria-labelledby="dropdown_notifications" right>
                     <DropdownItem onClick={e => e.preventDefault()}>
-                      {getString(langId, "generic", "label_comingSoon")}
+                      {getString(prefs.locale, "generic", "label_comingSoon")}
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>
@@ -226,14 +216,14 @@ class AppNavBar extends React.Component {
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-navbar" right tag="ul">
                     <DropdownItem onClick={() => this.pushRouterHistory('/app/user/profile')}>
-                      {getString(langId, compId, "label_profile")}
+                      {getString(prefs.locale, this.compId, "label_profile")}
                     </DropdownItem>
                     <DropdownItem onClick={() => this.pushRouterHistory('/app/user/subscription')}>
-                      {getString(langId, compId, "label_subscription")}
+                      {getString(prefs.locale, this.compId, "label_subscription")}
                     </DropdownItem>
                     <DropdownItem divider tag="li" />
                     <DropdownItem onClick={() => this.logoutClick()}>
-                      {getString(langId, compId, "label_logout")}
+                      {getString(prefs.locale, this.compId, "label_logout")}
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>

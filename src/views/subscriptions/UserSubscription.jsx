@@ -19,10 +19,9 @@ import SubscriptionPlatinum from "./cards/SubscriptionPlatinum";
 class UserSubscription extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase()
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       pageFirstLoading: true,
 
       activeInterval: "month",
@@ -34,13 +33,8 @@ class UserSubscription extends React.Component {
 
     this.onClick = this.onClick.bind(this);
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
-  }
   componentDidMount() {
-    this.props.setNavbarTitleId("title_" + this.state.compId)
+    this.props.setNavbarTitleId("title_" + this.compId)
     this.prepareRequirements()
   }
   async prepareRequirements() {
@@ -51,7 +45,7 @@ class UserSubscription extends React.Component {
     }
 
     let user = await this.props.managers.auth.instantUser()
-    subscription = await this.props.managers.app.subscriptionRetrieve(user.subscription)
+    subscription = await this.props.managers.app.subscriptionRetrieve(user.subscription.name)
 
     this.setState({ subscription })
   }
@@ -98,19 +92,21 @@ class UserSubscription extends React.Component {
   }
 
   subscriptionDone() {
+    let { prefs, getString } = this.props;
+
     this.setState({
       alert: (
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_subscriptionDone_title")}
-          confirmBtnText={this.props.getString(this.state.langId, this.state.compId, "btn_getStarted")}
+          title={getString(prefs.locale, this.compId, "alert_subscriptionDone_title")}
+          confirmBtnText={getString(prefs.locale, this.compId, "btn_getStarted")}
           onConfirm={() => this.reloadApp()}
           confirmBtnBsStyle="success"
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_subscriptionDone_text_p1")}
+          {getString(prefs.locale, this.compId, "alert_subscriptionDone_text_p1")}
           <br /><br />
-          {this.props.getString(this.state.langId, this.state.compId, "alert_subscriptionDone_text_p2")}
+          {getString(prefs.locale, this.compId, "alert_subscriptionDone_text_p2")}
         </ReactBSAlert>
       )
     });
@@ -127,10 +123,8 @@ class UserSubscription extends React.Component {
   }
 
   render() {
-    let { getString } = this.props;
+    let { prefs, getString } = this.props;
     let {
-      langId,
-      compId,
       activeInterval,
 
       subscription,
@@ -150,7 +144,7 @@ class UserSubscription extends React.Component {
               className={activeInterval === "month" ? "active" : ""}
               onClick={() => this.toggleNavLink("activeInterval", "month")}
             >
-              {getString(langId, compId, "label_monthly")}
+              {getString(prefs.locale, this.compId, "label_monthly")}
             </NavLink>
           </NavItem>
           <NavItem>
@@ -161,7 +155,7 @@ class UserSubscription extends React.Component {
               className={activeInterval === "year" ? "active" : ""}
               onClick={() => this.toggleNavLink("activeInterval", "year")}
             >
-              {getString(langId, compId, "label_yearly")}
+              {getString(prefs.locale, this.compId, "label_yearly")}
             </NavLink>
           </NavItem>
         </Nav>

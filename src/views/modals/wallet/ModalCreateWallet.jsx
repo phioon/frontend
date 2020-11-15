@@ -30,10 +30,9 @@ import {
 class ModalCreateWallet extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       isOpen: props.isOpen,
       isLoading: false,
 
@@ -61,8 +60,6 @@ class ModalCreateWallet extends React.Component {
     }
   }
   static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
     if (props.isOpen !== state.isOpen)
       return { isOpen: props.isOpen }
 
@@ -167,7 +164,7 @@ class ModalCreateWallet extends React.Component {
     e.preventDefault();
     this.setState({ isLoading: true })
 
-    let { compId, wallet } = this.state
+    let { wallet } = this.state
 
     let data = {
       name: wallet.data.name,
@@ -183,7 +180,7 @@ class ModalCreateWallet extends React.Component {
       this.objectCreated()
     }
     else {
-      let msg = await this.props.getHttpTranslation(result, compId, "wallet")
+      let msg = await this.props.getHttpTranslation(result, this.compId, "wallet")
       this.setState({
         isLoading: false,
         alertState: "has-danger",
@@ -193,17 +190,19 @@ class ModalCreateWallet extends React.Component {
   }
 
   objectCreated() {
+    let { prefs, getString } = this.props;
+
     this.setState({
       isLoading: false,
       alert: (
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_created_title")}
+          title={getString(prefs.locale, this.compId, "alert_created_title")}
           onConfirm={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_created_text")}
+          {getString(prefs.locale, this.compId, "alert_created_text")}
         </ReactBSAlert>
       )
     });
@@ -227,9 +226,9 @@ class ModalCreateWallet extends React.Component {
   };
 
   render() {
-    let { getString, modalId } = this.props;
+    let { prefs, getString, modalId } = this.props;
     let {
-      langId, compId, isOpen,
+      isOpen,
       isLoading,
 
       currency,
@@ -257,20 +256,20 @@ class ModalCreateWallet extends React.Component {
               <i className="nc-icon nc-simple-remove" />
             </button>
             <h5 className="modal-title" id={modalId}>
-              {getString(langId, compId, "title")}
+              {getString(prefs.locale, this.compId, "title")}
             </h5>
             <hr />
             {this.props.sWalletNames.length == 0 &&
               <label>
-                <p>{getString(langId, compId, "label_intro_p1")}</p>
-                <p>{getString(langId, compId, "label_intro_p2")}</p>
+                <p>{getString(prefs.locale, this.compId, "label_intro_p1")}</p>
+                <p>{getString(prefs.locale, this.compId, "label_intro_p2")}</p>
               </label>
             }
           </CardHeader>
           <CardBody>
             {/* Name */}
             <FormGroup className={`has-label ${wallet.states.name}`}>
-              <label>{getString(langId, compId, "input_name")}</label>
+              <label>{getString(prefs.locale, this.compId, "input_name")}</label>
               <Input
                 type="text"
                 name="name"
@@ -279,13 +278,13 @@ class ModalCreateWallet extends React.Component {
               />
               {wallet.states.name === "has-danger" ? (
                 <label className="error">
-                  {getString(langId, compId, "error_name")}
+                  {getString(prefs.locale, this.compId, "error_name")}
                 </label>
               ) : null}
             </FormGroup>
             {/* Description */}
             <FormGroup>
-              <label>{getString(langId, compId, "input_description")}</label>
+              <label>{getString(prefs.locale, this.compId, "input_description")}</label>
               <Input
                 type="text"
                 name="desc"
@@ -295,18 +294,18 @@ class ModalCreateWallet extends React.Component {
             </FormGroup>
             {/* Stock Exchange */}
             <FormGroup className={`has-label ${wallet.states.stockExchange}`}>
-              <label>{getString(langId, compId, "input_stockExchange")}
+              <label>{getString(prefs.locale, this.compId, "input_stockExchange")}
                 {" "}
                 <i id={"input_stockExchange_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_stockExchange_hint"}>
-                {getString(langId, compId, "input_stockExchange_hint")}
+                {getString(prefs.locale, this.compId, "input_stockExchange_hint")}
               </UncontrolledTooltip>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
                 name="stockExchange"
-                placeholder={getString(langId, "generic", "input_select")}
+                placeholder={getString(prefs.locale, "generic", "input_select")}
                 value={wallet.data.stockExchange}
                 options={stockExchangeOptions}
                 onChange={value => this.onSelectChange("stockExchange", value)}
@@ -314,12 +313,12 @@ class ModalCreateWallet extends React.Component {
             </FormGroup>
             {/* Balance */}
             <FormGroup className={`has-label ${wallet.states.balance}`}>
-              <label>{getString(langId, compId, "input_balance")}
+              <label>{getString(prefs.locale, this.compId, "input_balance")}
                 {" "}
                 <i id={"input_balance_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_balance_hint"}>
-                {getString(langId, compId, "input_balance_hint")}
+                {getString(prefs.locale, this.compId, "input_balance_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
                 className="form-control text-right"
@@ -352,7 +351,7 @@ class ModalCreateWallet extends React.Component {
             >
               {isLoading ?
                 <Spinner size="sm" /> :
-                getString(langId, compId, "btn_confirm")
+                getString(prefs.locale, this.compId, "btn_confirm")
               }
             </Button>
           </CardFooter>

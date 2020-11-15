@@ -27,9 +27,8 @@ urlpatterns = [
 # Auth
 urlpatterns += [
     path('auth/user/checkAvailability/', apiAuth.checkUsernameAvailability, name='check_username_availability'),
-    path('auth/usercustom/update/', apiAuth.UserCustomUpdateAPIView.as_view()),
     path('auth/user/register/', apiAuth.UserRegisterAPIView.as_view()),
-    path('auth/user/update/', apiAuth.UserUpdateAPIView.as_view()),
+    path('auth/user/update/', apiAuth.user_update, name='user_update'),
     path('auth/user/retrieve/', apiAuth.UserRetrieveAPIView.as_view()),
     path('auth/user/login/', apiAuth.LoginAPIView.as_view()),
     path('auth/user/logout/', knox_views.LogoutView.as_view(), name='knox_logout'),

@@ -45,10 +45,9 @@ import {
 class Register extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase()
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       isLoading: false,
       redirectToForgotPassword: undefined,
       // Any change in user object must be reflected at this.clearInputFields()
@@ -84,11 +83,6 @@ class Register extends React.Component {
 
     this.toggleModal = this.toggleModal.bind(this)
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
-  }
   componentDidMount() {
     document.body.classList.toggle("register-page");
     this.getCountries()
@@ -98,18 +92,17 @@ class Register extends React.Component {
   }
 
   async getCountries() {
-    let { getString } = this.props
-    let { langId } = this.state
+    let { getString, prefs } = this.props
     let nList = [{
       value: 0,
-      label: String(" " + this.props.getString(this.state.langId, this.state.compId, "input_nationality")),
+      label: String(" " + this.props.getString(prefs.locale, this.compId, "input_nationality")),
       isDisabled: true
     }]
     let cList = await this.props.managers.app.countryList()
 
     if (cList.data) {
       cList.data.forEach(obj => {
-        nList.push({ value: obj.code, label: getString(langId, "countries", obj.code.toLowerCase()) })
+        nList.push({ value: obj.code, label: getString(prefs.locale, "countries", obj.code.toLowerCase()) })
       })
       nList = orderBy(nList, ["label"])
       this.setState({ nationalities: nList })
@@ -258,7 +251,7 @@ class Register extends React.Component {
       email: user.data.email,
       password: user.data.password,
       nationality: user.data.nationality.value,
-      langId: this.state.langId
+      locale: this.props.prefs.locale
     };
 
     let result = await this.props.managers.auth.userRegister(data)
@@ -269,7 +262,7 @@ class Register extends React.Component {
       this.clearInputFields();
     }
     else {
-      let msg = await this.props.getHttpTranslation(result, this.state.compId, "user")
+      let msg = await this.props.getHttpTranslation(result, this.compId, "user")
 
       if (msg.id == "user_usernameAlreadyExists")
         user.states.username = "has-danger"
@@ -297,11 +290,8 @@ class Register extends React.Component {
   };
 
   render() {
-    let { getString } = this.props;
+    let { getString, prefs } = this.props;
     let {
-      // register form
-      langId,
-      compId,
       isLoading,
       redirectToForgotPassword,
       user,
@@ -330,9 +320,9 @@ class Register extends React.Component {
                   <i className="nc-icon nc-watch-time" />
                 </div>
                 <div className="description">
-                  <h5 className="info-title">{getString(langId, compId, "leftArea_infoTitle1")}</h5>
+                  <h5 className="info-title">{getString(prefs.locale, this.compId, "leftArea_infoTitle1")}</h5>
                   <p className="description">
-                    {getString(langId, compId, "leftArea_infoDesc1")}
+                    {getString(prefs.locale, this.compId, "leftArea_infoDesc1")}
                   </p>
                 </div>
               </div>
@@ -341,9 +331,9 @@ class Register extends React.Component {
                   <i className="nc-icon nc-bell-55" />
                 </div>
                 <div className="description">
-                  <h5 className="info-title">{getString(langId, compId, "leftArea_infoTitle2")}</h5>
+                  <h5 className="info-title">{getString(prefs.locale, this.compId, "leftArea_infoTitle2")}</h5>
                   <p className="description">
-                    {getString(langId, compId, "leftArea_infoDesc2")}
+                    {getString(prefs.locale, this.compId, "leftArea_infoDesc2")}
                   </p>
                 </div>
               </div>
@@ -352,9 +342,9 @@ class Register extends React.Component {
                   <i className="nc-icon nc-bulb-63" />
                 </div>
                 <div className="description">
-                  <h5 className="info-title">{getString(langId, compId, "leftArea_infoTitle3")}</h5>
+                  <h5 className="info-title">{getString(prefs.locale, this.compId, "leftArea_infoTitle3")}</h5>
                   <p className="description">
-                    {getString(langId, compId, "leftArea_infoDesc3")}
+                    {getString(prefs.locale, this.compId, "leftArea_infoDesc3")}
                   </p>
                 </div>
               </div>
@@ -363,7 +353,7 @@ class Register extends React.Component {
               <Card className="card-signup text-center">
                 <CardHeader>
                   <CardTitle tag="h4">
-                    {getString(langId, compId, "card_header")}
+                    {getString(prefs.locale, this.compId, "card_header")}
                   </CardTitle>
                   {/* <div className="social">
                     <Button className="btn-icon btn-round" color="twitter">
@@ -375,7 +365,7 @@ class Register extends React.Component {
                     <Button className="btn-icon btn-round" color="facebook">
                       <i className="fa fa-facebook-f" />
                     </Button>
-                    <p className="card-description">{getString(langId, compId, "info_orBeCassical")}</p>
+                    <p className="card-description">{getString(prefs.locale, this.compId, "info_orBeCassical")}</p>
                   </div> */}
                 </CardHeader>
                 <CardBody>
@@ -388,9 +378,9 @@ class Register extends React.Component {
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
-                        placeholder={getString(langId, compId, "input_firstName")}
+                        placeholder={getString(prefs.locale, this.compId, "input_firstName")}
                         type="text"
-                        name="firstname"
+                        name="first_email"
                         value={user.data.firstname}
                         onChange={e => this.onChange("firstname", e.target.value)}
                       />
@@ -403,9 +393,9 @@ class Register extends React.Component {
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
-                        placeholder={getString(langId, compId, "input_lastName")}
+                        placeholder={getString(prefs.locale, this.compId, "input_lastName")}
                         type="text"
-                        name="lastname"
+                        name="last_name"
                         value={user.data.lastname}
                         onChange={e => this.onChange("lastname", e.target.value)}
                       />
@@ -419,7 +409,7 @@ class Register extends React.Component {
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
-                        placeholder={getString(langId, compId, "input_email")}
+                        placeholder={getString(prefs.locale, this.compId, "input_email")}
                         name="email"
                         type="email"
                         value={user.data.email}
@@ -434,7 +424,7 @@ class Register extends React.Component {
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
-                        placeholder={getString(langId, compId, "input_username")}
+                        placeholder={getString(prefs.locale, this.compId, "input_username")}
                         name="username"
                         type="username"
                         value={user.data.username}
@@ -443,7 +433,7 @@ class Register extends React.Component {
                     </InputGroup>
                     <label>
                       {user.states.username === "has-danger" &&
-                        getString(langId, compId, user.data.username_msgId)
+                        getString(prefs.locale, this.compId, user.data.username_msgId)
                       }
                     </label>
                     {/* Password */}
@@ -454,7 +444,7 @@ class Register extends React.Component {
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
-                        placeholder={getString(langId, compId, "input_password")}
+                        placeholder={getString(prefs.locale, this.compId, "input_password")}
                         id="password"
                         name="password"
                         type="password"
@@ -464,7 +454,7 @@ class Register extends React.Component {
                       />
                       {user.states.password === "has-danger" ? (
                         <label className="error">
-                          {getString(langId, compId, "error_passwordLength")}
+                          {getString(prefs.locale, this.compId, "error_passwordLength")}
                         </label>
                       ) : null}
                     </InputGroup>
@@ -478,7 +468,7 @@ class Register extends React.Component {
                         value={user.data.nationality}
                         onChange={value => this.onSelectChange("nationality", value)}
                         options={nationalities}
-                        placeholder={getString(langId, compId, "input_nationality")}
+                        placeholder={getString(prefs.locale, this.compId, "input_nationality")}
                       />
                     </Col>
                     {/* Privacy Policy */}
@@ -491,15 +481,15 @@ class Register extends React.Component {
                             checked={user.data.cbTerms}
                             onChange={e => this.onChange("cbTerms", e.target.checked)} />
                           <span className="form-check-sign" />
-                          {getString(langId, compId, "checkbox_iAgreeToThe") + " "}
+                          {getString(prefs.locale, this.compId, "checkbox_iAgreeToThe") + " "}
                           <a href="#" onClick={e => e.preventDefault()}>
-                            {getString(langId, compId, "checkbox_privacyPolicy")}
+                            {getString(prefs.locale, this.compId, "checkbox_privacyPolicy")}
                           </a>
                         </Label>
                       </FormGroup>
                       {user.states.cbTerms === "has-danger" ? (
                         <label className="error">
-                          {getString(langId, compId, "error_acceptPrivacyPolicy")}
+                          {getString(prefs.locale, this.compId, "error_acceptPrivacyPolicy")}
                         </label>
                       ) : null}
                     </InputGroup>
@@ -515,7 +505,7 @@ class Register extends React.Component {
                   >
                     {isLoading ?
                       <Spinner size="sm" /> :
-                      getString(langId, compId, "btn_createAccount")}
+                      getString(prefs.locale, this.compId, "btn_createAccount")}
                   </Button>
                   <LabelAlert alertState={alertState} alertMsg={alertMsg} />
                   <br />
@@ -526,7 +516,7 @@ class Register extends React.Component {
                       className="btn-link btn-neutral"
                       color="default"
                       onClick={() => this.setState({ redirectToForgotPassword: true })}>
-                      {getString(langId, compId, "btn_forgotPassword")}?
+                      {getString(prefs.locale, this.compId, "btn_forgotPassword")}?
                     </Button>
                   }
                 </CardFooter>

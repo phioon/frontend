@@ -26,11 +26,9 @@ import { convertFloatToCurrency, getValueListFromObjList, orderBy, rtDefaultFilt
 class Wallets extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
-
       pageFirstLoading: true,
 
       alert: null,
@@ -66,13 +64,8 @@ class Wallets extends React.Component {
     this.toggleModal = this.toggleModal.bind(this);
     this.createClick = this.createClick.bind(this);
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
-  }
   componentDidMount() {
-    this.props.setNavbarTitleId("title_" + this.state.compId)
+    this.props.setNavbarTitleId("title_" + this.compId)
     this.prepareRequirements()
   }
 
@@ -85,6 +78,7 @@ class Wallets extends React.Component {
   }
 
   async prepareData() {
+    let { prefs, getString } = this.props;
     let wallets = await this.props.managers.app.walletList()
 
     if (wallets.data) {
@@ -121,7 +115,7 @@ class Wallets extends React.Component {
               </Button>
               {" "}
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"wallets_edit_" + obj.id}>
-                {this.props.getString(this.state.langId, this.state.compId, "wallets_edit_hint")}
+                {getString(prefs.locale, this.compId, "wallets_edit_hint")}
               </UncontrolledTooltip>
               {/* use this button to remove the data row */}
               <Button
@@ -137,7 +131,7 @@ class Wallets extends React.Component {
                 <i className="fa fa-times" />
               </Button>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"wallets_delete_" + obj.id}>
-                {this.props.getString(this.state.langId, this.state.compId, "wallets_delete_hint")}
+                {getString(prefs.locale, this.compId, "wallets_delete_hint")}
               </UncontrolledTooltip>
             </div>
           )
@@ -168,21 +162,23 @@ class Wallets extends React.Component {
   }
 
   deleteClick(obj) {
+    let { prefs, getString } = this.props;
+
     this.setState({
       alert: (
         <ReactBSAlert
           warning
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_confirming_title")}
+          title={getString(prefs.locale, this.compId, "alert_confirming_title")}
           onConfirm={() => this.deleteObject(obj)}
           onCancel={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
           cancelBtnBsStyle="danger"
-          confirmBtnText={this.props.getString(this.state.langId, this.state.compId, "btn_alert_confirm")}
-          cancelBtnText={this.props.getString(this.state.langId, this.state.compId, "btn_alert_cancel")}
+          confirmBtnText={getString(prefs.locale, this.compId, "btn_alert_confirm")}
+          cancelBtnText={getString(prefs.locale, this.compId, "btn_alert_cancel")}
           showCancel
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_confirming_text")}
+          {getString(prefs.locale, this.compId, "alert_confirming_text")}
         </ReactBSAlert>
       )
     });
@@ -196,16 +192,18 @@ class Wallets extends React.Component {
       this.hideAlert()
   }
   objectDeleted() {
+    let { prefs, getString } = this.props;
+
     this.setState({
       alert: (
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_deleted_title")}
+          title={getString(prefs.locale, this.compId, "alert_deleted_title")}
           onConfirm={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_deleted_text")}
+          {getString(prefs.locale, this.compId, "alert_deleted_text")}
         </ReactBSAlert>
       )
     });
@@ -225,11 +223,8 @@ class Wallets extends React.Component {
   };
 
   render() {
-    let { getString } = this.props;
+    let { prefs, getString } = this.props;
     let {
-      langId,
-      compId,
-
       pageFirstLoading,
 
       alert,
@@ -271,7 +266,7 @@ class Wallets extends React.Component {
           <CardHeader>
             <Row>
               <Col>
-                <CardTitle tag="h4">{getString(langId, compId, "card_title")}</CardTitle>
+                <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_title")}</CardTitle>
               </Col>
               <Col className="text-right">
                 <Button
@@ -281,7 +276,7 @@ class Wallets extends React.Component {
                   color="success"
                   onClick={this.createClick}
                 >
-                  {getString(langId, compId, "btn_newWallet")}
+                  {getString(prefs.locale, this.compId, "btn_newWallet")}
                 </Button>
               </Col>
             </Row>
@@ -293,42 +288,42 @@ class Wallets extends React.Component {
               defaultFilterMethod={rtDefaultFilter}
               columns={[
                 {
-                  Header: getString(langId, compId, "header_name"),
+                  Header: getString(prefs.locale, this.compId, "header_name"),
                   accessor: "name"
                 },
                 {
-                  Header: getString(langId, compId, "header_desc"),
+                  Header: getString(prefs.locale, this.compId, "header_desc"),
                   accessor: "desc"
                 },
                 {
-                  Header: getString(langId, compId, "header_stockExchange"),
+                  Header: getString(prefs.locale, this.compId, "header_stockExchange"),
                   accessor: "stockExchange",
                 },
                 {
-                  Header: getString(langId, compId, "header_balance"),
+                  Header: getString(prefs.locale, this.compId, "header_balance"),
                   accessor: "balance",
                   className: "text-right",
                   filterable: false
                 },
                 {
-                  Header: getString(langId, compId, "header_actions"),
+                  Header: getString(prefs.locale, this.compId, "header_actions"),
                   accessor: "actions",
                   sortable: false,
                   filterable: false
                 }
               ]}
               defaultPageSize={10}
-              previousText={getString(langId, "reacttable", "label_previous")}
-              nextText={getString(langId, "reacttable", "label_next")}
-              pageText={getString(langId, "reacttable", "label_page")}
-              ofText={getString(langId, "reacttable", "label_of")}
-              rowsText={getString(langId, "reacttable", "label_rows")}
+              previousText={getString(prefs.locale, "reacttable", "label_previous")}
+              nextText={getString(prefs.locale, "reacttable", "label_next")}
+              pageText={getString(prefs.locale, "reacttable", "label_page")}
+              ofText={getString(prefs.locale, "reacttable", "label_of")}
+              rowsText={getString(prefs.locale, "reacttable", "label_rows")}
               noDataText={
                 pageFirstLoading ?
-                  getString(langId, "generic", "label_loading") :
+                  getString(prefs.locale, "generic", "label_loading") :
                   data.length == 0 ?
-                    getString(langId, compId, "table_emptyData") :
-                    getString(langId, compId, "table_noDataFound")
+                    getString(prefs.locale, this.compId, "table_emptyData") :
+                    getString(prefs.locale, this.compId, "table_noDataFound")
               }
               showPaginationBottom
               className="-striped -highlight default-pagination"
@@ -351,9 +346,8 @@ class Wallets extends React.Component {
 export default Wallets;
 
 Wallets.propTypes = {
-  managers: PropTypes.object.isRequired,
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
-  setAuthStatus: PropTypes.func.isRequired,
+  getString: PropTypes.func.isRequired,
+  managers: PropTypes.object.isRequired,
   setNavbarTitleId: PropTypes.func.isRequired
 }

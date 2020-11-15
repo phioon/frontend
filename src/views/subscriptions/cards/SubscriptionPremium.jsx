@@ -16,18 +16,13 @@ import { project } from "../../../core/projectData";
 class SubscriptionPremium extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
+
     this.state = {
-      langId: props.prefs.langId,
-      compId: this.constructor.name.toLowerCase(),
       isLoading: undefined,
 
       subscription: { name: "premium", prices: {} }
     }
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
   }
   componentDidMount() {
     this.prepareRequirements()
@@ -44,14 +39,14 @@ class SubscriptionPremium extends React.Component {
   }
 
   render() {
-    let { getString, submitActionId } = this.props;
-    let { langId, compId, subscription, isLoading } = this.state;
+    let { prefs, getString, submitActionId } = this.props;
+    let { subscription, isLoading } = this.state;
 
     return (
       <Card className="card-pricing">
         <CardHeader>
           <div className="subscription">
-            {getString(langId, compId, "label_title")}
+            {getString(prefs.locale, this.compId, "label_title")}
           </div>
         </CardHeader>
         <CardBody>
@@ -63,17 +58,17 @@ class SubscriptionPremium extends React.Component {
             {" "}
             {this.props.activeInterval === 'month' ? 49 : 39}
             {" "}
-            <label><small>/{getString(langId, compId, "label_month")}</small></label>
+            <label><small>/{getString(prefs.locale, this.compId, "label_month")}</small></label>
           </CardTitle>
           <ul>
             {/* Stock Exchanges */}
             <li>
               <b>1</b>
-              {` ${getString(langId, compId, "label_stockExchange")}`}
+              {` ${getString(prefs.locale, this.compId, "label_stockExchange")}`}
               {" "}
               <i id={"label_stockExchange_hint"} className="nc-icon nc-alert-circle-i" />
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"label_stockExchange_hint"}>
-                {getString(langId, compId, "label_stockExchange_hint")}
+                {getString(prefs.locale, this.compId, "label_stockExchange_hint")}
               </UncontrolledTooltip>
             </li>
             {/* Wallets */}
@@ -81,28 +76,28 @@ class SubscriptionPremium extends React.Component {
               <b>5</b>
               {" "}
               <a href={project.info.website_wallets} target="_blank">
-                {`${getString(langId, compId, "label_wallets")}`}
+                {`${getString(prefs.locale, this.compId, "label_wallets")}`}
               </a>
             </li>
             {/* Dashboards */}
             <li>
-              {` ${getString(langId, compId, "label_dashboards")}`}
+              {` ${getString(prefs.locale, this.compId, "label_dashboards")}`}
               {" "}
               <i id={"label_dashboards_hint"} className="nc-icon nc-alert-circle-i" />
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"label_dashboards_hint"}>
-                {getString(langId, compId, "label_dashboards_hint")}
+                {getString(prefs.locale, this.compId, "label_dashboards_hint")}
               </UncontrolledTooltip>
             </li>
             {/* Strategies */}
             <li>
               <a href={project.info.website_strategies} target="_blank">
-                <b>{getString(langId, compId, "label_strategies")}</b>
+                <b>{getString(prefs.locale, this.compId, "label_strategies")}</b>
               </a>
             </li>
             {/* Phi Trader */}
             <li>
               <a href={project.info.website_phitrader} target="_blank">
-                <b>{getString(langId, compId, "label_phiTrader")}</b>
+                <b>{getString(prefs.locale, this.compId, "label_phiTrader")}</b>
               </a>
             </li>
           </ul>
@@ -118,7 +113,7 @@ class SubscriptionPremium extends React.Component {
           >
             {isLoading ?
               <Spinner size="sm" /> :
-              getString(langId, compId, `btn_${submitActionId}`)
+              getString(prefs.locale, this.compId, `btn_${submitActionId}`)
             }
           </Button>
         </CardFooter>

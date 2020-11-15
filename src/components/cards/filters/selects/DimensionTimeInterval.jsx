@@ -50,13 +50,13 @@ class DimentionTimeInterval extends Component {
 
             if (selection.length == 0) {
               newState.alertState = "has-danger"
-              newState.alertMsg = getString(prefs.langId, "filtercard", alertNoEntriesTxtId)
+              newState.alertMsg = getString(prefs.locale, "filtercard", alertNoEntriesTxtId)
             }
           }
           else {
             newState[fieldName + "State"] = "has-danger"
             newState.alertState = "has-danger"
-            newState.alertMsg = getString(prefs.langId, "filtercard", alertInvalidFormatTxtId)
+            newState.alertMsg = getString(prefs.locale, "filtercard", alertInvalidFormatTxtId)
           }
         }
 
@@ -79,13 +79,13 @@ class DimentionTimeInterval extends Component {
 
             if (selection.length == 0) {
               newState.alertState = "has-danger"
-              newState.alertMsg = getString(prefs.langId, "filtercard", alertNoEntriesTxtId)
+              newState.alertMsg = getString(prefs.locale, "filtercard", alertNoEntriesTxtId)
             }
           }
           else {
             newState[fieldName + "State"] = "has-danger"
             newState.alertState = "has-danger"
-            newState.alertMsg = getString(prefs.langId, "filtercard", alertInvalidFormatTxtId)
+            newState.alertMsg = getString(prefs.locale, "filtercard", alertInvalidFormatTxtId)
           }
         }
 
@@ -141,13 +141,13 @@ class DimentionTimeInterval extends Component {
         <Row>
           <Col>
             <FormGroup className={`has-label ${dateFromState}`}>
-              <label>{getString(prefs.langId, "filtercard", dateFromTxtId)}</label>
+              <label>{getString(prefs.locale, "filtercard", dateFromTxtId)}</label>
               <ReactDatetime
                 inputProps={{
                   className: "form-control form-text",
-                  placeholder: getString(prefs.langId, "generic", "input_select")
+                  placeholder: getString(prefs.locale, "generic", "input_select")
                 }}
-                locale={getString(prefs.langId, "locales", prefs.langId)}
+                locale={getString(prefs.locale, "locales", prefs.locale)}
                 value={dateFrom}
                 onChange={value => this.onSelectChange("dateFrom", value)}
                 isValidDate={value => this.isDateValid("dateFrom", value)}
@@ -158,13 +158,13 @@ class DimentionTimeInterval extends Component {
           <label className="centered">_</label>
           <Col>
             <FormGroup className={`has-label ${dateToState}`}>
-              <label>{getString(prefs.langId, "filtercard", dateToTxtId)}</label>
+              <label>{getString(prefs.locale, "filtercard", dateToTxtId)}</label>
               <ReactDatetime
                 inputProps={{
                   className: "form-control form-text",
-                  placeholder: getString(prefs.langId, "generic", "input_select")
+                  placeholder: getString(prefs.locale, "generic", "input_select")
                 }}
-                locale={getString(prefs.langId, "locales", prefs.langId)}
+                locale={getString(prefs.locale, "locales", prefs.locale)}
                 value={dateTo}
                 onChange={value => this.onSelectChange("dateTo", value)}
                 isValidDate={value => this.isDateValid("dateTo", value)}

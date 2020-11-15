@@ -74,7 +74,6 @@ class StrategySerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    # prices = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     prices = serializers.SerializerMethodField()
 
     class Meta:
@@ -83,7 +82,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     def get_prices(self, obj):
         prices = {}
-        for price in obj.prices.all():
+        for price in obj.prices.filter(is_active=True):
             prices[price.name] = price.id
         return prices
 
@@ -144,26 +143,41 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     birthday = serializers.ReadOnlyField(source='userCustom.birthday')
     nationality = serializers.ReadOnlyField(source='userCustom.nationality.code')
-    subscription = serializers.ReadOnlyField(source='userCustom.subscription.name')
-    subscription_status = serializers.ReadOnlyField(source='userCustom.subscription_status')
-    subscription_expires_on = serializers.ReadOnlyField(source='userCustom.subscription_expires_on')
-    subscription_renews_on = serializers.ReadOnlyField(source='userCustom.subscription_renews_on')
-    pref_currency = serializers.ReadOnlyField(source='userCustom.pref_currency.code')
-    pref_langId = serializers.ReadOnlyField(source='userCustom.pref_langId')
+    subscription = serializers.SerializerMethodField()
+    prefs = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name',
                   'date_joined', 'birthday', 'nationality',
-                  'subscription', 'subscription_status', 'subscription_renews_on', 'subscription_expires_on',
-                  'pref_langId', 'pref_currency']
-        read_only_fields = ['email']
+                  'subscription', 'prefs']
+
+    def get_subscription(self, obj):
+        subscription = {
+            'name': obj.userCustom.subscription.name,
+            'status': obj.userCustom.subscription_status,
+            'expires_on': obj.userCustom.subscription_expires_on,
+            'renews_on': obj.userCustom.subscription_renews_on,
+        }
+        return subscription
+
+    def get_prefs(self, obj):
+        prefs = {}
+
+        for field_name in obj.userPrefs.get_field_list():
+            attrValue = getattr(obj.userPrefs, field_name)
+
+            if field_name == 'currency':
+                prefs[field_name] = attrValue.code
+            else:
+                prefs[field_name] = attrValue
+        return prefs
 
 
 class UserCustomSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCustom
-        fields = ['birthday', 'nationality', 'pref_langId', 'pref_currency']
+        fields = ['birthday', 'nationality']
 
 
 class RequestPasswordResetSerializer(rest_auth_serializers.PasswordResetSerializer):

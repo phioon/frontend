@@ -21,27 +21,17 @@ import { UncontrolledTooltip } from "reactstrap";
 
 // Core
 import { project } from "../../core/projectData";
-import { lang } from "moment";
 // --------------------
 
 class Footer extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      langId: props.prefslangId,
-      compId: this.constructor.name.toLowerCase()
-    }
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
+    this.compId = this.constructor.name.toLowerCase()
   }
 
   render() {
     // Function to get proper translation
-    let { getString } = this.props;
-    let { langId, compId } = this.state;
+    let { getString, prefs } = this.props;
 
     return (
       <footer
@@ -53,30 +43,30 @@ class Footer extends React.Component {
               <ul>
                 <li>
                   <a href={project.info.website} target="_blank">
-                    {getString(langId, compId, "webSite")}
+                    {getString(prefs.locale, this.compId, "webSite")}
                   </a>
                 </li>
                 <li>
                   <a id="appStore" href="#comingsoon">
-                    {getString(langId, compId, "appStore")}
+                    {getString(prefs.locale, this.compId, "appStore")}
                   </a>
                   <UncontrolledTooltip target="appStore">
-                    {getString(langId, "generic", "label_comingSoon")}
+                    {getString(prefs.locale, "generic", "label_comingSoon")}
                   </UncontrolledTooltip>
                 </li>
                 <li>
                   <a id="googlePlay" href="#comingsoon">
-                    {getString(langId, compId, "googlePlay")}
+                    {getString(prefs.locale, this.compId, "googlePlay")}
                   </a>
                   <UncontrolledTooltip target="googlePlay">
-                    {getString(langId, "generic", "label_comingSoon")}
+                    {getString(prefs.locale, "generic", "label_comingSoon")}
                   </UncontrolledTooltip>
                 </li>
               </ul>
             </nav>
             <div className="credits ml-auto">
               <span className="copyright">
-                &copy; {1900 + new Date().getYear()} • {getString(langId, compId, "allRightsReserved")}
+                &copy; {1900 + new Date().getYear()} • {getString(prefs.locale, this.compId, "allRightsReserved")}
               </span>
             </div>
           </Row>

@@ -13,7 +13,7 @@ import stripe
 stripe.api_key = settings.STRIPE_API_KEY
 
 
-def get_stripe_langId(value):
+def get_stripe_locale(value):
     languages = {
         'ptBR': 'pt-BR',
         'enUS': 'en'
@@ -41,8 +41,8 @@ def get_user(field_name, value):
 def update_stripe_customer(customer_id, data):
     payload = {}
     for attr, value in data.items():
-        if attr == 'pref_langId':
-            payload['preferred_locales'] = [get_stripe_langId(value), ]
+        if attr == 'locale':
+            payload['preferred_locales'] = [get_stripe_locale(value), ]
 
     if payload:
         customer = stripe.Customer.modify(customer_id, **payload)

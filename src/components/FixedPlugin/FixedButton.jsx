@@ -8,20 +8,11 @@ import { sleep } from "../../core/utils";
 class FixedButton extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
-
       isTooltipOpen: false,
     }
 
     this.isBlinkingAllowed = true;
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
   }
   componentDidUpdate(prevProps) {
     if (this.props.showTooltip !== prevProps.showTooltip)
@@ -61,8 +52,8 @@ class FixedButton extends React.Component {
   }
 
   render() {
-    let { getString, position } = this.props;
-    let { langId, isTooltipOpen } = this.state;
+    let { getString, prefs, position } = this.props;
+    let { isTooltipOpen } = this.state;
 
     return (
       <div className={"fixed-plugin " + position}>
@@ -72,7 +63,7 @@ class FixedButton extends React.Component {
         {
           this.props.id ?
             <Tooltip isOpen={isTooltipOpen} placement="left" target={this.props.id} toggle={() => this.toggleTooltip()}>
-              {getString(langId, "fixedplugin", this.props.id + "_hint")}
+              {getString(prefs.locale, "fixedplugin", this.props.id + "_hint")}
             </Tooltip>
             :
             null
@@ -85,6 +76,7 @@ class FixedButton extends React.Component {
 export default FixedButton;
 
 FixedButton.propTypes = {
+  prefs: PropTypes.object.isRequired,
   onClick: PropTypes.func.isRequired,
   icon: PropTypes.string.isRequired
 }

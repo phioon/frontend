@@ -49,10 +49,9 @@ import {
 class ModalUpdatePosition extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       isOpen: props.isOpen,
       isLoading: false,
 
@@ -71,8 +70,6 @@ class ModalUpdatePosition extends React.Component {
     }
   }
   static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
     if (props.isOpen !== state.isOpen) {
       return {
         isOpen: props.isOpen,
@@ -108,6 +105,7 @@ class ModalUpdatePosition extends React.Component {
     let opCost = 0
     let opCostPercent = 0
     let totalCost = 0
+    let { prefs, getString } = this.props;
     let currency = this.state.currency
     let newState = { position: this.state.position }
 
@@ -223,7 +221,7 @@ class ModalUpdatePosition extends React.Component {
 
         if (!newState.position.data.endedOn && (price > 0 || opCost > 0)) {
           newState.alertState = ""
-          newState.alertMsg = this.props.getString(this.state.langId, this.state.compId,
+          newState.alertMsg = getString(prefs.locale, this.compId,
             newState.position.data.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
         }
         break;
@@ -252,7 +250,7 @@ class ModalUpdatePosition extends React.Component {
 
         if (!newState.position.data.endedOn && (convertMaskedStringToFloat(newState.position.data.e_price, currency) > 0 || opCost > 0)) {
           newState.alertState = ""
-          newState.alertMsg = this.props.getString(this.state.langId, this.state.compId,
+          newState.alertMsg = getString(prefs.locale, this.compId,
             newState.position.data.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
         }
         break;
@@ -287,7 +285,7 @@ class ModalUpdatePosition extends React.Component {
 
         if (!newState.position.data.endedOn && (convertMaskedStringToFloat(newState.position.data.e_price, currency) > 0 || opCost > 0)) {
           newState.alertState = ""
-          newState.alertMsg = this.props.getString(this.state.langId, this.state.compId,
+          newState.alertMsg = getString(prefs.locale, this.compId,
             newState.position.data.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
         }
         break;
@@ -300,8 +298,9 @@ class ModalUpdatePosition extends React.Component {
     this.setState(newState)
   }
   async onSelectChange(fieldName, value) {
-    let newState = { position: this.state.position }
+    let { prefs, getString } = this.props;
     let currency = this.state.currency
+    let newState = { position: this.state.position }
 
     if (this.state.alertState !== null) {
       newState.alertState = null
@@ -362,7 +361,7 @@ class ModalUpdatePosition extends React.Component {
             newState.position.states.e_price = ""
 
             newState.alertState = ""
-            newState.alertMsg = this.props.getString(this.state.langId, this.state.compId,
+            newState.alertMsg = getString(prefs.locale, this.compId,
               newState.position.data.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
           }
 
@@ -483,7 +482,7 @@ class ModalUpdatePosition extends React.Component {
       // Send signal to sync dRaw for this asset.
     }
     else {
-      let msg = await this.props.getHttpTranslation(result, this.state.compId, "position")
+      let msg = await this.props.getHttpTranslation(result, this.compId, "position")
       this.setState({
         isLoading: false,
         alertState: "has-danger",
@@ -493,17 +492,19 @@ class ModalUpdatePosition extends React.Component {
   }
 
   objectUpdated(position) {
+    let { prefs, getString } = this.props;
+
     this.setState({
       isLoading: false,
       alert: (
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={this.props.getString(this.state.langId, this.state.compId, "alert_updated_title")}
+          title={getString(prefs.locale, this.compId, "alert_updated_title")}
           onConfirm={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
         >
-          {this.props.getString(this.state.langId, this.state.compId, "alert_updated_text")}
+          {getString(prefs.locale, this.compId, "alert_updated_text")}
         </ReactBSAlert>
       )
     });
@@ -558,8 +559,8 @@ class ModalUpdatePosition extends React.Component {
   };
 
   StartData() {
-    let { getString } = this.props;
-    let { langId, compId, position, opCostIsPercentage, currency } = this.state;
+    let { prefs, getString } = this.props;
+    let { position, opCostIsPercentage, currency } = this.state;
 
     return (
       <TabPane tabId="start">
@@ -569,17 +570,17 @@ class ModalUpdatePosition extends React.Component {
             <FormGroup className={`has-label ${position.states.startedOn}`}>
               <label>
                 {position.data.typeIsBuy ?
-                  getString(langId, compId, "input_purchaseDate") :
-                  getString(langId, compId, "input_saleDate")
+                  getString(prefs.locale, this.compId, "input_purchaseDate") :
+                  getString(prefs.locale, this.compId, "input_saleDate")
                 }
               </label>
               <ReactDatetime
                 inputProps={{
                   className: "form-control",
-                  placeholder: getString(langId, "generic", "input_select")
+                  placeholder: getString(prefs.locale, "generic", "input_select")
                 }}
                 utc
-                locale={getString(langId, "locales", langId)}
+                locale={getString(prefs.locale, "locales", prefs.locale)}
                 value={position.data.startedOn}
                 onChange={value => this.onSelectChange("startedOn", value)}
                 isValidDate={value => this.isDateValid("startedOn", value)}
@@ -592,12 +593,12 @@ class ModalUpdatePosition extends React.Component {
         <Row className="justify-content-center">
           <Col xs="7" md="7">
             <FormGroup className={`has-label ${position.states.s_price}`}>
-              <label>{getString(langId, compId, "input_price")}
+              <label>{getString(prefs.locale, this.compId, "input_price")}
                 {" "}
                 <i id={"input_s_price_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_s_price_hint"}>
-                {getString(langId, compId, "input_price_hint")}
+                {getString(prefs.locale, this.compId, "input_price_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
                 className="form-control text-right"
@@ -620,12 +621,12 @@ class ModalUpdatePosition extends React.Component {
         <Row className="justify-content-center">
           <Col xs="7" md="7">
             <FormGroup>
-              <label>{getString(langId, compId, "input_cost")}
+              <label>{getString(prefs.locale, this.compId, "input_cost")}
                 {" "}
                 <i id={"input_s_cost_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_s_cost_hint"}>
-                {getString(langId, compId, "input_cost_hint")}
+                {getString(prefs.locale, this.compId, "input_cost_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
                 className="form-control text-right"
@@ -652,12 +653,12 @@ class ModalUpdatePosition extends React.Component {
           </Col>
           <Col xs="7" md="7">
             <FormGroup>
-              <label>{getString(langId, compId, "input_opCost")}
+              <label>{getString(prefs.locale, this.compId, "input_opCost")}
                 {" "}
                 <i id={"input_s_opCost_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_s_opCost_hint"}>
-                {getString(langId, compId, "input_opCost_hint")}
+                {getString(prefs.locale, this.compId, "input_opCost_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
                 className="form-control text-right"
@@ -691,7 +692,7 @@ class ModalUpdatePosition extends React.Component {
               %
                     </Button>
             <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="opCost_percentage">
-              {getString(langId, compId, "opCost_percentage_hint")}
+              {getString(prefs.locale, this.compId, "opCost_percentage_hint")}
             </UncontrolledTooltip>
             <Button
               className="btn-icon btn-link"
@@ -705,7 +706,7 @@ class ModalUpdatePosition extends React.Component {
               $
                     </Button>
             <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="opCost_currency">
-              {getString(langId, compId, "opCost_currency_hint")}
+              {getString(prefs.locale, this.compId, "opCost_currency_hint")}
             </UncontrolledTooltip>
           </Col>
         </Row>
@@ -716,12 +717,12 @@ class ModalUpdatePosition extends React.Component {
           </Col>
           <Col xs="7" md="7">
             <FormGroup>
-              <label>{getString(langId, compId, "input_totalCost")}
+              <label>{getString(prefs.locale, this.compId, "input_totalCost")}
                 {" "}
                 <i id={"input_s_totalCost_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_s_totalCost_hint"}>
-                {getString(langId, compId, "input_totalCost_hint")}
+                {getString(prefs.locale, this.compId, "input_totalCost_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
                 className="form-control text-right"
@@ -746,8 +747,8 @@ class ModalUpdatePosition extends React.Component {
     )
   }
   EndData() {
-    let { getString } = this.props;
-    let { langId, compId, position, opCostIsPercentage, currency } = this.state;
+    let { prefs, getString } = this.props;
+    let { position, opCostIsPercentage, currency } = this.state;
 
     return (
       <TabPane tabId="end">
@@ -757,17 +758,17 @@ class ModalUpdatePosition extends React.Component {
             <FormGroup className={`has-label ${position.states.endedOn}`}>
               <label>
                 {position.data.typeIsBuy ?
-                  getString(langId, compId, "input_saleDate") :
-                  getString(langId, compId, "input_purchaseDate")
+                  getString(prefs.locale, this.compId, "input_saleDate") :
+                  getString(prefs.locale, this.compId, "input_purchaseDate")
                 }
               </label>
               <ReactDatetime
                 inputProps={{
                   className: "form-control",
-                  placeholder: getString(langId, "generic", "input_select")
+                  placeholder: getString(prefs.locale, "generic", "input_select")
                 }}
                 utc
-                locale={getString(langId, "locales", langId)}
+                locale={getString(prefs.locale, "locales", prefs.locale)}
                 value={position.data.endedOn}
                 onChange={value => this.onSelectChange("endedOn", value)}
                 isValidDate={value => this.isDateValid("endedOn", value)}
@@ -780,12 +781,12 @@ class ModalUpdatePosition extends React.Component {
         <Row className="justify-content-center">
           <Col xs="7" md="7">
             <FormGroup className={`has-label ${position.states.e_price}`}>
-              <label>{getString(langId, compId, "input_price")}
+              <label>{getString(prefs.locale, this.compId, "input_price")}
                 {" "}
                 <i id={"input_e_price_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_e_price_hint"}>
-                {getString(langId, compId, "input_price_hint")}
+                {getString(prefs.locale, this.compId, "input_price_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
                 className="form-control text-right"
@@ -808,12 +809,12 @@ class ModalUpdatePosition extends React.Component {
         <Row className="justify-content-center">
           <Col xs="7" md="7">
             <FormGroup>
-              <label>{getString(langId, compId, "input_cost")}
+              <label>{getString(prefs.locale, this.compId, "input_cost")}
                 {" "}
                 <i id={"input_e_cost_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_e_cost_hint"}>
-                {getString(langId, compId, "input_cost_hint")}
+                {getString(prefs.locale, this.compId, "input_cost_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
                 className="form-control text-right"
@@ -840,12 +841,12 @@ class ModalUpdatePosition extends React.Component {
           </Col>
           <Col xs="7" md="7">
             <FormGroup>
-              <label>{getString(langId, compId, "input_opCost")}
+              <label>{getString(prefs.locale, this.compId, "input_opCost")}
                 {" "}
                 <i id={"input_e_opCost_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_e_opCost_hint"}>
-                {getString(langId, compId, "input_opCost_hint")}
+                {getString(prefs.locale, this.compId, "input_opCost_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
                 className="form-control text-right"
@@ -879,7 +880,7 @@ class ModalUpdatePosition extends React.Component {
               %
                     </Button>
             <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="opCost_percentage">
-              {getString(langId, compId, "opCost_percentage_hint")}
+              {getString(prefs.locale, this.compId, "opCost_percentage_hint")}
             </UncontrolledTooltip>
             <Button
               className="btn-icon btn-link"
@@ -893,7 +894,7 @@ class ModalUpdatePosition extends React.Component {
               $
                     </Button>
             <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="opCost_currency">
-              {getString(langId, compId, "opCost_currency_hint")}
+              {getString(prefs.locale, this.compId, "opCost_currency_hint")}
             </UncontrolledTooltip>
           </Col>
         </Row>
@@ -904,12 +905,12 @@ class ModalUpdatePosition extends React.Component {
           </Col>
           <Col xs="7" md="7">
             <FormGroup>
-              <label>{getString(langId, compId, "input_totalCost")}
+              <label>{getString(prefs.locale, this.compId, "input_totalCost")}
                 {" "}
                 <i id={"input_e_totalCost_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
               <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_e_totalCost_hint"}>
-                {getString(langId, compId, "input_totalCost_hint")}
+                {getString(prefs.locale, this.compId, "input_totalCost_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
                 className="form-control text-right"
@@ -947,9 +948,10 @@ class ModalUpdatePosition extends React.Component {
   }
 
   render() {
-    let { getString, modalId } = this.props;
+    let { prefs, getString, modalId } = this.props;
     let {
-      langId, compId, isOpen, isLoading,
+      isOpen,
+      isLoading,
 
       assetOptions,
       walletOptions,
@@ -977,12 +979,12 @@ class ModalUpdatePosition extends React.Component {
               <i className="nc-icon nc-simple-remove" />
             </button>
             <h5 className="modal-title" id={modalId}>
-              {getString(langId, compId, "title")}
+              {getString(prefs.locale, this.compId, "title")}
             </h5>
             <hr />
             <label>
-              <p>{getString(langId, compId, "label_intro_p1")}</p>
-              <p>{getString(langId, compId, "label_intro_p2")}</p>
+              <p>{getString(prefs.locale, this.compId, "label_intro_p1")}</p>
+              <p>{getString(prefs.locale, this.compId, "label_intro_p2")}</p>
             </label>
           </CardHeader>
           <CardBody>
@@ -1002,7 +1004,7 @@ class ModalUpdatePosition extends React.Component {
                   <div className="icon mm">
                     <i className="nc-icon nc-spaceship mm" />
                   </div>
-                  <label>{getString(langId, compId, "input_type_buy")}</label>
+                  <label>{getString(prefs.locale, this.compId, "input_type_buy")}</label>
                 </div>
               </Col>
               <Col className="col-md-3">
@@ -1018,18 +1020,18 @@ class ModalUpdatePosition extends React.Component {
                   <div className="icon mm">
                     <i className="nc-icon nc-spaceship fa-rotate-90 mm" />
                   </div>
-                  <label>{getString(langId, compId, "input_type_sell")}</label>
+                  <label>{getString(prefs.locale, this.compId, "input_type_sell")}</label>
                 </div>
               </Col>
             </Row>
             <br />
             {/* Wallet */}
             <FormGroup className={`has-label ${position.states.wallet}`}>
-              <label>{getString(langId, compId, "input_wallet")}</label>
+              <label>{getString(prefs.locale, this.compId, "input_wallet")}</label>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
-                placeholder={getString(langId, "generic", "input_select")}
+                placeholder={getString(prefs.locale, "generic", "input_select")}
                 name="wallet"
                 value={position.data.wallet}
                 options={walletOptions}
@@ -1038,11 +1040,11 @@ class ModalUpdatePosition extends React.Component {
             </FormGroup>
             {/* Asset */}
             <FormGroup className={`has-label ${position.states.asset}`}>
-              <label>{getString(langId, compId, "input_asset")}</label>
+              <label>{getString(prefs.locale, this.compId, "input_asset")}</label>
               <Select
                 className="react-select"
                 classNamePrefix="react-select"
-                placeholder={getString(langId, "generic", "input_select")}
+                placeholder={getString(prefs.locale, "generic", "input_select")}
                 name="asset"
                 value={position.data.asset}
                 options={assetOptions}
@@ -1051,10 +1053,11 @@ class ModalUpdatePosition extends React.Component {
             </FormGroup>
             {/* Amount */}
             <FormGroup className={`has-label ${position.states.amount}`}>
-              <label>{getString(langId, compId, "input_amount")}</label>
+              <label>{getString(prefs.locale, this.compId, "input_amount")}</label>
               <Input
                 type="number"
                 name="amount"
+                autoComplete="off"
                 value={position.data.amount}
                 onChange={e => this.onChange(e, e.target.name)}
               />
@@ -1070,7 +1073,7 @@ class ModalUpdatePosition extends React.Component {
                       className={activeNavId == "start" ? "active" : ""}
                       onClick={() => this.toggleNavLink("activeNavId", "start")}
                     >
-                      {getString(langId, compId, "tab_openInfo")}
+                      {getString(prefs.locale, this.compId, "tab_openInfo")}
                     </NavLink>
                   </NavItem>
                   {/* END */}
@@ -1080,7 +1083,7 @@ class ModalUpdatePosition extends React.Component {
                       className={activeNavId == "end" ? "active" : ""}
                       onClick={() => this.toggleNavLink("activeNavId", "end")}
                     >
-                      {getString(langId, compId, "tab_closeInfo")}
+                      {getString(prefs.locale, this.compId, "tab_closeInfo")}
                     </NavLink>
                   </NavItem>
                 </Nav>
@@ -1107,7 +1110,7 @@ class ModalUpdatePosition extends React.Component {
             >
               {isLoading ?
                 <Spinner size="sm" /> :
-                getString(langId, compId, "btn_confirm")
+                getString(prefs.locale, this.compId, "btn_confirm")
               }
             </Button>
           </CardFooter>
@@ -1120,9 +1123,9 @@ class ModalUpdatePosition extends React.Component {
 export default ModalUpdatePosition;
 
 ModalUpdatePosition.propTypes = {
-  managers: PropTypes.object.isRequired,
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
+  managers: PropTypes.object.isRequired,
   getHttpTranslation: PropTypes.func.isRequired,
 
   position: PropTypes.object.isRequired,

@@ -24,10 +24,9 @@ import { getDistinctValuesFromList, retrieveObjFromObjList } from "../../core/ut
 class PhiTrader extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
 
       modal_filters_isOpen: false,
 
@@ -48,13 +47,8 @@ class PhiTrader extends React.Component {
     this.onSelectionChange = this.onSelectionChange.bind(this)
     this.toggleModal = this.toggleModal.bind(this);
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
-  }
   componentDidMount() {
-    this.props.setNavbarTitleId("title_" + this.state.compId)
+    this.props.setNavbarTitleId("title_" + this.compId)
 
     this.prepareRequirements()
   }
@@ -200,13 +194,12 @@ class PhiTrader extends React.Component {
     return dSetups
   }
   translateObjField(dimensionId, objList, field) {
-    let { getString } = this.props
-    let { langId, compId } = this.state
+    let { prefs, getString } = this.props
 
     switch (dimensionId) {
       case "statuses":
         for (var obj of objList)
-          obj[field] = getString(langId, compId, [`item_${obj[field]}`])
+          obj[field] = getString(prefs.locale, this.compId, [`item_${obj[field]}`])
         break;
     }
 
@@ -349,11 +342,8 @@ class PhiTrader extends React.Component {
   };
 
   render() {
-    let { getString } = this.props;
+    let { prefs, getString } = this.props;
     let {
-      langId,
-      compId,
-
       cWallets,
       dimensions,
 
@@ -364,16 +354,16 @@ class PhiTrader extends React.Component {
     return (
       <div className="content">
         <div className="header text-center">
-          <h3 className="title">{getString(langId, compId, "title")}</h3>
+          <h3 className="title">{getString(prefs.locale, this.compId, "title")}</h3>
           <Card className="card-plain centered">
-            <label>{getString(langId, compId, "label_intro_p1")}</label>
-            <label>{getString(langId, compId, "label_intro_p2")}</label>
+            <label>{getString(prefs.locale, this.compId, "label_intro_p1")}</label>
+            <label>{getString(prefs.locale, this.compId, "label_intro_p2")}</label>
             <label>
-              {getString(langId, compId, "label_intro_p3")}
+              {getString(prefs.locale, this.compId, "label_intro_p3")}
               {" "}
-              <strong>{getString(langId, compId, "label_intro_notRecommendation")}</strong>,
+              <strong>{getString(prefs.locale, this.compId, "label_intro_notRecommendation")}</strong>,
                 {" "}
-              {getString(langId, compId, "label_intro_p4")}
+              {getString(prefs.locale, this.compId, "label_intro_p4")}
             </label>
           </Card>
         </div>
@@ -384,6 +374,8 @@ class PhiTrader extends React.Component {
           prefs={this.props.prefs}
           dimensions={dimensions}
           clearSelection={this.clearSelection}
+          pageFirstLoading={pageFirstLoading}
+          delayTriggerDimension={"setups"}
         >
           <Col key={`filter__openDates`} xs="12" md="6" xl={window.innerWidth > 1600 ? "4" : "6"}>
             <DimentionTimeInterval
@@ -454,8 +446,8 @@ class PhiTrader extends React.Component {
                 </Col>
                 <Col xl="10" lg="10" md="9" xs="9">
                   <br />
-                  <p className="card-description">{getString(langId, compId, "label_noWallets_p1")}</p>
-                  <p className="card-description">{getString(langId, compId, "label_noWallets_p2")}</p>
+                  <p className="card-description">{getString(prefs.locale, this.compId, "label_noWallets_p1")}</p>
+                  <p className="card-description">{getString(prefs.locale, this.compId, "label_noWallets_p2")}</p>
                 </Col>
               </Row>
               <CardFooter className="centered">
@@ -466,7 +458,7 @@ class PhiTrader extends React.Component {
                   type="submit"
                   onClick={() => this.setState({ goToWallets: true })}
                 >
-                  {getString(langId, compId, "btn_goToWallets")}
+                  {getString(prefs.locale, this.compId, "btn_goToWallets")}
                 </Button>
                 {this.state.goToWallets && <Redirect to="/app/myassets/wallets" />}
               </CardFooter>
@@ -483,8 +475,8 @@ class PhiTrader extends React.Component {
                   </Col>
                   <Col xl="10" lg="10" md="9" xs="8">
                     <br />
-                    <p className="card-description">{getString(langId, compId, "label_noNews_p1")}</p>
-                    <p className="card-description">{getString(langId, compId, "label_noNews_p2")}</p>
+                    <p className="card-description">{getString(prefs.locale, this.compId, "label_noNews_p1")}</p>
+                    <p className="card-description">{getString(prefs.locale, this.compId, "label_noNews_p2")}</p>
                   </Col>
                 </Row>
               </Card> :

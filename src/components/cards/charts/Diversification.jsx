@@ -10,12 +10,8 @@ import {
   CardHeader,
   CardFooter,
   Col,
-  DropdownMenu,
-  DropdownItem,
-  DropdownToggle,
   Row,
   UncontrolledTooltip,
-  UncontrolledDropdown
 } from "reactstrap";
 import Skeleton from "react-loading-skeleton";
 
@@ -25,38 +21,9 @@ class Diversification extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
-      pageFirstLoading: props.pageFirstLoading,
-
-      chart: props.chart,
       interval: "generic",
       selected: "groupBySector",
-
-      measures: props.measures,
-
-      currency: props.currency,
     };
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    if (props.pageFirstLoading !== state.pageFirstLoading)
-      return {
-        pageFirstLoading: props.pageFirstLoading,
-        chart: props.chart,
-        measures: props.measures,
-        currency: props.currency
-      }
-    if (props.chart !== state.chart)
-      return {
-        pageFirstLoading: props.pageFirstLoading,
-        chart: props.chart,
-        measures: props.measures,
-        currency: props.currency
-      }
-
-    return null
   }
 
   changeChart(interval, selected) {
@@ -68,7 +35,7 @@ class Diversification extends Component {
 
   handleKpiPresentation(format, kpiValue, includePlusMinus = false) {
     let strKpi = ""
-    let currency = this.state.currency
+    let { currency } = this.props;
 
     if (includePlusMinus && kpiValue > 0)
       strKpi += "+"
@@ -89,8 +56,8 @@ class Diversification extends Component {
   }
 
   render() {
-    let { getString } = this.props;
-    let { langId, pageFirstLoading, chart, measures, interval, selected, } = this.state;
+    let { getString, prefs, pageFirstLoading, chart, measures } = this.props;
+    let { interval, selected } = this.state;
 
     return (
       <Card className="card-stats">
@@ -110,7 +77,7 @@ class Diversification extends Component {
         </CardHeader>
         <CardBody>
           <h6 className="big-title">
-            {getString(langId, "charts", "chart_title_diversification")}
+            {getString(prefs.locale, "charts", "chart_title_diversification")}
           </h6>
           {
             pageFirstLoading ?
@@ -130,7 +97,7 @@ class Diversification extends Component {
             <Col xl="4" md="4">
               <label className="stats">
                 <i className="fa fa-cube" />
-                {getString(langId, "charts", "label_groupBy")}:
+                {getString(prefs.locale, "charts", "label_groupBy")}:
               </label>
             </Col>
             <Col className="text-right">
@@ -142,10 +109,10 @@ class Diversification extends Component {
                 type="button"
                 onClick={() => this.changeChart(undefined, "groupByAsset")}
               >
-                {getString(langId, "charts", "label_assets")}
+                {getString(prefs.locale, "charts", "label_assets")}
               </Button>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="amountInvested_groupByAsset">
-                {getString(langId, "charts", chart.generic.groupByAsset.hintId)}
+                {getString(prefs.locale, "charts", chart.generic.groupByAsset.hintId)}
               </UncontrolledTooltip>
               <Button
                 className="btn-link"
@@ -155,10 +122,10 @@ class Diversification extends Component {
                 type="button"
                 onClick={() => this.changeChart(undefined, "groupBySector")}
               >
-                {getString(langId, "charts", "label_sectors")}
+                {getString(prefs.locale, "charts", "label_sectors")}
               </Button>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="amountInvested_groupBySector">
-                {getString(langId, "charts", chart.generic.groupBySector.hintId)}
+                {getString(prefs.locale, "charts", chart.generic.groupBySector.hintId)}
               </UncontrolledTooltip>
               <Button
                 className="btn-link"
@@ -168,10 +135,10 @@ class Diversification extends Component {
                 type="button"
                 onClick={() => this.changeChart(undefined, "groupByCountry")}
               >
-                {getString(langId, "charts", "label_countries")}
+                {getString(prefs.locale, "charts", "label_countries")}
               </Button>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="amountInvested_groupByCountry">
-                {getString(langId, "charts", chart.generic.groupByCountry.hintId)}
+                {getString(prefs.locale, "charts", chart.generic.groupByCountry.hintId)}
               </UncontrolledTooltip>
             </Col>
           </Row>
@@ -184,8 +151,8 @@ class Diversification extends Component {
 export default Diversification;
 
 Diversification.propTypes = {
-  getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
   pageFirstLoading: PropTypes.bool.isRequired,
   chart: PropTypes.object.isRequired,
   measures: PropTypes.object.isRequired,

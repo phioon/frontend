@@ -22,7 +22,7 @@ import Select from "react-select";
 import ModalChangePassword from "../modals/auth/ModalChangePassword";
 
 import TimeManager from "../../core/managers/TimeManager";
-import { getLangList } from "../../core/lang";
+import { localeList } from "../../core/locales";
 import {
   areObjsEqual,
   deepCloneObj,
@@ -35,10 +35,9 @@ import {
 class UserProfile extends React.Component {
   constructor(props) {
     super(props);
+    this.compId = this.constructor.name.toLowerCase()
 
     this.state = {
-      compId: this.constructor.name.toLowerCase(),
-      langId: props.prefs.langId,
       isCheckingUsername: false,
 
       modal_changePassword_isOpen: false,
@@ -58,10 +57,10 @@ class UserProfile extends React.Component {
         isLoading: false,
         isValidated: undefined
       },
-      prefs: {
+      preferences: {
         data: {
-          pref_langId: "",
-          pref_currency: ""
+          locale: "",
+          currency: ""
         },
         states: {},
 
@@ -74,13 +73,8 @@ class UserProfile extends React.Component {
 
     this.toggleModal = this.toggleModal.bind(this)
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.prefs.langId !== state.langId)
-      return { langId: props.prefs.langId }
-    return null
-  }
   componentDidMount() {
-    this.props.setNavbarTitleId("title_" + this.state.compId)
+    this.props.setNavbarTitleId("title_" + this.compId)
     this.prepareRequirements()
   }
   async prepareRequirements() {
@@ -88,7 +82,7 @@ class UserProfile extends React.Component {
   }
   async prepareUserData() {
     let { getString, prefs: prefsFromProps } = this.props;
-    let { langId, personalData, prefs } = this.state;
+    let { personalData, preferences } = this.state;
 
     let user = await this.props.managers.auth.instantUser()
     user.initials = getInitials(`${user.first_name} ${user.last_name}`)
@@ -96,36 +90,36 @@ class UserProfile extends React.Component {
     for (var [k, v] of Object.entries(user)) {
       if (Object.keys(personalData.data).includes(k))
         personalData.data[k] = v
-      else if (Object.keys(prefs.data).includes(k))
-        prefs.data[k] = v
+      else if (Object.keys(preferences.data).includes(k))
+        preferences.data[k] = v
     }
 
     // Currencies
     let currencies = await this.props.managers.app.currenciesForSelect()
     for (var c of currencies)
       if (prefsFromProps.currency == c.value)
-        prefs.data.pref_currency = c
+        preferences.data.currency = c
 
     // Languages
-    let langList = getLangList()
+    let langList = localeList()
     let languages = []
     for (var id of langList) {
       let option = {
         value: id,
-        label: getString(langId, "languages", id)
+        label: getString(prefsFromProps.locale, "languages", id)
       }
       languages.push(option)
 
-      if (prefsFromProps.langId == id)
-        prefs.data.pref_langId = option
+      if (prefsFromProps.locale == id)
+        preferences.data.locale = option
     }
 
     personalData.initial = deepCloneObj(personalData.data)
-    prefs.initial = deepCloneObj(prefs.data)
+    preferences.initial = deepCloneObj(preferences.data)
 
     this.setState({
       personalData,
-      prefs,
+      prefs: preferences,
       currencies, languages,
     })
   }
@@ -208,10 +202,10 @@ class UserProfile extends React.Component {
         else
           newState[type].states[fieldName] = "has-danger"
         break;
-      case "pref_currency":
+      case "currency":
         newState[type].states[fieldName] = "has-success"
         break;
-      case "pref_langId":
+      case "locale":
         newState[type].states[fieldName] = "has-success"
         break;
     }
@@ -293,16 +287,14 @@ class UserProfile extends React.Component {
   };
 
   render() {
-    let { getString } = this.props;
+    let { getString, prefs } = this.props;
     let {
-      langId,
-      compId,
       isCheckingUsername,
 
       modal_changePassword_isOpen,
 
       personalData,
-      prefs,
+      preferences,
 
       currencies,
       languages,
@@ -325,7 +317,7 @@ class UserProfile extends React.Component {
               {/* Personal Data */}
               <Card>
                 <CardHeader>
-                  <h5 className="title">{getString(langId, compId, "title_personalData")}</h5>
+                  <h5 className="title">{getString(prefs.locale, this.compId, "title_personalData")}</h5>
                 </CardHeader>
                 <CardBody>
                   <Form>
@@ -333,7 +325,7 @@ class UserProfile extends React.Component {
                       {/* Email */}
                       <Col md="8" sm="8" xs="8">
                         <FormGroup>
-                          <label>{getString(langId, compId, "input_email")}</label>
+                          <label>{getString(prefs.locale, this.compId, "input_email")}</label>
                           <Input
                             type="email"
                             name="email"
@@ -348,7 +340,7 @@ class UserProfile extends React.Component {
                           className="btn-neutral"
                           onClick={() => this.toggleModal("changePassword")}
                         >
-                          {getString(langId, compId, "btn_changePassword")}
+                          {getString(prefs.locale, this.compId, "btn_changePassword")}
                         </Button>
                       </Col>
                     </Row>
@@ -356,7 +348,7 @@ class UserProfile extends React.Component {
                       {/* Username */}
                       <Col md="8" sm="8" xs="8">
                         <FormGroup className={`has-label ${personalData.states.username}`}>
-                          <label>{getString(langId, compId, "input_username")}</label>
+                          <label>{getString(prefs.locale, this.compId, "input_username")}</label>
                           <Input
                             type="text"
                             name="username"
@@ -369,7 +361,7 @@ class UserProfile extends React.Component {
                         {isCheckingUsername && <Spinner color="info" size="sm" />}
                         <label className="text-danger">
                           {personalData.states.username === "has-danger" &&
-                            getString(langId, compId, personalData.data.username_msgId)
+                            getString(prefs.locale, this.compId, personalData.data.username_msgId)
                           }
                         </label>
                       </Col>
@@ -378,9 +370,9 @@ class UserProfile extends React.Component {
                       {/* First Name */}
                       <Col md="6">
                         <FormGroup className={`has-label ${personalData.states.first_name}`}>
-                          <label>{getString(langId, compId, "input_firstName")}</label>
+                          <label>{getString(prefs.locale, this.compId, "input_firstName")}</label>
                           <Input
-                            placeholder={getString(langId, compId, "input_firstName")}
+                            placeholder={getString(prefs.locale, this.compId, "input_firstName")}
                             type="text"
                             name="first_name"
                             value={personalData.data.first_name}
@@ -391,9 +383,9 @@ class UserProfile extends React.Component {
                       {/* Last Name */}
                       <Col md="6">
                         <FormGroup className={`has-label ${personalData.states.last_name}`}>
-                          <label>{getString(langId, compId, "input_lastName")}</label>
+                          <label>{getString(prefs.locale, this.compId, "input_lastName")}</label>
                           <Input
-                            placeholder={getString(langId, compId, "input_lastName")}
+                            placeholder={getString(prefs.locale, this.compId, "input_lastName")}
                             type="text"
                             name="last_name"
                             value={personalData.data.last_name}
@@ -406,10 +398,10 @@ class UserProfile extends React.Component {
                       {/* Nationality */}
                       <Col md="6">
                         <FormGroup>
-                          <label>{getString(langId, compId, "input_nationality")}</label>
+                          <label>{getString(prefs.locale, this.compId, "input_nationality")}</label>
                           <Input
-                            value={getString(langId, "countries", String(personalData.data.nationality).toLowerCase())}
-                            placeholder={getString(langId, compId, "input_nationality")}
+                            value={getString(prefs.locale, "countries", String(personalData.data.nationality).toLowerCase())}
+                            placeholder={getString(prefs.locale, this.compId, "input_nationality")}
                             type="text"
                             disabled
                           />
@@ -418,19 +410,19 @@ class UserProfile extends React.Component {
                       {/* Birthday */}
                       <Col md="6">
                         <FormGroup className={`has-label ${personalData.states.birthday}`}>
-                          <label>{getString(langId, compId, "input_birthday")}
+                          <label>{getString(prefs.locale, this.compId, "input_birthday")}
                             {" "}
                             <i id="input_birthday_hint" className="nc-icon nc-alert-circle-i" />
                           </label>
                           <UncontrolledTooltip delay={{ show: 200 }} placement="top" target="input_birthday_hint">
-                            <label>{getString(langId, compId, "input_birthday_hint")}</label>
+                            <label>{getString(prefs.locale, this.compId, "input_birthday_hint")}</label>
                           </UncontrolledTooltip>
                           <ReactDatetime
                             inputProps={{
                               className: "form-control",
-                              placeholder: this.props.getString(langId, "generic", "input_select")
+                              placeholder: this.props.getString(prefs.locale, "generic", "input_select")
                             }}
-                            locale={getString(langId, "locales", langId)}
+                            locale={getString(prefs.locale, "locales", prefs.locale)}
                             value={personalData.data.birthday && TimeManager.getLocaleDateString(personalData.data.birthday, false)}
                             onChange={value => this.onSelectChange("personalData", "birthday", value)}
                             isValidDate={this.isDateValid}
@@ -457,7 +449,7 @@ class UserProfile extends React.Component {
                       >
                         {personalData.isLoading ?
                           <Spinner size="sm" /> :
-                          getString(langId, compId, "btn_save")
+                          getString(prefs.locale, this.compId, "btn_save")
                         }
                       </Button>
                     </Col>
@@ -469,40 +461,40 @@ class UserProfile extends React.Component {
               {/* Prefs */}
               <Card>
                 <CardHeader>
-                  <h5 className="title">{getString(langId, compId, "title_prefs")}</h5>
+                  <h5 className="title">{getString(prefs.locale, this.compId, "title_prefs")}</h5>
                 </CardHeader>
                 <CardBody>
                   {/* Language */}
                   <FormGroup>
-                    <label>{getString(langId, compId, "input_language")}</label>
+                    <label>{getString(prefs.locale, this.compId, "input_language")}</label>
                     <Select
                       className="react-select primary"
                       classNamePrefix="react-select"
-                      name="pref_langId"
-                      value={prefs.data.pref_langId}
-                      onChange={value => this.onSelectChange("prefs", "pref_langId", value)}
+                      name="locale"
+                      value={preferences.data.locale}
+                      onChange={value => this.onSelectChange("prefs", "locale", value)}
                       options={languages}
-                      placeholder={getString(langId, "generic", "input_select")}
+                      placeholder={getString(prefs.locale, "generic", "input_select")}
                     />
                   </FormGroup>
                   {/* Currency */}
                   <FormGroup>
                     <label>
-                      {getString(langId, compId, "input_currency")}
+                      {getString(prefs.locale, this.compId, "input_currency")}
                       {" "}
                       <i id="input_currency_hint" className="nc-icon nc-alert-circle-i" />
                     </label>
                     <UncontrolledTooltip delay={{ show: 200 }} placement="top" target="input_currency_hint">
-                      {getString(langId, compId, "input_currency_hint")}
+                      {getString(prefs.locale, this.compId, "input_currency_hint")}
                     </UncontrolledTooltip>
                     <Select
                       className="react-select primary"
                       classNamePrefix="react-select"
-                      name="pref_currency"
-                      value={prefs.data.pref_currency}
-                      onChange={value => this.onSelectChange("prefs", "pref_currency", value)}
+                      name="currency"
+                      value={preferences.data.currency}
+                      onChange={value => this.onSelectChange("prefs", "currency", value)}
                       options={currencies}
-                      placeholder={getString(langId, "generic", "input_select")}
+                      placeholder={getString(prefs.locale, "generic", "input_select")}
                     />
                   </FormGroup>
                 </CardBody>
@@ -515,12 +507,12 @@ class UserProfile extends React.Component {
                         className="btn-round"
                         color="success"
                         name="btnSaveprefs"
-                        disabled={prefs.isValidated ? false : true}
-                        onClick={e => this.saveClick(e, "prefs", prefs)}
+                        disabled={preferences.isValidated ? false : true}
+                        onClick={e => this.saveClick(e, "prefs", preferences)}
                       >
-                        {prefs.isLoading ?
+                        {preferences.isLoading ?
                           <Spinner size="sm" /> :
-                          getString(langId, compId, "btn_save")
+                          getString(prefs.locale, this.compId, "btn_save")
                         }
                       </Button>
                     </Col>
