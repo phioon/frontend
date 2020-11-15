@@ -7,6 +7,7 @@ from rest_framework.exceptions import ValidationError
 from rest_auth import serializers as rest_auth_serializers
 
 from django.utils.http import urlsafe_base64_decode as uid_decoder
+from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_text
 from django.utils import timezone
 from datetime import datetime
@@ -182,19 +183,15 @@ class UserCustomSerializer(serializers.ModelSerializer):
 
 class RequestPasswordResetSerializer(rest_auth_serializers.PasswordResetSerializer):
     def get_email_options(self):
-        subject_template_name = 'emails/<langId>/password_reset_subject.txt'
-        html_email_template_name = 'emails/<langId>/password_reset_email.html'
+        subject_template_name = 'emails/<locale>/password_reset_subject.txt'
+        html_email_template_name = 'emails/<locale>/password_reset_email.html'
 
         user_email = self.validated_data['email']
 
-        if UserCustom.objects.filter(user__email__exact=user_email).exists():
-            userCustom = UserCustom.objects.get(user__email__exact=user_email)
-            pref_langId = userCustom.pref_langId
-            subject_template_name = subject_template_name.replace('<langId>', pref_langId)
-            html_email_template_name = html_email_template_name.replace('<langId>', pref_langId)
-        else:
-            subject_template_name = subject_template_name.replace('<langId>', 'ptBR')
-            html_email_template_name = html_email_template_name.replace('<langId>', 'ptBR')
+        user = get_object_or_404(User, email=user_email)
+        locale = user.userPrefs.locale
+        subject_template_name = subject_template_name.replace('<locale>', locale)
+        html_email_template_name = html_email_template_name.replace('<locale>', locale)
 
         print('subject_template_name: %s' % subject_template_name)
         return {

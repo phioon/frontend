@@ -42,7 +42,7 @@ class Currency (models.Model):
 class Country (models.Model):
     code = models.CharField(max_length=8, verbose_name='Alpha-2 Code', primary_key=True)
     name = models.CharField(max_length=128, unique=True)
-    langId = models.CharField(max_length=8)
+    locale = models.CharField(max_length=8)
     currency = models.ForeignKey(Currency, on_delete=models.DO_NOTHING)
 
     def __str__(self):
@@ -52,22 +52,22 @@ class Country (models.Model):
         Country.objects.update_or_create(
             code='BR',
             defaults={'name': 'Brazil',
-                      'langId': 'ptBR',
+                      'locale': 'ptBR',
                       'currency': Currency.objects.get(pk='BRL')})
         Country.objects.update_or_create(
             code='PT',
             defaults={'name': 'Portugal',
-                      'langId': 'ptBR',
+                      'locale': 'ptBR',
                       'currency': Currency.objects.get(pk='EUR')})
         Country.objects.update_or_create(
             code='US',
             defaults={'name': 'United States of America',
-                      'langId': 'enUS',
+                      'locale': 'enUS',
                       'currency': Currency.objects.get(pk='USD')})
         Country.objects.update_or_create(
             code='GB',
             defaults={'name': 'United Kingdom',
-                      'langId': 'enUS',
+                      'locale': 'enUS',
                       'currency': Currency.objects.get(pk='GBP')})
 
 

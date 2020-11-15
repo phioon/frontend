@@ -93,7 +93,9 @@ class ForgotPassword extends React.Component {
 
     let result = await this.props.managers.auth.userRequestPasswordReset(user)
 
-    if (result.status == 200) {
+    console.log({ result })
+
+    if (result.status === 200 || result.response.status === 404) {
       this.setState({
         isLoading: false,
         alertState: undefined,
