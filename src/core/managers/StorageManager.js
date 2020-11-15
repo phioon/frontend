@@ -7,15 +7,15 @@ const config = {
   //          Any change on VERSION will let client know it's changed and needs to be rebuilt.
   app: {
     countries: {
-      syncLimit: 8640,
-      version: 0.01
+      syncLimit: 43200,
+      version: 0.02
     },
     currencies: {
-      syncLimit: 8640,
+      syncLimit: 43200,
       version: 0.01
     },
     positionTypes: {
-      syncLimit: 8640,
+      syncLimit: 43200,
       version: 0.01
     },
     positions: {
@@ -27,7 +27,7 @@ const config = {
       version: 0.04
     },
     subscriptions: {
-      syncLimit: 8640,
+      syncLimit: 43200,
       version: 0.03
     },
     wallets: {
@@ -43,7 +43,7 @@ const config = {
       version: 0.01
     },
     user_prefs: {
-      syncLimit: 8640,
+      syncLimit: 43200,
       version: 0.01
     }
   },
@@ -57,7 +57,7 @@ const config = {
       version: 0.05
     },
     indicators: {
-      syncLimit: 8460,
+      syncLimit: 43200,
       version: 0.19
     },
     dSma: {
@@ -93,7 +93,7 @@ const config = {
       version: 0.01
     },
     technicalConditions: {
-      syncLimit: 8640,
+      syncLimit: 43200,
       version: 0.01
     },
   },
