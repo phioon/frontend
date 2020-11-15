@@ -22,7 +22,7 @@ __backendApiPass__ = '#P1q2w3e4r$Api'
 
 
 @api_view(['GET'])
-@permission_classes([IsPremium | IsPlatinum, ])
+@permission_classes([IsPremium | IsPlatinum | permissions.IsAuthenticated, ])
 def TechnicalConditionList(request):
     backendRequest = __backendHost__ + '/api/market/technicalConditions/'
 
@@ -217,7 +217,7 @@ def D_PhiboLatestList(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsPremium | IsPlatinum, ])
+@permission_classes([IsPremium | IsPlatinum | permissions.IsAuthenticated, ])
 def D_setupList(request):
     backendRequest = __backendHost__ + '/api/market/d/setups/'
 
@@ -239,7 +239,7 @@ def D_setupList(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsPremium | IsPlatinum, ])
+@permission_classes([IsPremium | IsPlatinum | permissions.IsAuthenticated, ])
 def D_setupSummaryList(request):
     backendRequest = __backendHost__ + '/api/market/d/setupSummary/'
 

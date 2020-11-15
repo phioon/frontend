@@ -26,6 +26,7 @@ class UserSubscription extends React.Component {
 
       activeInterval: "month",
 
+      user: {},
       subscription: {},
 
       currency: { code: "BRL", symbol: "R$", thousands_separator_symbol: ".", decimal_symbol: "," },
@@ -47,7 +48,7 @@ class UserSubscription extends React.Component {
     let user = await this.props.managers.auth.instantUser()
     subscription = await this.props.managers.app.subscriptionRetrieve(user.subscription.name)
 
-    this.setState({ subscription })
+    this.setState({ user, subscription })
   }
 
   async validateSession() {
@@ -67,11 +68,14 @@ class UserSubscription extends React.Component {
   }
 
   async onClick(action, data) {
+    let { subscription } = this.state;
+
     switch (action) {
-      // priceId needed
       case "upgrade":
-        if (this.state.subscription.name === "basic")
+        if (subscription.name === "basic") {
+          // priceId needed
           await this.openCheckoutSession(data)
+        }
         else
           await this.openCustomerPortal()
         break;

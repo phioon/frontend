@@ -50,10 +50,7 @@ class UserRegisterAPIView(generics.GenericAPIView):
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
         nationality = get_object_or_404(Country, pk=request.data['nationality'])
-        subscription = get_object_or_404(Subscription, name='premium')
-
-        # Subscription will go back to 'basic'.
-        # Remember to remove subscription_expires_on !!
+        subscription = get_object_or_404(Subscription, name='basic')
 
         if nationality:
             user = serializer.save()
@@ -63,8 +60,7 @@ class UserRegisterAPIView(generics.GenericAPIView):
                     userCustom = UserCustom.objects.create(
                         user=user,
                         nationality=nationality,
-                        subscription=subscription,
-                        subscription_expires_on='2020-12-31')
+                        subscription=subscription)
 
                     UserPreferences.objects.create(
                         user=user,
@@ -254,6 +250,7 @@ def user_update(request):
     serializer_class = UserSerializer
     data = request.data
 
+    # All fields in [UserPreferences] are supposed to be updatable
     updatable_fields = [
         'email', 'username', 'first_name', 'last_name',
         'birthday', 'nationality']
@@ -292,6 +289,7 @@ def user_update(request):
         user.userCustom.save()
     if userPrefs_updated:
         user.userPrefs.save()
+        apiStripe.update_stripe_customer(user.userCustom.stripe_customer_id, data)
 
     serializer = serializer_class(instance=user)
     return Response(serializer.data)

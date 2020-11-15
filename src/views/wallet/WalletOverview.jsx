@@ -730,7 +730,7 @@ class WalletOverview extends React.Component {
           prefs={this.props.prefs}
           dimensions={dimensions}
           clearSelection={this.clearSelection}
-          pageFirstLoading={measureFirstLoading}
+          pageFirstLoading={chartFirstLoading}
           delayTriggerDimension={"positions"}
         >
           <Col key={`filter__openDates`} xs="12" md="6" xl={window.innerWidth > 1600 ? "4" : "6"}>

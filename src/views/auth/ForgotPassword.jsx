@@ -99,7 +99,7 @@ class ForgotPassword extends React.Component {
       this.setState({
         isLoading: false,
         alertState: undefined,
-        alertMsg: getString(this.props.prefs.locale, this.compId, "label_emailSent")
+        alertMsg: getString(prefs.locale, this.compId, "label_emailSent")
       })
     }
     else {

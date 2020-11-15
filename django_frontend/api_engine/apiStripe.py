@@ -14,12 +14,12 @@ stripe.api_key = settings.STRIPE_API_KEY
 
 
 def get_stripe_locale(value):
-    languages = {
+    locales = {
         'ptBR': 'pt-BR',
         'enUS': 'en'
     }
-    if value in languages:
-        return languages[value]
+    if value in locales:
+        return locales[value]
     else:
         return None
 
@@ -39,7 +39,11 @@ def get_user(field_name, value):
 
 
 def update_stripe_customer(customer_id, data):
+    if not customer_id:
+        return
+
     payload = {}
+
     for attr, value in data.items():
         if attr == 'locale':
             payload['preferred_locales'] = [get_stripe_locale(value), ]

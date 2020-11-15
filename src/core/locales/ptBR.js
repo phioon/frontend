@@ -498,8 +498,8 @@ const locale = {
     opCost_currency_hint: "Use formato de Moeda para o campo Custo Operacional.",
     opCost_percentage_hint: "Use formato de Porcentagem para o campo Custo Operacional.",
 
-    alert_created_title: "Atualizada!",
-    alert_created_text: "Posição foi atualizada com sucesso.",
+    alert_updated_title: "Atualizada!",
+    alert_updated_text: "Posição foi atualizada com sucesso.",
 
     alert_purchaseDateMissing: "Vejo que deixou o campo 'Data da Compra' vazio. Tudo bem, vou atualizar a Posição com esses dados, mas vou considera-la como 'Aberta' até que o campo 'Data da Compra' esteja preenchido. ;)",
     alert_saleDateMissing: "Vejo que deixou o campo 'Data da Venda' vazio. Tudo bem, vou atualizar a Posição com esses dados, mas vou considera-la como 'Aberta' até que o campo 'Data da Venda' esteja preenchido. ;)",

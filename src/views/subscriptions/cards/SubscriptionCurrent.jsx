@@ -86,8 +86,6 @@ class SubscriptionCurrent extends React.Component {
       ...subscription,
     }
 
-    console.log(subscription)
-
     for (var [k, v] of Object.entries(user))
       if (Object.keys(personalData.data).includes(k))
         personalData.data[k] = v

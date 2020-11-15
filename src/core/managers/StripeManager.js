@@ -3,7 +3,8 @@ import { deepCloneObj, httpRequest, sleep } from "../utils";
 
 import { loadStripe } from "@stripe/stripe-js";
 var stripe_apiKey = undefined;
-if (process.env.NODE_ENV === "production")
+
+if (window.location.hostname === "app.phioon.com")
   stripe_apiKey = "pk_live_51HkbgHHiGSreEiGHRC2RRIjONTMJOmfvsy3U857OtRm5s1FDM53EzjwocgrLWxZnxPMAP1rEej1aTurciVE7G9vj00FwTs4wTj"
 else
   stripe_apiKey = "pk_test_51HkbgHHiGSreEiGHpC8mXSmf5R2YNkDfLEhQIFrICQ646F9YnnUUYFFJehSO4btkE4s032OnaFFWgI5W9idI94be00f9gieyx3"

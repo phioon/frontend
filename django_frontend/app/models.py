@@ -107,16 +107,16 @@ class SubscriptionPrice (models.Model):
         platinum = Subscription.objects.get(name='platinum')
 
         SubscriptionPrice.objects.update_or_create(
-            id='price_1HlGJHHiGSreEiGHeSF2r4Ph',
+            id='STRIPE_PRICE_ID_1',
             defaults={'subscription': premium, 'name': 'premium_month'})
         SubscriptionPrice.objects.update_or_create(
-            id='price_1HlGVWHiGSreEiGHqhcodS13',
+            id='STRIPE_PRICE_ID_2',
             defaults={'subscription': premium, 'name': 'premium_year'})
         SubscriptionPrice.objects.update_or_create(
-            id='price_1HlGNpHiGSreEiGHkOvzJ4tx',
+            id='STRIPE_PRICE_ID_3',
             defaults={'subscription': platinum, 'name': 'platinum_month'})
         SubscriptionPrice.objects.update_or_create(
-            id='price_1HlGNqHiGSreEiGHIqP4vHzW',
+            id='STRIPE_PRICE_ID_4',
             defaults={'subscription': platinum, 'name': 'platinum_year'})
 
 
