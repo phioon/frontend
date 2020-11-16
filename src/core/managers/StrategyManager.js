@@ -218,7 +218,7 @@ class StrategyManager {
       and: []
     }
     let rule = {}
-    let operator = ">="
+    let operator = ">"
 
     let lastItemId = String("<interval>_" + items[0].id + "__p" + shift)
 
@@ -270,7 +270,7 @@ class StrategyManager {
       for (var operation of v0)
         for (var [operator, variables] of Object.entries(operation)) {
           switch (operator) {
-            case ">=":
+            case ">":
               for (var v of variables) {
                 let itemId = String(v.var).replace('<interval>_', '')
                 itemId = itemId.substring(0, itemId.indexOf('__'))

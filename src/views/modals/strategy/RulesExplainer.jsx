@@ -42,7 +42,7 @@ class RulesExplainer extends React.Component {
                   {getString(prefs.locale, "indicators", rule.id)}
                 </Col>
                 <Col xs="2">
-                  {getString(prefs.locale, this.compId, "label_explain_gte")}
+                  <b>{getString(prefs.locale, this.compId, "label_explain_gte")}</b>
                 </Col>
                 <Col>
                   {getString(prefs.locale, "indicators", ws.items[key + 1].id)}
