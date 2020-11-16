@@ -33,7 +33,6 @@ class ModalCreateWallet extends React.Component {
     this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      isOpen: props.isOpen,
       isLoading: false,
 
       stockExchangeOptions: [],
@@ -58,12 +57,6 @@ class ModalCreateWallet extends React.Component {
       alertState: null,
       alertMsg: "",
     }
-  }
-  static getDerivedStateFromProps(props, state) {
-    if (props.isOpen !== state.isOpen)
-      return { isOpen: props.isOpen }
-
-    return null
   }
   async componentDidMount() {
     this.prepareRequirements()
@@ -226,9 +219,8 @@ class ModalCreateWallet extends React.Component {
   };
 
   render() {
-    let { prefs, getString, modalId } = this.props;
+    let { prefs, getString, modalId, isOpen } = this.props;
     let {
-      isOpen,
       isLoading,
 
       currency,

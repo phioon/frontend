@@ -32,30 +32,31 @@ class ModalUpdateWallet extends React.Component {
     this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      isOpen: props.isOpen,
       isLoading: false,
 
-      sWalletNames: props.sWalletNames,
       currency: props.currency,
 
-      initial_wallet: props.wallet,
+      initial_wallet: {},
       wallet: props.wallet,
 
       alertState: null,
       alertMsg: "",
     }
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.isOpen !== state.isOpen)
-      return {
-        isOpen: props.isOpen,
-        currency: props.currency,
-        sWalletNames: props.sWalletNames,
-        initial_wallet: deepCloneObj(props.wallet),
-        wallet: props.wallet,
-      }
+  componentDidUpdate(prevProps) {
+    if (prevProps.wallet !== this.props.wallet)
+      this.prepareRequirements()
+  }
 
-    return null
+  prepareRequirements() {
+    let { currency, wallet } = this.props;
+
+    this.setState({
+      currency,
+
+      initial_wallet: deepCloneObj(wallet),
+      wallet
+    })
   }
 
   verifyWalletName(walletName) {
@@ -64,7 +65,7 @@ class ModalUpdateWallet extends React.Component {
       isValidated = true
       if (walletName == this.state.initial_wallet.data.name)
         isValidated = true
-      else if (this.state.sWalletNames.includes(walletName))
+      else if (this.props.sWalletNames.includes(walletName))
         isValidated = false
     }
 
@@ -180,9 +181,8 @@ class ModalUpdateWallet extends React.Component {
   };
 
   render() {
-    let { prefs, getString, modalId } = this.props;
+    let { prefs, getString, modalId, isOpen } = this.props;
     let {
-      isOpen,
       isLoading,
 
       wallet,

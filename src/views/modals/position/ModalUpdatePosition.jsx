@@ -55,33 +55,34 @@ class ModalUpdatePosition extends React.Component {
       isOpen: props.isOpen,
       isLoading: false,
 
-      walletOptions: props.walletOptions,
       assetOptions: [],
+      currency: {},
+
       opCostIsPercentage: true,   // true = Porcentage
       activeNavId: "start",
 
-      initial_position: props.position,
+      initial_position: {},
       position: props.position,
-
-      currency: props.currency,
 
       alertState: null,
       alertMsg: "",
     }
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.isOpen !== state.isOpen) {
-      return {
-        isOpen: props.isOpen,
-        currency: props.currency,
-        walletOptions: props.walletOptions,
-        assetOptions: props.assetOptions,
-        initial_position: deepCloneObj(props.position),
-        position: props.position,
-      }
-    }
+  componentDidUpdate(prevProps) {
+    if (prevProps.position !== this.props.position)
+      this.prepareRequirements()
+  }
 
-    return null
+  prepareRequirements() {
+    let { assetOptions, currency, position } = this.props;
+
+    this.setState({
+      assetOptions,
+      currency,
+
+      initial_position: deepCloneObj(position),
+      position
+    })
   }
 
   async handleSelect(model, se_short = null) {
@@ -106,7 +107,7 @@ class ModalUpdatePosition extends React.Component {
     let opCostPercent = 0
     let totalCost = 0
     let { prefs, getString } = this.props;
-    let currency = this.state.currency
+    let { currency } = this.state;
     let newState = { position: this.state.position }
 
     if (this.state.alertState !== null) {
@@ -289,8 +290,6 @@ class ModalUpdatePosition extends React.Component {
             newState.position.data.typeIsBuy ? "alert_saleDateMissing" : "alert_purchaseDateMissing")
         }
         break;
-      default:
-        break;
     }
 
     newState.position.isValidated = this.isValidated(newState.position)
@@ -299,7 +298,7 @@ class ModalUpdatePosition extends React.Component {
   }
   async onSelectChange(fieldName, value) {
     let { prefs, getString } = this.props;
-    let currency = this.state.currency
+    let { currency } = this.state;
     let newState = { position: this.state.position }
 
     if (this.state.alertState !== null) {
@@ -368,10 +367,10 @@ class ModalUpdatePosition extends React.Component {
         break;
       case "wallet":
         this.handleSelect("asset", value.se_short)
-        let prevCurrency = this.state.currency
+        let prevCurrency = currency
         let newCurrency = await this.props.managers.app.currencyRetrieve(value.currency)
 
-        if (prevCurrency != newCurrency) {
+        if (prevCurrency !== newCurrency) {
           let price = 0, cost = 0, opCost = 0, totalCost = 0;
           // Start
           price = convertMaskedStringToFloat(newState.position.data.s_price, prevCurrency)
@@ -395,8 +394,6 @@ class ModalUpdatePosition extends React.Component {
 
         newState.position.states[fieldName] = "has-success"
         newState.currency = newCurrency
-        break;
-      default:
         break;
     }
 
@@ -426,7 +423,7 @@ class ModalUpdatePosition extends React.Component {
 
     let position = { id: this.state.position.data.id }
     let patch = this.state.position.patch
-    let currency = this.state.currency
+    let { currency } = this.state;
 
     for (var [k, v] of Object.entries(patch))
       switch (k) {
@@ -460,8 +457,6 @@ class ModalUpdatePosition extends React.Component {
           break;
         case "e_price":
           position.e_unit_price = convertMaskedStringToFloat(v, currency)
-          break;
-        default:
           break;
       }
 
@@ -560,7 +555,7 @@ class ModalUpdatePosition extends React.Component {
 
   StartData() {
     let { prefs, getString } = this.props;
-    let { position, opCostIsPercentage, currency } = this.state;
+    let { currency, position, opCostIsPercentage } = this.state;
 
     return (
       <TabPane tabId="start">
@@ -748,7 +743,7 @@ class ModalUpdatePosition extends React.Component {
   }
   EndData() {
     let { prefs, getString } = this.props;
-    let { position, opCostIsPercentage, currency } = this.state;
+    let { currency, position, opCostIsPercentage } = this.state;
 
     return (
       <TabPane tabId="end">
@@ -948,14 +943,12 @@ class ModalUpdatePosition extends React.Component {
   }
 
   render() {
-    let { prefs, getString, modalId } = this.props;
+    let { prefs, getString, modalId, isOpen, walletOptions } = this.props;
     let {
-      isOpen,
       isLoading,
+      activeNavId,
 
       assetOptions,
-      walletOptions,
-      activeNavId,
 
       position,
 
@@ -1129,6 +1122,7 @@ ModalUpdatePosition.propTypes = {
   getHttpTranslation: PropTypes.func.isRequired,
 
   position: PropTypes.object.isRequired,
+  walletOptions: PropTypes.array.isRequired,
 
   modalId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,

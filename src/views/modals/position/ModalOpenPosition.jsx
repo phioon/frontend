@@ -45,13 +45,10 @@ class ModalOpenPosition extends React.Component {
     this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      isOpen: props.isOpen,
       isLoading: false,
 
-      currency: props.currency,
-
-      walletOptions: props.walletOptions,
       assetOptions: [],
+      currency: {},
       opCostIsPercentage: false,   // true = Porcentage
 
       position: {
@@ -84,22 +81,24 @@ class ModalOpenPosition extends React.Component {
       alertMsg: "",
     }
   }
-  static getDerivedStateFromProps(props, state) {
-    if (props.isOpen !== state.isOpen)
-      return {
-        isOpen: props.isOpen,
-        walletOptions: props.walletOptions,
-        currency: props.currency
-      }
-
-    return null
+  componentDidMount() {
+    this.prepareRequirements()
   }
   componentDidUpdate(prevProps) {
-    if (this.props.isOpen != prevProps.isOpen) {
-      let { position } = this.state;
-      position.data.startedOn = TimeManager.getMoment()
-      this.setState({ position })
-    }
+    if (this.props.isOpen != prevProps.isOpen)
+      this.prepareRequirements()
+  }
+
+  prepareRequirements() {
+    let { currency } = this.props;
+    let { position } = this.state;
+
+    position.data.startedOn = TimeManager.getMoment()
+
+    this.setState({
+      currency,
+      position
+    })
   }
 
   clearInputFields = () => {
@@ -118,16 +117,17 @@ class ModalOpenPosition extends React.Component {
         s_totalCost: 0.00,
       },
       states: {
-        startedOn: "",
+        startedOn: "has-success",
         wallet: "",
         asset: "",
+        type: "has-success",
         amount: "",
         s_price: "",
       },
       isValidated: undefined
     }
 
-    this.setState({ position });
+    this.setState({ position, assetOptions: [] });
   };
 
   onChange(event, stateName) {
@@ -137,7 +137,7 @@ class ModalOpenPosition extends React.Component {
     let opCost = 0
     let opCostPercent = 0
     let totalCost = 0
-    let currency = this.state.currency
+    let { currency } = this.props;
     let newState = { position: this.state.position }
 
     if (this.state.alertState !== null) {
@@ -250,6 +250,7 @@ class ModalOpenPosition extends React.Component {
   }
   async onSelectChange(fieldName, value) {
     let newState = { position: this.state.position }
+    let { currency } = this.props;
 
     newState.position.data[fieldName] = value
 
@@ -265,7 +266,7 @@ class ModalOpenPosition extends React.Component {
         break;
       case "wallet":
         this.handleSelect("asset", value.se_short)
-        let prevCurrency = this.state.currency
+        let prevCurrency = currency
         let newCurrency = await this.props.managers.app.currencyRetrieve(value.currency)
 
         if (prevCurrency != newCurrency) {
@@ -303,7 +304,8 @@ class ModalOpenPosition extends React.Component {
   async confirmClick(e) {
     e.preventDefault();
     this.setState({ isLoading: true })
-    let { position } = this.state
+    let { position } = this.state;
+    let { currency } = this.props;
 
     let positionTypes = await this.props.managers.app.positionTypeData()
     let type = undefined
@@ -324,9 +326,9 @@ class ModalOpenPosition extends React.Component {
       asset_label: position.data.asset.label,
       type: type,
       amount: position.data.amount,
-      s_unit_price: convertMaskedStringToFloat(position.data.s_price, this.state.currency),
-      s_total_price: convertMaskedStringToFloat(position.data.s_cost, this.state.currency),
-      s_operational_cost: convertMaskedStringToFloat(position.data.s_opCost, this.state.currency)
+      s_unit_price: convertMaskedStringToFloat(position.data.s_price, currency),
+      s_total_price: convertMaskedStringToFloat(position.data.s_cost, currency),
+      s_operational_cost: convertMaskedStringToFloat(position.data.s_opCost, currency)
     };
 
     let result = await this.props.managers.app.positionCreate(data)
@@ -403,15 +405,11 @@ class ModalOpenPosition extends React.Component {
   };
 
   render() {
-    let { prefs, getString, modalId } = this.props;
+    let { prefs, getString, modalId, isOpen, walletOptions, currency } = this.props;
     let {
-      isOpen,
       isLoading,
 
-      currency,
-
       assetOptions,
-      walletOptions,
       opCostIsPercentage,
 
       position,
@@ -732,6 +730,9 @@ ModalOpenPosition.propTypes = {
   getString: PropTypes.func.isRequired,
   managers: PropTypes.object.isRequired,
   getHttpTranslation: PropTypes.func.isRequired,
+
+  walletOptions: PropTypes.array.isRequired,
+
   modalId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   toggleModal: PropTypes.func.isRequired,
