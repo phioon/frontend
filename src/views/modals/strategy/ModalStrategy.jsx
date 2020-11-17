@@ -513,6 +513,35 @@ class ModalStrategy extends React.Component {
       )
     })
   }
+  renderAdvancedWS(workspaces) {
+    let { prefs, getString } = this.props;
+    let { isDragging } = this.state;
+
+    let filters = { type: "basic" }
+    let reversedWS = applyFilterToObjList(workspaces.slice(), filters)
+    reversedWS.reverse()
+
+    return reversedWS.map((ws) => {
+      return (
+        <Col key={ws.id} lg="6">
+          <Card
+            className={classnames("drop-area", isDragging && "dash-zone")}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => this.onDrop(e, ws)}>
+            <CardHeader>
+              <p className="card-category">{getString(prefs.locale, this.compId, ["label_" + ws.id])}</p>
+              <div className="text-center">
+                <label>
+                  {getString(prefs.locale, this.compId, ["label_" + ws.id + "_intro"])}
+                </label>
+              </div>
+              <hr />
+            </CardHeader>
+          </Card>
+        </Col>
+      )
+    })
+  }
 
   addSubcategoryClick(subcatId) {
     let { selected } = this.state;
