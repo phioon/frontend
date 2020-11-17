@@ -76,7 +76,7 @@ class AppLayout extends React.Component {
   }
 
   async storageManagerInitiator() {
-    let syncFull = false
+    let syncFull = true
     let detailed = true
 
     let sUser = this.props.managers.auth.instantUser()
@@ -87,15 +87,13 @@ class AppLayout extends React.Component {
     this.props.managers.app.subscriptionList()                            // async call
     this.props.managers.app.positionTypeList()                            // async call
 
-    let wallets = await this.props.managers.app.walletList()              // [First Call] Used to check if syncFull is needed
+    let wallets = await this.props.managers.app.offlineWalletList()       // [First Call] Used to check if syncFull is needed
 
     if (wallets.data) {
       // Here, we'll check if last user logged is the same as the one logging in now.
       // This situation is only valid if user was logged off by timeout. Otherwise, Phioon removes personal data automatically.
-      if (wallets.data.length === 0)
-        syncFull = true
-      else if (wallets.data[0].owner !== sUser.id)
-        syncFull = true
+      if (wallets.data.length > 0 && wallets.data[0].owner === sUser.id)
+        syncFull = false
     }
 
     this.props.managers.app.strategyList(syncFull)                        // async call

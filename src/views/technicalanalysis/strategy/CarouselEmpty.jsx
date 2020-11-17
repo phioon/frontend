@@ -29,7 +29,6 @@ function CarouselEmpty(props) {
                   <br />
                   <p className="card-description">{props.getString(props.prefs.locale, props.compId, "label_noStrategies_p1")}</p>
                   <p className="card-description">{props.getString(props.prefs.locale, props.compId, "label_noStrategies_p2")}</p>
-                  <p className="card-description">{props.getString(props.prefs.locale, props.compId, "label_noStrategies_p3")}</p>
                 </Col>
               </Row>
             </Card>

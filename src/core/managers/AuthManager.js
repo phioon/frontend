@@ -232,6 +232,7 @@ class AuthManager {
     const sKey = "user"
     const sKey_wallets = "wallets"
     const sKey_positions = "positions"
+    const sKey_strategies = "strategies"
 
     this.instantUser({})
     AuthManager.instantToken({})
@@ -239,6 +240,7 @@ class AuthManager {
     StorageManager.removeData(sKey)
     StorageManager.removeData(sKey_wallets)
     StorageManager.removeData(sKey_positions)
+    StorageManager.removeData(sKey_strategies)
   }
 
   // Prefs

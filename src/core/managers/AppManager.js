@@ -625,6 +625,90 @@ class AppManager {
     return options
   }
 
+  // Strategy
+  async strategyList(syncFull = false) {
+    const sKey = "strategies"
+    await this.startRequest(sKey)
+    let result = null
+
+    if (!syncFull) {
+      result = await StorageManager.isUpToDate(this.sModule, sKey)
+      if (result) {
+        this.finishRequest(sKey)
+        return result
+      }
+    }
+
+    let wsInfo = this.getApi("wsStrategies")
+    wsInfo.method = "get"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status == 200)
+      result = await StorageManager.store(sKey, result.data)
+    else {
+      this.getHttpTranslation(result, "strategylist", "strategy", true)
+      result = await StorageManager.getItem(sKey)
+    }
+
+    this.finishRequest(sKey)
+    return result
+  }
+  async strategyData(syncFull = false) {
+    let sItem = await this.strategyList(syncFull)
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
+  }
+  async strategyCreate(strategy) {
+    let wsInfo = this.getApi("wsStrategies")
+    wsInfo.method = "post"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
+
+    if (result.status == 201) {
+      let syncFull = true
+      await this.strategyList(syncFull)
+    }
+
+    return result
+  }
+  async strategyUpdate(strategy) {
+    let wsInfo = this.getApi("wsStrategies")
+    wsInfo.request += strategy.id + "/"
+    wsInfo.method = "patch"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
+
+    if (result.status == 200) {
+      let syncFull = true
+      await this.strategyList(syncFull)
+    }
+
+    return result
+  }
+  async strategyDelete(pk) {
+    var wsInfo = this.getApi("wsStrategies")
+    wsInfo.request += pk + "/"
+    wsInfo.method = "delete"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status == 204) {
+      let syncFull = true
+      await this.strategyList(syncFull)
+    }
+    else
+      this.getHttpTranslation(result, "strategydelete", "strategy", true)
+
+    return result
+  }
+
   // Wallet
   // .. Data
   async walletList(syncFull = false) {
@@ -665,6 +749,11 @@ class AppManager {
 
     // Return it with http error details
     return sItem
+  }
+  async offlineWalletList() {
+    const sKey = "wallets"
+    let result = await StorageManager.getItem(sKey)
+    return result
   }
   async walletCreate(wallet) {
     let wsInfo = this.getApi("wsWallets")
@@ -771,90 +860,6 @@ class AppManager {
     return options
   }
   // --------------------
-
-  // Strategy
-  async strategyList(syncFull = false) {
-    const sKey = "strategies"
-    await this.startRequest(sKey)
-    let result = null
-
-    if (!syncFull) {
-      result = await StorageManager.isUpToDate(this.sModule, sKey)
-      if (result) {
-        this.finishRequest(sKey)
-        return result
-      }
-    }
-
-    let wsInfo = this.getApi("wsStrategies")
-    wsInfo.method = "get"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
-    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
-
-    if (result.status == 200)
-      result = await StorageManager.store(sKey, result.data)
-    else {
-      this.getHttpTranslation(result, "strategylist", "strategy", true)
-      result = await StorageManager.getItem(sKey)
-    }
-
-    this.finishRequest(sKey)
-    return result
-  }
-  async strategyData(syncFull = false) {
-    let sItem = await this.strategyList(syncFull)
-
-    if (sItem && sItem.data)
-      return sItem.data
-
-    // Return it with http error details
-    return sItem
-  }
-  async strategyCreate(strategy) {
-    let wsInfo = this.getApi("wsStrategies")
-    wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
-
-    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
-
-    if (result.status == 201) {
-      let syncFull = true
-      await this.strategyList(syncFull)
-    }
-
-    return result
-  }
-  async strategyUpdate(strategy) {
-    let wsInfo = this.getApi("wsStrategies")
-    wsInfo.request += strategy.id + "/"
-    wsInfo.method = "patch"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
-    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
-
-    if (result.status == 200) {
-      let syncFull = true
-      await this.strategyList(syncFull)
-    }
-
-    return result
-  }
-  async strategyDelete(pk) {
-    var wsInfo = this.getApi("wsStrategies")
-    wsInfo.request += pk + "/"
-    wsInfo.method = "delete"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
-
-    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
-
-    if (result.status == 204) {
-      let syncFull = true
-      await this.strategyList(syncFull)
-    }
-    else
-      this.getHttpTranslation(result, "strategydelete", "strategy", true)
-
-    return result
-  }
 
   getApi(apiId) {
     if (apiId in this.apis)

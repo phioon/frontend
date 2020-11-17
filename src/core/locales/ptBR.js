@@ -795,7 +795,6 @@ const locale = {
 
     label_noStrategies_p1: "Está preparado para começar a economizar tempo e ainda ter as melhores oportunidades do mercado à um clique?",
     label_noStrategies_p2: "Então comece criando a sua primeira Estratégia !",
-    label_noStrategies_p3: "Ah! Espero que aproveite a experiência... Uma vez que se acostuma, não tem mais volta! ;)",
 
     card_results_title: "Resultado",
 

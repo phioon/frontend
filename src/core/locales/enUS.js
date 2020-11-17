@@ -800,7 +800,6 @@ const locale = {
 
     label_noStrategies_p1: "Are you ready to start saving time and always having the best opportunities at one click?",
     label_noStrategies_p2: "Go ahead and create your first Strategy !",
-    label_noStrategies_p3: "Ah! I hope you enjoy the journey... Once you get used to it, there is no way back! ;)",
 
     card_results_title: "Results",
 
