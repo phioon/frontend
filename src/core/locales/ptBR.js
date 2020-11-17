@@ -797,7 +797,7 @@ const locale = {
     label_noStrategies_p2: "Então comece criando a sua primeira Estratégia !",
     label_noStrategies_p3: "Ah! Espero que aproveite a experiência... Uma vez que se acostuma, não tem mais volta! ;)",
 
-    card_results_title: "Resultados",
+    card_results_title: "Resultado",
 
     input_stockExchange: "Bolsa de Valores",
     input_stockExchange_hint: "Estamos falando de qual Bolsa de Valores?",
