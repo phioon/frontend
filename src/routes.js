@@ -18,7 +18,7 @@ import LockScreen from "views/auth/LockScreen.jsx";
 import Login from "views/auth/Login.jsx";
 import SetPassword from "views/auth/SetPassword.jsx";
 import Register from "views/auth/Register.jsx";
-import UserProfile from "views/auth/UserProfile.jsx";
+import MyAccount from "views/auth/MyAccount.jsx";
 import UserSubscription from "views/subscriptions/UserSubscription.jsx";
 
 // App
@@ -104,10 +104,10 @@ const routes = [
         layout: "/app"
       },
       {
-        path: "/user/profile",
-        name: "userprofile",
-        mini: "UP",
-        component: UserProfile,
+        path: "/user/myaccount",
+        name: "myaccount",
+        mini: "MA",
+        component: MyAccount,
         layout: "/app"
       },
       {

@@ -32,7 +32,7 @@ import {
   getInitials
 } from "../../core/utils";
 
-class UserProfile extends React.Component {
+class MyAccount extends React.Component {
   constructor(props) {
     super(props);
     this.compId = this.constructor.name.toLowerCase()
@@ -527,9 +527,9 @@ class UserProfile extends React.Component {
   }
 }
 
-export default UserProfile;
+export default MyAccount;
 
-UserProfile.propTypes = {
+MyAccount.propTypes = {
   managers: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
   prefs: PropTypes.object.isRequired,

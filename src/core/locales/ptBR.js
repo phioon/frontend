@@ -16,14 +16,14 @@ const locale = {
     title_positions: "Meus Ativos",
     title_strategies: "Análise Técnica",
     title_phitrader: "Análise Técnica",
-    title_userprofile: "Meu Perfil",
+    title_myaccount: "Minha Conta",
     title_usersubscription: "Meu Plano",
     title_walletoverview: "Visão Geral",
     title_wallets: "Meus Ativos",
 
     placeholder_search: "Pesquisar...",
 
-    label_profile: "Perfil",
+    label_myaccount: "Minha Conta",
     label_subscription: "Plano",
     label_logout: "Sair"
   },
@@ -288,29 +288,28 @@ const locale = {
     winners_number_hint: "Quantidade de Posições com resultado positivo.",
     winners_percentage_hint: "Quantidade de Posições vencedoras dividido pela quantidade de Posições."
   },
-  mysetups: {
-    card_title: "Setups",
+  myaccount: {
+    title_personalData: "Dados Pessoais",
+    title_prefs: "Preferências",
 
-    table_noDataFound: "hmm... Não encontrei nenhuma Carteira com esses filtros. Será que perdi algo?",
-    table_emptyData: "Ainda não tem Carteiras aqui? Crie uma no botão à direita da tela. ;)",
+    input_email: "E-mail",
+    btn_changePassword: "Alterar Senha",
+    input_username: "Usuário",
+    input_firstName: "Primeiro Nome",
+    input_lastName: "Último Nome",
+    input_nationality: "Nacionalidade",
+    input_birthday: "Data de Nascimento",
+    input_birthday_hint: "Eu poderia enviar presentes de aniversário. Quem sabe...",
 
-    header_name: "Nome",
-    header_balance: "Saldo",
-    header_desc: "Descrição",
-    header_stockExchange: "Bolsa de Valores",
-    header_currency: "Moeda",
-    header_actions: "Ações",
+    input_currency: "Moeda Principal",
+    input_currency_hint: "Investe em diferentes países? Posso converter outras moedas para a de sua preferência em relatórios e dashboards. ",
+    input_language: "Idioma",
 
-    btn_alert_cancel: "Cancelar",
-    btn_alert_confirm: "Confirmar",
-    alert_confirming_title: "Você tem certeza?",
-    alert_confirming_text: "Posições relacionadas a esta Carteira também serão removidas.",
-    alert_confirming_footer: "Uma vez removida, não é possível recupera-la.",
-    alert_deleted_title: "Removida!",
-    alert_deleted_text: "Sua Carteira foi removida com sucesso.",
+    error_username_minReq: "Letras (a-z), números (0-9), underscores (_) e pontos (.)",
+    error_username_taken: "Nome de usuário em uso :/",
+    error_username_couldNotCheck: "Algo deu errado :/ Vamos tentar novamente mais tarde.",
 
-    wallets_edit_hint: "Editar esta Carteira.",
-    wallets_delete_hint: "Deletar esta Carteira."
+    btn_save: "Salvar"
   },
   modalchangepassword: {
     title: "Alterar Senha",
@@ -757,10 +756,10 @@ const locale = {
     alert_passwordReseted_text: "Agora, já podemos tentar logar novamente. ;)"
   },
   sidebar: {
-    profile: "Perfil",
-    profileMini: "P",
+    myaccount: "Minha Conta",
+    myaccountMini: "MC",
     subscription: "Plano",
-    subscriptionMini: "PL",
+    subscriptionMini: "P",
 
     myassets: "Meus Ativos",
     wallets: "Carteiras",
@@ -956,29 +955,6 @@ const locale = {
     phibo_305_down_p1: "Preço alcançou uma resistência técnica importante após retração de <fibo_pct_retraction>% da Onda 1 e confirmou um Pivô de Baixa.",
     phibo_305_down_p2: "Linhas de Resistência estão alinhadas para baixo, o que aumenta a probabilidade de início de onda 3.",
     phibo_72_down_p1: "Preço alcançou uma resistência técnica após retração de <fibo_pct_retraction>% da Onda 1 e confirmou um Pivô de Baixa, aumentando a probabilidade de, ao menos, o preço testar o fundo anterior novamente.",
-  },
-  userprofile: {
-    title_personalData: "Dados Pessoais",
-    title_prefs: "Preferências",
-
-    input_email: "E-mail",
-    btn_changePassword: "Alterar Senha",
-    input_username: "Usuário",
-    input_firstName: "Primeiro Nome",
-    input_lastName: "Último Nome",
-    input_nationality: "Nacionalidade",
-    input_birthday: "Data de Nascimento",
-    input_birthday_hint: "Eu poderia enviar presentes de aniversário. Quem sabe...",
-
-    input_currency: "Moeda Principal",
-    input_currency_hint: "Investe em diferentes países? Posso converter outras moedas para a de sua preferência em relatórios e dashboards. ",
-    input_language: "Idioma",
-
-    error_username_minReq: "Letras (a-z), números (0-9), underscores (_) e pontos (.)",
-    error_username_taken: "Nome de usuário em uso :/",
-    error_username_couldNotCheck: "Algo deu errado :/ Vamos tentar novamente mais tarde.",
-
-    btn_save: "Salvar"
   },
   usersubscription: {
     label_monthly: "Mensal",

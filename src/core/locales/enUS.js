@@ -16,14 +16,14 @@ const locale = {
     title_positions: "My Assets",
     title_strategies: "Technical Analysis",
     title_phitrader: "Technical Analysis",
-    title_userprofile: "My Profile",
+    title_myaccount: "My Account",
     title_usersubscription: "My Subscription",
     title_walletoverview: "Overview",
     title_wallets: "My Assets",
 
     placeholder_search: "Search...",
 
-    label_profile: "Profile",
+    label_myaccount: "My Account",
     label_subscription: "Subscription",
     label_logout: "Log out"
   },
@@ -285,6 +285,29 @@ const locale = {
     winners_kpi_label: "Winners",
     winners_number_hint: "Amount of Positions with positive result.",
     winners_percentage_hint: "Winner Positions divided by the amount of Positions."
+  },
+  myaccount: {
+    title_personalData: "Personal Data",
+    title_prefs: "Preferences",
+
+    input_email: "Email",
+    btn_changePassword: "Change Password",
+    input_username: "Username",
+    input_firstName: "First Name",
+    input_lastName: "Last Name",
+    input_nationality: "Nationality",
+    input_birthday: "Birthday",
+    input_birthday_hint: "I could send birthday gifts. Who knows...",
+
+    input_currency: "Main Currency",
+    input_currency_hint: "Do you invest in different countries? I could convert the currencies to your preferred one on dashboards and reports. ",
+    input_language: "Language",
+
+    error_username_minReq: "Letters (a-z), numbers (0-9), underscores (_) and periods (.)",
+    error_username_taken: "Username taken :/",
+    error_username_couldNotCheck: "Something went wrong :/ Let's try again later.",
+
+    btn_save: "Save"
   },
   modalchangepassword: {
     title: "Change Password",
@@ -738,8 +761,8 @@ const locale = {
     alert_passwordReseted_text: "Now we can log in again. ;)",
   },
   sidebar: {
-    profile: "Profile",
-    profileMini: "P",
+    myaccount: "My Account",
+    myaccountMini: "MA",
     subscription: "Subscription",
     subscriptionMini: "S",
 
@@ -946,29 +969,6 @@ const locale = {
     phibo_305_down_p1: "Price reached an important technical resistance after a retracement of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Down.",
     phibo_305_down_p2: "Resistance Lines are aligned down, increasing the probability of starting a Wave 3.",
     phibo_72_down_p1: "Price reached a technical resistance after a retracement of 21% from the recent bottom and drew a Pivot Down, increasing the probability of, at least, testing last bottom again.",
-  },
-  userprofile: {
-    title_personalData: "Personal Data",
-    title_prefs: "Preferences",
-
-    input_email: "Email",
-    btn_changePassword: "Change Password",
-    input_username: "Username",
-    input_firstName: "First Name",
-    input_lastName: "Last Name",
-    input_nationality: "Nationality",
-    input_birthday: "Birthday",
-    input_birthday_hint: "I could send birthday gifts. Who knows...",
-
-    input_currency: "Main Currency",
-    input_currency_hint: "Do you invest in different countries? I could convert the currencies to your preferred one on dashboards and reports. ",
-    input_language: "Language",
-
-    error_username_minReq: "Letters (a-z), numbers (0-9), underscores (_) and periods (.)",
-    error_username_taken: "Username taken :/",
-    error_username_couldNotCheck: "Something went wrong :/ Let's try again later.",
-
-    btn_save: "Save"
   },
   usersubscription: {
     label_monthly: "Monthly",
