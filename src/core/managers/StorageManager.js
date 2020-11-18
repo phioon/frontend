@@ -117,10 +117,12 @@ class StorageManager {
   static async setItem(sKey, value) {
     if (cacheStorageNotSupported) {
       // Cache Storage not supported! Using Local Storage...
+
       return localStorage.setItem(sKey, JSON.stringify(value))
     }
     else {
       // Cache Storage supported...
+
       let options = { headers: { "content-type": "application/json" } }
       return await cache.put(this.getRequestId(sKey), new Response(JSON.stringify(value), options))
     }
@@ -176,10 +178,12 @@ class StorageManager {
     else {
       if (cacheStorageNotSupported) {
         // Cache Storage not supported! Using Local Storage...
+
         localStorage.removeItem(sKey)
       }
       else {
         // Cache Storage supported...
+
         await cache.delete(this.getRequestId(sKey))
       }
     }
