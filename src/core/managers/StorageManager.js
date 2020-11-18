@@ -107,25 +107,46 @@ const strData = "data";                    // It goes into each sKey OR subKey
 const strModifiedTime = "modifiedTime";    // It goes into each sKey OR subKey
 
 const err404 = { status: 404, message: "Storage is not managed: " }
-
-let isStorageDisabled = false
+var cacheStorageNotSupported = undefined
 
 class StorageManager {
   // CRUD
   static getRequestId(key) {
     return `/cache/${key}.json`
   }
-  static async setItem(key, value) {
-    let options = { headers: { 'content-type': 'application/json' } }
-    return await cache.put(this.getRequestId(key), new Response(JSON.stringify(value), options))
+  static async setItem(sKey, value) {
+    if (cacheStorageNotSupported) {
+      // Cache Storage not supported! Using Local Storage...
+      return localStorage.setItem(sKey, JSON.stringify(value))
+    }
+    else {
+      // Cache Storage supported...
+      let options = { headers: { "content-type": "application/json" } }
+      return await cache.put(this.getRequestId(sKey), new Response(JSON.stringify(value), options))
+    }
   }
   static async getItem(sKey, subKey) {
-    let result = await cache.match(this.getRequestId(sKey))
+    let result = undefined
 
-    if (result) {
-      result = await result.json()
-      if (subKey)
-        result = result[subKey]
+    if (cacheStorageNotSupported) {
+      // Cache Storage not supported! Using Local Storage...
+
+      result = localStorage.getItem(sKey)
+      if (result) {
+        result = JSON.parse(result)
+        if (subKey)
+          result = result[subKey]
+      }
+    }
+    else {
+      // Cache Storage supported...
+
+      result = await cache.match(this.getRequestId(sKey))
+      if (result) {
+        result = await result.json()
+        if (subKey)
+          result = result[subKey]
+      }
     }
 
     return result
@@ -153,7 +174,14 @@ class StorageManager {
       await this.setItem(sKey, sItem)
     }
     else {
-      await cache.delete(this.getRequestId(sKey))
+      if (cacheStorageNotSupported) {
+        // Cache Storage not supported! Using Local Storage...
+        localStorage.removeItem(sKey)
+      }
+      else {
+        // Cache Storage supported...
+        await cache.delete(this.getRequestId(sKey))
+      }
     }
   }
   static async removeData(sKey, subKey) {
@@ -322,8 +350,10 @@ class StorageManager {
       cache = await window.caches.open(cacheId)
     else if ('caches' in self)
       cache = await self.caches.open(cacheId)
-    else
+    else {
+      cacheStorageNotSupported = true
       console.log(`Cache Storage not supported.`)
+    }
 
     for (let [k0, v0] of Object.entries(config)) {
       for (let [k1, v1] of Object.entries(v0)) {
