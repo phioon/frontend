@@ -80,6 +80,7 @@ const locale = {
   confirmemail: {
     card_header: "Confirmação de E-mail",
     btn_login: "Ir para Login",
+    btn_request: "Solicite um novo e-mail",
 
     alert_emailConfirmed_title: "E-mail verificado!",
     alert_emailConfirmed_text: "Agora é só curtir o app. ;)"
@@ -241,7 +242,6 @@ const locale = {
     btn_signUp: "Criar Conta",
     btn_forgotPassword: "Esqueceu a Senha",
     btn_resendEmail: "Reenviar E-mail",
-
 
     label_emailSent: "Envei um e-mail para você com instruções para confirmação de seu e-mail. Dê uma olhada lá, por gentileza. ;)"
   },
@@ -642,10 +642,18 @@ const locale = {
     label_rows: "linhas",
   },
   register: {
+    alert_generalErrorTitle: "Algo deu errado...",
+    alert_tryAgain: "Ooops... Me perdoe. :( Poderia tentar novamente?",
+    alert_404or50X: "Ooops... Me perdoe. :( Parece que meu time teve dificuldade para processar sua requisição.",
+    alert_couldNotSendRequest: "Não estou conseguindo enviar sua requisição. Poderia verificar sua conexão com a internet e tentar novamente?",
+    alert_username: "Ooops... Um usuário com esse email já existe. Você esqueceu sua senha?",
+
     error_enterValidEmail: "Aqui, preciso de um e-mail válido.",
     error_username_minReq: "Pode conter letras (a-z), números (0-9), underscores (_) e pontos (.)",
     error_passwordLength: "Precisa ser no minimo 8 caracteres.",
     error_acceptPrivacyPolicy: "Para prosseguir, preciso que aceite nossa Politica de Privacidade.",
+
+    info_selectNationality: "Selecione um",
 
     leftArea_infoTitle1: "Praticidade",
     leftArea_infoDesc1: "Pare de perder tempo todos os dias analisando gráficos de dezenas de ativos. Deixa isso com a gente.",
@@ -656,7 +664,6 @@ const locale = {
 
     card_header: "Crie sua conta",
     info_orBeCassical: "ou vá em modo clássico mesmo",
-
     input_firstName: "Primeiro Nome",
     input_lastName: "Último Nome",
     input_email: "E-mail",
@@ -666,7 +673,6 @@ const locale = {
     input_nationality: "Nacionalidade",
     checkbox_iAgreeToThe: "Eu concordo com a",
     checkbox_privacyPolicy: "política de privacidade.",
-
     btn_createAccount: "Criar conta",
     btn_forgotPassword: "Esqueceu a Senha",
   },
@@ -849,6 +855,23 @@ const locale = {
     table_emptyData: "Nesse momento, não há ativos nesta condição técnica. Talvez mais tarde...",
     table_noDataFound: "hmm... Será que perdi algo?! Por favor, dê uma olhada nos seus filtros. ;)"
   },
+  subscriptions: {
+    basic_label: "BASIC",
+    basic_desc_p1: "É uma excelente opção para você que está procurando por funcionalidades básica.",
+    basic_desc_p2: "Então, preparei um pacote de recursos básicos que espero que atende às suas necessidades.",
+    basic_desc_p3: "E é grátis! \\o/",
+
+    premium_label: "PREMIUM",
+    premium_desc_p1: "Se você está procurando uma plataforma mais robusta, posso lhe mostrar nossa segunda opção.",
+    premium_desc_p2: "Graças à tecnologia de IA, pude aprender a fazer coisas que os humanos geralmente fazem e uma delas é a análise técnica",
+    premium_desc_p3: "",
+    premium_desc_p4: "Fui criado para ajudar os investidores a serem mais eficentes e seguros.",
+
+    platinum_label: "PLATINUM",
+    platinum_desc_p1: "Entendo ... Você é um grande jogador, procurando uma maneira de melhorar seus resultados.",
+    platinum_desc_p2: "Então, você precisa de uma plataforma inteligente para ativos em todo o mundo",
+    platinum_desc_p3: "Fui criado para ajudar os investidores a serem mais eficentes e seguros."
+  },
   subscriptionbasic: {
     label_title: "BASIC",
 
@@ -857,7 +880,7 @@ const locale = {
     label_perDay: "por dia",
     label_runs: "execuções",
 
-    label_stockExchange: "Bolsa de Valores",
+    label_stockExchange: "Bolsa de Valores23",
     label_stockExchange_hint: "Em breve, mais mercados serão inclusos no PHIOON. ;)",
     label_wallets: "Carteiras",
     label_staticPanels: "Painéis de Posições",
@@ -875,7 +898,7 @@ const locale = {
     label_perDay: "por dia",
     label_runs: "execuções",
 
-    label_stockExchange: "Bolsa de Valores",
+    label_stockExchange: "Bolsa de Valores2323",
     label_stockExchange_hint: "Em breve, mais mercados serão inclusos no PHIOON. ;)",
     label_stockExchanges: "Bolsas de Valores",
     label_stockExchanges_hint: "Em breve, mais mercados serão inclusos no PHIOON. ;)",
@@ -908,7 +931,8 @@ const locale = {
     label_strategies: "Estratégias",
     label_phiTrader: "Phi Trader",
 
-    btn_upgrade: "Upgrade"
+    btn_upgrade: "Upgrade",
+    btn_downgrade: "Downgrade"
   },
   subscriptioncurrent: {
     label_joinedOn: "MEMBRO DESDE",
@@ -994,6 +1018,7 @@ const locale = {
     btn_alert_confirm: "Confirmar",
     alert_confirming_title: "Você tem certeza?",
     alert_confirming_text: "Posições relacionadas a esta Carteira também serão removidas.",
+    alert_confirming_footer: "Depois de excluído, não é possível recuperá-lo.",
     alert_deleted_title: "Removida!",
     alert_deleted_text: "Sua Carteira foi removida com sucesso.",
 

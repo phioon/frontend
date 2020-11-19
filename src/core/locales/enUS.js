@@ -140,6 +140,7 @@ const locale = {
   },
   httptranslation: {
     wallet_limitReached: "Need more wallets to manage your investments? Go premium and enjoy it! ;)",
+    strategy_limitReached: "Neew more  strategies to improve your results? Go premium and enjoy it! ;)",
 
     user_profileUpdated: "Profile updated!",
 
@@ -157,6 +158,7 @@ const locale = {
 
     backend_serviceUnavailable: "Ooops... Sorry for that. :( My team asked for a couple minutes to solve an issue. I'll be working offline for a while. Requests may become slower.",
 
+    general_successCodes: "Done.",
     general_unauthorizedCodes: "I noticed you were away for a while and, for your own security, I decided to log you off. ;) Let's get back to work?",
     general_internalErrorCodes: "Ooops... Sorry for that. :( Seems like my team had a hard time processing your request.",
     general_noResponseReceived: "Ooops... Sorry for that. :( Seems like my team is out for lunch or they are just ignoring me... I'll keep trying to reach them.",
@@ -477,7 +479,6 @@ const locale = {
 
     input_type_buy: "BUY",
     input_type_sell: "SELL",
-
     input_wallet: "Wallet",
     input_asset: "Asset",
     input_amount: "Amount",
@@ -610,6 +611,7 @@ const locale = {
     btn_alert_confirm: "Confirm",
     alert_confirming_title: "Are you sure?",
     alert_confirming_text: "Once deleted, it's not possible to recover it back.",
+    alert_confirming_footer: "Once deleted, it's not possible to recover it back.",
     alert_deleted_title: "Deleted!",
     alert_deleted_text: "Position has been deleted.",
 
@@ -644,8 +646,7 @@ const locale = {
     alert_tryAgain: "Ooops... Sorry for that. :( Could you try again?",
     alert_404or50X: "Ooops... Sorry for that. :( Seems like my team had a hard time processing your request.",
     alert_couldNotSendRequest: "I couldn't send your request. Could you verify your internet connection and try again?",
-    alert_username:
-      "Ooops... A user with that email address already exists. Did you forget your password?",
+    alert_username:"Ooops... A user with that email address already exists. Did you forget your password?",
 
     error_enterValidEmail: "Here, I need a valid email.",
     error_username_minReq: "It can have letters (a-z), numbers (0-9) underscores (_) and periods (.)",
@@ -894,6 +895,9 @@ const locale = {
 
     label_month: "mon",
 
+    label_perDay: "per day",
+    label_runs: "runs",
+
     label_stockExchange: "Stock Exchange",
     label_stockExchange_hint: "Soon, other stock exchanges will be included in PHIOON. ;)",
     label_stockExchanges: "Stock Exchanges",
@@ -901,6 +905,7 @@ const locale = {
     label_wallets: "Wallets",
     label_dashboards: "Position Dashboards",
     label_dashboards_hint: "Auto-Refresh included.",
+    label_strategyRuns: "Strategy runs",
     label_strategies: "Strategies",
     label_phiTrader: "Phi Trader",
 
@@ -912,6 +917,9 @@ const locale = {
 
     label_month: "mon",
 
+    label_perDay: "per day",
+    label_runs: "runs",
+
     label_stockExchange: "Stock Exchange",
     label_stockExchange_hint: "Soon, other stock exchanges will be included in PHIOON. ;)",
     label_stockExchanges: "Stock Exchanges",
@@ -919,6 +927,7 @@ const locale = {
     label_wallets: "Wallets",
     label_dashboards: "Position Dashboards",
     label_dashboards_hint: "Auto-Refresh included.",
+    label_strategyRuns: "Strategy runs",
     label_strategies: "Strategies",
     label_phiTrader: "Phi Trader",
 
@@ -957,6 +966,7 @@ const locale = {
     "btl_ema_7__trend_ema_144+": "Price is getting more support and starting an upward trend. Moving Averages 34, 144 and 610 are aligned up and Price is breaking above EMA 34. Gains may vary between 7% and 23%.",
     "btl_ema_0__trend_ema_610-": "Price is getting more resistance and starting an downward trend. Moving Averages 34, 144 and 610 are aligned down and Price is breaking bellow EMA 34. Gains may vary between 7% and 16%'.",
     "btl_ema_0__trend_ema_144-": "Price is getting more resistance and starting an downward trend. Moving Averages 34, 144 and 610 are aligned down and Price is breaking bellow EMA 34. Gains may vary between 7% and 16%.",
+
     phibo_1292_up_p1: "Price reached a key technical support after a retracement of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Up.",
     phibo_1292_up_p2: "Support Lines are aligned up, increasing the probability of starting a long Wave 3.",
     phibo_305_up_p1: "Price reached an important technical support after a retracement of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Up.",
@@ -994,7 +1004,8 @@ const locale = {
     card_title: "Wallets",
     btn_newWallet: "New Wallet",
 
-    table_noDataFound: "Don't have a Wallet yet? Create it clicking on the button at your right. ;)",
+    table_noDataFound: "hmm... I didn't find any wallets with these filters. Did I miss something?. ;)",
+    table_emptyData: "Don't have a Wallet yet? Create it clicking on the button at your right. ;)",
 
     header_name: "Name",
     header_balance: "Balance",
