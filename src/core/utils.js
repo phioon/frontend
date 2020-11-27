@@ -388,6 +388,7 @@ export function substringText(text, maxLength) {
   return text
 }
 export function getInitials(fullName) {
+  
   var names = trim(String(fullName)).split(" ")
   var fisrtName = names.shift().toUpperCase()
   var lastName = names.pop().toUpperCase()
@@ -397,9 +398,10 @@ export function getInitials(fullName) {
   return initials
 }
 export function getFirstAndLastName(fullName) {
+  
   let maxLength = 18
 
-  let names = String(fullName).split(" ")
+  let names = trim(String(fullName)).split(" ")
   let firstName = names.shift()
   let lastName = names.pop()
 

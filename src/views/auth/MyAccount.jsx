@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { trim } from "jquery";
 // reactstrap components
 import {
   Button,
@@ -29,7 +30,8 @@ import {
   verifyLength,
   verifyOnlyLetters,
   verifyUsernameStr,
-  getInitials
+  getInitials,
+  getFirstAndLastName
 } from "../../core/utils";
 
 class MyAccount extends React.Component {
@@ -80,12 +82,21 @@ class MyAccount extends React.Component {
   async prepareRequirements() {
     await this.prepareUserData()
   }
+
+  returnUserInitals(user) {
+    let name = getFirstAndLastName(`${user.first_name} ${user.last_name}`)
+
+    let userInitials = getInitials(name)
+
+    return userInitials
+  }
+
   async prepareUserData() {
     let { getString, prefs: prefsFromProps } = this.props;
     let { personalData, preferences } = this.state;
 
     let user = await this.props.managers.auth.instantUser()
-    user.initials = getInitials(`${user.first_name} ${user.last_name}`)
+    user.initials = this.returnUserInitals(user)
 
     for (var [k, v] of Object.entries(user)) {
       if (Object.keys(personalData.data).includes(k))
@@ -261,10 +272,25 @@ class MyAccount extends React.Component {
     let obj_data = deepCloneObj(obj.data)
 
     for (let [k, v] of Object.entries(obj_data)) {
-      if (typeof v === "object") {
-        // Data from Selects {value: "", label: ""} must be readable for the API. So, just considers the field 'value'
-        obj_data[k] = v ? v.value : v
+
+      switch (k) {
+        case "birthday":
+          obj_data[k] = TimeManager.getDateString(v)
+          break;
+        case "first_name":
+          obj_data[k] = trim(v)
+          break;
+        case "last_name":
+          obj_data[k] = trim(v)
+          break;
+        default:
+          if (typeof v === "object") {
+            // Data from Selects {value: "", label: ""} must be readable for the API. So, just considers the field 'value'
+            obj_data[k] = v ? v.value : v
+          }
+          break;
       }
+
     }
 
     await this.props.managers.auth.userUpdate(obj_data)

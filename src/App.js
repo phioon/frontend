@@ -43,15 +43,16 @@ class App extends React.Component {
         currency: "BRL"
       },
 
-      isAuthenticated: undefined
+      user: undefined
     }
 
     this.setPrefs = this.setPrefs.bind(this)
+    this.setUser = this.setUser.bind(this)
     this.setAuthStatus = this.setAuthStatus.bind(this)
     this.setLocale = this.setLocale.bind(this)
     this.getHttpTranslation = this.getHttpTranslation.bind(this)
     this.managers = {
-      auth: new AuthManager(this.getHttpTranslation, this.setAuthStatus, this.setPrefs),
+      auth: new AuthManager(this.getHttpTranslation, this.setAuthStatus, this.setPrefs, this.setUser),
       app: new AppManager(this.getHttpTranslation),
       market: new MarketManager(this.getHttpTranslation),
       stripe: new StripeManager(this.getHttpTranslation)
@@ -69,6 +70,7 @@ class App extends React.Component {
     await storage.initiator()
 
     this.setAuthStatus(await this.managers.auth.isUserAuthenticated())
+    
   }
 
   async notify(place, color, icon = "nc-icon nc-bell-55", msgId, msgText, autoDismiss = 7) {
@@ -133,6 +135,11 @@ class App extends React.Component {
 
       this.setState({ prefs })
     }
+  }
+
+  // Set User
+  setUser(user) {
+     this.setState({ user })
   }
 
   setLocale(newLocale) {
@@ -300,7 +307,7 @@ class App extends React.Component {
   }
 
   render() {
-    let { prefs, isAuthenticated } = this.state
+    let { prefs, user, isAuthenticated } = this.state
 
     return (
       <>
@@ -334,6 +341,7 @@ class App extends React.Component {
                     <AppLayout {...props}
                       managers={this.managers}
                       prefs={prefs}
+                      user={user}
                       getString={getTranslation}
                       getHttpTranslation={this.getHttpTranslation}
                       isAuthenticated={isAuthenticated}

@@ -6,10 +6,11 @@ var __user = undefined;
 var __token = undefined;
 
 class AuthManager {
-  constructor(getHttpTranslation, setAuthStatus, setPrefs) {
+  constructor(getHttpTranslation, setAuthStatus, setPrefs, setUser) {
     this.getHttpTranslation = getHttpTranslation
     this.setAuthStatus = setAuthStatus
     this.setPrefs = setPrefs
+    this.setUser = setUser
 
     this.sModule = "auth"
     this.apis = {
@@ -177,11 +178,9 @@ class AuthManager {
     if (result.status == 200) {
       this.getHttpTranslation(result, "profileupdate", "user", true)
       result = result.data
-
       this.instantUser(result)
       let sUser = await StorageManager.getData(sKey)
       sUser.user = result
-
       await this.storePrefs(sUser.user.prefs)
       this.setPrefs(sUser.user.prefs)
       return await StorageManager.store(sKey, sUser)
@@ -269,7 +268,10 @@ class AuthManager {
   // Instant Data
   instantUser(data) {
     if (data)
+    {
       __user = data
+      this.setUser(data)
+    }
     else
       data = __user
 

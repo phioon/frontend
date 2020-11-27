@@ -38,10 +38,6 @@ class Sidebar extends React.Component {
     this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      user: undefined,
-      userName: null,
-      fullName: undefined,
-
       ...this.getCollapseStates(props.routes)
     }
   }
@@ -53,16 +49,14 @@ class Sidebar extends React.Component {
         suppressScrollY: false
       });
     }
-    this.prepareRequirements()
   }
 
-  prepareRequirements() {
-    let user = this.props.managers.auth.instantUser()
-    let fullName = getFirstAndLastName(`${user.first_name} ${user.last_name}`)
+  returnUserInitals(user) {
+    let name = getFirstAndLastName(`${user.first_name} ${user.last_name}`)
 
-    user.initials = getInitials(fullName)
+    let userInitials = getInitials(name)
 
-    this.setState({ user, fullName })
+    return userInitials
   }
 
   componentWillUnmount() {
@@ -172,9 +166,7 @@ class Sidebar extends React.Component {
     return this.props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
   };
   render() {
-    let { prefs, getString } = this.props;
-    let { user, fullName } = this.state;
-
+    let { prefs, getString, user } = this.props;
     return (
       <div
         className="sidebar"
@@ -204,7 +196,7 @@ class Sidebar extends React.Component {
         <div className="sidebar-wrapper" ref="sidebar">
           <div className="user">
             <div className="photo text-center centered">
-              <span>{user && user.initials}</span>
+              <span>{this.returnUserInitals(user)}</span>
             </div>
             <div className="info">
               <a
@@ -213,7 +205,7 @@ class Sidebar extends React.Component {
                 onClick={() => this.setState({ openAvatar: !this.state.openAvatar })}
               >
                 <span>
-                  {fullName}
+                  {getFirstAndLastName(`${user.first_name} ${user.last_name}`)}
                   <b className="caret" />
                 </span>
               </a>
@@ -246,6 +238,7 @@ export default Sidebar;
 
 Sidebar.propTypes = {
   prefs: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
   managers: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
 }
