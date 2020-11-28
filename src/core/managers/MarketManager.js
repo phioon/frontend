@@ -553,8 +553,6 @@ class MarketManager {
       }
     }
 
-    // console.log(`notCachedInstances: ${notCachedInstances}`)
-
     let wsInfo = this.getApi("wsQuote")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)
     wsInfo.request += "latest/"
@@ -776,8 +774,6 @@ class MarketManager {
         return sItem
       }
     }
-
-    console.log(`notCachedInstances: ${notCachedInstances}`)
 
     let wsInfo = this.getApi("wsPhibo")
     wsInfo.request = wsInfo.request.replace("<timeInterval>", interval)

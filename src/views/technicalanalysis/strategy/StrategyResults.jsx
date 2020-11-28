@@ -60,6 +60,10 @@ class StrategyResults extends React.Component {
     let jsonRules = { and: [] }
 
     for (var [wsId, rules] of Object.entries(strategy.rules)) {
+
+      // Rules from Basic WS has different format if compared with Advanced WS...
+      rules = this.props.managers.strategy.standardizeWSRules(wsId, rules)
+
       for (var [variable, obj] of Object.entries(filters)) {
         // At this point, 'obj' is an object selected from a list: {value: "", label: ""}
         rules = this.props.managers.strategy.replaceVariable(rules, variable, obj.value)

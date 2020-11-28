@@ -165,6 +165,7 @@ const locale = {
     general_couldNotSendRequest: "I couldn't send your request. Could you check your internet connection and try again?",
   },
   indicators: {
+    constant: "Fixed Value",
     // Time Intervals
     any: "Any",
     d: "Daily",
@@ -173,6 +174,10 @@ const locale = {
     moving_average: "Moving Average",
     phibo: "Phibo PVPC",
     roc: "Rate of Change",
+    // Tools
+    comparison: "Comparison",
+    distance: "Distance",
+    slope: "Slope",
     // Quote
     open: "Open",
     high: "High",
@@ -182,6 +187,9 @@ const locale = {
     // Zero Line
     zero_line: "Zero Line",
     // Indicators
+    ema: "Exponential Moving Average",
+    sma: "Simple Moving Average",
+    // Instances
     sma_close7: "SMA 7",
     sma_close10: "SMA 10",
     sma_close20: "SMA 20",
@@ -224,6 +232,16 @@ const locale = {
     roc_emaclose610: "ROC EMA 610",
     roc_emaclose1292: "ROC EMA 1292",
     roc_emaclose2584: "ROC EMA 2584",
+
+    roc_smaclose7: "ROC SMA 7",
+    roc_smaclose10: "ROC SMA 10",
+    roc_smaclose20: "ROC SMA 20",
+    roc_smaclose21: "ROC SMA 21",
+    roc_smaclose30: "ROC SMA 30",
+    roc_smaclose50: "ROC SMA 50",
+    roc_smaclose55: "ROC SMA 55",
+    roc_smaclose100: "ROC SMA 100",
+    roc_smaclose200: "ROC SMA 200",
   },
   languages: {
     enUS: "English",
@@ -347,11 +365,68 @@ const locale = {
 
     btn_confirm: "Create",
   },
+  modalcomparisondetail: {
+    title: "Comparison",
+    label_intro_p1: "Use this tool to compare indicator values between each other.",
+    label_intro_p2: "You can also compare them with a fixed value.",
+
+    label_item1: "Indicator 1",
+    label_item2: "Indicator 2",
+
+    input_operator: "Op.",
+    input_operator_hint: "Operation to be made between these 2 values.",
+    input_interval: "Time Interval",
+    input_interval_hint: "Leave it ANY if you want to keep this strategy dynamic and reuse it on other time intervals.",
+    input_subcategory: "Category",
+    input_subcategory_hint: "Choose one of the available indicator category.",
+    input_indicator: "Type",
+    input_indicator_hint: "Which type of the selected indicator do you need?",
+    input_instance: "Indicator",
+    input_instance_hint: "Its value will be be used for the comparison.",
+    input_offset: "Offset",
+    input_offset_hint: "Default value is 0, which means the latest period (candle). If you select 1, I'll consider a period before and so on...",
+    input_constant: "Fixed Value",
+    input_constant_hint: "A value that should be used to compare with the other indicator's value.",
+
+    warning_couldUseBasicWS: "Looking at this rule, seems like it would be possible to move it to Basic or Transition Workspace... Your strategy would become faster to execute and easier to understand. ;)",
+    error_instancesAreEqual: "Hmm... Am I wrong or these 2 elements are the same? They will always be equal each other, unless you want to compare them between different Time Intervals...",
+
+    btn_add: "Add",
+    btn_save: "Save",
+  },
+  modaldistancedetail: {
+    title: "Distance",
+    label_intro_p1: "Use this tool to monitor how close 2 indicators should be to each other.",
+    label_intro_p2: "You can also monitor their distance to a fixed value.",
+
+    label_item1: "Indicator 1",
+    label_item2: "Indicator 2",
+
+    input_threshold: "Threshold",
+    input_threshold_hint: "How close should these indicators be to each other? I like to work with the value 1.214%.",
+    threshold_currency_hint: "Calculation: |v1 - v2|",
+    threshold_percentage_hint: "Calculation: |v1 - v2| / v1",
+    input_interval: "Time Interval",
+    input_interval_hint: "Leave it ANY if you want to keep this strategy dynamic and reuse it on other time intervals.",
+    input_subcategory: "Category",
+    input_subcategory_hint: "Choose one of the available indicator category.",
+    input_indicator: "Type",
+    input_indicator_hint: "Which type of the selected indicator do you need?",
+    input_instance: "Indicator",
+    input_instance_hint: "Its value will be be used for the comparison.",
+    input_offset: "Offset",
+    input_offset_hint: "Default value is 0, which means the latest period (candle). If you select 1, I'll consider a period before and so on...",
+    input_constant: "Fixed Value",
+    input_constant_hint: "A value that should be used to be compared to the other indicator's value.",
+
+    warning_usingCurrency: "Hmm... I prefer using percentage format to calculate distance. It would make your strategy work pretty well for any asset price range... Just a thought... ;)",
+    error_instancesAreEqual: "Hmm... Am I wrong or these 2 elements are the same? They will always be equal each other, unless you want to compare them between different Time Intervals...",
+
+    btn_add: "Add",
+    btn_save: "Save",
+  },
   modalmovingavgdetail: {
     title: "Moving Average",
-
-    label_ema: "Exponential",
-    label_sma: "Simple / Arithmetic",
 
     input_type: "Type",
     input_type_hint: "Which moving average are we talking about?",
@@ -411,6 +486,30 @@ const locale = {
     btn_add: "Add",
     btn_save: "Save",
   },
+  modalslopedetail: {
+    title: "Slope",
+    label_intro_p1: "Use this tool to set an expected slope for a specific indicator.",
+    label_intro_p2: "It could be an upward or downward slope. What do you want to see on the chart?",
+
+    input_interval: "Time Interval",
+    input_interval_hint: "Leave it ANY if you want to keep this strategy dynamic and reuse it on other time intervals.",
+    input_subcategory: "Category",
+    input_subcategory_hint: "Choose one of the available indicator category.",
+    input_indicator: "Indicator",
+    input_indicator_hint: "Which indicator are we talking about?",
+    input_periods: "Periods",
+    input_periods_hint: "Amount of periods considered to calculate this indicator.",
+    input_offset: "Offset",
+    input_offset_hint: "Default value is 0, which means the latest period (candle). If you select 1, I'll consider a period before and so on...",
+    input_slope: "Slope",
+    input_slope_hint: "Set what is the expected behavior for this indicator.",
+
+    label_upward: "Upward",
+    label_downward: "Downward",
+
+    btn_add: "Add",
+    btn_save: "Save",
+  },
   modalstrategy: {
     title_create: "Create Strategy",
     title_update: "Update Strategy",
@@ -425,13 +524,15 @@ const locale = {
     label_basic_intro_p2: "Then, reorder them accordingly to the way they should appear on a chart.",
 
     label_advanced: "Advanced",
-    label_advanced_intro_p1: "Is there something you couldn't do on Basic mode? No problem, you can aggregate the best of both modes...",
+    label_advanced_intro_p1: "Advanced workspace has been created to complement the other workspaces...",
+    label_advanced_intro_p2: "Use the following tools to make your Strategy even more powerful.",
+    label_advanced_intro: "Bring out the big guns into this area... Then, reorder them to keep it organized ;)",
 
     input_name: "Name",
     input_logic: "Logic",
     label_logic_dynamic: "Dynamic",
     label_logic_static: "Static",
-    input_logic_hint: "A Dynamic Strategy can be applied to any time interval (d, m60). It becomes Static if the time interval is set in one the rules.",
+    input_logic_hint: "A Dynamic Strategy can be applied to any time interval (w, d, m60...). It becomes Static if a specific interval is set for one of the rules.",
     input_description: "Description",
     label_description_placeholder: "A detailed description may help other users understand how your Strategy works...",
     input_public: "Public",
@@ -806,8 +907,8 @@ const locale = {
 
     input_stockExchange: "Stock Exchange",
     input_stockExchange_hint: "Which Stock Exchange are we talking about?",
-    input_timeInterval: "Interval",
-    input_timeInterval_hint: "Which time interval the Strategy's rules should be applied in?",
+    input_interval: "Interval",
+    input_interval_hint: "Which time interval the Strategy's rules should be applied in?",
 
     btn_alert_cancel: "Cancel",
     btn_alert_confirm: "Confirm",
@@ -826,15 +927,15 @@ const locale = {
     icon_type_sell_hint: "Sale Strategy.",
 
     label_cat_basic: "Basic",
-    label_cat_basic_hint: "It looks for a specific ordering in the latest period (candle) only.",
+    label_cat_basic_hint: "It looks for a specific ordering in the latest period (candle).",
     label_cat_transition: "Transition",
     label_cat_transition_hint: "It looks for moviments in the last 2 periods (candles). Example: \"Price overcoming EMA 34\".",
     label_cat_advanced: "Advanced",
-    label_cat_advanced_hint: "It's well planned to catch specific moviments.",
+    label_cat_advanced_hint: "It's well planned to find specific moviments and behaviors.",
 
     label_logic: "Type",
     label_dynamic: "Dynamic",
-    label_dynamic_hint: "It can be completly applied to any time interval (weekly, daily, m60...)",
+    label_dynamic_hint: "It can be completely applied to any time interval (weekly, daily, m60...)",
     label_static: "Static",
     label_static_hint: "Some rules are fixed to a specific time interval.",
     label_category: "Category",

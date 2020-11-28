@@ -64,7 +64,7 @@ class Strategies extends React.Component {
 
       cWallets: 0,
       stockExchangeOptions: [],
-      timeIntervalOptions: [],
+      intervalOptions: [],
 
       strategies: [],
       sStrategyNames: [],
@@ -131,7 +131,7 @@ class Strategies extends React.Component {
     let wallets = await this.props.managers.app.walletList()
     let stockExchanges = getDistinctValuesFromList(wallets.data, "se_short")
     let stockExchangeOptions = []
-    let timeIntervalOptions = []
+    let intervalOptions = []
 
     for (var se_short of stockExchanges) {
       let stockExchange = await this.props.managers.market.stockExchangeRetrieve(se_short)
@@ -149,20 +149,20 @@ class Strategies extends React.Component {
 
     for (var indicator of iItems)
       for (var instance of indicator.instances)
-        if (!retrieveObjFromObjList(timeIntervalOptions, "value", instance.interval)) {
+        if (!retrieveObjFromObjList(intervalOptions, "value", instance.interval)) {
           let option = {
             value: instance.interval,
             label: getString(prefs.locale, "indicators", instance.interval)
           }
-          timeIntervalOptions.push(option)
+          intervalOptions.push(option)
 
           // Default option
           if (option.value == "d")
-            this.onSelectChange("timeInterval", option)
+            this.onSelectChange("interval", option)
         }
 
 
-    this.setState({ cWallets: wallets.data.length, stockExchangeOptions, timeIntervalOptions })
+    this.setState({ cWallets: wallets.data.length, stockExchangeOptions, intervalOptions })
   }
   async prepareCarousel() {
     // 1. Strategies
@@ -273,19 +273,17 @@ class Strategies extends React.Component {
 
         newState.selected.filters.general.stockExchange = value
         break;
-      case "timeInterval":
+      case "interval":
         if (newState.selected.filters.variables.interval !== value)
           runStrategy = true
 
         newState.selected.filters.variables.interval = value
         break;
-      default:
-        break;
     }
 
     this.setState(newState)
 
-    if (runStrategy && this.state.selected.strategy.id) {
+    if (runStrategy && newState.selected.strategy.id) {
       // If a Strategy is selected, for each select change, run it again.
       this.runClick(this.state.selected.strategy)
     }
@@ -413,7 +411,7 @@ class Strategies extends React.Component {
 
       cWallets,
       stockExchangeOptions,
-      timeIntervalOptions,
+      intervalOptions,
 
       sStrategyNames,
       alert,
@@ -576,21 +574,21 @@ class Strategies extends React.Component {
                     {/* Time Interval */}
                     <Col xl="2" lg="3" md="3" xs="6">
                       <FormGroup>
-                        <label>{getString(prefs.locale, this.compId, "input_timeInterval")}
+                        <label>{getString(prefs.locale, this.compId, "input_interval")}
                           {" "}
-                          <i id={"input_timeInterval_hint"} className="nc-icon nc-alert-circle-i" />
+                          <i id={"input_interval_hint"} className="nc-icon nc-alert-circle-i" />
                         </label>
-                        <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_timeInterval_hint"}>
-                          {getString(prefs.locale, this.compId, "input_timeInterval_hint")}
+                        <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_interval_hint"}>
+                          {getString(prefs.locale, this.compId, "input_interval_hint")}
                         </UncontrolledTooltip>
                         <Select
                           className="react-select"
                           classNamePrefix="react-select"
-                          name="timeInterval"
+                          name="interval"
                           placeholder={getString(prefs.locale, "generic", "input_select")}
                           value={selected.filters.variables.interval}
-                          options={timeIntervalOptions}
-                          onChange={value => this.onSelectChange("timeInterval", value)}
+                          options={intervalOptions}
+                          onChange={value => this.onSelectChange("interval", value)}
                         />
                       </FormGroup>
                     </Col>

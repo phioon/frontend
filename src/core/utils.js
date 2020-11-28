@@ -58,7 +58,7 @@ export function retrieveObjFromObjList(objList, keyField = "id", value) {
       return obj
   return null
 }
-export function applyFilterToObjList(objList, filters = { field: undefined }) {
+export function applyFilterToObjList(objList, filters = { field: [undefined] }) {
   // Filter object and return only the matching occurrencies
   let data = []
 
@@ -68,7 +68,7 @@ export function applyFilterToObjList(objList, filters = { field: undefined }) {
     // Apply filter
     for (var [k, v] of Object.entries(filters))
       // Object 'filters' is not empty
-      if (obj[k] == v)
+      if (v.includes(obj[k]))
         push = true
       else {
         push = false
@@ -283,18 +283,19 @@ export function convertMaskedStringToFloat(strNumber, currency) {
   let number = String(strNumber).replace(/[^0-9.,]/g, "")
 
   if (currency.decimal_symbol == ",") {
-    number = number.replace(/\./g, "")    // Firstly, remove thousands separators (if there is any)
+    number = number.replace(/\./g, "")    // Firstly, remove thousand separators (if there is any)
     number = number.replace(/\,/g, ".")   // Then, replace decimal separator ',' for '.'
   }
   else
-    number = number.replace(/\,/g, "")    // Remove thousands separators. Decimal separator is already OK because it's a '.' already.
+    number = number.replace(/\,/g, "")    // Remove thousand separators. Decimal separator is OK because it's a '.' already.
   return Number(number)
 }
 export function convertFloatToPercentage(number, decimal_symbol) {
+  number = Number(number)
   let strNumber = String(number).replace(/[^0-9-.,]/g, "")
   let result = ""
 
-  if (decimal_symbol == ",")
+  if (decimal_symbol === ",")
     strNumber = strNumber.replace(/\./g, ",")
 
   result += strNumber + " %"
@@ -302,12 +303,13 @@ export function convertFloatToPercentage(number, decimal_symbol) {
   return result
 }
 export function convertFloatToCurrency(number, currency) {
+  number = Number(number)
   let strNumber = String(number).replace(/[^0-9-.,]/g, "")
   let strInt = String(number).replace(/[^0-9-.,]/g, "")
   let strDecimal = "00"
   let result = ""
 
-  if (number % 1 != 0) {
+  if (number % 1 !== 0) {
     strInt = strNumber.substring(0, strNumber.indexOf("."))
     strDecimal = strNumber.substring(strNumber.indexOf(".") + 1)
 
@@ -373,6 +375,20 @@ export function round(value, decimals) {
   }
 
   return value
+}
+export function distance(v1, v2, threshold) {
+  let distance = v1 - v2
+
+  if (threshold.perc) {
+    distance = distance / v1
+    threshold = threshold.perc / 100
+  }
+  else
+    threshold = threshold.const
+
+  distance = Math.abs(distance)
+
+  return distance <= threshold
 }
 
 // String
@@ -442,6 +458,8 @@ export function verifyGreaterThan(value, gt) {
 }
 // function that verifies if a string has a given length or not
 export function verifyLength(value, minLen, maxLen = undefined) {
+  value = String(value);
+
   if (value.length >= minLen) {
     if (maxLen) {
       if (value.length <= maxLen)
@@ -462,7 +480,7 @@ export function verifyUsernameStr(value) {
 }
 // function that verifies if number is a integer
 export function verifyIfInteger(value) {
-  if (value % 1 == 0)
+  if (value % 1 === 0)
     return true;
   return false;
 }

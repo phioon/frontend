@@ -165,6 +165,7 @@ const locale = {
     general_couldNotSendRequest: "Não estou conseguindo enviar sua requisição. Poderia verificar sua conexão com a internet e tentar novamente?",
   },
   indicators: {
+    constant: "Valor Fixo",
     // Time Intervals
     any: "Qualquer",
     d: "Diário",
@@ -172,7 +173,11 @@ const locale = {
     quote: "Cotação",
     moving_average: "Média Móvel",
     phibo: "Phibo PVPC",
-    roc: "Taxa de Variação",
+    roc: "Taxa de Variação (ROC)",
+    // Tools
+    comparison: "Comparação",
+    distance: "Distância",
+    slope: "Inclinação",
     // Quote
     open: "Abertura",
     high: "Máxima",
@@ -182,6 +187,9 @@ const locale = {
     // Zero Line
     zero_line: "Linha Zero",
     // Indicators
+    ema: "Média Móvel Exponencial",
+    sma: "Média Móvel Simples",
+    // Instances
     sma_close7: "MMA 7",
     sma_close10: "MMA 10",
     sma_close20: "MMA 20",
@@ -224,6 +232,16 @@ const locale = {
     roc_emaclose610: "ROC MME 610",
     roc_emaclose1292: "ROC MME 1292",
     roc_emaclose2584: "ROC MME 2584",
+
+    roc_smaclose7: "ROC MMA 7",
+    roc_smaclose10: "ROC MMA 10",
+    roc_smaclose20: "ROC MMA 20",
+    roc_smaclose21: "ROC MMA 21",
+    roc_smaclose30: "ROC MMA 30",
+    roc_smaclose50: "ROC MMA 50",
+    roc_smaclose55: "ROC MMA 55",
+    roc_smaclose100: "ROC MMA 100",
+    roc_smaclose200: "ROC MMA 200",
   },
   languages: {
     enUS: "English",
@@ -347,11 +365,68 @@ const locale = {
 
     btn_confirm: "Criar",
   },
+  modalcomparisondetail: {
+    title: "Comparação",
+    label_intro_p1: "Use esta ferramenta para comparar os valores de dois indicadores.",
+    label_intro_p2: "Você também pode compara-los com um valor fixo qualquer.",
+
+    label_item1: "Indicador 1",
+    label_item2: "Indicador 2",
+
+    input_operator: "Op.",
+    input_operator_hint: "Operação a ser realizada entre estes dois valores.",
+    input_interval: "Tempo Gráfico",
+    input_interval_hint: "Deixe este campo em QUALQUER se você quer manter esta estratégia dinâmica e reutiliza-la em outros tempos gráficos.",
+    input_subcategory: "Categoria",
+    input_subcategory_hint: "Escolha a categoria do indicador..",
+    input_indicator: "Tipo",
+    input_indicator_hint: "Estamos falando de qual tipo/subcategoria?",
+    input_instance: "Indicador",
+    input_instance_hint: "Seu valor será utilizado na comparação.",
+    input_offset: "Deslocamento",
+    input_offset_hint: "Valor padrão é 0, o que significa o período (candle) mais recente. Se você selecionar 1, eu vou considerar um período anterior e por aí vai...",
+    input_constant: "Valor Fixo",
+    input_constant_hint: "Um valor numérico a ser comparado com o valor do outro indicador.",
+
+    warning_couldUseBasicWS: "Analisando esta regra, parece que ela poderia ser realizada utilizando as áreas de trabalho Básica ou Transição... Sua estratégia executaria mais rápido, além de ficar mais simples.",
+    error_instancesAreEqual: "Hmm... Eu estou enganado ou estes 2 elementos são iguais? Eles vão ser sempre iguais um ao outro, a não ser que você queira compara-los entre diferentes intervalos de tempo ou deslocamentos...",
+
+    btn_add: "Adicionar",
+    btn_save: "Salvar",
+  },
+  modaldistancedetail: {
+    title: "Distância",
+    label_intro_p1: "Use esta ferramenta para monitorar o quão perto 2 indicadores devem estar um do outro.",
+    label_intro_p2: "Você também pode monitorar sua distância em relação a um valor fixo qualquer.",
+
+    label_item1: "Indicador 1",
+    label_item2: "Indicador 2",
+
+    input_threshold: "Distância Máxima",
+    input_threshold_hint: "Quão próximo estes indicadores devem estar um do outro? Particularmente, eu gosto de trabalhar com o valor 1.214% ;).",
+    threshold_currency_hint: "Cálculo: |v1 - v2|",
+    threshold_percentage_hint: "Cálculo: |v1 - v2| / v1",
+    input_interval: "Tempo Gráfico",
+    input_interval_hint: "Deixe este campo em QUALQUER se você quer manter esta estratégia dinâmica e reutiliza-la em outros tempos gráficos.",
+    input_subcategory: "Categoria",
+    input_subcategory_hint: "Escolha a categoria do indicador..",
+    input_indicator: "Tipo",
+    input_indicator_hint: "Estamos falando de qual tipo/subcategoria?",
+    input_instance: "Indicador",
+    input_instance_hint: "Seu valor será utilizado na comparação.",
+    input_offset: "Deslocamento",
+    input_offset_hint: "Valor padrão é 0, o que significa o período (candle) mais recente. Se você selecionar 1, eu vou considerar um período anterior e por aí vai...",
+    input_constant: "Valor Fixo",
+    input_constant_hint: "Um valor numérico a ser comparado com o valor do outro indicador.",
+
+    warning_usingCurrency: "Hmm... Para calcular distância, eu prefiro utilizar porcentagens. Isso faz com que sua estratégia funcione bem em qualquer faixa de preço do ativo... Apenas uma dica ;)",
+    error_instancesAreEqual: "Hmm... Eu estou enganado ou estes 2 elementos são iguais? Eles vão ser sempre iguais um ao outro, a não ser que você queira compara-los entre diferentes intervalos de tempo ou deslocamentos...",
+
+    btn_add: "Adicionar",
+    btn_save: "Salvar",
+  },
   modalmovingavgdetail: {
     title: "Média Móvel",
-
-    label_ema: "Exponencial",
-    label_sma: "Simples / Aritmética",
 
     input_type: "Tipo",
     input_type_hint: "Estamos falando de qual média móvel?",
@@ -411,6 +486,30 @@ const locale = {
     btn_add: "Adicionar",
     btn_save: "Salvar",
   },
+  modalslopedetail: {
+    title: "Inclinação",
+    label_intro_p1: "Use esta ferramenta para monitorar a inclinação do indicador.",
+    label_intro_p2: "Esta inclinação pode ser positiva ou negativa. O que você quer ver no gráfico?",
+
+    input_interval: "Tempo Gráfico",
+    input_interval_hint: "Deixe este campo em QUALQUER se você quer manter esta estratégia dinâmica e reutiliza-la em outros tempos gráficos.",
+    input_subcategory: "Categoria",
+    input_subcategory_hint: "Escolha a categoria do indicador..",
+    input_indicator: "Indicador",
+    input_indicator_hint: "Estamos falando de qual indicador?",
+    input_periods: "Períodos",
+    input_periods_hint: "Quantidade de períodos considerados para calcular este indicador.",
+    input_offset: "Deslocamento",
+    input_offset_hint: "Valor padrão é 0, o que significa o período (candle) mais recente. Se você selecionar 1, eu vou considerar um período anterior e por aí vai...",
+    input_slope: "Inclinação",
+    input_slope_hint: "Defina qual a inclinação esperada no gráfico para este indicador.",
+
+    label_upward: "Positiva",
+    label_downward: "Negativa",
+
+    btn_add: "Adicionar",
+    btn_save: "Salvar",
+  },
   modalstrategy: {
     title_create: "Criar Estratégia",
     title_update: "Atualizar Estratégia",
@@ -421,17 +520,19 @@ const locale = {
 
     label_basic: "Básica",
     label_transition: "Transição",
-    label_basic_intro_p1: "Clique ou mova os seguintes indicadores para a Área de Trabalho desejada...",
+    label_basic_intro_p1: "Clique ou arraste nos seguintes indicadores para a Área de Trabalho desejada...",
     label_basic_intro_p2: "Depois, realinhe os indicadores da forma como eles deveriam aparecer em um gráfico.",
 
     label_advanced: "Avançada",
-    label_advanced_intro_p1: "As outras Áreas de Trabalho não foram suficientes? Sem problemas, é possível aproveitar o melhor de cada uma delas...",
+    label_advanced_intro_p1: "A Área de Trabalho Avançada foi desenvolvida para complementar as outras áreas...",
+    label_advanced_intro_p2: "Utilize as ferramentas abaixo para deixar sua Estratégia ainda mais poderosa.",
+    label_advanced_intro: "Arraste as ferramentas para esta área... Depois, reordene-as para deixar tudo organizado ;)",
 
     input_name: "Nome",
     input_logic: "Lógica",
     label_logic_dynamic: "Dinâmica",
     label_logic_static: "Estática",
-    input_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico. Ela se torna Estática caso o tempo gráfico seja forçado em uma das regras.",
+    input_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico (s, d, m60...). Ela se torna Estática se um tempo gráfico específico é selecionado em uma das regras.",
     input_description: "Descrição",
     label_description_placeholder: "Uma descrição bem escrita pode ajudar outros usuários a entenderem melhor como sua Estratégia funciona...",
     input_public: "Pública",
@@ -806,8 +907,8 @@ const locale = {
 
     input_stockExchange: "Bolsa de Valores",
     input_stockExchange_hint: "Estamos falando de qual Bolsa de Valores?",
-    input_timeInterval: "Intervalo",
-    input_timeInterval_hint: "As regras da estratégia devem ser aplicada em qual tempo gráfico?",
+    input_interval: "Intervalo",
+    input_interval_hint: "As regras da estratégia devem ser aplicada em qual tempo gráfico?",
 
     btn_alert_cancel: "Cancelar",
     btn_alert_confirm: "Confirmar",
@@ -826,11 +927,11 @@ const locale = {
     icon_type_sell_hint: "Estratégia de Venda.",
 
     label_cat_basic: "Básica",
-    label_cat_basic_hint: "Verifica a ordem dos indicadores no último período (candle) apenas.",
+    label_cat_basic_hint: "Verifica a ordem dos indicadores no último período (candle).",
     label_cat_transition: "Transição",
     label_cat_transition_hint: "Procura por movimentos dentro dos 2 últimos períodos (candles). Exemplo: \"Preço superando MME 34.\"",
     label_cat_advanced: "Avançada",
-    label_cat_advanced_hint: "Geralmente, é bem planejada para identificar movimentos específicos.",
+    label_cat_advanced_hint: "Geralmente, é bem planejada para identificar movimentos/comportamentos específicos.",
 
     label_logic: "Lógica",
     label_dynamic: "Dinâmica",

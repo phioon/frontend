@@ -82,7 +82,7 @@ class ModalMovingAvgDetail extends React.Component {
     for (var value of distinctValues)
       typeOptions.push({
         value: value,
-        label: getString(prefs.locale, this.compId, ["label_" + value])
+        label: getString(prefs.locale, "indicators", value)
       })
 
     switch (action) {
@@ -113,7 +113,7 @@ class ModalMovingAvgDetail extends React.Component {
     this.onSelectChange("type", selectedType)
 
     // Periods
-    let filters = { indicator: selectedItem.indicator }
+    let filters = { indicator: [selectedItem.indicator] }
     let periodOptions = this.handleSelect("periods", filters)
     periodOptions = periodOptions.periodOptions
 
@@ -135,7 +135,7 @@ class ModalMovingAvgDetail extends React.Component {
       case "type":
         newState.indicator.states[fieldName] = "has-success"
 
-        filters = { indicator: value.value }
+        filters = { indicator: [value.value] }
         this.handleSelect("periods", filters)
         break;
       case "periods":
@@ -162,7 +162,7 @@ class ModalMovingAvgDetail extends React.Component {
 
         for (var obj of selection) {
           if (selectedItem && selectedItem.value == obj.value || !retrieveObjFromObjList(workspace, "value", obj.value)) {
-            // If it's a selected item (being updated) or it isn't within origin WS yet...
+            // It's a selected item (being updated) or it isn't within origin WS yet...
             newState.periodOptions.push({
               value: obj.periods,
               label: obj.periods
@@ -184,12 +184,12 @@ class ModalMovingAvgDetail extends React.Component {
   }
 
   getSelectedItem(indicator) {
-    // Based on selections made, tries to 
+    // Based on selections made, tries to retrieve one object
     let { items } = this.props;
 
     let filters = {
-      indicator: indicator.data.type.value,
-      periods: indicator.data.periods.value,
+      indicator: [indicator.data.type.value],
+      periods: [indicator.data.periods.value],
     }
 
     let filteredItems = applyFilterToObjList(items, filters)
@@ -320,7 +320,6 @@ ModalMovingAvgDetail.propTypes = {
   prefs: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
   managers: PropTypes.object.isRequired,
-  getHttpTranslation: PropTypes.func.isRequired,
 
   modalId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,

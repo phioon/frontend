@@ -136,13 +136,10 @@ class ModalPhiboDetail extends React.Component {
   }
 
   getSelectedItem(indicator) {
-    // Based on selections made, tries to 
+    // Based on selections made, tries to retrieve one object
     let { items } = this.props;
 
-    let filters = {
-      id: indicator.data.type.value,
-    }
-
+    let filters = { id: [indicator.data.type.value] }
     let filteredItems = applyFilterToObjList(items, filters)
 
     // The filtering above MUST return only 1 item
@@ -251,7 +248,6 @@ ModalPhiboDetail.propTypes = {
   prefs: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
   managers: PropTypes.object.isRequired,
-  getHttpTranslation: PropTypes.func.isRequired,
 
   modalId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
