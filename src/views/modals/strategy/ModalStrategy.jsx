@@ -74,7 +74,7 @@ class ModalStrategy extends React.Component {
       modal_distanceDetail_isOpen: false,
       modal_slopeDetail_isOpen: false,
 
-      activeWsMode: "advanced",
+      activeWsMode: "transition",
 
       iItems: [],
 
