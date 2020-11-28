@@ -328,6 +328,9 @@ class MyAccount extends React.Component {
       alert
     } = this.state;
 
+    console.log(TimeManager.getDateString(personalData.data.birthday, false))
+    console.log(personalData.data.birthday)
+
     return (
       <>
         <div className="content">
@@ -449,7 +452,7 @@ class MyAccount extends React.Component {
                               placeholder: this.props.getString(prefs.locale, "generic", "input_select")
                             }}
                             locale={getString(prefs.locale, "locales", prefs.locale)}
-                            value={personalData.data.birthday && TimeManager.getLocaleDateString(personalData.data.birthday, false)}
+                            value={personalData.data.birthday && TimeManager.getMoment(personalData.data.birthday, true)}
                             onChange={value => this.onSelectChange("personalData", "birthday", value)}
                             isValidDate={this.isDateValid}
                             timeFormat={false}
