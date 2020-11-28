@@ -27,11 +27,19 @@ import ReactCardFlip from 'react-card-flip';
 import ReactBSAlert from "react-bootstrap-sweetalert";
 // Used to create a Sortable container
 import SortableRulesBasic from "../../../components/sortables/SortableRulesBasic";
+import SortableRulesAdv from "../../../components/sortables/SortableRulesAdv";
 // react plugin used to create DropdownMenu for selecting items
 import Select from "react-select";
 
+// Indicators
 import ModalQuoteDetail from "./indicators/ModalQuoteDetail";
 import ModalMovingAvgDetail from "./indicators/ModalMovingAvgDetail";
+import ModalPhiboDetail from "./indicators/ModalPhiboDetail";
+// Tools
+import ModalComparisonDetail from "./tools/ModalComparisonDetail";
+import ModalDistanceDetail from "./tools/ModalDistanceDetail";
+import ModalSlopeDetail from "./tools/ModalSlopeDetail";
+
 import RulesExplainer from "./RulesExplainer";
 
 import LabelAlert from "../../../components/LabelAlert";
@@ -43,7 +51,6 @@ import {
   verifyLength,
   deepCloneObj,
 } from "../../../core/utils";
-import ModalPhiboDetail from "./indicators/ModalPhiboDetail";
 
 
 class ModalStrategy extends React.Component {
@@ -55,14 +62,19 @@ class ModalStrategy extends React.Component {
       isOpen: props.isOpen,
       isLoading: false,
 
-      action: props.action,
+      action: undefined,
 
       modal_chooseWS_isOpen: false,
+      // Subcategories
       modal_quoteDetail_isOpen: false,
       modal_movingAverageDetail_isOpen: false,
       modal_phiboDetail_isOpen: false,
+      // Tools
+      modal_comparisonDetail_isOpen: false,
+      modal_distanceDetail_isOpen: false,
+      modal_slopeDetail_isOpen: false,
 
-      activeWsMode: "basic",
+      activeWsMode: "advanced",
 
       iItems: [],
 
@@ -110,19 +122,25 @@ class ModalStrategy extends React.Component {
 
       selected: {
         action: undefined,
-        subcatId: undefined,
         workspace: undefined,
-        indicator: undefined
+
+        toolId: undefined,
+        indicators: undefined,
+
+        subcatId: undefined,
+        indicator: undefined,
       },
 
+      currency: { code: "BRL", symbol: "R$", thousands_separator_symbol: ".", decimal_symbol: "," },
       alertState: null,
       alertMsg: "",
     }
 
-    this.onWSCommit = this.onWSCommit.bind(this)
-    this.updateIndicatorClick = this.updateIndicatorClick.bind(this)
-    this.onSortableChange = this.onSortableChange.bind(this)
-    this.toggleModal = this.toggleModal.bind(this)
+    this.onWSCommit = this.onWSCommit.bind(this);
+    this.updateIndicatorClick = this.updateIndicatorClick.bind(this);
+    this.updateToolClick = this.updateToolClick.bind(this);
+    this.onSortableChange = this.onSortableChange.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
   }
   componentDidUpdate(prevProps) {
     if (prevProps.isOpen !== this.props.isOpen)
@@ -185,6 +203,8 @@ class ModalStrategy extends React.Component {
     let { selected } = this.state;
 
     selected.action = undefined
+
+    selected.toolId = undefined
     selected.subcatId = undefined
     selected.indicator = undefined
 
@@ -193,15 +213,40 @@ class ModalStrategy extends React.Component {
 
   async prepareRequirements() {
     let { prefs, getString, action, objData } = this.props;
-    let { iItems, strategy, selected } = this.state;
+    let { currency, iItems, strategy, selected } = this.state;
 
+    currency = await this.props.managers.app.currencyRetrieve(prefs.currency)
     iItems = await this.props.managers.market.indicatorData()
 
-    // iItems: Preparing to be read by Sortable
+    let distinctValues = []
+    let constant = "constant"
+    let constantObj = {
+      id: constant,
+      instances: [],
+      category: constant,
+      subcategory: constant,
+      indicator: constant,
+      periods: 0,
+      value: constant
+    }
+
     for (var obj of iItems) {
+      // iItems: Preparing to be read by Sortable (Basic WS)
       obj.value = obj.id
       obj.label = getString(prefs.locale, "indicators", obj.id)
+
+      // ManualInput: Getting all available intervals
+      for (var instance of obj.instances)
+        if (!distinctValues.includes(instance.interval)) {
+          distinctValues.push(instance.interval)
+
+          constantObj.instances.push({
+            name: `${instance.interval}_${constant}`,
+            interval: instance.interval
+          })
+        }
     }
+    iItems.push(constantObj)
 
     // Workspaces: Preparing to be read by List
     for (var obj of strategy.workspaces) {
@@ -209,7 +254,7 @@ class ModalStrategy extends React.Component {
       obj.label = getString(prefs.locale, this.compId, ["label_" + obj.id])
 
       // Default WS
-      if (obj.id == "basic_0")
+      if (obj.id === "basic_0")
         selected.workspace = obj
     }
 
@@ -220,11 +265,11 @@ class ModalStrategy extends React.Component {
       case "update":
         strategy = this.prepareToUpdate(iItems, strategy, objData)
         break;
-      default:
-        break;
     }
 
-    this.setState({ iItems, strategy, selected })
+    // console.log(iItems)
+
+    this.setState({ currency, iItems, strategy, selected })
   }
   prepareToCreate(iItems) {
     for (var obj of iItems) {
@@ -234,10 +279,12 @@ class ModalStrategy extends React.Component {
     }
   }
   prepareToUpdate(iItems, strategy, objData) {
+    let { getString, prefs } = this.props;
+    let { currency } = this.state;
     let wsRules = JSON.parse(objData.rules)
 
     for (var [wsId, rules] of Object.entries(wsRules)) {
-      let ws = this.props.managers.strategy.convertJSONRulesIntoWS(iItems, wsId, rules)
+      let ws = this.props.managers.strategy.convertJSONRulesIntoWS(getString, prefs, currency, iItems, wsId, rules)
 
       for (var item of ws.items) {
         strategy = this.onWSCommit("add", ws.id, item)
@@ -275,6 +322,7 @@ class ModalStrategy extends React.Component {
     return isValidated
   }
 
+  // onChanges
   onChange(value, stateName) {
     let newState = { strategy: this.state.strategy }
 
@@ -337,8 +385,8 @@ class ModalStrategy extends React.Component {
     this.setState(newState)
   }
 
-
-  onDragStart(e, subcatId) {
+  // [Subcategory] Drag and Drop
+  onDragSubcatStart(e, subcatId) {
     let { selected } = this.state;
 
     e.dataTransfer.setData("id", subcatId)
@@ -349,15 +397,33 @@ class ModalStrategy extends React.Component {
 
     this.setState({ selected, isDragging: true })
   }
-  onDrop(e, ws) {
+  onDropSubcat(e, ws) {
     this.setState({ isDragging: false })
     let subcatId = e.dataTransfer.getData("id");
 
     this.openSubcategoryDetail("add", ws, subcatId)
   }
+  // [Advanced Tools] Drag and Drop
+  onDragToolStart(e, toolId) {
+    let { selected } = this.state;
+
+    e.dataTransfer.setData("id", toolId)
+
+    selected.action = "add"
+    selected.toolId = toolId
+    selected.indicator = undefined
+
+    this.setState({ selected, isDragging: true })
+  }
+  onDropTool(e, ws) {
+    this.setState({ isDragging: false })
+    let toolId = e.dataTransfer.getData("id");
+
+    this.openToolDetail("add", ws, toolId)
+  }
 
   renderSubcategoryAsCard(iItems, subcatId) {
-    let filters = { subcategory: subcatId }
+    let filters = { subcategory: [subcatId] }
     iItems = applyFilterToObjList(iItems, filters)
     let subcategories = getDistinctValuesFromList(iItems, "subcategory")
 
@@ -367,7 +433,7 @@ class ModalStrategy extends React.Component {
           <Card
             draggable
             onClick={() => this.addSubcategoryClick(subcatId)}
-            onDragStart={(e) => this.onDragStart(e, subcatId)}
+            onDragStart={(e) => this.onDragSubcatStart(e, subcatId)}
             onDragEnd={() => this.setState({ isDragging: false })}
           >
             <CardBody className="centered">
@@ -381,11 +447,30 @@ class ModalStrategy extends React.Component {
       )
     });
   }
+  renderAdvancedToolsAsCard(toolId) {
+    return (
+      <Col xl="3" lg="4" md="6" sm="6" key={"card_" + toolId}>
+        <Card
+          draggable
+          onClick={() => this.addToolClick(toolId)}
+          onDragStart={(e) => this.onDragToolStart(e, toolId)}
+          onDragEnd={() => this.setState({ isDragging: false })}
+        >
+          <CardBody className="centered">
+            <i className="sortable-item-handle" />
+            <Button size="sm" className="btn-neutral">
+              {this.props.getString(this.props.prefs.locale, "indicators", toolId)}
+            </Button>
+          </CardBody>
+        </Card>
+      </Col>
+    )
+  }
   renderBasicWS(workspaces) {
     let { prefs, getString } = this.props;
     let { isDragging } = this.state;
 
-    let filters = { id: "basic_0" }
+    let filters = { id: ["basic_0"] }
     let reversedWS = applyFilterToObjList(workspaces.slice(), filters)
     reversedWS.reverse()
 
@@ -395,7 +480,7 @@ class ModalStrategy extends React.Component {
           <Card
             className={classnames("drop-area", isDragging && "dash-zone")}
             onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => this.onDrop(e, ws)}>
+            onDrop={(e) => this.onDropSubcat(e, ws)}>
             <CardHeader>
               <p className="card-category">{getString(prefs.locale, this.compId, ["label_" + ws.id])}</p>
               <div className="text-center">
@@ -451,7 +536,7 @@ class ModalStrategy extends React.Component {
     let { prefs, getString } = this.props;
     let { isDragging } = this.state;
 
-    let filters = { type: "basic" }
+    let filters = { type: ["basic"] }
     let reversedWS = applyFilterToObjList(workspaces.slice(), filters)
     reversedWS.reverse()
 
@@ -461,7 +546,7 @@ class ModalStrategy extends React.Component {
           <Card
             className={classnames("drop-area", isDragging && "dash-zone")}
             onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => this.onDrop(e, ws)}>
+            onDrop={(e) => this.onDropSubcat(e, ws)}>
             <CardHeader>
               <p className="card-category">{getString(prefs.locale, this.compId, ["label_" + ws.id])}</p>
               <div className="text-center">
@@ -517,17 +602,17 @@ class ModalStrategy extends React.Component {
     let { prefs, getString } = this.props;
     let { isDragging } = this.state;
 
-    let filters = { type: "basic" }
+    let filters = { type: ["advanced"] }
     let reversedWS = applyFilterToObjList(workspaces.slice(), filters)
     reversedWS.reverse()
 
     return reversedWS.map((ws) => {
       return (
-        <Col key={ws.id} lg="6">
+        <Col key={ws.id} lg="9">
           <Card
             className={classnames("drop-area", isDragging && "dash-zone")}
             onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => this.onDrop(e, ws)}>
+            onDrop={(e) => this.onDropTool(e, ws)}>
             <CardHeader>
               <p className="card-category">{getString(prefs.locale, this.compId, ["label_" + ws.id])}</p>
               <div className="text-center">
@@ -537,31 +622,72 @@ class ModalStrategy extends React.Component {
               </div>
               <hr />
             </CardHeader>
+            <CardBody>
+              <SortableRulesAdv
+                context={ws.id}
+                items={ws.items}
+                onUpdateItem={this.updateToolClick}
+                onRemoveItem={this.onWSCommit}
+                onSortableChange={this.onWSCommit} />
+            </CardBody>
           </Card>
         </Col>
       )
     })
   }
 
+  // [Subcategory] Clicks
   addSubcategoryClick(subcatId) {
-    let { selected } = this.state;
+    let { strategy, selected, activeWsMode } = this.state;
 
     selected.action = "add"
     selected.subcatId = subcatId
     selected.indicator = undefined
 
+    if (["basic", "transition"].includes(activeWsMode))
+      selected.workspace = retrieveObjFromObjList(strategy.workspaces, "id", "basic_0")
+    else if (activeWsMode === "advanced")
+      selected.workspace = retrieveObjFromObjList(strategy.workspaces, "id", "advanced")
+
     this.setState({ selected })
-    this.toggleModal("chooseWS")
+    if (activeWsMode === "transition")
+      this.toggleModal("chooseWS")
+    else
+      this.openSubcategoryDetail("add", selected.workspace, subcatId)
+
   }
   updateIndicatorClick(wsId, itemId) {
     let { strategy } = this.state;
 
     for (var ws of strategy.workspaces)
-      if (ws.id == wsId) {
+      if (ws.id === wsId) {
         let indicator = retrieveObjFromObjList(ws.items, "id", itemId)
         if (indicator)
           this.openSubcategoryDetail("update", ws, indicator.subcategory, indicator)
       }
+  }
+  // [Advanced Tools] Clicks
+  addToolClick(toolId) {
+    let { strategy, selected, activeWsMode } = this.state;
+
+    selected.action = "add"
+    selected.toolId = toolId
+    selected.indicator = undefined
+
+    if (activeWsMode === "basic")
+      selected.workspace = retrieveObjFromObjList(strategy.workspaces, "id", "basic_0")
+    else if (activeWsMode === "advanced")
+      selected.workspace = retrieveObjFromObjList(strategy.workspaces, "id", "advanced")
+
+    this.setState({ selected })
+    this.openToolDetail("add", selected.workspace, toolId)
+  }
+  updateToolClick(wsId, toolIndex) {
+    let { strategy } = this.state;
+
+    for (var ws of strategy.workspaces)
+      if (ws.id === wsId)
+        this.openToolDetail("update", ws, ws.items[toolIndex].toolId, toolIndex)
   }
 
   openSubcategoryDetail(action, ws, subcatId, indicator) {
@@ -573,8 +699,8 @@ class ModalStrategy extends React.Component {
     let modalId = undefined
 
     selected.action = action
-    selected.subcatId = subcatId
     selected.workspace = ws
+    selected.subcatId = subcatId
     selected.indicator = indicator
 
     this.setState({ selected })
@@ -598,6 +724,37 @@ class ModalStrategy extends React.Component {
     if (modalId)
       this.toggleModal(modalId)
   }
+  openToolDetail(action, ws, toolId, toolIndex) {
+    // [action, ws] are required for both operations: 'add' and 'update'
+    // [toolId] is required only to 'add' an indicator into a WS.
+    // [indicator] is required only to 'update' an indicator from a WS.
+
+    let { selected } = this.state;
+    let modalId = undefined
+
+    selected.action = action
+    selected.workspace = ws
+    selected.toolId = toolId
+    selected.toolIndex = toolIndex
+    // console.log(selected)
+
+    this.setState({ selected })
+
+    switch (toolId) {
+      case "comparison":
+        modalId = "comparisonDetail"
+        break;
+      case "distance":
+        modalId = "distanceDetail"
+        break;
+      case "slope":
+        modalId = "slopeDetail"
+        break;
+    }
+
+    if (modalId)
+      this.toggleModal(modalId)
+  }
 
   onWSChange(wsId, fieldName, value) {
     let { strategy } = this.state;
@@ -614,42 +771,35 @@ class ModalStrategy extends React.Component {
     strategy.data.rules = []
 
     for (var ws of strategy.workspaces)
-      if (ws.id == wsId) {
+      if (ws.id === wsId) {
         // WS Data
         switch (action) {
           case "add":
             ws = this.addIndicatorIntoWS(ws, item)
-
-            if (ws.id == "basic_1")
-              this.toggleNavLink("activeWsMode", "transition")
-            else if (ws.id == "advanced")
-              this.toggleNavLink("activeWsMode", "advanced")
-
             break;
           case "update":
             ws = this.saveIndicatorOnWS(ws, prevItemId, item)
             break;
           case "delete":
-            ws = this.deleteIndicatorFromWS(ws, item.id)
+            ws = this.deleteIndicatorFromWS(ws, item)
             break;
           case "sort":
-            // item here means 'items' (plural). It's triggered every time the items order is changed.
+            // item here means 'items' (plural). It's triggered every time the items are reordered.
             ws = this.onSortableChange(ws, item)
             break;
-          default:
-            break;
         }
-        // WS JSONRules and Strategy States
+        // WS JSONRules
         ws.rules = this.props.managers.strategy.convertWSIntoJSONRules(ws)
 
+        // Strategy states
         switch (ws.type) {
           case "basic":
             // BASIC WS
-            if (ws.items.length == 0) {
+            if (ws.items.length === 0) {
               // Basic WS has zero items
               delete strategy.states[wsId]
             }
-            else if (ws.items.length == 1) {
+            else if (ws.items.length === 1) {
               // Basic WS has only one item
               strategy.states[wsId] = ""
             }
@@ -660,16 +810,14 @@ class ModalStrategy extends React.Component {
             break;
           case "advanced":
             // ADVANCED WS
-            if (ws.items.length == 0) {
+            if (ws.items.length === 0) {
               // Advanced WS has zero items
               delete strategy.states[wsId]
             }
             else if (ws.items.length >= 1) {
-              // Advanced WS has at least 1 item. Now, a comparison is possible
+              // Advanced WS has at least 1 item.
               strategy.states[wsId] = "has-success"
             }
-            break;
-          default:
             break;
         }
       }
@@ -681,7 +829,7 @@ class ModalStrategy extends React.Component {
     strategy.isValidated = this.isValidated(strategy)
 
 
-    if (this.props.action == "update") {
+    if (this.props.action === "update") {
       strategy.patch.rules = strategy.data.rules
       strategy.patch.isDynamic = strategy.data.isDynamic
     }
@@ -696,15 +844,23 @@ class ModalStrategy extends React.Component {
     return ws
   }
   saveIndicatorOnWS(ws, prevItemId, item) {
+    // In Advanced WS, prevItemId can also be used as prevItemIndex
+
     for (var x = 0; x < ws.items.length; x++)
-      if (ws.items[x].id == prevItemId)
+      if (ws.type === "basic" && ws.items[x].id === prevItemId)
+        ws.items[x] = item
+      else if (ws.type === "advanced" && prevItemId === x)
         ws.items[x] = item
 
     return ws
   }
-  deleteIndicatorFromWS(ws, itemId) {
+  deleteIndicatorFromWS(ws, item) {
+    // In Advanced WS, item can also be used as itemIndex
+
     for (var x = 0; x < ws.items.length; x++)
-      if (ws.items[x].id == itemId)
+      if (ws.type === "basic" && ws.items[x].id === item.id)
+        ws.items.splice(x, 1)
+      else if (ws.type === "advanced" && item === x)
         ws.items.splice(x, 1)
 
     return ws
@@ -717,7 +873,7 @@ class ModalStrategy extends React.Component {
 
   isValidated(obj) {
     for (var state of Object.values(obj.states))
-      if (state != "has-success")
+      if (state !== "has-success")
         return false
 
     if (!obj.states.basic_0 && !obj.states.basic_1 && !obj.states.advanced) {
@@ -725,7 +881,7 @@ class ModalStrategy extends React.Component {
       return false
     }
 
-    if (this.props.action == "update") {
+    if (this.props.action === "update") {
       // If it's updating a Strategy, it must be somehow different than the original object
       if (areObjsEqual(obj.data, obj.initial))
         return false
@@ -866,18 +1022,22 @@ class ModalStrategy extends React.Component {
     let { prefs, getString, modalId, isOpen } = this.props;
     let {
       isLoading,
-
+      activeWsMode,
       modal_chooseWS_isOpen,
+
       modal_quoteDetail_isOpen,
       modal_movingAverageDetail_isOpen,
       modal_phiboDetail_isOpen,
 
-      activeWsMode,
+      modal_comparisonDetail_isOpen,
+      modal_distanceDetail_isOpen,
+      modal_slopeDetail_isOpen,
 
       iItems,
       strategy,
       selected,
 
+      currency,
       alert,
       alertState,
       alertMsg,
@@ -955,11 +1115,11 @@ class ModalStrategy extends React.Component {
           isOpen={modal_quoteDetail_isOpen}
           toggleModal={this.toggleModal}
           onCommit={this.onWSCommit}
-          items={selected.subcatId == "quote" ? applyFilterToObjList(iItems, { subcategory: selected.subcatId }) : []}
-          action={selected.subcatId == "quote" ? selected.action : ""}
-          workspace={selected.subcatId == "quote" ? selected.workspace.items : []}
-          wsId={selected.subcatId == "quote" ? selected.workspace.id : ""}
-          selectedItem={selected.subcatId == "quote" ? selected.indicator : {}}
+          items={selected.subcatId === "quote" ? applyFilterToObjList(iItems, { subcategory: [selected.subcatId] }) : []}
+          action={selected.subcatId === "quote" ? selected.action : ""}
+          workspace={selected.subcatId === "quote" ? selected.workspace.items : []}
+          wsId={selected.subcatId === "quote" ? selected.workspace.id : ""}
+          selectedItem={selected.subcatId === "quote" ? selected.indicator : {}}
         />
         {/* Moving Average */}
         <ModalMovingAvgDetail
@@ -968,11 +1128,11 @@ class ModalStrategy extends React.Component {
           isOpen={modal_movingAverageDetail_isOpen}
           toggleModal={this.toggleModal}
           onCommit={this.onWSCommit}
-          items={selected.subcatId == "moving_average" ? applyFilterToObjList(iItems, { subcategory: selected.subcatId }) : []}
-          action={selected.subcatId == "moving_average" ? selected.action : ""}
-          workspace={selected.subcatId == "moving_average" ? selected.workspace.items : []}
-          wsId={selected.subcatId == "moving_average" ? selected.workspace.id : ""}
-          selectedItem={selected.subcatId == "moving_average" ? selected.indicator : {}}
+          items={selected.subcatId === "moving_average" ? applyFilterToObjList(iItems, { subcategory: [selected.subcatId] }) : []}
+          action={selected.subcatId === "moving_average" ? selected.action : ""}
+          workspace={selected.subcatId === "moving_average" ? selected.workspace.items : []}
+          wsId={selected.subcatId === "moving_average" ? selected.workspace.id : ""}
+          selectedItem={selected.subcatId === "moving_average" ? selected.indicator : {}}
         />
         {/* Phibo PVPC */}
         <ModalPhiboDetail
@@ -981,11 +1141,55 @@ class ModalStrategy extends React.Component {
           isOpen={modal_phiboDetail_isOpen}
           toggleModal={this.toggleModal}
           onCommit={this.onWSCommit}
-          items={selected.subcatId == "phibo" ? applyFilterToObjList(iItems, { subcategory: selected.subcatId }) : []}
-          action={selected.subcatId == "phibo" ? selected.action : ""}
-          workspace={selected.subcatId == "phibo" ? selected.workspace.items : []}
-          wsId={selected.subcatId == "phibo" ? selected.workspace.id : ""}
-          selectedItem={selected.subcatId == "phibo" ? selected.indicator : {}}
+          items={selected.subcatId === "phibo" ? applyFilterToObjList(iItems, { subcategory: [selected.subcatId] }) : []}
+          action={selected.subcatId === "phibo" ? selected.action : ""}
+          workspace={selected.subcatId === "phibo" ? selected.workspace.items : []}
+          wsId={selected.subcatId === "phibo" ? selected.workspace.id : ""}
+          selectedItem={selected.subcatId === "phibo" ? selected.indicator : {}}
+        />
+        {/* Comparison */}
+        <ModalComparisonDetail
+          {...this.props}
+          modalId="comparisonDetail"
+          isOpen={modal_comparisonDetail_isOpen}
+          toggleModal={this.toggleModal}
+          onCommit={this.onWSCommit}
+          currency={currency}
+          toolId={selected.toolId}
+          toolIndex={selected.toolIndex}
+          items={selected.toolId === "comparison" ? iItems : []}
+          action={selected.toolId === "comparison" ? selected.action : ""}
+          wsId={selected.toolId === "comparison" ? selected.workspace.id : ""}
+          selectedItem={selected.toolId === "comparison" ? selected.workspace.items[selected.toolIndex] : {}}
+        />
+        {/* Distance */}
+        <ModalDistanceDetail
+          {...this.props}
+          modalId="distanceDetail"
+          isOpen={modal_distanceDetail_isOpen}
+          toggleModal={this.toggleModal}
+          onCommit={this.onWSCommit}
+          currency={currency}
+          toolId={selected.toolId}
+          toolIndex={selected.toolIndex}
+          items={selected.toolId === "distance" ? applyFilterToObjList(iItems, { category: ["price_lagging", "constant"] }) : []}
+          action={selected.toolId === "distance" ? selected.action : ""}
+          wsId={selected.toolId === "distance" ? selected.workspace.id : ""}
+          selectedItem={selected.toolId === "distance" ? selected.workspace.items[selected.toolIndex] : {}}
+        />
+        {/* Slope */}
+        <ModalSlopeDetail
+          {...this.props}
+          modalId="slopeDetail"
+          isOpen={modal_slopeDetail_isOpen}
+          toggleModal={this.toggleModal}
+          onCommit={this.onWSCommit}
+          toolId={selected.toolId}
+          toolIndex={selected.toolIndex}
+          items={selected.toolId === "slope" ? applyFilterToObjList(iItems, { subcategory: ["roc", "constant"] }) : []}
+          action={selected.toolId === "slope" ? selected.action : ""}
+          wsId={selected.toolId === "slope" ? selected.workspace.id : ""}
+          selectedItem={selected.toolId === "slope" ? selected.workspace.items[selected.toolIndex] : {}}
         />
         <Card className="card-plain">
           <CardHeader className="modal-header">
@@ -1006,7 +1210,6 @@ class ModalStrategy extends React.Component {
               <p>{getString(prefs.locale, this.compId, "label_intro_p1")}</p>
               <p>{getString(prefs.locale, this.compId, "label_intro_p2")}</p>
             </label>
-            <hr />
           </CardHeader>
           <CardBody>
             {/* Type */}
@@ -1239,9 +1442,19 @@ class ModalStrategy extends React.Component {
                 <div className="text-center">
                   <label>
                     <p>{getString(prefs.locale, this.compId, "label_advanced_intro_p1")}</p>
-                    <p>{getString(prefs.locale, "generic", "label_comingSoon")}</p>
+                    <p>{getString(prefs.locale, this.compId, "label_advanced_intro_p2")}</p>
                   </label>
                 </div>
+                {/* Tools */}
+                <Row className="justify-content-center">
+                  {this.renderAdvancedToolsAsCard("comparison")}
+                  {this.renderAdvancedToolsAsCard("distance")}
+                  {this.renderAdvancedToolsAsCard("slope")}
+                </Row>
+                <br />
+                <Row className="justify-content-center">
+                  {this.renderAdvancedWS(strategy.workspaces)}
+                </Row>
               </TabPane>
             </TabContent>
           </CardBody>

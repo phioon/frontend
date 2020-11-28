@@ -9,10 +9,9 @@ const SortableItem = SortableElement((props) => {
   return (
     <div className="sortable-item">
       <span className="sortable-item-handle" />
-      {props.item.label}
-
-      <Col className="text-right">
-        {props.onUpdateItem && !props.item.unchangeable &&
+      <Col>{props.item.label}</Col>
+      <Col xs="4" className="pull-right text-right">
+        {props.onUpdateItem &&
           <Button
             id={"ws_edit_" + props.item.value}
             onClick={() => props.onUpdateItem(props.context, props.item.value)}
@@ -57,7 +56,7 @@ const SortableList = SortableContainer((props) => {
 });
 
 
-class SortableSetupRulesBasic extends React.Component {
+class SortableRulesBasic extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -79,7 +78,7 @@ class SortableSetupRulesBasic extends React.Component {
   }
 }
 
-SortableSetupRulesBasic.propTypes = {
+SortableRulesBasic.propTypes = {
   items: PropTypes.array.isRequired,
   context: PropTypes.string.isRequired,
   onSortableChange: PropTypes.func.isRequired,
@@ -87,4 +86,4 @@ SortableSetupRulesBasic.propTypes = {
   onRemoveItem: PropTypes.func.isRequired
 }
 
-export default SortableSetupRulesBasic;
+export default SortableRulesBasic;
