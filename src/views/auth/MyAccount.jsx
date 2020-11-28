@@ -328,9 +328,6 @@ class MyAccount extends React.Component {
       alert
     } = this.state;
 
-    console.log(TimeManager.getDateString(personalData.data.birthday, false))
-    console.log(personalData.data.birthday)
-
     return (
       <>
         <div className="content">
