@@ -455,7 +455,7 @@ class StrategyManager {
         iItem.interval = interval.replace("<interval>", "any")
         iItem.offset = offset
 
-        item.items.push(iItem)
+        item.items.push(deepCloneObj(iItem))
       }
     }
     return item
@@ -497,7 +497,7 @@ class StrategyManager {
         iItem.interval = interval.replace("<interval>", "any")
         iItem.offset = offset
 
-        item.items.push(iItem)
+        item.items.push(deepCloneObj(iItem))
       }
     }
     return item

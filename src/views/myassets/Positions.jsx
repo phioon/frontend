@@ -113,7 +113,7 @@ class Positions extends React.Component {
 
     if (positions.data) {
       let assets = getDistinctValuesFromList(positions.data, "asset_symbol")
-      assets = await this.props.managers.market.assetList(false, assets)
+      assets = await this.props.managers.market.assetList(true, assets)
 
       for (var obj of positions.data) {
         obj.wallet = await this.props.managers.app.walletRetrieve(obj.wallet)

@@ -499,6 +499,7 @@ class ModalComparisonDetail extends React.Component {
 
   getSelectedItems(tool) {
     let selectedItems = []
+    tool = deepCloneObj(tool)
 
     // First Item
     if (tool.data.instance_0)
@@ -518,6 +519,8 @@ class ModalComparisonDetail extends React.Component {
     let { getString, prefs, currency } = this.props;
     let { tool } = this.state;
     let item = { toolId: this.props.toolId }
+
+    console.log(items)
 
     items[0].interval = tool.data.interval_0.value
     items[0].offset = tool.data.offset_0.value
@@ -967,6 +970,7 @@ class ModalComparisonDetail extends React.Component {
                     />
                   </FormGroup>
                 </Collapse>
+
                 <Collapse isOpen={tool.data.subcategory_1.value === "constant"}>
                   {/* Constant 1 */}
                   <FormGroup className={`has-label ${tool.states.instance_0}`}>

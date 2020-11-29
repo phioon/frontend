@@ -206,7 +206,7 @@ class MarketManager {
 
   // Asset
   async assetList(detailed = false, assets = [], se_short) {
-    // syncFull is only triggered from WalletList
+    // [detailed] is the flag used to identify whether it's been called for user's assets or for a general call.
     // Client must pass 'assets' or 'stockExchange'. One of these 2 parameters are required.
     if (assets.length == 0 && !se_short)
       return {}

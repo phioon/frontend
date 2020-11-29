@@ -27,6 +27,7 @@ import {
   convertMaskedStringToFloat,
   convertFloatToCurrency,
   convertFloatToPercentage,
+  deepCloneObj,
   retrieveObjFromObjList,
   getDistinctValuesFromList,
   orderBy
@@ -569,6 +570,7 @@ class ModalDistanceDetail extends React.Component {
 
   getSelectedItems(tool) {
     let selectedItems = []
+    tool = deepCloneObj(tool)
 
     // First Item
     if (tool.data.instance_0)
