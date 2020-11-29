@@ -1462,6 +1462,7 @@ class ModalStrategy extends React.Component {
             <LabelAlert alertState={alertState} alertMsg={alertMsg} />
             <Button
               className="btn-simple btn-round"
+              id={`strategy_${this.props.action}`}
               color="success"
               data-dismiss="modal"
               type="submit"

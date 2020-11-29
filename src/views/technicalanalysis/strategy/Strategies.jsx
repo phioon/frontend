@@ -498,6 +498,7 @@ class Strategies extends React.Component {
                   <Row>
                     <Col className="text-right">
                       <Button
+                        id="strategy_new"
                         type="submit"
                         className="btn-round"
                         outline

@@ -29,7 +29,7 @@ class SubscriptionCurrent extends React.Component {
       pageFirstLoading: true,
       isLoading: undefined,
 
-      subscription: {},
+      subscription: { name: undefined },
 
       personalData: {
         data: {
@@ -253,6 +253,7 @@ class SubscriptionCurrent extends React.Component {
               <Row className="mt-5" />
               <Row className="justify-content-center">
                 <Button
+                  id={`subscription_manage_${subscription.name}`}
                   color="success"
                   className="btn-simple btn-round"
                   onClick={() => this.onClick("manage")}>

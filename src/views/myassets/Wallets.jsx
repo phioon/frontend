@@ -270,6 +270,7 @@ class Wallets extends React.Component {
               </Col>
               <Col className="text-right">
                 <Button
+                  id="wallet_new"
                   type="submit"
                   className="btn-round"
                   outline

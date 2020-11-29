@@ -701,6 +701,7 @@ class ModalOpenPosition extends React.Component {
             <LabelAlert alertState={alertState} alertMsg={alertMsg} />
             <Button
               className="btn-simple btn-round"
+              id="position_create"
               color="success"
               data-dismiss="modal"
               type="submit"

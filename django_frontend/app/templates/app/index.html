@@ -2,39 +2,54 @@
 <html lang="en" class="perfect-scrollbar-off">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="theme-color" content="#000000" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="theme-color" content="#000000" />
 
-    <!--
+  <!--
         manifest.json provides metadata used when your web app is added to the
         homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
         -->
-    <link rel="manifest" href="/static/app/manifest.json" />
-    <link rel="icon" sizes="76x76" type="image/png"
-        href="https://storage.googleapis.com/phioon-static/assets/img/branding/favicon.png" />
-    <link rel="apple-touch-icon" sizes="76x76"
-        href="https://storage.googleapis.com/phioon-static/assets/img/branding/favicon.png" />
+  <link rel="manifest" href="/static/app/manifest.json" />
+  <link rel="icon" sizes="76x76" type="image/png"
+    href="https://storage.googleapis.com/phioon-static/assets/img/branding/favicon.png" />
+  <link rel="apple-touch-icon" sizes="76x76"
+    href="https://storage.googleapis.com/phioon-static/assets/img/branding/favicon.png" />
 
-    <!--     Fonts and icons     -->
-    <link rel="stylesheet" href="/static/app/assets/fonts/fontawesome-5.13.0/css/all.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" />
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" href="/static/app/assets/fonts/fontawesome-5.13.0/css/all.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" />
 
-    <title>PHIOON</title>
-    <meta name="description" content="Tecnologia para Investimentos">
-    <meta property="og:title" content="PHIOON" />
-    <meta property="og:url" content="https://app.phioon.com/" />
-    <meta property="og:description" content="Tecnologia para Investimentos">
-    <meta property="og:image"
-        content="https://storage.googleapis.com/phioon-static/assets/img/branding/avatar/avatar_green_ogp.jpg">
+  <!-- Google Tag Manager -->
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-MN6CPF5');
+  </script>
+
+  <title>PHIOON</title>
+  <meta name="description" content="Tecnologia para Investimentos">
+  <meta property="og:title" content="PHIOON" />
+  <meta property="og:url" content="https://app.phioon.com/" />
+  <meta property="og:description" content="Tecnologia para Investimentos">
+  <meta property="og:image"
+    content="https://storage.googleapis.com/phioon-static/assets/img/branding/avatar/avatar_green_ogp.jpg">
 </head>
 
 <body>
-    <noscript> You need to enable JavaScript to run this app. </noscript>
-    <div id="root"></div>
-    {% load static %}
-    <script src="{% static "./app/main.js" %}"></script>
-    <!--
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MN6CPF5" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe>
+  </noscript>
+  <noscript> You need to enable JavaScript to run this app. </noscript>
+  <div id="root"></div>
+  {% load static %}
+  <script src="{% static "./app/main.js" %}"></script>
+  <!--
         This HTML file is a template.
         If you open it directly in the browser, you will see an empty page.
 

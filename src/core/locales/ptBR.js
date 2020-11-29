@@ -403,7 +403,7 @@ const locale = {
     label_item2: "Indicador 2",
 
     input_threshold: "Distância Máxima",
-    input_threshold_hint: "Quão próximo estes indicadores devem estar um do outro? Particularmente, eu gosto de trabalhar com o valor 1.214% ;).",
+    input_threshold_hint: "Quão próximo estes indicadores devem estar um do outro? Particularmente, eu gosto de trabalhar com uma distância de 1% ;).",
     threshold_currency_hint: "Cálculo: |v1 - v2|",
     threshold_percentage_hint: "Cálculo: |v1 - v2| / v1",
     input_interval: "Tempo Gráfico",
@@ -525,7 +525,7 @@ const locale = {
 
     label_advanced: "Avançada",
     label_advanced_intro_p1: "A Área de Trabalho Avançada foi desenvolvida para complementar as outras áreas...",
-    label_advanced_intro_p2: "Utilize as ferramentas abaixo para deixar sua Estratégia ainda mais poderosa.",
+    label_advanced_intro_p2: "Utilize as ferramentas abaixo para deixar sua Estratégia ainda mais eficiente.",
     label_advanced_intro: "Arraste as ferramentas para esta área... Depois, reordene-as para deixar tudo organizado ;)",
 
     input_name: "Nome",
@@ -999,7 +999,7 @@ const locale = {
     label_perDay: "por dia",
     label_runs: "execuções",
 
-    label_stockExchange: "Bolsa de Valores2323",
+    label_stockExchange: "Bolsa de Valores",
     label_stockExchange_hint: "Em breve, mais mercados serão inclusos no PHIOON. ;)",
     label_stockExchanges: "Bolsas de Valores",
     label_stockExchanges_hint: "Em breve, mais mercados serão inclusos no PHIOON. ;)",

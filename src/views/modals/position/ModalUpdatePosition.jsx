@@ -1092,6 +1092,7 @@ class ModalUpdatePosition extends React.Component {
             <LabelAlert alertState={alertState} alertMsg={alertMsg} />
             <Button
               className="btn-simple btn-round"
+              id="position_update"
               color="success"
               data-dismiss="modal"
               type="submit"

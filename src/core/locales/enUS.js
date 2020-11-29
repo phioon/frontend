@@ -403,7 +403,7 @@ const locale = {
     label_item2: "Indicator 2",
 
     input_threshold: "Threshold",
-    input_threshold_hint: "How close should these indicators be to each other? I like to work with the value 1.214%.",
+    input_threshold_hint: "How close should these indicators be to each other? I like to work with a distance of 1%.",
     threshold_currency_hint: "Calculation: |v1 - v2|",
     threshold_percentage_hint: "Calculation: |v1 - v2| / v1",
     input_interval: "Time Interval",
@@ -747,7 +747,7 @@ const locale = {
     alert_tryAgain: "Ooops... Sorry for that. :( Could you try again?",
     alert_404or50X: "Ooops... Sorry for that. :( Seems like my team had a hard time processing your request.",
     alert_couldNotSendRequest: "I couldn't send your request. Could you verify your internet connection and try again?",
-    alert_username:"Ooops... A user with that email address already exists. Did you forget your password?",
+    alert_username: "Ooops... A user with that email address already exists. Did you forget your password?",
 
     error_enterValidEmail: "Here, I need a valid email.",
     error_username_minReq: "It can have letters (a-z), numbers (0-9) underscores (_) and periods (.)",

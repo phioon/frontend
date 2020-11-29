@@ -105,6 +105,7 @@ class SubscriptionPremium extends React.Component {
         <CardFooter className="text-center">
           <Button
             className="btn-simple btn-round"
+            id={`subscription_${submitActionId}_${subscription.name}`}
             color={submitActionId === "downgrade" ? "danger" : "success"}
             onClick={() => this.onClick(
               submitActionId, {

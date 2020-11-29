@@ -166,8 +166,9 @@ class ModalDistanceDetail extends React.Component {
     this.setState({ tool })
   }
   prepareToAdd(tool, currency, intervalOptions, offsetOptions) {
-    this.onChange("threshold_percentage", convertFloatToPercentage(1.214, currency.decimal_symbol))
-    this.onChange("threshold_currency", convertFloatToCurrency(0.8, currency))
+    this.onChange("threshold_percentage", convertFloatToPercentage(1, currency.decimal_symbol))
+    this.onChange("threshold_currency", convertFloatToCurrency(0.5, currency))
+    this.onChangeInputFormat("threshold", "percentage")
 
     for (var obj of intervalOptions)
       if (obj.value === "any") {
@@ -196,13 +197,13 @@ class ModalDistanceDetail extends React.Component {
         this.onChangeInputFormat("threshold", "percentage")
         this.onChange("threshold_percentage", convertFloatToPercentage(selectedItem.threshold.perc, currency.decimal_symbol))
 
-        this.onChange("threshold_currency", convertFloatToCurrency(0.8, currency))     // Default
+        this.onChange("threshold_currency", convertFloatToCurrency(0.5, currency))     // Default
       }
       else if (selectedItem.threshold.const) {
         this.onChangeInputFormat("threshold", "currency")
         this.onChange("threshold_currency", convertFloatToCurrency(selectedItem.threshold.const, currency))
 
-        this.onChange("threshold_percentage", convertFloatToPercentage(1.214, currency.decimal_symbol))     // Default
+        this.onChange("threshold_percentage", convertFloatToPercentage(1, currency.decimal_symbol))     // Default
       }
 
     // For each Indicator...

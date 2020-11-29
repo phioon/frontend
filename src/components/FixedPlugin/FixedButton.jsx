@@ -57,7 +57,7 @@ class FixedButton extends React.Component {
 
     return (
       <div className={"fixed-plugin " + position}>
-        <div id={this.props.id ? this.props.id : ""} onClick={this.props.onClick}>
+        <div id={this.props.id && this.props.id} onClick={this.props.onClick}>
           <i className={"icon " + this.props.icon} />
         </div>
         {

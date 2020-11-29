@@ -386,6 +386,7 @@ class Positions extends React.Component {
               </Col>
               <Col className="text-right">
                 <Button
+                  id="position_new"
                   type="submit"
                   className="btn-round"
                   outline
