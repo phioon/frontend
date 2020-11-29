@@ -520,8 +520,6 @@ class ModalComparisonDetail extends React.Component {
     let { tool } = this.state;
     let item = { toolId: this.props.toolId }
 
-    console.log(items)
-
     items[0].interval = tool.data.interval_0.value
     items[0].offset = tool.data.offset_0.value
 
