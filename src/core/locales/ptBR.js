@@ -825,8 +825,8 @@ const locale = {
     priceLimit_hint: "Preço Limite sugerido para esta operação. Este pode mudar, considerando seu Gerenciamento de Risco.",
     stopLoss_hint: "Aqui é um ponto de segurança, onde acredito que o Preço não alcance novamente. Se isso acontecer, saia da operação e aguarde uma nova oportunidade.",
     target_hint: "Uma projeção para estimar onde o Preço pode chegar. Na maioria das vezes, utilizo sequência de Fibonacci.",
-    gainPercent_hint: "Se tudo der certo, este será o lucro.",
-    lossPercent_hint: "Se tudo der certo, este será o lucro.",
+    gainPercent_hint: "Se tudo der certo, este será o lucro da operação.",
+    lossPercent_hint: "Se tudo der certo, este será o lucro da operação.",
     riskReward_hint: "Ganho Potencial dividido pela possível Perda representa a relação Risco x Retorno da operação. Quanto maior este número, melhor.",
     startedOn_hint: "Data de Início da Operação.",
 

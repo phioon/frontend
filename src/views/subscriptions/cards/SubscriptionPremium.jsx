@@ -56,7 +56,7 @@ class SubscriptionPremium extends React.Component {
           <CardTitle tag="h3">
             <label><small>R$</small></label>
             {" "}
-            {this.props.activeInterval === 'month' ? 49 : 39}
+            {this.props.activeInterval === "month" ? 49 : 39}
             {" "}
             <label><small>/{getString(prefs.locale, this.compId, "label_month")}</small></label>
           </CardTitle>
@@ -108,9 +108,9 @@ class SubscriptionPremium extends React.Component {
             id={`subscription_${submitActionId}_${subscription.name}`}
             color={submitActionId === "downgrade" ? "danger" : "success"}
             onClick={() => this.onClick(
-              submitActionId, {
-              priceId: subscription.prices[`${subscription.name}_${this.props.activeInterval}`]
-            })}
+              submitActionId,
+              { priceId: subscription.prices[`${subscription.name}_${this.props.activeInterval}`] }
+            )}
           >
             {isLoading ?
               <Spinner size="sm" /> :

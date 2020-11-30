@@ -825,8 +825,8 @@ const locale = {
     priceLimit_hint: "Price Limit suggested for this operation. It may be different connsidering your Risk Management.",
     stopLoss_hint: "Here is a safety spot where I believe price won't reach again. If it happens, leave the operation and wait for a new opportunity.",
     target_hint: "It is a projection to estimate where price may reach. Most of the time, I use Fibonacci sequence.",
-    gainPercent_hint: "If everything goes well, that'll be the profit.",
-    lossPercent_hint: "If everything goes well, that'll be the profit.",
+    gainPercent_hint: "If everything goes well, that'll be the profit for this operation.",
+    lossPercent_hint: "If everything goes well, that'll be the profit for this operation.",
     riskReward_hint: "Potential Gain divided by Potential Loss represents the correlation between Risk and Reward. The higher this number is, the better.",
     startedOn_hint: "Operation started on:",
 

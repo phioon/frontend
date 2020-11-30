@@ -176,7 +176,7 @@ class Positions extends React.Component {
             <div className="actions-right">
               {/* use this button to edit kind of action */}
               <Button
-                id={"positions_edit_" + obj.id}
+                id={"edit_" + obj.id}
                 onClick={() => {
                   let obj = this.state.data.find(obj => obj.key === key);
                   this.updateClick(obj)
@@ -185,14 +185,14 @@ class Positions extends React.Component {
                 size="sm"
                 className="btn-icon btn-link edit"
               >
-                <i className="fa fa-edit" />
+                <i id="position_edit" className="fa fa-edit" />
               </Button>{" "}
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"positions_edit_" + obj.id}>
+              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"edit_" + obj.id}>
                 {getString(prefs.locale, this.compId, "positions_edit_hint")}
               </UncontrolledTooltip>
               {/* use this button to remove the data row */}
               <Button
-                id={"positions_delete_" + obj.id}
+                id={"delete_" + obj.id}
                 onClick={() => {
                   let obj = this.state.data.find(obj => obj.key === key);
                   this.deleteClick(obj)
@@ -201,9 +201,9 @@ class Positions extends React.Component {
                 size="sm"
                 className="btn-icon btn-link remove"
               >
-                <i className="fa fa-times" />
+                <i id="position_delete" className="fa fa-times" />
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"positions_delete_" + obj.id}>
+              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"delete_" + obj.id}>
                 {getString(prefs.locale, this.compId, "positions_delete_hint")}
               </UncontrolledTooltip>
             </div>

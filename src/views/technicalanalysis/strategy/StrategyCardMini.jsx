@@ -38,15 +38,15 @@ class StrategyCardMini extends React.Component {
         <Button
           className="btn-icon btn-link"
           color="success"
-          id={"strategy_run__" + strategy.id}
+          id={"run__" + strategy.id}
           size="sm"
           type="button"
           disabled={isLoading}
           onClick={() => this.props.onClick("run", strategy)}
         >
-          <i className="nc-icon nc-button-play" />
+          <i id="strategy_run" className="nc-icon nc-button-play" />
         </Button>
-        <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"strategy_run__" + strategy.id}>
+        <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"run__" + strategy.id}>
           {getString(prefs.locale, this.compId, "btn_run_hint")}
         </UncontrolledTooltip>
         {/* Edit */}
@@ -55,14 +55,14 @@ class StrategyCardMini extends React.Component {
             <Button
               className="btn-icon btn-link"
               color="warning"
-              id={"strategy_update__" + strategy.id}
+              id={"update__" + strategy.id}
               size="sm"
               type="button"
               onClick={() => this.props.onClick("update", strategy)}
             >
-              <i className="fa fa-edit" />
+              <i id="strategy_update" className="fa fa-edit" />
             </Button>
-            <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"strategy_update__" + strategy.id}>
+            <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"update__" + strategy.id}>
               {getString(prefs.locale, this.compId, "btn_update_hint")}
             </UncontrolledTooltip>
           </> : null
@@ -73,14 +73,14 @@ class StrategyCardMini extends React.Component {
             <Button
               className="btn-icon btn-link remove"
               color="danger"
-              id={"strategy_delete__" + strategy.id}
+              id={"delete__" + strategy.id}
               size="sm"
               type="button"
               onClick={() => this.props.onClick("delete", strategy)}
             >
-              <i className="fa fa-times" />
+              <i id="strategy_delete" className="fa fa-times" />
             </Button>
-            <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"strategy_delete__" + strategy.id}>
+            <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"delete__" + strategy.id}>
               {getString(prefs.locale, this.compId, "btn_delete_hint")}
             </UncontrolledTooltip>
           </> : null

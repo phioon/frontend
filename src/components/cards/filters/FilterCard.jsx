@@ -175,7 +175,7 @@ class FilterCard extends Component {
               <small>{getString(prefs.locale, this.compId, "label_clear")}</small>
             </Button>
             <Button className="btn-icon btn-simple" size="sm" onClick={() => this.setState({ isOpen: !this.state.isOpen })}>
-              <i className="fa fa-filter" />
+              <i id={isOpen ? "filter_close" : "filter_open"} className="fa fa-filter" />
             </Button>
           </CardTitle>
           <Collapse isOpen={isOpen}>

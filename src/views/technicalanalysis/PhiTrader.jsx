@@ -150,7 +150,7 @@ class PhiTrader extends React.Component {
       obj.tc_id = tc.id
 
       if (obj.ended_on)
-        obj.ended_on = TimeManager.getLocaleDateString(obj.ended_on)
+        obj.ended_on = TimeManager.getLocaleDateString(obj.ended_on, false)
       else {
         let high = assets[obj.asset_symbol].data.high
         let low = assets[obj.asset_symbol].data.low

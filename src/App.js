@@ -26,6 +26,7 @@ import MarketManager from "./core/managers/MarketManager";
 import MeasureManager from "./core/managers/MeasureManager";
 import StrategyManager from "./core/managers/StrategyManager";
 import StripeManager from "./core/managers/StripeManager";
+import GtagManager from "./core/managers/GtagManager";
 
 export var isAuthenticated = undefined
 const hist = createBrowserHistory();
@@ -52,11 +53,18 @@ class App extends React.Component {
     this.setLocale = this.setLocale.bind(this)
     this.getHttpTranslation = this.getHttpTranslation.bind(this)
     this.managers = {
-      auth: new AuthManager(this.getHttpTranslation, this.setAuthStatus, this.setPrefs, this.setUser),
+      gtag: new GtagManager(),
       app: new AppManager(this.getHttpTranslation),
       market: new MarketManager(this.getHttpTranslation),
       stripe: new StripeManager(this.getHttpTranslation)
     }
+    this.managers.auth = new AuthManager(
+      this.managers.gtag,
+      this.getHttpTranslation,
+      this.setAuthStatus,
+      this.setPrefs,
+      this.setUser
+    )
     this.managers.strategy = new StrategyManager(this.managers.market)
     this.managers.measure = new MeasureManager(this.managers.app, this.managers.market)
 
@@ -70,7 +78,7 @@ class App extends React.Component {
     await storage.initiator()
 
     this.setAuthStatus(await this.managers.auth.isUserAuthenticated())
-    
+
   }
 
   async notify(place, color, icon = "nc-icon nc-bell-55", msgId, msgText, autoDismiss = 7) {
@@ -136,10 +144,9 @@ class App extends React.Component {
       this.setState({ prefs })
     }
   }
-
   // Set User
   setUser(user) {
-     this.setState({ user })
+    this.setState({ user })
   }
 
   setLocale(newLocale) {

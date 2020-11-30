@@ -58,10 +58,17 @@ class UserSubscription extends React.Component {
     let checkoutSession = await this.props.managers.stripe.checkoutSessionRetrieve(sessionId)
 
     if (checkoutSession.id) {
-      // Checkout session finished with success?
-      // Test others use cases: payment declined, etc...
+      // Seems like it's a valid Checkout object...
 
       if (checkoutSession.payment_status === "paid") {
+        let price = checkoutSession.amount_total && checkoutSession.amount_total / 100
+        let gtag_obj = {
+          currency: String(checkoutSession.currency).toUpperCase(),
+          value: price,
+          items: [{ id: checkoutSession.subscription, price: price }],
+        }
+        this.props.managers.gtag.sendEvent("purchase", gtag_obj)
+
         this.subscriptionDone()
       }
     }
@@ -73,7 +80,7 @@ class UserSubscription extends React.Component {
     switch (action) {
       case "upgrade":
         if (subscription.name === "basic") {
-          // priceId needed
+          // data.priceId needed
           await this.openCheckoutSession(data)
         }
         else

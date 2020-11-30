@@ -1,12 +1,14 @@
 import StorageManager from "./StorageManager";
-import TimeManager from "./TimeManager";
 import { deepCloneObj, httpRequest, sleep } from "../utils";
 
 var __user = undefined;
 var __token = undefined;
 
 class AuthManager {
-  constructor(getHttpTranslation, setAuthStatus, setPrefs, setUser) {
+  constructor(gtagManager, getHttpTranslation, setAuthStatus, setPrefs, setUser) {
+    this.managers = {
+      gtag: gtagManager
+    }
     this.getHttpTranslation = getHttpTranslation
     this.setAuthStatus = setAuthStatus
     this.setPrefs = setPrefs
@@ -105,6 +107,8 @@ class AuthManager {
       await StorageManager.store(sKey, result)
 
       this.setAuthStatus(true)
+
+      this.managers.gtag.userInitialize(result.user, true)
       return result
     }
 
@@ -117,6 +121,7 @@ class AuthManager {
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
     this.clearUserLocalData()
+    this.managers.gtag.userLogout()
     return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
   }
   async userChangePassword(object) {
@@ -211,6 +216,8 @@ class AuthManager {
 
         await this.storePrefs(sData.user.prefs)
         this.setPrefs(sData.user.prefs)
+
+        this.managers.gtag.userInitialize(sData.user, false)
         return await StorageManager.store(sKey, sData)
       }
     }
@@ -228,7 +235,7 @@ class AuthManager {
     return false
   }
   async clearUserLocalData() {
-    const sKey = "user"
+    const sKey_user = "user"
     const sKey_wallets = "wallets"
     const sKey_positions = "positions"
     const sKey_strategies = "strategies"
@@ -236,7 +243,7 @@ class AuthManager {
     this.instantUser({})
     AuthManager.instantToken({})
 
-    StorageManager.removeData(sKey)
+    StorageManager.removeData(sKey_user)
     StorageManager.removeData(sKey_wallets)
     StorageManager.removeData(sKey_positions)
     StorageManager.removeData(sKey_strategies)
@@ -267,8 +274,7 @@ class AuthManager {
 
   // Instant Data
   instantUser(data) {
-    if (data)
-    {
+    if (data) {
       __user = data
       this.setUser(data)
     }
