@@ -217,6 +217,30 @@ def D_PhiboLatestList(request):
 
 
 @api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def D_RocLatestList(request):
+    backendRequest = __backendHost__ + '/api/market/d/roc/latest/'
+
+    params = request.query_params
+    data = request.data
+
+    try:
+        r = requests.get(backendRequest,
+                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         data=data,
+                         params=params)
+    except requests.exceptions.Timeout:
+        r = requests.get(backendRequest,
+                         auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
+                         data=data,
+                         params=params)
+    except requests.exceptions.RequestException as ex:
+        obj_res = {'message': str(ex)}
+        return Response(obj_res, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    return Response(json.loads(r.text))
+
+
+@api_view(['GET'])
 @permission_classes([IsPremium | IsPlatinum | permissions.IsAuthenticated, ])
 def D_setupList(request):
     backendRequest = __backendHost__ + '/api/market/d/setups/'

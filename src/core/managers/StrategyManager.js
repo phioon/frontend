@@ -54,6 +54,7 @@ class StrategyManager {
           rawData.push(this.managers.market.phiboData(stockExchange, v.interval, v.instances, v.lastPeriods))
           break;
         case "roc":
+          // Problem is here... This case is never reached out.
           rawData.push(this.managers.market.rocData(stockExchange, v.interval, v.instances, v.lastPeriods))
           break;
       }
@@ -113,7 +114,7 @@ class StrategyManager {
       for (var operation of v0)
         for (var [operator, variables] of Object.entries(operation))
           for (var v of variables)
-            if (v.var && !varList.includes(v.var))
+            if (v.hasOwnProperty("var") && !varList.includes(v.var))
               varList.push(v.var)
 
     return varList
@@ -170,7 +171,7 @@ class StrategyManager {
         for (var [operator, values] of Object.entries(operation)) {
           for (var v of values) {
             // Each value of the operation
-            if (v.var && String(v.var).includes(varId)) {
+            if (v.hasOwnProperty("var") && String(v.var).includes(varId)) {
               // Key 'var' exists and it matches our varId
               v.var = String(v.var).replace(varId, value)
             }
@@ -184,6 +185,7 @@ class StrategyManager {
 
     if (wsId === "advanced") {
       // It's an Advanced WS, so let's check the tools that are being used...
+      let constantObjNeeded = ["distance"]
 
       for (var [logic, v0] of Object.entries(wsRules)) {
         stdObj[logic] = []
@@ -195,8 +197,8 @@ class StrategyManager {
 
               for (var v of values) {
                 // Each value of the operation
-                if (v.const) {
-                  // It's a constant, so ignore key "const"
+                if (!constantObjNeeded.includes(toolId) && v.hasOwnProperty("const")) {
+                  // It's a constant and object {const: <value>} is not needed, so ignore key "const"
                   v = deepCloneObj(v.const)
                 }
 
@@ -326,7 +328,6 @@ class StrategyManager {
   getDistanceRules(obj) {
     let rule = { distance: [] }
 
-    // Handling items...
     for (var item of obj.items) {
       let value = undefined
 
@@ -433,7 +434,7 @@ class StrategyManager {
         let interval = "<interval>"
         let offset = 0
 
-        if (v.var) {
+        if (v.hasOwnProperty("var")) {
           interval = String(v.var).substring(0, String(v.var).indexOf("_"))
           offset = this.getOffsetFromVariable(v.var)
 
@@ -475,7 +476,7 @@ class StrategyManager {
         let interval = "<interval>"
         let offset = 0
 
-        if (v.var) {
+        if (v.hasOwnProperty("var")) {
           interval = String(v.var).substring(0, String(v.var).indexOf("_"))
           offset = this.getOffsetFromVariable(v.var)
 
@@ -514,7 +515,7 @@ class StrategyManager {
           item.element = this.buildDistanceElement(getString, prefs, currency, item)
           break;
         case "slope":
-          item.element = this.buildComparisonElement(getString, prefs, currency, item)
+          item.element = this.buildSlopeElement(getString, prefs, item)
           break;
       }
     }
@@ -598,6 +599,32 @@ class StrategyManager {
             getString(prefs.locale, "indicators", item.items[1].id)
           }
           {Number(item.items[1].offset) === 0 ? "" : ` [${item.items[1].offset}]`}
+        </Col>
+      </Row>
+    )
+  }
+  buildSlopeElement(getString, prefs, item) {
+    // Element that appears on Sortable List...
+    return (
+      <Row>
+        {/* iItem */}
+        <Col xs="5" className="centered">
+          {item.items[0].interval === "any" ? "" : `[${item.items[0].interval}] `}
+          {getString(prefs.locale, "indicators", item.items[0].id)}
+          {Number(item.items[0].offset) === 0 ? "" : ` [${item.items[0].offset}]`}
+        </Col>
+        {/* Slope */}
+        <Col xs="2" className="centered">
+          <small><b>
+            {`< ${getString(prefs.locale, "indicators", "label_slope")} >`}
+          </b></small>
+        </Col>
+        {/* Direction */}
+        <Col xs="5" className="centered">
+          {item.operator === ">" ?
+            getString(prefs.locale, "indicators", "label_upwards") :
+            getString(prefs.locale, "indicators", "label_downwards")
+          }
         </Col>
       </Row>
     )

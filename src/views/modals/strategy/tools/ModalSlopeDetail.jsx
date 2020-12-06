@@ -19,7 +19,7 @@ import {
 import Select from "react-select";
 
 import LabelAlert from "../../../../components/LabelAlert";
-import { applyFilterToObjList, getDistinctValuesFromList, retrieveObjFromObjList } from "../../../../core/utils";
+import { applyFilterToObjList, deepCloneObj, getDistinctValuesFromList, retrieveObjFromObjList } from "../../../../core/utils";
 
 class ModalSlopeDetail extends React.Component {
   constructor(props) {
@@ -210,11 +210,10 @@ class ModalSlopeDetail extends React.Component {
     let distinctValues = getDistinctValuesFromList(items, "indicator")
 
     for (var indicator of distinctValues)
-      if (indicator !== "constant")
-        options.push({
-          value: indicator,
-          label: getString(prefs.locale, "indicators", indicator)
-        })
+      options.push({
+        value: indicator,
+        label: getString(prefs.locale, "indicators", indicator)
+      })
 
     return options;
   }
@@ -222,8 +221,7 @@ class ModalSlopeDetail extends React.Component {
     let options = []
 
     for (var item of items)
-      if (item.id !== "constant")
-        options.push({ label: item.periods, value: item.periods })
+      options.push({ label: item.periods, value: item.periods })
 
     return options;
   }
@@ -296,46 +294,45 @@ class ModalSlopeDetail extends React.Component {
     }
 
     this.setState(newState)
-    return newState[`${fieldName}_options`]    // Used by this.prepateToUpdate()
+    return newState[`${fieldName}_options`]    // Used by this.prepareToUpdate()
   }
 
   getSelectedItems(tool) {
     let { items } = this.props;
     let selectedItems = []
 
-    // First Item
+    // First and Second Items: They are always the same instance.
     let filters = {
       indicator: [tool.data.indicator.value],
       periods: [tool.data.periods.value],
     }
     let filteredItems = applyFilterToObjList(items, filters)
     // The filtering above MUST return only 1 item
-    if (filteredItems.length == 1)
-      selectedItems.push(filteredItems[0])
-    else
+    if (filteredItems.length == 1) {
+      selectedItems.push(deepCloneObj(filteredItems[0]))
+      selectedItems.push(deepCloneObj(filteredItems[0]))
+    }
+    else {
       selectedItems.push(undefined)
-
-    // Second Item
-    let constantItem = retrieveObjFromObjList(items, "id", "constant")
-    constantItem.value = 0
-    selectedItems.push(constantItem)
+      selectedItems.push(undefined)
+    }
 
     return selectedItems;
   }
   getAdvancedItem(items) {
     let { getString, prefs } = this.props;
-    let { tool, intervalOptions, offsetOptions } = this.state;
+    let { tool } = this.state;
     let item = { toolId: this.props.toolId }
 
     items[0].interval = tool.data.interval.value
     items[0].offset = tool.data.offset.value
 
-    items[1].interval = intervalOptions[0].value
-    items[1].offset = offsetOptions[0].value
+    items[1].interval = tool.data.interval.value
+    items[1].offset = tool.data.offset.value + 1
 
     item.items = items
     item.operator = tool.data.operator.value
-    item.element = this.props.managers.strategy.buildComparisonElement(getString, prefs, undefined, item)
+    item.element = this.props.managers.strategy.buildSlopeElement(getString, prefs, item)
 
     return item
   }

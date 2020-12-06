@@ -189,6 +189,10 @@ const locale = {
     // Indicators
     ema: "Exponential Moving Average",
     sma: "Simple Moving Average",
+    // Slopes
+    label_slope: "slope",
+    label_upwards: "Upwards",
+    label_downwards: "Downwards",
     // Instances
     sma_close7: "SMA 7",
     sma_close10: "SMA 10",

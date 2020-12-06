@@ -189,6 +189,10 @@ const locale = {
     // Indicators
     ema: "Média Móvel Exponencial",
     sma: "Média Móvel Simples",
+    // Slopes
+    label_slope: "inclinação",
+    label_upwards: "Positiva",
+    label_downwards: "Negativa",
     // Instances
     sma_close7: "MMA 7",
     sma_close10: "MMA 10",

@@ -52,7 +52,8 @@ urlpatterns += [
     path('market/d/quote/latest/', apiMarket.D_QuoteLatestList, name='d-quote_latest_data'),
     path('market/d/sma/latest/', apiMarket.D_SmaLatestList, name='d-sma_latest_data'),
     path('market/d/ema/latest/', apiMarket.D_EmaLatestList, name='d-ema_latest_data'),
-    path('market/d/phibo/latest/', apiMarket.D_PhiboLatestList, name='d_phibo_latest_data'),
+    path('market/d/phibo/latest/', apiMarket.D_PhiboLatestList, name='d-phibo_latest_data'),
+    path('market/d/roc/latest/', apiMarket.D_RocLatestList, name='d-roc_latest_data'),
 
     path('market/d/setups/', apiMarket.D_setupList, name='d-setup'),
     path('market/d/setupSummary/', apiMarket.D_setupSummaryList, name='D-setup-summary'),

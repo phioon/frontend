@@ -10,7 +10,7 @@ const SortableItem = SortableElement((props) => {
     <div className="sortable-item">
       <span className="sortable-item-handle" />
       <Col>{props.item.element}</Col>
-      <Col lg="2" sm="3" xs="4" className="text-right">
+      <Col lg="2" sm="3" xs="3" className="text-right">
         {props.onUpdateItem &&
           <Button
             id={"ws_edit_" + props.item.value}

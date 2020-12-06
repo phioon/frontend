@@ -608,7 +608,7 @@ class ModalStrategy extends React.Component {
 
     return reversedWS.map((ws) => {
       return (
-        <Col key={ws.id} lg="9">
+        <Col key={ws.id}>
           <Card
             className={classnames("drop-area", isDragging && "dash-zone")}
             onDragOver={(e) => e.preventDefault()}
@@ -1186,7 +1186,7 @@ class ModalStrategy extends React.Component {
           onCommit={this.onWSCommit}
           toolId={selected.toolId}
           toolIndex={selected.toolIndex}
-          items={selected.toolId === "slope" ? applyFilterToObjList(iItems, { subcategory: ["roc", "constant"] }) : []}
+          items={selected.toolId === "slope" ? applyFilterToObjList(iItems, { subcategory: ["moving_average"] }) : []}
           action={selected.toolId === "slope" ? selected.action : ""}
           wsId={selected.toolId === "slope" ? selected.workspace.id : ""}
           selectedItem={selected.toolId === "slope" ? selected.workspace.items[selected.toolIndex] : {}}
