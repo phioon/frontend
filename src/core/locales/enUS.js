@@ -17,7 +17,7 @@ const locale = {
     title_strategies: "Technical Analysis",
     title_phitrader: "Technical Analysis",
     title_myaccount: "My Account",
-    title_usersubscription: "My Subscription",
+    title_usersubscription: "My Plan",
     title_walletoverview: "Overview",
     title_wallets: "My Assets",
 
@@ -143,6 +143,9 @@ const locale = {
     strategy_limitReached: "Neew more  strategies to improve your results? Go premium and enjoy it! ;)",
 
     user_profileUpdated: "Profile updated!",
+    user_planPastDue_p1: "hmm... Something wrong happened while renewing your Plan :/",
+    user_planPastDue_p2: "It may be a good idea to check your Subscription to make sure your data is correct. ;)",
+    user_goToPlan: "Go to My Plan",
 
     user_emailAlreadyExists: "hmm... If I'm not wrong, I've seen your email here before. Did you forget your password?",
     user_usernameAlreadyExists: "hmm... This username is taken already... Let's try another one.",
@@ -959,23 +962,6 @@ const locale = {
     table_firstLoad: "Run a Strategy and let's see what we can find... ;)",
     table_emptyData: "Right now, there are no assets matching this technical condition. Maybe later...",
     table_noDataFound: "hmm... Did I miss something?! Please, check your filters. ;)"
-  },
-  subscriptions: {
-    basic_label: "BASIC",
-    basic_desc_p1: "It's a great option if you are looking for basic functionalities.",
-    basic_desc_p2: "So, I prepared a bundle of basic features that I hope it will fit your needs.",
-    basic_desc_p3: "And it's for free! \\o/",
-
-    premium_label: "PREMIUM",
-    premium_desc_p1: "If you are looking for a more robust platform, I can show you our second option.",
-    premium_desc_p2: "Thank to AI technology, I could learn how to do things humans usually do, and one of them is Technical Analysis.",
-    premium_desc_p3: "",
-    premium_desc_p4: "I'm designed to help investors being more efficient and secure.",
-
-    platinum_label: "PLATINUM",
-    platinum_desc_p1: "I see... You are a big player, looking for a way to improve your results.",
-    platinum_desc_p2: "So, you need an intelligent platform for assets in the entire world",
-    platinum_desc_p3: "I'm designed to help investors being more efficient and secure."
   },
   subscriptionbasic: {
     label_title: "BASIC",

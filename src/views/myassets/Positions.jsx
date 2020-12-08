@@ -311,17 +311,6 @@ class Positions extends React.Component {
     });
   };
 
-  notify(msg) {
-    let options = {
-      place: "tc",
-      message: msg,
-      type: "danger",
-      icon: "nc-icon nc-alert-circle-i",
-      autoDismiss: 7
-    };
-    this.refs.notificationAlert.notificationAlert(options);
-  }
-
   toggleModal(modalId) {
     this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
   };

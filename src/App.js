@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, Route, Switch, Redirect } from "react-router-dom";
+import { Router, Route, Switch, Redirect, Link } from "react-router-dom";
 import { LoopCircleLoading } from 'react-loadingg';
 
 import { createBrowserHistory } from "history";
@@ -47,28 +47,30 @@ class App extends React.Component {
       user: undefined
     }
 
-    this.setPrefs = this.setPrefs.bind(this)
-    this.setUser = this.setUser.bind(this)
-    this.setAuthStatus = this.setAuthStatus.bind(this)
-    this.setLocale = this.setLocale.bind(this)
-    this.getHttpTranslation = this.getHttpTranslation.bind(this)
+    this.notificationAlertRef = React.createRef();
+
+    this.setPrefs = this.setPrefs.bind(this);
+    this.setUser = this.setUser.bind(this);
+    this.setAuthStatus = this.setAuthStatus.bind(this);
+    this.setLocale = this.setLocale.bind(this);
+    this.getHttpTranslation = this.getHttpTranslation.bind(this);
     this.managers = {
       gtag: new GtagManager(),
       app: new AppManager(this.getHttpTranslation),
       market: new MarketManager(this.getHttpTranslation),
       stripe: new StripeManager(this.getHttpTranslation)
-    }
+    };
     this.managers.auth = new AuthManager(
       this.managers.gtag,
       this.getHttpTranslation,
       this.setAuthStatus,
       this.setPrefs,
       this.setUser
-    )
-    this.managers.strategy = new StrategyManager(this.managers.market)
-    this.managers.measure = new MeasureManager(this.managers.app, this.managers.market)
+    );
+    this.managers.strategy = new StrategyManager(this.managers.market);
+    this.managers.measure = new MeasureManager(this.managers.app, this.managers.market);
 
-    this.msgQueue = []
+    this.msgQueue = [];
   }
   componentDidMount() {
     this.prepareRequirements()
@@ -78,10 +80,9 @@ class App extends React.Component {
     await storage.initiator()
 
     this.setAuthStatus(await this.managers.auth.isUserAuthenticated())
-
   }
 
-  async notify(place, color, icon = "nc-icon nc-bell-55", msgId, msgText, autoDismiss = 7) {
+  async notify(place, color, icon = "nc-icon nc-bell-55", msgId, element, autoDismiss = 7) {
     var color = color
     var options = {};
 
@@ -91,7 +92,7 @@ class App extends React.Component {
         <div>
           <span data-notify="icon" className={icon} />
           <span>
-            {msgText}
+            {element}
           </span>
         </div>
       ),
@@ -108,7 +109,7 @@ class App extends React.Component {
       return
     }
 
-    this.refs.notificationAlert.notificationAlert(options);
+    this.notificationAlertRef.current.notificationAlert(options);
 
     this.msgQueue.push(msgId)
     await sleep(autoDismiss * 1000)
@@ -146,9 +147,39 @@ class App extends React.Component {
   }
   // Set User
   setUser(user) {
+    // Triggered by AuthManager.instantUser.
+    // User is authenticated.
     this.setState({ user })
+    this.checkSubscriptionStatus(user)
   }
-
+  checkSubscriptionStatus(user) {
+    if (user.subscription.name !== "basic" && user.subscription.status === "past_due") {
+      let element = (
+        <>
+          <label>
+            {getTranslation(user.prefs.locale, "httptranslation", "user_planPastDue_p1")}
+          </label>
+          <label>
+            {getTranslation(user.prefs.locale, "httptranslation", "user_planPastDue_p2")}
+          </label>
+          {" "}
+          <Link to="/app/user/subscription">
+            {getTranslation(user.prefs.locale, "httptranslation", "user_goToPlan")}
+          </Link>
+          {" "}
+          <i class="fas fa-external-link-alt" />
+        </>
+      )
+      let msg = {
+        id: "subscription",
+        icon: "nc-icon nc-bell-55",
+        text: element,
+        color: "danger",
+        autoDismiss: 60
+      }
+      this.notify("br", msg.color, msg.icon, msg.id, msg.text, msg.autoDismiss)
+    }
+  }
   setLocale(newLocale) {
     // Set new language. Only used by AuthNavBar (AppNavBar uses this.setPrefs())
     let prefs = this.state.prefs
@@ -318,8 +349,8 @@ class App extends React.Component {
 
     return (
       <>
-        <NotificationAlert ref="notificationAlert" />
         <Router history={hist}>
+          <NotificationAlert ref={this.notificationAlertRef} />
           <Switch>
             <Route
               path="/auth"

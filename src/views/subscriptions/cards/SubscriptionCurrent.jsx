@@ -243,7 +243,9 @@ class SubscriptionCurrent extends React.Component {
                 </UncontrolledTooltip>
               </Col>
               <Col md="5" sm="5" xs="5" className="text-right">
-                <label>{TimeManager.getLocaleDateString(subscription.renews_on, false)}</label>
+                <label className={TimeManager.getDateString() > subscription.renews_on && "text-danger"}>
+                  {TimeManager.getLocaleDateString(subscription.renews_on, false)}
+                </label>
               </Col>
             </Row>
           }

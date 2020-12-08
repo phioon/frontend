@@ -40,11 +40,13 @@ class Sidebar extends React.Component {
     this.state = {
       ...this.getCollapseStates(props.routes)
     }
+
+    this.sidebarRef = React.createRef()
   }
   componentDidMount() {
     // if you are using a Windows Machine, the scrollbars will have a Mac look
     if (navigator.platform.indexOf("Win") > -1) {
-      ps = new PerfectScrollbar(this.refs.sidebar, {
+      ps = new PerfectScrollbar(this.sidebarRef.current, {
         suppressScrollX: true,
         suppressScrollY: false
       });
@@ -193,7 +195,7 @@ class Sidebar extends React.Component {
             />
           </a>
         </div>
-        <div className="sidebar-wrapper" ref="sidebar">
+        <div className="sidebar-wrapper" ref={this.sidebarRef}>
           <div className="user">
             <div className="photo text-center centered">
               <span>{this.returnUserInitals(user)}</span>

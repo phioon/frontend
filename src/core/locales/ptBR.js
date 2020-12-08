@@ -143,9 +143,12 @@ const locale = {
     strategy_limitReached: "Precisa de mais estratégias para melhorar seus resultados? Atualize seu plano e aproveite! ;)",
 
     user_profileUpdated: "Perfil atualizado!",
+    user_planPastDue_p1: "hmm... Houve algum problema com a renovação do seu plano :/",
+    user_planPastDue_p2: "Pode ser uma boa ideia conferir a Assinatura para confirmar se seus dados estão corretos. ;)",
+    user_goToPlan: "Ir para Meu Plano",
 
     user_emailAlreadyExists: "hmm... Se não me engano, eu já vi seu email por aqui antes. Esqueceu a senha?",
-    user_usernameAlreadyExists: "hmm... This username is taken already... Let's try another one.",
+    user_usernameAlreadyExists: "hmm... Este nome de usuário já está em uso... Vamos tentar outro!",
     user_emailCouldNotBeSent: "Ok, a boa notícia é que seu usuário foi criado. Má notícia, meu time não está conseguindo te enviar o email de confirmação. Já pedi para darem uma olhada no seu caso, então você deve receber um email nas próximas horas. ;)",
     user_emailNotConfirmed: "Antes de continuar, preciso que confirme seu e-mail... Ainda não recebeu o E-mail de Confirmação?",
     user_amountOfSessions: "Ooops... A quantidade de sessões para este usuário foi excedida. Aguarde alguns minutos e tente novamente.",
@@ -959,23 +962,6 @@ const locale = {
     table_firstLoad: "Execute uma Estratégia e vamos ver o que encontramos... ;)",
     table_emptyData: "Nesse momento, não há ativos nesta condição técnica. Talvez mais tarde...",
     table_noDataFound: "hmm... Será que perdi algo?! Por favor, dê uma olhada nos seus filtros. ;)"
-  },
-  subscriptions: {
-    basic_label: "BASIC",
-    basic_desc_p1: "É uma excelente opção para você que está procurando por funcionalidades básica.",
-    basic_desc_p2: "Então, preparei um pacote de recursos básicos que espero que atende às suas necessidades.",
-    basic_desc_p3: "E é grátis! \\o/",
-
-    premium_label: "PREMIUM",
-    premium_desc_p1: "Se você está procurando uma plataforma mais robusta, posso lhe mostrar nossa segunda opção.",
-    premium_desc_p2: "Graças à tecnologia de IA, pude aprender a fazer coisas que os humanos geralmente fazem e uma delas é a análise técnica",
-    premium_desc_p3: "",
-    premium_desc_p4: "Fui criado para ajudar os investidores a serem mais eficentes e seguros.",
-
-    platinum_label: "PLATINUM",
-    platinum_desc_p1: "Entendo ... Você é um grande jogador, procurando uma maneira de melhorar seus resultados.",
-    platinum_desc_p2: "Então, você precisa de uma plataforma inteligente para ativos em todo o mundo",
-    platinum_desc_p3: "Fui criado para ajudar os investidores a serem mais eficentes e seguros."
   },
   subscriptionbasic: {
     label_title: "BASIC",

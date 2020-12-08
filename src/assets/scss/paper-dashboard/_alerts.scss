@@ -26,6 +26,10 @@
         background-color: lighten($primary-color, 5%);
     }
 
+    a{
+        color: $white-color;
+    }
+
     .close{
       color: $white-color;
       opacity: .9;
