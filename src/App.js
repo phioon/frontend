@@ -150,7 +150,9 @@ class App extends React.Component {
     // Triggered by AuthManager.instantUser.
     // User is authenticated.
     this.setState({ user })
-    this.checkSubscriptionStatus(user)
+
+    if (user.hasOwnProperty("subscription"))
+      this.checkSubscriptionStatus(user)
   }
   checkSubscriptionStatus(user) {
     if (user.subscription.name !== "basic" && user.subscription.status === "past_due") {

@@ -79,7 +79,7 @@ class AppLayout extends React.Component {
     let syncFull = true
     let detailed = true
 
-    let sUser = this.props.managers.auth.instantUser()
+    let sUser = this.props.user
 
     // App
     this.props.managers.app.countryList()                                 // async call

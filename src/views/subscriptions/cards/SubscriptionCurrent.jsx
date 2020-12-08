@@ -75,7 +75,7 @@ class SubscriptionCurrent extends React.Component {
   async prepareUserData() {
     let { personalData, subscription } = this.state;
 
-    let user = await this.props.managers.auth.instantUser()
+    let user = this.props.user
     user.initials = getInitials(`${user.first_name} ${user.last_name}`)
     user.full_name = getFirstAndLastName(`${user.first_name} ${user.last_name}`)
 

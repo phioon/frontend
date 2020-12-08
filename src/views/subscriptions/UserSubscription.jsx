@@ -45,7 +45,7 @@ class UserSubscription extends React.Component {
       this.validateSession()
     }
 
-    let user = await this.props.managers.auth.instantUser()
+    let user = this.props.user
     subscription = await this.props.managers.app.subscriptionRetrieve(user.subscription.name)
 
     this.setState({ user, subscription })

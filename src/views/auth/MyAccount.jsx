@@ -95,7 +95,7 @@ class MyAccount extends React.Component {
     let { getString, prefs: prefsFromProps } = this.props;
     let { personalData, preferences } = this.state;
 
-    let user = await this.props.managers.auth.instantUser()
+    let user = this.props.user
     user.initials = this.returnUserInitals(user)
 
     for (var [k, v] of Object.entries(user)) {

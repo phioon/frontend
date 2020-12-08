@@ -741,6 +741,11 @@ class AppManager {
     this.finishRequest(sKey)
     return result
   }
+  async offlineWalletList() {
+    const sKey = "wallets"
+    let result = await StorageManager.getItem(sKey)
+    return result
+  }
   async walletData(syncFull = false) {
     let sItem = await this.walletList(syncFull)
 
@@ -749,11 +754,6 @@ class AppManager {
 
     // Return it with http error details
     return sItem
-  }
-  async offlineWalletList() {
-    const sKey = "wallets"
-    let result = await StorageManager.getItem(sKey)
-    return result
   }
   async walletCreate(wallet) {
     let wsInfo = this.getApi("wsWallets")
