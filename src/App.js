@@ -351,7 +351,6 @@ class App extends React.Component {
                       user={user}
                       getString={getTranslation}
                       getHttpTranslation={this.getHttpTranslation}
-                      isAuthenticated={isAuthenticated}
                       setPrefs={this.setPrefs}
                       setLocale={this.setLocale}
                       setAuthStatus={this.setAuthStatus}
