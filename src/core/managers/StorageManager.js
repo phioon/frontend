@@ -252,7 +252,7 @@ class StorageManager {
         }
         else {
           // Market is Closed
-          isIndicatorCached = MarketManager.isDIndicatorCached(result[strData], subKey)
+          isIndicatorCached = await MarketManager.isDIndicatorCached(result[strData], subKey)
 
           // console.log(`${sKey}: isIndicatorCached? ${isIndicatorCached}`)
 
