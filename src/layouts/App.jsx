@@ -105,7 +105,7 @@ class AppLayout extends React.Component {
     let positionAssets = getDistinctValuesFromList(positions.data, "asset_symbol")
 
     this.props.managers.market.indicatorList()                            // async call
-    this.props.managers.market.stockExchangeList()                        // async call
+    await this.props.managers.market.stockExchangeList()                  // async call
     this.props.managers.market.assetList(detailed, positionAssets)        // async call
 
     // Premium

@@ -49,7 +49,7 @@ const config = {
   },
   market: {
     assets: {
-      syncLimit: 10,
+      syncLimit: 12,
       version: 0.05
     },
     dRaw: {
@@ -238,6 +238,7 @@ class StorageManager {
         else {
           // Market is Closed
           let isAssetUpToDate = await MarketManager.isAssetUpToDate(result[strData].stockExchange, mTime)
+
           isUpToDate = isAssetUpToDate || (result.data && mTime &&
             TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit)
         }
@@ -356,7 +357,7 @@ class StorageManager {
       cache = await self.caches.open(cacheId)
     else {
       cacheStorageNotSupported = true
-      console.log(`Cache Storage not supported.`)
+      console.log(`Cache Storage not supported. Using Local Storage...`)
     }
 
     for (let [k0, v0] of Object.entries(config)) {

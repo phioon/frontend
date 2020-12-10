@@ -426,32 +426,44 @@ class MarketManager {
     return false
   }
   static isLastPriceStored(stockExchange, tz_mTime) {
-    // console.log('tz_mTime: ' + tz_mTime.format())
+    // Keep in mind that at this point, market is always closed...
 
     if (stockExchange) {
       let tz = stockExchange.se_timezone
       let se_endTime = TimeManager.getTzMoment(String(tz_mTime.format("YYYY-MM-DD") + "T" + stockExchange.se_endTime), tz)
       let mTime_weekDay = TimeManager.tzGetWeekday(tz, tz_mTime)
 
-      // console.log('se_endTime: ' + se_endTime.format())
-      // console.log('mTime_weekDay: ' + mTime_weekDay)
+      let syncTolerance = 60 * 12
+      switch (mTime_weekDay) {
+        case 5:
+          // Friday
+          syncTolerance = (1440 * 2) + (60 * 12)
+          break;
+        case 6:
+          // Saturday
+          syncTolerance = (1440 * 1) + (60 * 12)
+          break;
+      }
+
+      // console.log(`tz_mTime: ${tz_mTime}`)
+      // console.log(`se_endTime: ${se_endTime}`)
+
+      // console.log(`syncTolerance: ${syncTolerance}`)
+      // console.log(`diff: ${TimeManager.timestampDiff(se_endTime)}`)
 
       if ([1, 2, 3, 4, 5].includes(mTime_weekDay)) {
-        // Last time it was modified was weekday
+        // Last time it was modified was a weekday
         let mAfterMarketCloses = TimeManager.timestampDiff(tz_mTime, se_endTime)
 
-        // Considers that prices can be updated up to 60 minutes after market is closed.
-        if (mAfterMarketCloses >= 60)
+        if (mAfterMarketCloses >= 60 && TimeManager.timestampDiff(se_endTime) > -syncTolerance) {
+          // Price has been updated after market was closed.
+          // Time difference between se_endTime and now is under tolerance
           return true
+        }
       }
       else {
-        // Last time it was modified was weekend
-        let syncToleranceWeekend = (1440 * 2) + (60 * 8)
-
-        // console.log("syncToleranceWeekend: " + syncToleranceWeekend)
-        // console.log("TimeManager.timestampDiff(tz_mTime): " + TimeManager.timestampDiff(tz_mTime))
-
-        if (TimeManager.timestampDiff(tz_mTime) > -syncToleranceWeekend)
+        // Last time it was modified was on Weekend
+        if (TimeManager.timestampDiff(se_endTime) > -syncTolerance)
           return true
       }
     }
