@@ -397,7 +397,7 @@ const locale = {
     input_constant: "Fixed Value",
     input_constant_hint: "A value that should be used to compare with the other indicator's value.",
 
-    warning_couldUseBasicWS: "Looking at this rule, seems like it would be possible to move it to Basic or Transition Workspace... Your strategy would become faster to execute and easier to understand. ;)",
+    warning_couldUseBasicWS: "Looking at this rule, seems like it would be possible to move it to workspace Basic... Your strategy would become faster to execute and easier to understand. ;)",
     error_instancesAreEqual: "Hmm... Am I wrong or these 2 elements are the same? They will always be equal each other, unless you want to compare them between different Time Intervals...",
 
     btn_add: "Add",
@@ -530,7 +530,6 @@ const locale = {
     label_workspaces: "Workspaces",
 
     label_basic: "Basic",
-    label_transition: "Transition",
     label_basic_intro_p1: "Click or move the following indicators into the Workspace desired...",
     label_basic_intro_p2: "Then, reorder them accordingly to the way they should appear on a chart.",
 
@@ -917,9 +916,7 @@ const locale = {
     icon_type_sell_hint: "Sale Strategy.",
 
     label_cat_basic: "Basic",
-    label_cat_basic_hint: "It looks for a specific ordering in the latest period (candle).",
-    label_cat_transition: "Transition",
-    label_cat_transition_hint: "It looks for moviments in the last 2 periods (candles). Example: \"Price overcoming EMA 34\".",
+    label_cat_basic_hint: "It looks for moviments in the last 2 periods (candles). Example: \"Price overcoming EMA 34\".",
     label_cat_advanced: "Advanced",
     label_cat_advanced_hint: "It's well planned to find specific moviments and behaviors.",
 

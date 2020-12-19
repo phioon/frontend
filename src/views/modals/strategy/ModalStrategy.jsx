@@ -74,7 +74,7 @@ class ModalStrategy extends React.Component {
       modal_distanceDetail_isOpen: false,
       modal_slopeDetail_isOpen: false,
 
-      activeWsMode: "transition",
+      activeWsMode: "basic",
 
       iItems: [],
 
@@ -152,7 +152,7 @@ class ModalStrategy extends React.Component {
   fakeUnmount() {
     let newState = { strategy: this.state.strategy }
 
-    newState.activeWsMode = "transition"
+    newState.activeWsMode = "basic"
 
     newState.strategy = {
       initial: {},
@@ -466,72 +466,6 @@ class ModalStrategy extends React.Component {
     let { prefs, getString, action } = this.props;
     let { isDragging } = this.state;
 
-    let filters = { id: ["basic_0"] }
-    let reversedWS = applyFilterToObjList(workspaces.slice(), filters)
-    reversedWS.reverse()
-
-    return reversedWS.map((ws) => {
-      return (
-        <Col key={ws.id} lg="6">
-          <Card
-            className={classnames("drop-area", isDragging && "dash-zone")}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => this.onDropSubcat(e, ws)}>
-            <CardHeader>
-              <p className="card-category">{getString(prefs.locale, this.compId, ["label_" + ws.id])}</p>
-              <div className="text-center">
-                <label>
-                  {getString(prefs.locale, this.compId, ["label_" + ws.id + "_intro"])}
-                </label>
-              </div>
-              <hr />
-            </CardHeader>
-            <CardBody>
-              <ReactCardFlip isFlipped={ws.showExplainer} flipDirection="vertical">
-                <SortableRulesBasic
-                  context={ws.id}
-                  items={ws.items}
-                  onUpdateItem={action !== "view" && this.updateIndicatorClick}
-                  onRemoveItem={action !== "view" && this.onWSCommit}
-                  onSortableChange={action !== "view" && this.onWSCommit} />
-                <RulesExplainer
-                  managers={this.props.managers}
-                  prefs={this.props.prefs}
-                  getString={this.props.getString}
-                  workspace={ws} />
-              </ReactCardFlip>
-            </CardBody>
-            <CardFooter>
-              <Row>
-                <Col className="text-right">
-                  <Button
-                    className="btn-neutral"
-                    color="primary"
-                    id={ws.id + "__explainer_hint"}
-                    size="sm"
-                    type="button"
-                    onClick={() => ws.showExplainer ?
-                      this.onWSChange(ws.id, "showExplainer", false) :
-                      this.onWSChange(ws.id, "showExplainer", true)
-                    }
-                  >
-                    {ws.showExplainer ?
-                      getString(prefs.locale, this.compId, "btn_goToRules") :
-                      getString(prefs.locale, this.compId, "btn_goToExplainer")
-                    }
-                  </Button>
-                </Col>
-              </Row>
-            </CardFooter>
-          </Card>
-        </Col>
-      )
-    })
-  }
-  renderTransitionWS(workspaces) {
-    let { prefs, getString, action } = this.props;
-    let { isDragging } = this.state;
-
     let filters = { type: ["basic"] }
     let reversedWS = applyFilterToObjList(workspaces.slice(), filters)
     reversedWS.reverse()
@@ -640,13 +574,13 @@ class ModalStrategy extends React.Component {
     selected.subcatId = subcatId
     selected.indicator = undefined
 
-    if (["basic", "transition"].includes(activeWsMode))
+    if (activeWsMode === "basic")
       selected.workspace = retrieveObjFromObjList(strategy.workspaces, "id", "basic_0")
-    else if (activeWsMode === "advanced")
+    else
       selected.workspace = retrieveObjFromObjList(strategy.workspaces, "id", "advanced")
 
     this.setState({ selected })
-    if (activeWsMode === "transition")
+    if (activeWsMode === "basic")
       this.toggleModal("chooseWS")
     else
       this.openSubcategoryDetail("add", selected.workspace, subcatId)
@@ -1371,18 +1305,6 @@ class ModalStrategy extends React.Component {
                   {getString(prefs.locale, this.compId, "label_basic")}
                 </NavLink>
               </NavItem>
-              {/* Transition */}
-              <NavItem>
-                <NavLink
-                  data-toggle="tab"
-                  href="#"
-                  role="wsMode"
-                  className={activeWsMode === "transition" ? "active" : ""}
-                  onClick={() => this.toggleNavLink("activeWsMode", "transition")}
-                >
-                  {getString(prefs.locale, this.compId, "label_transition")}
-                </NavLink>
-              </NavItem>
               {/* Advanced */}
               <NavItem>
                 <NavLink
@@ -1415,26 +1337,6 @@ class ModalStrategy extends React.Component {
                 <Row className="mt-3" />
                 <Row className="justify-content-center">
                   {this.renderBasicWS(strategy.workspaces)}
-                </Row>
-              </TabPane>
-              <TabPane tabId="transition">
-                <div className="text-center">
-                  {action !== "view" &&
-                    <label>
-                      <p>{getString(prefs.locale, this.compId, "label_basic_intro_p1")}</p>
-                      <p>{getString(prefs.locale, this.compId, "label_basic_intro_p2")}</p>
-                    </label>
-                  }
-                </div>
-                {/* Indicators */}
-                <Row className="justify-content-center">
-                  {this.renderSubcategoryAsCard(iItems, "quote")}
-                  {this.renderSubcategoryAsCard(iItems, "moving_average")}
-                  {this.renderSubcategoryAsCard(iItems, "phibo")}
-                </Row>
-                <Row className="mt-3" />
-                <Row className="justify-content-center">
-                  {this.renderTransitionWS(strategy.workspaces)}
                 </Row>
               </TabPane>
               <TabPane tabId="advanced">

@@ -23,8 +23,6 @@ class StrategyCardMini extends React.Component {
 
     if (Object.keys(rules.advanced).length > 0)
       return "label_cat_advanced"
-    else if (Object.keys(rules.basic_1).length > 0)
-      return "label_cat_transition"
     else
       return "label_cat_basic"
   }
@@ -64,7 +62,7 @@ class StrategyCardMini extends React.Component {
         >
           <i id="strategy_run" className="nc-icon nc-button-play" />
         </Button>
-        <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"run__" + strategy.id}>
+        <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={"run__" + strategy.id}>
           {getString(prefs.locale, this.compId, "btn_run_hint")}
         </UncontrolledTooltip>
         {/* Edit */}
@@ -80,7 +78,7 @@ class StrategyCardMini extends React.Component {
             >
               <i id="strategy_update" className="far fa-edit" />
             </Button>
-            <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"update__" + strategy.id}>
+            <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={"update__" + strategy.id}>
               {getString(prefs.locale, this.compId, "btn_update_hint")}
             </UncontrolledTooltip>
           </>
@@ -98,7 +96,7 @@ class StrategyCardMini extends React.Component {
             >
               <i id="strategy_delete" className="fa fa-times" />
             </Button>
-            <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"delete__" + strategy.id}>
+            <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={"delete__" + strategy.id}>
               {getString(prefs.locale, this.compId, "btn_delete_hint")}
             </UncontrolledTooltip>
           </>
@@ -139,7 +137,7 @@ class StrategyCardMini extends React.Component {
             >
               <i id="strategy_update" className="far fa-edit" />
             </Button>
-            <UncontrolledTooltip delay={{ show: 500 }} placement="bottom" target={"update__" + strategy.id}>
+            <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={"update__" + strategy.id}>
               {getString(prefs.locale, this.compId, "btn_update_hint")}
             </UncontrolledTooltip>
           </> :
@@ -155,7 +153,7 @@ class StrategyCardMini extends React.Component {
             >
               <i id="strategy_view" className="far fa-eye" />
             </Button>
-            <UncontrolledTooltip delay={{ show: 500 }} placement="bottom" target={"view__" + strategy.id}>
+            <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={"view__" + strategy.id}>
               {getString(prefs.locale, this.compId, "btn_view_hint")}
             </UncontrolledTooltip>
           </>
@@ -171,7 +169,7 @@ class StrategyCardMini extends React.Component {
         >
           <i id="strategy_save" className={strategy.isSaved ? "fas fa-bookmark" : "far fa-bookmark"} />
         </Button>
-        <UncontrolledTooltip delay={{ show: 500 }} placement="bottom" target={"save__" + strategy.id}>
+        <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={"save__" + strategy.id}>
           {strategy.isSaved ?
             getString(prefs.locale, this.compId, "btn_unsave_hint") :
             getString(prefs.locale, this.compId, "btn_save_hint")
@@ -196,7 +194,7 @@ class StrategyCardMini extends React.Component {
         >
           <i id="strategy_view" className="far fa-eye" />
         </Button>
-        <UncontrolledTooltip delay={{ show: 500 }} placement="bottom" target={"view__" + strategy.id}>
+        <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={"view__" + strategy.id}>
           {getString(prefs.locale, this.compId, "btn_view_hint")}
         </UncontrolledTooltip>
         {/* Save */}
@@ -210,7 +208,7 @@ class StrategyCardMini extends React.Component {
         >
           <i id="strategy_save" className={strategy.isSaved ? "fas fa-bookmark" : "far fa-bookmark"} />
         </Button>
-        <UncontrolledTooltip delay={{ show: 500 }} placement="bottom" target={"save__" + strategy.id}>
+        <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={"save__" + strategy.id}>
           {strategy.isSaved ?
             getString(prefs.locale, this.compId, "btn_unsave_hint") :
             getString(prefs.locale, this.compId, "btn_save_hint")

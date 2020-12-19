@@ -397,7 +397,7 @@ const locale = {
     input_constant: "Valor Fixo",
     input_constant_hint: "Um valor numérico a ser comparado com o valor do outro indicador.",
 
-    warning_couldUseBasicWS: "Analisando esta regra, parece que ela poderia ser realizada utilizando as áreas de trabalho Básica ou Transição... Sua estratégia executaria mais rápido, além de ficar mais simples.",
+    warning_couldUseBasicWS: "Analisando esta regra, parece que ela poderia ser realizada utilizando a área de trabalho Básica... Sua estratégia executaria mais rápido, além de ficar mais simples.",
     error_instancesAreEqual: "Hmm... Eu estou enganado ou estes 2 elementos são iguais? Eles vão ser sempre iguais um ao outro, a não ser que você queira compara-los entre diferentes intervalos de tempo ou deslocamentos...",
 
     btn_add: "Adicionar",
@@ -530,7 +530,6 @@ const locale = {
     label_workspaces: "Áreas de Trabalho",
 
     label_basic: "Básica",
-    label_transition: "Transição",
     label_basic_intro_p1: "Clique ou arraste nos seguintes indicadores para a Área de Trabalho desejada...",
     label_basic_intro_p2: "Depois, realinhe os indicadores da forma como eles deveriam aparecer em um gráfico.",
 
@@ -917,11 +916,9 @@ const locale = {
     icon_type_sell_hint: "Estratégia de Venda.",
 
     label_cat_basic: "Básica",
-    label_cat_basic_hint: "Verifica a ordem dos indicadores no último período (candle).",
-    label_cat_transition: "Transição",
-    label_cat_transition_hint: "Procura por movimentos dentro dos 2 últimos períodos (candles). Exemplo: \"Preço superando MME 34.\"",
+    label_cat_basic_hint: "Procura por movimentos dentro dos 2 últimos períodos (candles). Exemplo: \"Preço superando MME 34.\"",
     label_cat_advanced: "Avançada",
-    label_cat_advanced_hint: "Geralmente, é bem planejada para identificar movimentos/comportamentos específicos.",
+    label_cat_advanced_hint: "Geralmente, é bem planejada para identificar movimentos técnicos específicos.",
 
     label_logic: "Lógica",
     label_dynamic: "Dinâmica",

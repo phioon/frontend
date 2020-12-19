@@ -47,7 +47,7 @@ const SortableList = SortableContainer((props) => {
           key={item.value}
           index={index}
           item={item}
-          disabled={Boolean(props.onSortableChange)}
+          disabled={!Boolean(props.onSortableChange)}
 
           context={props.context}
           onUpdateItem={props.onUpdateItem}
