@@ -467,18 +467,20 @@ class PhiTrader extends React.Component {
             dimensions.setups.data.length == 0 ?
               // Empty Setups
               <Card className="card-stats">
-                <Row>
-                  <Col xl="2" lg="2" md="3" xs="4" className="centered">
-                    <div className="icon-big text-center">
-                      <i className="nc-icon nc-zoom-split text-warning" />
-                    </div>
-                  </Col>
-                  <Col xl="10" lg="10" md="9" xs="8">
-                    <br />
-                    <p className="card-description">{getString(prefs.locale, this.compId, "label_noNews_p1")}</p>
-                    <p className="card-description">{getString(prefs.locale, this.compId, "label_noNews_p2")}</p>
-                  </Col>
-                </Row>
+                <CardBody>
+                  <Row>
+                    <Col xl="2" lg="2" md="3" xs="4" className="centered">
+                      <div className="icon-big text-center">
+                        <i className="nc-icon nc-zoom-split text-warning" />
+                      </div>
+                    </Col>
+                    <Col xl="10" lg="10" md="9" xs="8">
+                      <br />
+                      <p className="card-description">{getString(prefs.locale, this.compId, "label_noNews_p1")}</p>
+                      <p className="card-description">{getString(prefs.locale, this.compId, "label_noNews_p2")}</p>
+                    </Col>
+                  </Row>
+                </CardBody>
               </Card> :
               // Setups
               <Card className="card-timeline card-plain">

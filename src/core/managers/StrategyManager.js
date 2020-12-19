@@ -28,6 +28,43 @@ class StrategyManager {
     }
     this.sModule = "strategy"
   }
+  // Preparing Indicator Items
+  async prepareIndicatorItems(getString, prefs) {
+    let iItems = await this.managers.market.indicatorData()
+
+    let distinctValues = []
+    let constant = "constant"
+    let constantObj = {
+      id: constant,
+      instances: [],
+      category: constant,
+      subcategory: constant,
+      indicator: constant,
+      periods: 0,
+      value: constant
+    }
+
+    for (var obj of iItems) {
+      // iItems: Preparing to be read by Sortable (Basic WS)
+      obj.value = obj.id
+      obj.label = getString(prefs.locale, "indicators", obj.id)
+
+      // ConstantObj: Getting all available intervals
+      for (var instance of obj.instances)
+        if (!distinctValues.includes(instance.interval)) {
+          distinctValues.push(instance.interval)
+
+          constantObj.instances.push({
+            name: `${instance.interval}_${constant}`,
+            interval: instance.interval
+          })
+        }
+    }
+    iItems.push(constantObj)
+
+    return iItems
+  }
+
   // Building data
   // 1. Define Indicators involved and amount of periods needed
   async buildData(stockExchange, rules) {

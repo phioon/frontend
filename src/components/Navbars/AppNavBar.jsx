@@ -7,6 +7,11 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Form,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
   NavbarBrand,
   Navbar,
   Nav,
@@ -171,6 +176,19 @@ class AppNavBar extends React.Component {
               <span className="navbar-toggler-bar navbar-kebab" />
             </button>
             <Collapse className="justify-content-end" navbar isOpen={this.state.collapseOpen}>
+              {/* <Form>
+                <InputGroup className="no-border">
+                  <Input
+                    defaultValue=""
+                    placeholder={getString(prefs.locale, "generic", "input_search")}
+                    type="text" />
+                  <InputGroupAddon addonType="append">
+                    <InputGroupText>
+                      <i className="nc-icon nc-zoom-split" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+              </Form> */}
               <Nav navbar>
                 <UncontrolledDropdown className="btn-rotate" nav>
                   <DropdownToggle

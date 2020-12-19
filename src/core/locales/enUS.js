@@ -7,6 +7,7 @@ const locale = {
     label_loading: "Loading...",
     label_days: "days",
 
+    input_search: "Search...",
     input_select: "Select...",
     input_noOptions: "No options available..."
   },
@@ -14,14 +15,13 @@ const locale = {
     title_default: "Dashboard",
     title_openpositions: "Open Positions",
     title_positions: "My Assets",
-    title_strategies: "Technical Analysis",
+    title_strategypanel: "Strategies",
+    title_strategygallery: "Strategies",
     title_phitrader: "Technical Analysis",
     title_myaccount: "My Account",
     title_usersubscription: "My Plan",
     title_walletoverview: "Overview",
     title_wallets: "My Assets",
-
-    placeholder_search: "Search...",
 
     label_myaccount: "My Account",
     label_subscription: "Subscription",
@@ -140,7 +140,9 @@ const locale = {
   },
   httptranslation: {
     wallet_limitReached: "Need more wallets to manage your investments? Go premium and enjoy it! ;)",
-    strategy_limitReached: "Neew more  strategies to improve your results? Go premium and enjoy it! ;)",
+    strategy_limitReached: "Neew more strategies to improve your results? Go premium and enjoy it! ;)",
+    strategy_addedToCollection: "Strategy added to your collection.",
+    strategy_removedFromCollection: "Strategy removed from your collection.",
 
     user_profileUpdated: "Profile updated!",
     user_planPastDue_p1: "hmm... Something wrong happened while renewing your Plan :/",
@@ -520,6 +522,8 @@ const locale = {
   modalstrategy: {
     title_create: "Create Strategy",
     title_update: "Update Strategy",
+    title_view: "Strategy Details",
+
     label_intro_p1: "A Strategy is a set of rules/filters that can be applied to the relation between Price and Indicators.",
     label_intro_p2: "Once created, it can be applied to any time interval, unless you force it on the advanced workspace.",
 
@@ -575,7 +579,8 @@ const locale = {
 
     btn_add: "Add",
     btn_create: "Create",
-    btn_update: "Update"
+    btn_update: "Update",
+    btn_view: "Back"
   },
   modalupdateposition: {
     title: "Update Position",
@@ -887,9 +892,12 @@ const locale = {
     openpositions: "Open Positions",
     openpositionsMini: "OP",
 
-    technicalAnalysis: "Technical Analysis",
-    strategiesMini: "S",
     strategies: "Strategies",
+    strategypanel: "Control Panel",
+    strategypanelMini: "CP",
+    strategygallery: "Gallery",
+    strategygalleryMini: "G",
+
     phitrader: "Phi Trader",
     phitraderMini: "PHI",
   },
@@ -898,31 +906,6 @@ const locale = {
   },
   stockexchangefilter: {
     label_title: "Stock Exchanges",
-  },
-  strategies: {
-    title: "Strategies",
-    btn_newStrategy: "New Strategy",
-
-    label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
-    label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can bring you strategies and indicators that are available there! ;)",
-    btn_goToWallets: "Go to Wallets",
-
-    label_noStrategies_p1: "Are you ready to start saving time and always having the best opportunities at one click?",
-    label_noStrategies_p2: "Go ahead and create your first Strategy !",
-
-    card_results_title: "Results",
-
-    input_stockExchange: "Stock Exchange",
-    input_stockExchange_hint: "Which Stock Exchange are we talking about?",
-    input_interval: "Interval",
-    input_interval_hint: "Which time interval the Strategy's rules should be applied in?",
-
-    btn_alert_cancel: "Cancel",
-    btn_alert_confirm: "Confirm",
-    alert_confirming_title: "Are you sure?",
-    alert_confirming_text: "Once deleted, it's not possible to recover it back.",
-    alert_deleted_title: "Deleted!",
-    alert_deleted_text: "Your Strategy has been deleted.",
   },
   strategycardmini: {
     label_public: "Public",
@@ -948,9 +931,48 @@ const locale = {
     label_category: "Category",
 
     btn_run_hint: "Run Strategy.",
-    btn_view_hint: "View Strategy.",
+    btn_view_hint: "See details.",
+    btn_save_hint: "Save Strategy.",
+    btn_unsave_hint: "Remove from Saved collection.",
     btn_update_hint: "Update Strategy.",
     btn_delete_hint: "Delete Strategy.",
+  },
+  strategygallery: {
+    title: "Gallery",
+
+    card_mostRuns_title: "Most Runs",
+    card_mostSaved_title: "Most Saved",
+  },
+  strategypanel: {
+    title: "Control Panel",
+    btn_newStrategy: "New",
+    btn_goToGallery: "Go to Gallery",
+
+    label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
+    label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can bring you strategies and indicators that are available there! ;)",
+    btn_goToWallets: "Go to Wallets",
+
+    label_myStrategies_noStrategies_p1: "Are you ready to start saving time and always having the best opportunities at one click?",
+    label_myStrategies_noStrategies_p2: "Go ahead and create your first Strategy !",
+
+    label_savedStrategies_noStrategies_p1: "I couldn't find any Strategy saved over here... You can always go to Gallery and see what other users are using lately...",
+    label_savedStrategies_noStrategies_p2: "If you like something there, save it! So it will appear right here. ;)",
+
+    card_myStrategies_title: "My Strategies",
+    card_savedStrategies_title: "Saved",
+    card_results_title: "Results",
+
+    input_stockExchange: "Stock Exchange",
+    input_stockExchange_hint: "Which Stock Exchange are we talking about?",
+    input_interval: "Interval",
+    input_interval_hint: "Which time interval the Strategy's rules should be applied in?",
+
+    btn_alert_cancel: "Cancel",
+    btn_alert_confirm: "Confirm",
+    alert_confirming_title: "Are you sure?",
+    alert_confirming_text: "Once deleted, it's not possible to recover it back.",
+    alert_deleted_title: "Deleted!",
+    alert_deleted_text: "Your Strategy has been deleted.",
   },
   strategyresults: {
     header_asset: "Asset",

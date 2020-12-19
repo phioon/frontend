@@ -28,15 +28,33 @@ class StrategyCardMini extends React.Component {
     else
       return "label_cat_basic"
   }
+  onClick(action, strategy) {
+    this.props.onClick(action, strategy)
 
-  renderBtnActions() {
-    let { prefs, getString, strategy, isLoading, isOwner } = this.props;
+    // Handle immediate actions...
+    switch (action) {
+      case "save":
+        strategy.isSaved = !strategy.isSaved
+        this.setState({ strategy })
+    }
+  }
+
+  renderActions(context) {
+    if (context === "myStrategies")
+      return this.renderMyActions();
+    else if (context === "savedStrategies")
+      return this.renderSavedActions();
+    else if (context === "gallery")
+      return this.renderGalleryActions();
+  }
+  renderMyActions() {
+    let { prefs, getString, strategy, isLoading } = this.props;
 
     return (
       <div className="text-right">
         {/* Run */}
         <Button
-          className="btn-icon btn-link"
+          className="btn-icon btn-neutral"
           color="success"
           id={"run__" + strategy.id}
           size="sm"
@@ -50,28 +68,28 @@ class StrategyCardMini extends React.Component {
           {getString(prefs.locale, this.compId, "btn_run_hint")}
         </UncontrolledTooltip>
         {/* Edit */}
-        {isOwner ?
+        {strategy.isOwner &&
           <>
             <Button
-              className="btn-icon btn-link"
+              className="btn-icon btn-neutral"
               color="warning"
               id={"update__" + strategy.id}
               size="sm"
               type="button"
               onClick={() => this.props.onClick("update", strategy)}
             >
-              <i id="strategy_update" className="fa fa-edit" />
+              <i id="strategy_update" className="far fa-edit" />
             </Button>
             <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"update__" + strategy.id}>
               {getString(prefs.locale, this.compId, "btn_update_hint")}
             </UncontrolledTooltip>
-          </> : null
+          </>
         }
         {/* Delete */}
-        {isOwner ?
+        {strategy.isOwner &&
           <>
             <Button
-              className="btn-icon btn-link remove"
+              className="btn-icon btn-neutral remove"
               color="danger"
               id={"delete__" + strategy.id}
               size="sm"
@@ -83,22 +101,137 @@ class StrategyCardMini extends React.Component {
             <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"delete__" + strategy.id}>
               {getString(prefs.locale, this.compId, "btn_delete_hint")}
             </UncontrolledTooltip>
-          </> : null
+          </>
         }
+      </div>
+    )
+  }
+  renderSavedActions() {
+    let { prefs, getString, strategy, isLoading } = this.props;
+
+    return (
+      <div className="text-right">
+        {/* Run */}
+        <Button
+          className="btn-icon btn-neutral"
+          color="success"
+          id={"run__" + strategy.id}
+          size="sm"
+          type="button"
+          disabled={isLoading}
+          onClick={() => this.onClick("run", strategy)}
+        >
+          <i id="strategy_run" className="nc-icon nc-button-play" />
+        </Button>
+        <UncontrolledTooltip delay={{ show: 500 }} placement="bottom" target={"run__" + strategy.id}>
+          {getString(prefs.locale, this.compId, "btn_run_hint")}
+        </UncontrolledTooltip>
+        {strategy.isOwner ?
+          <>
+            {/* Edit */}
+            <Button
+              className="btn-icon btn-neutral"
+              color="warning"
+              id={"update__" + strategy.id}
+              size="sm"
+              type="button"
+              onClick={() => this.props.onClick("update", strategy)}
+            >
+              <i id="strategy_update" className="far fa-edit" />
+            </Button>
+            <UncontrolledTooltip delay={{ show: 500 }} placement="bottom" target={"update__" + strategy.id}>
+              {getString(prefs.locale, this.compId, "btn_update_hint")}
+            </UncontrolledTooltip>
+          </> :
+          <>
+            {/* View */}
+            <Button
+              className="btn-icon btn-neutral"
+              color="warning"
+              id={"view__" + strategy.id}
+              size="sm"
+              type="button"
+              onClick={() => this.onClick("view", strategy)}
+            >
+              <i id="strategy_view" className="far fa-eye" />
+            </Button>
+            <UncontrolledTooltip delay={{ show: 500 }} placement="bottom" target={"view__" + strategy.id}>
+              {getString(prefs.locale, this.compId, "btn_view_hint")}
+            </UncontrolledTooltip>
+          </>
+        }
+        {/* Save */}
+        <Button
+          className="btn-icon btn-neutral"
+          color="info"
+          id={"save__" + strategy.id}
+          size="sm"
+          type="button"
+          onClick={() => this.onClick("save", strategy)}
+        >
+          <i id="strategy_save" className={strategy.isSaved ? "fas fa-bookmark" : "far fa-bookmark"} />
+        </Button>
+        <UncontrolledTooltip delay={{ show: 500 }} placement="bottom" target={"save__" + strategy.id}>
+          {strategy.isSaved ?
+            getString(prefs.locale, this.compId, "btn_unsave_hint") :
+            getString(prefs.locale, this.compId, "btn_save_hint")
+          }
+        </UncontrolledTooltip>
+      </div>
+    )
+  }
+  renderGalleryActions() {
+    let { prefs, getString, strategy } = this.props;
+
+    return (
+      <div className="text-right">
+        {/* View */}
+        <Button
+          className="btn-icon btn-neutral"
+          color="warning"
+          id={"view__" + strategy.id}
+          size="sm"
+          type="button"
+          onClick={() => this.onClick("view", strategy)}
+        >
+          <i id="strategy_view" className="far fa-eye" />
+        </Button>
+        <UncontrolledTooltip delay={{ show: 500 }} placement="bottom" target={"view__" + strategy.id}>
+          {getString(prefs.locale, this.compId, "btn_view_hint")}
+        </UncontrolledTooltip>
+        {/* Save */}
+        <Button
+          className="btn-icon btn-neutral"
+          color="info"
+          id={"save__" + strategy.id}
+          size="sm"
+          type="button"
+          onClick={() => this.onClick("save", strategy)}
+        >
+          <i id="strategy_save" className={strategy.isSaved ? "fas fa-bookmark" : "far fa-bookmark"} />
+        </Button>
+        <UncontrolledTooltip delay={{ show: 500 }} placement="bottom" target={"save__" + strategy.id}>
+          {strategy.isSaved ?
+            getString(prefs.locale, this.compId, "btn_unsave_hint") :
+            getString(prefs.locale, this.compId, "btn_save_hint")
+          }
+        </UncontrolledTooltip>
       </div>
     )
   }
 
   render() {
-    let { prefs, getString, strategy } = this.props;
+    let { prefs, getString, context, strategy } = this.props;
 
     return (
       <Card className="card-stats-mini">
         <CardBody>
           {/* Name */}
-          <CardTitle>{strategy.name}</CardTitle>
+          <CardTitle draggable>
+            {strategy.name}
+          </CardTitle>
 
-          {/* category */}
+          {/* Category */}
           <Row>
             <Col>
               <label>{getString(prefs.locale, this.compId, "label_category")}</label>
@@ -136,9 +269,10 @@ class StrategyCardMini extends React.Component {
             <label>@{strategy.owner_username}</label>
           </div>
 
-          <Row className="mt-3" />
+          {/* <Row className="mt-3" /> */}
+          <hr />
           {/* Action buttons */}
-          {this.renderBtnActions()}
+          {this.renderActions(context)}
 
         </CardBody>
         {/* Background Icon */}

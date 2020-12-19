@@ -67,7 +67,7 @@ class AuthManager {
     let data = { username: username }
     let isAvailable = false
     let wsInfo = this.getApi("wsUser")
-    wsInfo.request += "checkAvailability/"
+    wsInfo.request += "check-availability/"
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     wsInfo.method = "post"
 
@@ -126,7 +126,7 @@ class AuthManager {
   }
   async userChangePassword(object) {
     let wsInfo = this.getApi("wsUser")
-    wsInfo.request += "changepassword/"
+    wsInfo.request += "change-password/"
     wsInfo.method = "post"
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
@@ -134,14 +134,14 @@ class AuthManager {
   }
   async userRequestPasswordReset(user) {
     let wsInfo = this.getApi("wsUser")
-    wsInfo.request += "request/passwordreset/"
+    wsInfo.request += "request/password-reset/"
     wsInfo.method = "post"
 
     return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, user)
   }
   async userRequestConfirmEmail(user) {
     let wsInfo = this.getApi("wsUser")
-    wsInfo.request += "request/emailconfirmation/"
+    wsInfo.request += "request/email-confirmation/"
     wsInfo.method = "post"
 
     return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, user)
@@ -155,7 +155,7 @@ class AuthManager {
   }
   async userSetPasswordWithToken(object) {
     let wsInfo = this.getApi("wsUser")
-    wsInfo.request += "confirm/passwordreset/"
+    wsInfo.request += "confirm/password-reset/"
     wsInfo.method = "post"
 
     return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, object)

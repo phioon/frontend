@@ -19,7 +19,7 @@ const SortableItem = SortableElement((props) => {
             size="sm"
             className="btn-icon btn-neutral edit"
           >
-            <i className="fa fa-edit" />
+            <i className="far fa-edit" />
           </Button>
         }
 
@@ -47,6 +47,7 @@ const SortableList = SortableContainer((props) => {
           key={index}
           index={index}
           item={item}
+          disabled={Boolean(props.onSortableChange)}
 
           i={index}
           context={props.context}

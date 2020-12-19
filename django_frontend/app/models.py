@@ -1,8 +1,11 @@
 from django.contrib.auth.models import User
+from django.db.models import Avg, Sum
+from django.core import validators
 from django.db import models
+from datetime import datetime, timedelta
 
 
-class Currency (models.Model):
+class Currency(models.Model):
     code = models.CharField(max_length=8, verbose_name='ISO 4217 Code', primary_key=True)
     symbol = models.CharField(max_length=8, verbose_name='examples: US$, R$, A$, C$')
     name = models.CharField(max_length=128)
@@ -39,7 +42,7 @@ class Currency (models.Model):
                       'decimal_symbol': '.'})
 
 
-class Country (models.Model):
+class Country(models.Model):
     code = models.CharField(max_length=8, verbose_name='Alpha-2 Code', primary_key=True)
     name = models.CharField(max_length=128, unique=True)
     locale = models.CharField(max_length=8)
@@ -71,7 +74,7 @@ class Country (models.Model):
                       'currency': Currency.objects.get(pk='GBP')})
 
 
-class Subscription (models.Model):
+class Subscription(models.Model):
     name = models.CharField(max_length=32, primary_key=True)
     label = models.CharField(max_length=32)
 
@@ -90,7 +93,7 @@ class Subscription (models.Model):
             defaults={'label': 'Platinum'})
 
 
-class SubscriptionPrice (models.Model):
+class SubscriptionPrice(models.Model):
     # Remember to update prices here accordingly to Stripe's platform.
     # Otherwise, the webhook_listener will not be able to address the correct subscription to the users.
 
@@ -120,7 +123,7 @@ class SubscriptionPrice (models.Model):
             defaults={'subscription': platinum, 'name': 'platinum_year'})
 
 
-class PositionType (models.Model):
+class PositionType(models.Model):
     name = models.CharField(max_length=12, unique=True)
     desc = models.CharField(max_length=512, null=True)
 
@@ -136,7 +139,7 @@ class PositionType (models.Model):
             defaults={'desc': 'Sell'})
 
 
-class UserCustom (models.Model):
+class UserCustom(models.Model):
     # Want fields here to be retrieved by Frontend? Add them into UserSerializer (not UserCustomSerializer)
     # UserCustomSerializer is used only for updating UserCustom objects
 
@@ -155,7 +158,7 @@ class UserCustom (models.Model):
         return self.user.username
 
 
-class UserPreferences (models.Model):
+class UserPreferences(models.Model):
     user = models.OneToOneField(User, related_name='userPrefs', on_delete=models.CASCADE)
     locale = models.CharField(max_length=8)
     currency = models.ForeignKey(Currency, on_delete=models.DO_NOTHING)
@@ -174,7 +177,7 @@ class UserPreferences (models.Model):
         return fields
 
 
-class Wallet (models.Model):
+class Wallet(models.Model):
     owner = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
     desc = models.CharField(max_length=128, blank=True)
@@ -186,7 +189,7 @@ class Wallet (models.Model):
         return self.name
 
 
-class Position (models.Model):
+class Position(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
@@ -210,7 +213,7 @@ class Position (models.Model):
         return str(self.pk)
 
 
-class Strategy (models.Model):
+class Strategy(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
@@ -225,3 +228,124 @@ class Strategy (models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+    def rate(self, user, value):
+        try:
+            # Try to update instance...
+            instance = StrategyRating.objects.get(strategy=self, user=user)
+            instance.rating_avg = value
+            instance.save()
+        except StrategyRating.DoesNotExist:
+            instance = StrategyRating.objects.create(strategy=self, user=user, rating=value)
+
+        self.update_stats('ratings')
+
+        return instance
+
+    def run(self):
+        today = datetime.utcnow().date()
+
+        try:
+            # Try to update instance...
+            instance = StrategyUsage.objects.get(strategy=self, date=today)
+            instance.runs = instance.runs + 1
+            instance.save()
+        except StrategyUsage.DoesNotExist:
+            # Instance doesn't exist, so create it...
+            instance = StrategyUsage.objects.create(strategy=self, date=today, runs=1)
+
+        self.update_stats('usage')
+
+        return instance
+
+    def set_save(self, user, value):
+        try:
+            # Try to update instance...
+            instance = StrategyRating.objects.get(strategy=self, user=user)
+            instance.is_saved = value
+            instance.save()
+        except StrategyRating.DoesNotExist:
+            instance = StrategyRating.objects.create(strategy=self, user=user, is_saved=value)
+
+        self.update_stats('ratings')
+
+        return instance
+
+    def update_stats(self, related_name):
+        if related_name == 'usage':
+            self.update_usage()
+        elif related_name == 'ratings':
+            self.update_ratings()
+
+    def update_ratings(self):
+        # Ratings
+        aggr = self.ratings.aggregate(Avg('rating'))
+        if aggr['rating__avg'] is not None:
+            avg = round(aggr['rating__avg'], 2)
+            self.stats.rating_avg = avg
+
+        # Is Saved
+        saved_count = self.ratings.filter(is_saved=True).count()
+        self.stats.saved_count = saved_count
+        self.stats.save()
+
+    def update_usage(self):
+        # IMPORTANT! Variable [queryset] is reusable to avoid database hits...
+        today = datetime.utcnow().date()
+
+        # 14 days
+        date_from = today - timedelta(days=14)
+        queryset = self.usage.filter(date__gte=date_from)
+        usage = queryset.aggregate(runs_last_14_days=Sum('runs'))
+        self.stats.runs_last_14_days = usage['runs_last_14_days']
+
+        # 7 days
+        date_from = today - timedelta(days=7)
+        usage = queryset.filter(date__gte=date_from).aggregate(runs_last_7_days=Sum('runs'))
+        self.stats.runs_last_7_days = usage['runs_last_7_days']
+
+        self.stats.save()
+
+
+class StrategyStats(models.Model):
+    strategy = models.OneToOneField(Strategy, related_name='stats', on_delete=models.CASCADE)
+    rating_avg = models.FloatField(default=0)
+    saved_count = models.IntegerField(default=0)
+
+    runs_last_7_days = models.IntegerField(default=0)
+    runs_last_14_days = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.strategy.pk) + '__' + str(self.rating_avg)
+
+
+class StrategyRating(models.Model):
+    last_modified = models.DateTimeField(auto_now=True)
+    strategy = models.ForeignKey(Strategy, related_name='ratings', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_saved = models.BooleanField(default=False)
+    rating = models.IntegerField(default=0, validators=[
+        validators.MinValueValidator(1),
+        validators.MaxValueValidator(5)]
+    )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', 'strategy'])
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'strategy'], name='unique_rating')
+        ]
+
+    def __str__(self):
+        return str(self.strategy.pk) + '__' + str(self.user.username)
+
+
+class StrategyUsage(models.Model):
+    strategy = models.ForeignKey(Strategy, related_name='usage', db_index=True, on_delete=models.CASCADE)
+    date = models.DateField(auto_now=True, db_index=True)
+    runs = models.IntegerField(default=1)
+
+    def __str__(self):
+        return str(self.strategy.pk) + '__' + str(self.date)
+

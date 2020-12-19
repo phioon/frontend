@@ -109,7 +109,7 @@ class SubscriptionCurrent extends React.Component {
     let { subscription, insights } = this.state
     insights.phiOperations.amount.data = 0
     let wallets = await this.props.managers.app.walletData()
-    let strategies = await this.props.managers.app.strategyData()
+    let strategies = await this.props.managers.app.myStrategyData()
 
     let stockExchanges = getDistinctValuesFromList(wallets, "se_short")
     let dSetups = []

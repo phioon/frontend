@@ -206,7 +206,7 @@ class App extends React.Component {
     let badRequestCodes = [400]
     let unauthorizedCodes = [401]
     let goneCodes = [410]
-    let internalErrorCodes = [403, 404, 500, 503]
+    let internalErrorCodes = [403, 404, 405, 500, 503]
     let rData = null
     let msg = {
       id: undefined,
@@ -221,9 +221,17 @@ class App extends React.Component {
       msg.icon = "nc-icon nc-check-2"
       msg.autoDismiss = 3
 
-      if (model == "user") {
-        if (context == "profileupdate")
-          msg.id = model + "_profileUpdated"
+      switch (model) {
+        case "user":
+          if (context === "profileupdate")
+            msg.id = model + "_profileUpdated"
+          break;
+        case "strategy":
+          if (context === "strategyaddedtocollection")
+            msg.id = model + "_addedToCollection"
+          else if (context === "strategyremovedfromcollection")
+            msg.id = model + "_removedFromCollection"
+          break;
       }
     }
     else if (rResult.response) {

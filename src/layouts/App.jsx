@@ -41,22 +41,21 @@ class AppLayout extends React.Component {
       document.scrollingElement.scrollTop = 0;
       this.mainPanelRef.current.scrollTop = 0;
 
-      let isStrategies = this.props.location.pathname.indexOf("/strategies") > -1
+      let isStrategyPage = this.props.location.pathname.indexOf("/strategies/panel") > -1
 
-      if (isStrategies)
+      if (isStrategyPage)
         this.destroyPerfectScrollbar()
       else
-        this.mountPerfectScrollbar()
+        this.mountPerfectScrollbar(isStrategyPage)
     }
   }
 
   // Perfect Scrollbar
-  mountPerfectScrollbar() {
+  mountPerfectScrollbar(isStrategyPage) {
     let isWindows = navigator.platform.indexOf("Win") > -1
     let isMounted = document.documentElement.classList.contains("perfect-scrollbar-on")
-    let isStrategies = this.props.location.pathname.indexOf("/strategies") > -1
 
-    if (isStrategies)
+    if (isStrategyPage)
       return
     else if (isWindows && !isMounted) {
       document.documentElement.className += " perfect-scrollbar-on";
@@ -96,7 +95,7 @@ class AppLayout extends React.Component {
         syncFull = false
     }
 
-    this.props.managers.app.strategyList(syncFull)                        // async call
+    this.props.managers.app.myStrategyList(syncFull)                      // async call
     wallets = await this.props.managers.app.walletList(syncFull)
     let positions = await this.props.managers.app.positionList(syncFull)
 

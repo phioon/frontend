@@ -22,12 +22,13 @@ import MyAccount from "views/auth/MyAccount.jsx";
 import UserSubscription from "views/subscriptions/UserSubscription.jsx";
 
 // App
-import Strategies from "views/technicalanalysis/strategy/Strategies";
 import OpenPositions from "views/wallet/OpenPositions";
 import Positions from "views/myassets/Positions";
 import PhiTrader from "views/technicalanalysis/PhiTrader";
 import WalletOverview from "views/wallet/WalletOverview";
 import Wallets from "views/myassets/Wallets";
+import StrategyPanel from "views/technicalanalysis/strategy/StrategyPanel";
+import StrategyGallery from "views/technicalanalysis/strategy/StrategyGallery";
 
 const routes = [
   {
@@ -175,25 +176,33 @@ const routes = [
   {
     sidebar: true,
     collapse: true,
-    name: "technicalAnalysis",
+    name: "strategies",
     icon: "nc-icon nc-bulb-63",
     state: "tcCollapse",
     views: [
       {
         sidebar: true,
-        path: "/analysis/strategies",
-        name: "strategies",
-        component: Strategies,
+        path: "/strategies/panel",
+        name: "strategypanel",
+        component: StrategyPanel,
         layout: "/app"
       },
       {
         sidebar: true,
-        path: "/analysis/phitrader",
-        name: "phitrader",
-        component: PhiTrader,
+        path: "/strategies/gallery",
+        name: "strategygallery",
+        component: StrategyGallery,
         layout: "/app"
-      },
+      }
     ]
+  },
+  {
+    sidebar: true,
+    path: "/phitrader",
+    name: "phitrader",
+    icon: "nc-icon nc-atom",
+    component: PhiTrader,
+    layout: "/app"
   },
 ]
 

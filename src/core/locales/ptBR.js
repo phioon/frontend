@@ -7,6 +7,7 @@ const locale = {
     label_loading: "Carregando...",
     label_days: "dias",
 
+    input_search: "Procurar...",
     input_select: "Selecione...",
     input_noOptions: "Opções indisponíveis..."
   },
@@ -14,14 +15,13 @@ const locale = {
     title_default: "Dashboard",
     title_openpositions: "Posições Abertas",
     title_positions: "Meus Ativos",
-    title_strategies: "Análise Técnica",
+    title_strategypanel: "Estratégias",
+    title_strategygallery: "Estratégias",
     title_phitrader: "Análise Técnica",
     title_myaccount: "Minha Conta",
     title_usersubscription: "Meu Plano",
     title_walletoverview: "Visão Geral",
     title_wallets: "Meus Ativos",
-
-    placeholder_search: "Pesquisar...",
 
     label_myaccount: "Minha Conta",
     label_subscription: "Plano",
@@ -141,6 +141,8 @@ const locale = {
   httptranslation: {
     wallet_limitReached: "Precisa de mais carteiras para gerenciar seus investimentos? Atualize seu plano e aproveite! ;)",
     strategy_limitReached: "Precisa de mais estratégias para melhorar seus resultados? Atualize seu plano e aproveite! ;)",
+    strategy_addedToCollection: "Estratégia adicionada à sua coleção.",
+    strategy_removedFromCollection: "Estratégia removida da sua coleção.",
 
     user_profileUpdated: "Perfil atualizado!",
     user_planPastDue_p1: "hmm... Houve algum problema com a renovação do seu plano :/",
@@ -520,6 +522,8 @@ const locale = {
   modalstrategy: {
     title_create: "Criar Estratégia",
     title_update: "Atualizar Estratégia",
+    title_view: "Detalhes da Estratégia",
+
     label_intro_p1: "Uma Estratégia é um conjunto de regras/filtros que pode ser aplicado à relação entre Preço e Indicadores.",
     label_intro_p2: "Uma vez criada, ela pode ser aplicada à qualquer tempo gráfico, a menos que você force isso na área avançada.",
 
@@ -541,7 +545,7 @@ const locale = {
     label_logic_static: "Estática",
     input_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico (s, d, m60...). Ela se torna Estática se um tempo gráfico específico é selecionado em uma das regras.",
     input_description: "Descrição",
-    label_description_placeholder: "Uma descrição bem escrita pode ajudar outros usuários a entenderem melhor como sua Estratégia funciona...",
+    label_description_placeholder: "Uma descrição bem escrita pode ajudar outros usuários a entender melhor como sua Estratégia funciona...",
     input_public: "Pública",
     input_public_hint: "Outros usuários podem ver esta estratégia.",
     input_private: "Privada",
@@ -575,7 +579,8 @@ const locale = {
 
     btn_add: "Adicionar",
     btn_create: "Criar",
-    btn_update: "Atualizar"
+    btn_update: "Atualizar",
+    btn_view: "Voltar"
   },
   modalupdateposition: {
     title: "Atualizar Posição",
@@ -887,9 +892,12 @@ const locale = {
     openpositions: "Posições Abertas",
     openpositionsMini: "PA",
 
-    technicalAnalysis: "Análise Técnica",
-    strategiesMini: "E",
     strategies: "Estratégias",
+    strategypanel: "Painel",
+    strategypanelMini: "P",
+    strategygallery: "Galeria",
+    strategygalleryMini: "G",
+
     phitrader: "Phi Trader",
     phitraderMini: "PHI",
   },
@@ -898,31 +906,6 @@ const locale = {
   },
   stockexchangefilter: {
     label_title: "Bolsa de Valores",
-  },
-  strategies: {
-    title: "Estratégias",
-    btn_newStrategy: "Nova Estratégia",
-
-    label_noWallets_p1: "Hmm... Parece que você ainda tem Carteiras criadas por aqui... Que tal criar a primeira?",
-    label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua e então trazer estratégias e indicadores disponíveis por lá! ;)",
-    btn_goToWallets: "Ir para Carteiras",
-
-    label_noStrategies_p1: "Está preparado para começar a economizar tempo e ainda ter as melhores oportunidades do mercado à um clique?",
-    label_noStrategies_p2: "Então comece criando a sua primeira Estratégia !",
-
-    card_results_title: "Resultado",
-
-    input_stockExchange: "Bolsa de Valores",
-    input_stockExchange_hint: "Estamos falando de qual Bolsa de Valores?",
-    input_interval: "Intervalo",
-    input_interval_hint: "As regras da estratégia devem ser aplicada em qual tempo gráfico?",
-
-    btn_alert_cancel: "Cancelar",
-    btn_alert_confirm: "Confirmar",
-    alert_confirming_title: "Você tem certeza?",
-    alert_confirming_text: "Uma vez removida, não é possível recupera-la.",
-    alert_deleted_title: "Removida!",
-    alert_deleted_text: "Sua Estratégia foi removida com sucesso.",
   },
   strategycardmini: {
     label_public: "Pública",
@@ -949,8 +932,44 @@ const locale = {
 
     btn_run_hint: "Executar Estratégia.",
     btn_view_hint: "Visualizar Estratégia.",
+    btn_save_hint: "Salvar Estratégia.",
+    btn_unsave_hint: "Remover da coleção.",
     btn_update_hint: "Atualizar Estratégia.",
     btn_delete_hint: "Deletar Estratégia.",
+  },
+  strategygallery: {
+    title: "Galeria",
+  },
+  strategypanel: {
+    title: "Painel de Controle",
+    btn_newStrategy: "Nova Estratégia",
+    btn_goToGallery: "Ir para Galeria",
+
+    label_noWallets_p1: "Hmm... Parece que você ainda tem Carteiras criadas por aqui... Que tal criar a primeira?",
+    label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua e então trazer estratégias e indicadores disponíveis por lá! ;)",
+    btn_goToWallets: "Ir para Carteiras",
+
+    label_myStrategies_noStrategies_p1: "Está preparado para começar a economizar tempo e ainda ter as melhores oportunidades do mercado à um clique?",
+    label_myStrategies_noStrategies_p2: "Então comece criando a sua primeira Estratégia !",
+
+    label_savedStrategies_noStrategies_p1: "Não encontrei nenhuma Estratégia salva por aqui... Que tal visitar a Galeria para saber as Estratégias mais usadas por outros usuários ultimamente?",
+    label_savedStrategies_noStrategies_p2: "Se gostar de algo por lá, você pode salvá-las e elas vão aparecer aqui. ;)",
+
+    card_myStrategies_title: "Minhas",
+    card_savedStrategies_title: "Salvas",
+    card_results_title: "Resultado",
+
+    input_stockExchange: "Bolsa de Valores",
+    input_stockExchange_hint: "Estamos falando de qual Bolsa de Valores?",
+    input_interval: "Intervalo",
+    input_interval_hint: "As regras da estratégia devem ser aplicada em qual tempo gráfico?",
+
+    btn_alert_cancel: "Cancelar",
+    btn_alert_confirm: "Confirmar",
+    alert_confirming_title: "Você tem certeza?",
+    alert_confirming_text: "Uma vez removida, não é possível recupera-la.",
+    alert_deleted_title: "Removida!",
+    alert_deleted_text: "Sua Estratégia foi removida com sucesso.",
   },
   strategyresults: {
     header_asset: "Ativo",

@@ -10,7 +10,7 @@ from django.utils.http import urlsafe_base64_decode as uid_decoder
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_text
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from app import models as app_models
 from app.models import Country, Currency, Strategy, Subscription, Position, PositionType, UserCustom, Wallet
@@ -41,7 +41,7 @@ class PositionSerializer(serializers.ModelSerializer):
         walletOwner = value.owner
 
         if requestor != walletOwner:
-            raise serializers.ValidationError("This wallet is not yours.")
+            raise serializers.ValidationError("You must be owner to update a Position.")
         return value
 
     def validate_ended_on(self, value):
@@ -68,10 +68,38 @@ class PositionTypeSerializer(serializers.ModelSerializer):
 class StrategySerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
     owner_username = serializers.ReadOnlyField(source='owner.username')
+    stats = serializers.SerializerMethodField()
 
     class Meta:
         model = Strategy
         fields = '__all__'
+
+    def get_stats(self, obj):
+        stats = {
+            'rating_avg': obj.stats.rating_avg,
+            'saved_count': obj.stats.saved_count,
+            'runs_last_14_days': obj.stats.runs_last_14_days
+        }
+
+        return stats
+
+    def create(self, validated_data):
+        instance = app_models.Strategy.objects.create(**validated_data)
+        app_models.StrategyStats.objects.create(strategy=instance)      # Create stats instance
+
+        return instance
+
+    def update(self, instance, validated_data):
+        requestor = self.context['request'].user
+
+        if instance.owner != requestor:
+            raise serializers.ValidationError("You must be owner to update a Strategy.")
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -104,15 +132,8 @@ class WalletSerializer(serializers.ModelSerializer):
             if walletAmount >= 2:
                 raise serializers.ValidationError("Wallets limit reached.")
 
-        wallet = Wallet.objects.create(
-            owner=requestor,
-            name=validated_data['name'],
-            desc=validated_data['desc'],
-            balance=validated_data['balance'],
-            currency=validated_data['currency'],
-            se_short=validated_data['se_short'])
-
-        return wallet
+        instance = Wallet.objects.create(**validated_data)
+        return instance
 
 
 # Auth

@@ -30,17 +30,10 @@ function CarouselSkeleton() {
         <Row>
           <SkeletonCol />
           <SkeletonCol />
-          {window.innerWidth > 576 && <SkeletonCol />}
-          {window.innerWidth > 576 && <SkeletonCol />}
-
-          {window.innerWidth > 768 && <SkeletonCol />}
           {window.innerWidth > 768 && <SkeletonCol />}
 
           {window.innerWidth > 1200 && <SkeletonCol />}
-          {window.innerWidth > 1200 && <SkeletonCol />}
 
-          {window.innerWidth > 1600 && <SkeletonCol />}
-          {window.innerWidth > 1600 && <SkeletonCol />}
           {window.innerWidth > 1600 && <SkeletonCol />}
           {window.innerWidth > 1600 && <SkeletonCol />}
         </Row>

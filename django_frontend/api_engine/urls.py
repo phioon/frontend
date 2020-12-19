@@ -11,8 +11,13 @@ urlpatterns = [
     path('app/wallets/', apiApp.WalletList.as_view()),
     path('app/wallets/<int:pk>/', apiApp.WalletDetail.as_view()),
     path('app/positionTypes/', apiApp.PositionTypeList.as_view()),
+    path('app/mystrategies/', apiApp.MyStrategyList.as_view()),
+    path('app/mystrategies/<int:pk>/', apiApp.MyStrategyDetail.as_view()),
     path('app/strategies/', apiApp.StrategyList.as_view()),
     path('app/strategies/<int:pk>/', apiApp.StrategyDetail.as_view()),
+    path('app/strategies/<int:pk>/run/', apiApp.strategy_run),
+    path('app/strategies/<int:pk>/rate/', apiApp.strategy_rate),
+    path('app/strategies/<int:pk>/set-save/', apiApp.strategy_set_save),
     path('app/subscriptions/', apiApp.SubscriptionList.as_view()),
     path('app/countries/', apiApp.CountryList.as_view()),
     path('app/currencies/', apiApp.CurrencyList.as_view()),
@@ -26,18 +31,18 @@ urlpatterns = [
 
 # Auth
 urlpatterns += [
-    path('auth/user/checkAvailability/', apiAuth.checkUsernameAvailability, name='check_username_availability'),
+    path('auth/user/check-availability/', apiAuth.checkUsernameAvailability, name='check_username_availability'),
     path('auth/user/register/', apiAuth.UserRegisterAPIView.as_view()),
     path('auth/user/update/', apiAuth.user_update, name='user_update'),
     path('auth/user/retrieve/', apiAuth.UserRetrieveAPIView.as_view()),
     path('auth/user/login/', apiAuth.LoginAPIView.as_view()),
     path('auth/user/logout/', knox_views.LogoutView.as_view(), name='knox_logout'),
-    path('auth/user/logoutall/', knox_views.LogoutAllView.as_view(), name='knox_logoutall'),
-    path('auth/user/changepassword/', rest_auth_views.PasswordChangeView.as_view()),
-    path('auth/user/request/passwordreset/', apiAuth.RequestPasswordResetView.as_view(), name='rest_password_reset'),
-    path('auth/user/request/emailconfirmation/', apiAuth.RequestEmailConfirmationView.as_view(), name='rest_confirm_email'),
+    path('auth/user/logout-all/', knox_views.LogoutAllView.as_view(), name='knox_logoutall'),
+    path('auth/user/change-password/', rest_auth_views.PasswordChangeView.as_view()),
+    path('auth/user/request/password-reset/', apiAuth.RequestPasswordResetView.as_view(), name='rest_password_reset'),
+    path('auth/user/request/email-confirmation/', apiAuth.RequestEmailConfirmationView.as_view(), name='rest_confirm_email'),
     path('auth/user/checkToken/<uidb64>/<token>/', apiAuth.CheckToken),
-    path('auth/user/confirm/passwordreset/', rest_auth_views.PasswordResetConfirmView.as_view()),
+    path('auth/user/confirm/password-reset/', rest_auth_views.PasswordResetConfirmView.as_view()),
     path('auth/user/confirm/email/', apiAuth.ConfirmEmailView.as_view()),
 ]
 

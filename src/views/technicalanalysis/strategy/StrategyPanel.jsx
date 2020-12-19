@@ -17,7 +17,12 @@ import {
   CarouselControl,
   CarouselIndicators,
   Col,
+  Form,
   FormGroup,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
   Row,
   UncontrolledTooltip
 } from "reactstrap";
@@ -26,14 +31,16 @@ import Select from "react-select";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
 
+import ModalStrategy from "../../modals/strategy/ModalStrategy";
+import ModalStrategyView from "../../modals/strategy/ModalStrategyView";
+
 import StrategyCardMini from "./StrategyCardMini";
 import StrategyResults from "./StrategyResults";
-import ModalStrategy from "../../modals/strategy/ModalStrategy";
 import CarouselSkeleton from "./CarouselSkeleton";
 import CarouselEmpty from "./CarouselEmpty";
 import { orderBy, getDistinctValuesFromList, deepCloneObj, retrieveObjFromObjList, sleep } from "../../../core/utils";
 
-class Strategies extends React.Component {
+class StrategyPanel extends React.Component {
   constructor(props) {
     super(props);
     this.compId = this.constructor.name.toLowerCase();
@@ -46,10 +53,17 @@ class Strategies extends React.Component {
       action: "create",
       objData: {},
 
-      carousel: {
+      myStrategies: {
+        id: "myStrategies",
         slides: [],
         activeIndex: 0,
       },
+      savedStrategies: {
+        id: "savedStrategies",
+        slides: [],
+        activeIndex: 0,
+      },
+
       selected: {
         filters: {
           variables: {
@@ -68,19 +82,20 @@ class Strategies extends React.Component {
 
       strategies: [],
       sStrategyNames: [],
+      redirectTo: undefined,
       alert: null,
     };
 
     this.resize = this.resize.bind(this);
-    this.prepareCarousel = this.prepareCarousel.bind(this);
+    this.prepareMyStrategies = this.prepareMyStrategies.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.toggleLoading = this.toggleLoading.bind(this);
     this.onClick = this.onClick.bind(this);
   }
   componentDidMount() {
+    this.props.setNavbarTitleId("title_" + this.compId)
     window.addEventListener("resize", this.resize);
 
-    this.props.setNavbarTitleId("title_" + this.compId)
     this.prepareRequirements()
   }
   componentWillUnmount() {
@@ -90,22 +105,22 @@ class Strategies extends React.Component {
   resize() {
     let maxItemsPerSlide = this.getMaxItemsPerSlide()
 
-    if (this.state.carousel.maxItemsPerSlide != maxItemsPerSlide)
-      this.prepareCarousel()          // async call
+    if (this.state.myStrategies.maxItemsPerSlide != maxItemsPerSlide)
+      this.prepareMyStrategies()          // async call
   }
   getMaxItemsPerSlide() {
     if (window.innerWidth < 576)
       return 2
     else if (window.innerWidth < 768)
-      return 4
+      return 2
     else if (window.innerWidth < 990)
-      return 6
+      return 3
     else if (window.innerWidth < 1200)
-      return 6
+      return 3
     else if (window.innerWidth < 1600)
-      return 8
+      return 4
     else
-      return 12
+      return 8
   }
   scrollPage(elementId) {
     let element = document.getElementById(elementId)
@@ -117,7 +132,8 @@ class Strategies extends React.Component {
 
     let tasks = [
       this.prepareContext(),
-      this.prepareCarousel()
+      this.prepareMyStrategies(),
+      this.prepareSavedStrategies()
     ]
     await Promise.all(tasks)
 
@@ -161,19 +177,34 @@ class Strategies extends React.Component {
             this.onSelectChange("interval", option)
         }
 
-
     this.setState({ cWallets: wallets.data.length, stockExchangeOptions, intervalOptions })
   }
-  async prepareCarousel() {
+  async prepareMyStrategies() {
     // 1. Strategies
-    let strategies = await this.props.managers.app.strategyData()
+    let strategies = await this.props.managers.app.myStrategyData()
     strategies = orderBy(strategies, ['-create_time'])
     let sStrategyNames = getDistinctValuesFromList(strategies, "name")
 
     // 2. Carousel
-    let carousel = this.prepareSlides(this.state.carousel, strategies)
+    let carousel = this.prepareSlides(this.state.myStrategies, strategies)
 
-    this.setState({ strategies, sStrategyNames, carousel })
+    this.setState({ strategies, sStrategyNames, myStrategies: carousel })
+  }
+  async prepareSavedStrategies() {
+    // 1. Query
+    let query = {
+      filters: {},
+      order_by: "-usage",
+      only_saved: true,
+      page_size: 50
+    }
+    // 2. Strategies
+    let strategies = await this.props.managers.app.strategyData(false, query)
+
+    // 3. Carousel
+    let carousel = this.prepareSlides(this.state.savedStrategies, strategies.results)
+
+    this.setState({ savedStrategies: carousel })
   }
   prepareSlides(carousel, strategies) {
     let slides = []
@@ -194,20 +225,22 @@ class Strategies extends React.Component {
       slides.push(items)
 
     carousel.slides = slides
-    this.moveSlide("goto", 0)
+    this.moveSlide(carousel, "goto", 0)
 
     return carousel
   }
 
-  renderStrategyItem(slide) {
+  renderStrategyItem(context, slide) {
     return slide.map((strategy) => {
-      let isOwner = this.props.user.username === strategy.owner_username
+      strategy.isOwner = this.props.user.username === strategy.owner_username
+      strategy.isSaved = context === "savedStrategies"
+
       return (
         <Col key={"strategy__" + strategy.id} xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
           <StrategyCardMini
             {...this.props}
+            context={context}
             strategy={deepCloneObj(strategy)}
-            isOwner={isOwner}
             onClick={this.onClick}
             isLoading={this.state.isLoading}
           />
@@ -215,12 +248,12 @@ class Strategies extends React.Component {
       )
     })
   }
-  renderStrategySlides(slides) {
+  renderStrategySlides(context, slides) {
     return slides.map((slide, key) => {
       return (
         <CarouselItem key={"item__" + key}>
           <Row>
-            {this.renderStrategyItem(slide)}
+            {this.renderStrategyItem(context, slide)}
           </Row>
           <br />
           <br />
@@ -228,8 +261,7 @@ class Strategies extends React.Component {
       )
     })
   }
-  moveSlide(action, index = 0) {
-    let { carousel } = this.state;
+  moveSlide(carousel, action, index = 0) {
     let newSlide = undefined
 
     switch (action) {
@@ -252,13 +284,11 @@ class Strategies extends React.Component {
       case "goto":
         newSlide = index
         break;
-      default:
-        break;
     }
 
     carousel.activeIndex = newSlide
 
-    this.setState({ carousel })
+    this.setState({ [carousel.id]: carousel })
   }
 
   onSelectChange(fieldName, value) {
@@ -291,6 +321,13 @@ class Strategies extends React.Component {
 
   async onClick(action, obj) {
     switch (action) {
+      case "view":
+        this.viewClick(obj)
+        break;
+      case "save":
+        await this.saveClick(obj)
+        this.prepareRequirements()
+        break;
       case "run":
         this.runClick(obj)
         await sleep(250)          // Wait a bit or smooth scroll will get stuck
@@ -305,19 +342,40 @@ class Strategies extends React.Component {
       case "delete":
         this.deleteClick(obj)
         break;
-      default:
-        break;
     }
+  }
+  viewClick(obj) {
+    let objData = {
+      id: obj.id,
+      name: obj.name,
+      desc: obj.desc,
+      type: obj.type,
+      isDynamic: obj.is_dynamic,
+      isPublic: obj.is_public,
+      rules: obj.rules
+    }
+
+    this.setState({ action: "view", objData })
+    this.toggleModal("strategyDetail")
+  }
+  async saveClick(obj) {
+    let payload = {
+      id: obj.id,
+      is_saved: !obj.isSaved
+    }
+    await this.props.managers.app.strategySetSave(payload)
   }
   runClick(obj) {
     let { selected } = this.state;
 
+    this.props.managers.app.strategyRun(obj.id)
     selected.strategy = obj
 
     this.setState({ selected, isLoading: true })
   }
   createClick() {
-    this.setState({ action: "create" })
+    let objData = {}
+    this.setState({ action: "create", objData })
     this.toggleModal("strategyDetail")
   }
   updateClick(obj) {
@@ -357,7 +415,7 @@ class Strategies extends React.Component {
     });
   }
   async deleteObject(obj) {
-    let result = await this.props.managers.app.strategyDelete(obj.id)
+    let result = await this.props.managers.app.myStrategyDelete(obj.id)
 
     if (result.status == 204)
       this.objectDeleted()
@@ -381,7 +439,7 @@ class Strategies extends React.Component {
       )
     });
 
-    this.prepareCarousel()
+    this.prepareMyStrategies()
   }
 
   toggleLoading(value) {
@@ -406,7 +464,8 @@ class Strategies extends React.Component {
       action,
       objData,
 
-      carousel,
+      myStrategies,
+      savedStrategies,
       selected,
 
       cWallets,
@@ -414,6 +473,7 @@ class Strategies extends React.Component {
       intervalOptions,
 
       sStrategyNames,
+      redirectTo,
       alert,
     } = this.state;
 
@@ -427,40 +487,35 @@ class Strategies extends React.Component {
           isOpen={modal_strategyDetail_isOpen}
           toggleModal={this.toggleModal}
           action={action}
-          objData={action == "update" ? objData : {}}
+          objData={objData}
           sStrategyNames={sStrategyNames}
-          runItIfSuccess={this.prepareCarousel}
+          runItIfSuccess={this.prepareMyStrategies}
         />
         <div className="header text-center">
           <h3 className="title">{getString(prefs.locale, this.compId, "title")}</h3>
         </div>
-        <br />
+        <Row className="mt-4" />
 
         {pageFirstLoading ?
           // Carousel Skeleton
-          <Card className="card-plain">
-            <CardHeader>
-              <Row>
-                <Col>
-                  <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_title")}</CardTitle>
-                </Col>
-                <Col className="text-right">
-                  <Button
-                    type="submit"
-                    className="btn-round"
-                    outline
-                    color="success"
-                    onClick={() => this.onClick("create")}
-                  >
-                    {getString(prefs.locale, this.compId, "btn_newStrategy")}
-                  </Button>
-                </Col>
-              </Row>
-            </CardHeader>
-            <CardBody>
-              <CarouselSkeleton />
-            </CardBody>
-          </Card>
+          <>
+            <Card className="card-plain">
+              <CardHeader>
+                <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_myStrategies_title")}</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <CarouselSkeleton />
+              </CardBody>
+            </Card>
+            <Card className="card-plain">
+              <CardHeader>
+                <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_savedStrategies_title")}</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <CarouselSkeleton />
+              </CardBody>
+            </Card>
+          </>
           :
           cWallets == 0 ?
             // No wallets
@@ -492,11 +547,15 @@ class Strategies extends React.Component {
             </Card>
             :
             <>
-              {/* Strategies */}
+              {/* My Strategies */}
               <Card className="card-plain">
                 <CardHeader>
+                  {/* Title and Button*/}
                   <Row>
-                    <Col className="text-right">
+                    <Col xs="8">
+                      <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_myStrategies_title")}</CardTitle>
+                    </Col>
+                    <Col xs="4" className="text-right">
                       <Button
                         id="strategy_new"
                         type="submit"
@@ -509,27 +568,110 @@ class Strategies extends React.Component {
                       </Button>
                     </Col>
                   </Row>
+                  {/* Search... */}
+                  <Row>
+                    <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6">
+                      <Form>
+                        <InputGroup className="no-border">
+                          <Input
+                            defaultValue=""
+                            placeholder={getString(prefs.locale, "generic", "input_search")}
+                            type="text"
+                            onChange={e => this.search(myStrategies.id, e.target.value)}
+                          />
+                          <InputGroupAddon addonType="append">
+                            <InputGroupText>
+                              <i className="nc-icon nc-zoom-split" />
+                            </InputGroupText>
+                          </InputGroupAddon>
+                        </InputGroup>
+                      </Form>
+                    </Col>
+                  </Row>
                 </CardHeader>
                 <CardBody>
-                  {carousel.slides.length == 0 ?
+                  {myStrategies.slides.length == 0 ?
                     <CarouselEmpty
                       prefs={prefs}
                       getString={getString}
                       compId={this.compId} /> :
                     <Carousel
-                      className="carousel-strategies"
-                      activeIndex={carousel.activeIndex}
-                      next={() => this.moveSlide("next")}
-                      previous={() => this.moveSlide("previous")}
+                      activeIndex={myStrategies.activeIndex}
+                      next={() => this.moveSlide(myStrategies, "next")}
+                      previous={() => this.moveSlide(myStrategies, "previous")}
                       interval={false}>
                       <CarouselIndicators
-                        items={Object.keys(carousel.slides)}
-                        activeIndex={carousel.activeIndex}
-                        onClickHandler={index => this.moveSlide("goto", index)}
+                        items={Object.keys(myStrategies.slides)}
+                        activeIndex={myStrategies.activeIndex}
+                        onClickHandler={index => this.moveSlide(myStrategies, "goto", index)}
                       />
-                      {this.renderStrategySlides(carousel.slides)}
-                      <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide("previous")} />
-                      <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide("next")} />
+                      {this.renderStrategySlides(myStrategies.id, myStrategies.slides)}
+                      <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide(myStrategies, "previous")} />
+                      <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide(myStrategies, "next")} />
+                    </Carousel>
+                  }
+                </CardBody>
+              </Card>
+              {/* Saved Strategies */}
+              <Card className="card-plain">
+                <CardHeader>
+                  {/* Title and Button*/}
+                  <Row>
+                    <Col>
+                      <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_savedStrategies_title")}</CardTitle>
+                    </Col>
+                    <Col className="text-right">
+                      <Button
+                        type="submit"
+                        className="btn-round"
+                        outline
+                        color="success"
+                        onClick={() => this.setState({ redirectTo: "/app/strategies/gallery" })}
+                      >
+                        {getString(prefs.locale, this.compId, "btn_goToGallery")}
+                      </Button>
+                    </Col>
+                  </Row>
+                  {/* Search... */}
+                  <Row>
+                    <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6">
+                      <Form>
+                        <InputGroup className="no-border">
+                          <Input
+                            defaultValue=""
+                            placeholder={getString(prefs.locale, "generic", "input_search")}
+                            type="text"
+                          />
+                          <InputGroupAddon addonType="append">
+                            <InputGroupText>
+                              <i className="nc-icon nc-zoom-split" />
+                            </InputGroupText>
+                          </InputGroupAddon>
+                        </InputGroup>
+                      </Form>
+                    </Col>
+                  </Row>
+                </CardHeader>
+                <CardBody>
+                  {savedStrategies.slides.length == 0 ?
+                    <CarouselEmpty
+                      prefs={prefs}
+                      getString={getString}
+                      compId={this.compId}
+                      context={savedStrategies.id} /> :
+                    <Carousel
+                      activeIndex={savedStrategies.activeIndex}
+                      next={() => this.moveSlide(savedStrategies, "next")}
+                      previous={() => this.moveSlide(savedStrategies, "previous")}
+                      interval={false}>
+                      <CarouselIndicators
+                        items={Object.keys(savedStrategies.slides)}
+                        activeIndex={savedStrategies.activeIndex}
+                        onClickHandler={index => this.moveSlide(savedStrategies, "goto", index)}
+                      />
+                      {this.renderStrategySlides(savedStrategies.id, savedStrategies.slides)}
+                      <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide(savedStrategies, "previous")} />
+                      <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide(savedStrategies, "next")} />
                     </Carousel>
                   }
                 </CardBody>
@@ -608,14 +750,15 @@ class Strategies extends React.Component {
               </Card>
             </>
         }
+        {redirectTo && <Redirect to={redirectTo} />}
       </div>
     )
   }
 }
 
-export default Strategies;
+export default StrategyPanel;
 
-Strategies.propTypes = {
+StrategyPanel.propTypes = {
   prefs: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
   managers: PropTypes.object.isRequired,

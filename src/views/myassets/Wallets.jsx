@@ -21,7 +21,7 @@ import FixedButton from "../../components/FixedPlugin/FixedButton";
 
 import ModalCreateWallet from "../modals/wallet/ModalCreateWallet";
 import ModalUpdateWallet from "../modals/wallet/ModalUpdateWallet";
-import { convertFloatToCurrency, getValueListFromObjList, orderBy, rtDefaultFilter } from "../../core/utils";
+import { convertFloatToCurrency, deepCloneObj, getValueListFromObjList, orderBy, rtDefaultFilter } from "../../core/utils";
 
 class Wallets extends React.Component {
   constructor(props) {
@@ -111,7 +111,7 @@ class Wallets extends React.Component {
                 size="sm"
                 className="btn-icon btn-link edit"
               >
-                <i id="wallet_edit" className="fa fa-edit" />
+                <i id="wallet_edit" className="far fa-edit" />
               </Button>
               {" "}
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"edit_" + obj.id}>
@@ -146,7 +146,7 @@ class Wallets extends React.Component {
     let currency = await this.props.managers.app.currencyRetrieve(walletData.currency)
 
     let wallet = {
-      data: walletData,
+      data: deepCloneObj(walletData),
       patch: {},
       states: {},
 

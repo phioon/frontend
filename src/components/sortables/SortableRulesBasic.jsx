@@ -10,7 +10,7 @@ const SortableItem = SortableElement((props) => {
     <div className="sortable-item">
       <span className="sortable-item-handle" />
       <Col>{props.item.label}</Col>
-      <Col xs="4" className="pull-right text-right">
+      <Col xs="4" className="text-right">
         {props.onUpdateItem &&
           <Button
             id={"ws_edit_" + props.item.value}
@@ -19,7 +19,7 @@ const SortableItem = SortableElement((props) => {
             size="sm"
             className="btn-icon btn-neutral edit"
           >
-            <i className="fa fa-edit" />
+            <i className="far fa-edit" />
           </Button>
         }
 
@@ -47,6 +47,8 @@ const SortableList = SortableContainer((props) => {
           key={item.value}
           index={index}
           item={item}
+          disabled={Boolean(props.onSortableChange)}
+
           context={props.context}
           onUpdateItem={props.onUpdateItem}
           onRemoveItem={props.onRemoveItem} />
@@ -81,9 +83,6 @@ class SortableRulesBasic extends React.Component {
 SortableRulesBasic.propTypes = {
   items: PropTypes.array.isRequired,
   context: PropTypes.string.isRequired,
-  onSortableChange: PropTypes.func.isRequired,
-  onUpdateItem: PropTypes.func.isRequired,
-  onRemoveItem: PropTypes.func.isRequired
 }
 
 export default SortableRulesBasic;

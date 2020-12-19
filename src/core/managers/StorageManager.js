@@ -14,6 +14,14 @@ const config = {
       syncLimit: 43200,
       version: 0.01
     },
+    mystrategies: {
+      syncLimit: 60,
+      version: 0.01
+    },
+    strategies: {
+      syncLimit: 15,
+      version: 0.01
+    },
     positionTypes: {
       syncLimit: 43200,
       version: 0.01
@@ -21,10 +29,6 @@ const config = {
     positions: {
       syncLimit: 15,
       version: 0.01
-    },
-    strategies: {
-      syncLimit: 15,
-      version: 0.04
     },
     subscriptions: {
       syncLimit: 43200,
@@ -117,14 +121,11 @@ class StorageManager {
   static async setItem(sKey, value) {
     if (cacheStorageNotSupported) {
       // Cache Storage not supported! Using Local Storage...
-
       return localStorage.setItem(sKey, JSON.stringify(value))
     }
     else {
       // Cache Storage supported...
-
-      let options = { headers: { "content-type": "application/json" } }
-      return await cache.put(this.getRequestId(sKey), new Response(JSON.stringify(value), options))
+      return await cache.put(this.getRequestId(sKey), new Response(JSON.stringify(value)))
     }
   }
   static async getItem(sKey, subKey) {
@@ -347,7 +348,7 @@ class StorageManager {
       sItem = JSON.parse(localStorage.getItem(sKey))
       memData[sKey] = sItem
     }
-    console.log("It started using memory.")
+    console.log("Using memory...")
   }
   async initiator() {
     if ('caches' in window)
