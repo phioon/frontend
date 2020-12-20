@@ -4,14 +4,14 @@ import PropTypes from "prop-types";
 // react component for creating dynamic tables
 import ReactTable from "react-table-v6";
 
-import TimeManager from "../../../core/managers/TimeManager";
+import TimeManager from "../../core/managers/TimeManager";
 import {
   convertFloatToCurrency,
   rtDefaultFilter,
   getDistinctValuesFromList,
   integerWithThousandsSeparator,
   orderBy
-} from "../../../core/utils";
+} from "../../core/utils";
 
 class StrategyResults extends React.Component {
   constructor(props) {

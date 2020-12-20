@@ -334,11 +334,6 @@ class ModalStrategy extends React.Component {
     this.setState(newState)
   }
   onChoiceChange(choiceName, value) {
-    if (this.props.action === "view") {
-      // On view mode, nothing changes...
-      return
-    }
-
     let newState = { strategy: this.state.strategy }
 
     if (newState.strategy.data[choiceName] != value) {
@@ -1144,87 +1139,94 @@ class ModalStrategy extends React.Component {
           <CardBody>
             {/* Type */}
             <Row className="justify-content-center">
-              <Col md="3" xs="5">
-                <div
-                  className={classnames("card-choice", { active: strategy.data.type === "buy" })}
-                  onClick={() => this.onChoiceChange("type", "buy")}
-                >
-                  <input
-                    id="buy"
-                    name="type"
-                    type="radio"
-                  />
-                  <div id="radio_buy" className="icon mm">
-                    <i className="nc-icon nc-spaceship mm" />
+              {action === "view" && strategy.data.type !== "buy" ? null :
+                <Col md="3" xs="5">
+                  <div
+                    className={classnames("card-choice", { active: strategy.data.type === "buy" })}
+                    onClick={() => this.onChoiceChange("type", "buy")}
+                  >
+                    <input
+                      id="buy"
+                      name="type"
+                      type="radio"
+                    />
+                    <div id="radio_buy" className="icon mm">
+                      <i className="nc-icon nc-spaceship mm" />
+                    </div>
+                    <label>{getString(prefs.locale, this.compId, "input_buy")}</label>
                   </div>
-                  <label>{getString(prefs.locale, this.compId, "input_buy")}</label>
-                </div>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_buy"}>
-                  {getString(prefs.locale, this.compId, "input_buy_hint")}
-                </UncontrolledTooltip>
-              </Col>
-              <Col md="3" xs="5">
-                <div
-                  className={classnames("card-choice", { active: strategy.data.type === "sell" })}
-                  onClick={() => this.onChoiceChange("type", "sell")}
-                >
-                  <input
-                    id="sell"
-                    name="type"
-                    type="radio"
-                  />
-                  <div id="radio_sell" className="icon mm">
-                    <i className="nc-icon nc-spaceship fa-rotate-90 mm" />
+                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_buy"}>
+                    {getString(prefs.locale, this.compId, "input_buy_hint")}
+                  </UncontrolledTooltip>
+                </Col>
+              }
+              {action === "view" && strategy.data.type !== "sell" ? null :
+                <Col md="3" xs="5">
+                  <div
+                    className={classnames("card-choice", { active: strategy.data.type === "sell" })}
+                    onClick={() => this.onChoiceChange("type", "sell")}
+                  >
+                    <input
+                      id="sell"
+                      name="type"
+                      type="radio"
+                    />
+                    <div id="radio_sell" className="icon mm">
+                      <i className="nc-icon nc-spaceship fa-rotate-90 mm" />
+                    </div>
+                    <label>{getString(prefs.locale, this.compId, "input_sell")}</label>
                   </div>
-                  <label>{getString(prefs.locale, this.compId, "input_sell")}</label>
-                </div>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="right" target={"radio_sell"}>
-                  {getString(prefs.locale, this.compId, "input_sell_hint")}
-                </UncontrolledTooltip>
-              </Col>
+                  <UncontrolledTooltip delay={{ show: 200 }} placement="right" target={"radio_sell"}>
+                    {getString(prefs.locale, this.compId, "input_sell_hint")}
+                  </UncontrolledTooltip>
+                </Col>
+              }
             </Row>
             <Row className="mt-3" />
             {/* Visibility */}
             <Row className="justify-content-center">
-              <Col md="3" xs="5">
-                <div
-                  className={classnames("card-choice", { active: strategy.data.isPublic })}
-                  onClick={() => this.onChoiceChange("isPublic", true)}
-                >
-                  <input
-                    id="public"
-                    name="visilibity"
-                    type="radio"
-                    defaultChecked={strategy.data.isPublic}
-                  />
-                  <div id="radio_public" className="icon mm">
-                    <i className="nc-icon nc-world-2 mm" />
+              {action !== "view" &&
+                <Col md="3" xs="5">
+                  <div
+                    className={classnames("card-choice", { active: strategy.data.isPublic })}
+                    onClick={() => this.onChoiceChange("isPublic", true)}
+                  >
+                    <input
+                      id="public"
+                      name="visilibity"
+                      type="radio"
+                      defaultChecked={strategy.data.isPublic}
+                    />
+                    <div id="radio_public" className="icon mm">
+                      <i className="nc-icon nc-world-2 mm" />
+                    </div>
+                    <label>{getString(prefs.locale, this.compId, "input_public")}</label>
                   </div>
-                  <label>{getString(prefs.locale, this.compId, "input_public")}</label>
-                </div>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_public"}>
-                  {getString(prefs.locale, this.compId, "input_public_hint")}
-                </UncontrolledTooltip>
-              </Col>
-              <Col md="3" xs="5">
-                <div
-                  className={classnames("card-choice", { active: !strategy.data.isPublic })}
-                  onClick={() => this.onChoiceChange("isPublic", false)}
-                >
-                  <input
-                    id="private"
-                    name="visilibity"
-                    type="radio"
-                  />
-                  <div id="radio_private" className="icon mm">
-                    <i className="nc-icon nc-key-25 mm" />
+                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_public"}>
+                    {getString(prefs.locale, this.compId, "input_public_hint")}
+                  </UncontrolledTooltip>
+                </Col>}
+              {action !== "view" &&
+                <Col md="3" xs="5">
+                  <div
+                    className={classnames("card-choice", { active: !strategy.data.isPublic })}
+                    onClick={() => this.onChoiceChange("isPublic", false)}
+                  >
+                    <input
+                      id="private"
+                      name="visilibity"
+                      type="radio"
+                    />
+                    <div id="radio_private" className="icon mm">
+                      <i className="nc-icon nc-key-25 mm" />
+                    </div>
+                    <label>{getString(prefs.locale, this.compId, "input_private")}</label>
                   </div>
-                  <label>{getString(prefs.locale, this.compId, "input_private")}</label>
-                </div>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_private"}>
-                  {getString(prefs.locale, this.compId, "input_private_hint")}
-                </UncontrolledTooltip>
-              </Col>
+                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_private"}>
+                    {getString(prefs.locale, this.compId, "input_private_hint")}
+                  </UncontrolledTooltip>
+                </Col>
+              }
             </Row>
             <Row className="mt-3" />
             {/* Name and Logic */}

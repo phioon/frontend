@@ -48,7 +48,6 @@ const locale = {
 
     chart_tooltip_profitability: "% Profitability",
 
-    label_groupBy: "Group By",
     label_order: "Order by",
     label_assets: "Asset",
     label_countries: "Country",
@@ -276,7 +275,6 @@ const locale = {
     currency: "Currency",
     percentage: "Percentage",
     number: "Number",
-    label_format: "Format",
 
     amountInvested_kpi_label: "Amount Invested",
     amountInvested_title_hint: "Operational Costs included.",

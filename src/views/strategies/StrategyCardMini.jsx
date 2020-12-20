@@ -239,7 +239,7 @@ class StrategyCardMini extends React.Component {
                 {getString(prefs.locale, this.compId, this.getCategoryId(strategy.rules))}
               </label>
             </Col>
-            <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"category__" + strategy.id}>
+            <UncontrolledTooltip delay={{ show: 500 }} placement="top" target={"category__" + strategy.id}>
               {getString(prefs.locale, this.compId, [this.getCategoryId(strategy.rules) + "_hint"])}
             </UncontrolledTooltip>
           </Row>
@@ -255,7 +255,7 @@ class StrategyCardMini extends React.Component {
                   getString(prefs.locale, this.compId, "label_static")}
               </label>
             </Col>
-            <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"logic__" + strategy.id}>
+            <UncontrolledTooltip delay={{ show: 500 }} placement="top" target={"logic__" + strategy.id}>
               {strategy.is_dynamic ?
                 getString(prefs.locale, this.compId, "label_dynamic_hint") :
                 getString(prefs.locale, this.compId, "label_static_hint")

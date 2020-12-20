@@ -24,11 +24,11 @@ import UserSubscription from "views/subscriptions/UserSubscription.jsx";
 // App
 import OpenPositions from "views/wallet/OpenPositions";
 import Positions from "views/myassets/Positions";
-import PhiTrader from "views/technicalanalysis/PhiTrader";
+import PhiTrader from "views/phitrader/PhiTrader";
 import WalletOverview from "views/wallet/WalletOverview";
 import Wallets from "views/myassets/Wallets";
-import StrategyPanel from "views/technicalanalysis/strategy/StrategyPanel";
-import StrategyGallery from "views/technicalanalysis/strategy/StrategyGallery";
+import StrategyPanel from "views/strategies/StrategyPanel";
+import StrategyGallery from "views/strategies/StrategyGallery";
 
 const routes = [
   {

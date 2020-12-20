@@ -159,15 +159,9 @@ class ProfitabilityRanking extends Component {
         <CardFooter>
           <hr />
           <Row>
-            <Col xl="4" md="4">
-              <label className="stats">
-                <i className="fa fa-cube" />
-                {getString(prefs.locale, "charts", "label_groupBy")}:
-              </label>
-            </Col>
             <Col className="text-right">
               <Button
-                className="btn-link"
+                className={`btn-link ${selected === "groupByAsset" && "active"}`}
                 color="primary"
                 id="profitabilityRanking_groupByAsset"
                 size="sm"
@@ -180,7 +174,7 @@ class ProfitabilityRanking extends Component {
                 {getString(prefs.locale, "charts", chart.generic.groupByAsset.hintId)}
               </UncontrolledTooltip>
               <Button
-                className="btn-link"
+                className={`btn-link ${selected === "groupByWallet" && "active"}`}
                 color="primary"
                 id="profitabilityRanking_groupByWallet"
                 size="sm"

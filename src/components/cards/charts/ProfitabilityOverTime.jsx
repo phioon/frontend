@@ -147,16 +147,10 @@ class ProfitabilityOverTime extends Component {
         <CardFooter>
           <hr />
           <Row>
-            <Col xl="4" md="4">
-              <label className="stats">
-                <i className="fa fa-cube" />
-                {getString(prefs.locale, "charts", "label_groupBy")}:
-              </label>
-            </Col>
             <Col className="text-right">
               <span id="result_groupByAsset">
                 <Button
-                  className="btn-link"
+                  className={`btn-link ${selected === "groupByAsset" && "active"}`}
                   color="primary"
                   size="sm"
                   type="button"
@@ -180,7 +174,7 @@ class ProfitabilityOverTime extends Component {
               </UncontrolledTooltip>
               <span id="result_groupByWallet">
                 <Button
-                  className="btn-link"
+                  className={`btn-link ${selected === "groupByWallet" && "active"}`}
                   color="primary"
                   size="sm"
                   type="button"
@@ -204,7 +198,7 @@ class ProfitabilityOverTime extends Component {
                 }
               </UncontrolledTooltip>
               <Button
-                className="btn-link"
+                className={`btn-link ${selected === "overall" && "active"}`}
                 color="primary"
                 id="result_overall"
                 size="sm"

@@ -48,7 +48,6 @@ const locale = {
 
     chart_tooltip_profitability: "% Rentabilidade",
 
-    label_groupBy: "Agrupar por",
     label_order: "Ordernar por",
     label_assets: "Ativo",
     label_countries: "País",
@@ -276,7 +275,6 @@ const locale = {
     currency: "Moeda",
     percentage: "Porcentagem",
     number: "Número",
-    label_format: "Formato",
 
     amountInvested_kpi_label: "Valor Aplicado",
     amountInvested_title_hint: "Custo Operacional incluso.",

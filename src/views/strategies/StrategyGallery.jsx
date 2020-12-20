@@ -21,10 +21,10 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 
-import { orderBy, getDistinctValuesFromList, deepCloneObj, retrieveObjFromObjList, sleep } from "../../../core/utils";
+import { orderBy, getDistinctValuesFromList, deepCloneObj, retrieveObjFromObjList, sleep } from "../../core/utils";
 
-import ModalStrategy from "../../modals/strategy/ModalStrategy";
-import ModalStrategyView from "../../modals/strategy/ModalStrategyView";
+import ModalStrategy from "../modals/strategy/ModalStrategy";
+import ModalStrategyView from "../modals/strategy/ModalStrategyView";
 
 import StrategyCardMini from "./StrategyCardMini";
 import CarouselEmpty from "./CarouselEmpty";

@@ -31,14 +31,14 @@ import Select from "react-select";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
 
-import ModalStrategy from "../../modals/strategy/ModalStrategy";
-import ModalStrategyView from "../../modals/strategy/ModalStrategyView";
+import ModalStrategy from "../modals/strategy/ModalStrategy";
+import ModalStrategyView from "../modals/strategy/ModalStrategyView";
 
 import StrategyCardMini from "./StrategyCardMini";
 import StrategyResults from "./StrategyResults";
 import CarouselSkeleton from "./CarouselSkeleton";
 import CarouselEmpty from "./CarouselEmpty";
-import { orderBy, getDistinctValuesFromList, deepCloneObj, retrieveObjFromObjList, sleep } from "../../../core/utils";
+import { orderBy, getDistinctValuesFromList, deepCloneObj, retrieveObjFromObjList, sleep } from "../../core/utils";
 
 class StrategyPanel extends React.Component {
   constructor(props) {

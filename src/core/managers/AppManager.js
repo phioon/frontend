@@ -11,7 +11,6 @@ import {
   retrieveObjFromObjList,
   sleep
 } from "../utils";
-import { object } from "prop-types";
 
 class AppManager {
   constructor(getHttpTranslation) {
@@ -674,19 +673,6 @@ class AppManager {
     // Return it with http error details
     return sItem
   }
-  async strategyRun(pk) {
-    let wsInfo = this.getApi("wsStrategies")
-    wsInfo.request += pk + "/run/"
-    wsInfo.method = "post"
-    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
-
-    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
-
-    if (result.status !== 200)
-      this.getHttpTranslation(result, "strategyrun", "strategy")
-
-    return result
-  }
   async strategyRate(payload) {
     // payload.rating needed...
     let wsInfo = this.getApi("wsStrategies")
@@ -698,6 +684,19 @@ class AppManager {
 
     if (result.status !== 200)
       this.getHttpTranslation(result, "strategyrate", "strategy")
+
+    return result
+  }
+  async strategyRun(pk) {
+    let wsInfo = this.getApi("wsStrategies")
+    wsInfo.request += pk + "/run/"
+    wsInfo.method = "post"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status !== 200)
+      this.getHttpTranslation(result, "strategyrun", "strategy")
 
     return result
   }
