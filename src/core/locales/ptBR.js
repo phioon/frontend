@@ -13,18 +13,20 @@ const locale = {
   },
   appnavbar: {
     title_default: "Dashboard",
+    title_empty: "",
+    title_myaccount: "Minha Conta",
     title_openpositions: "Posições Abertas",
+    title_phitrader: "Análise Técnica",
     title_positions: "Meus Ativos",
     title_strategypanel: "Estratégias",
     title_strategygallery: "Estratégias",
-    title_phitrader: "Análise Técnica",
-    title_myaccount: "Minha Conta",
+    title_userprofile: "Usuário",
     title_usersubscription: "Meu Plano",
     title_walletoverview: "Visão Geral",
     title_wallets: "Meus Ativos",
 
-    label_myaccount: "Minha Conta",
-    label_subscription: "Plano",
+    label_profile: "Perfil",
+    label_subscription: "Meu Plano",
     label_logout: "Sair"
   },
   assetfilter: {
@@ -678,6 +680,11 @@ const locale = {
     item_buy: "Compra",
     item_sell: "Venda",
   },
+  pagenotfound: {
+    label_title: "Página não disponível. :(",
+    label_desc: "O link que você utilizou pode estar quebrado ou a página pode ter sido removida.",
+    btn_footer: "Voltar para PHIOON"
+  },
   phitrader: {
     title: "Phi Trader",
     label_intro_p1: "Olá! Sou o Phi, a Inteligência Artificial por trás das estratégias de mercado do PHIOON...",
@@ -872,10 +879,12 @@ const locale = {
     alert_passwordReseted_text: "Agora, já podemos tentar logar novamente. ;)"
   },
   sidebar: {
+    profile: "Perfil",
+    profileMini: "P",
     myaccount: "Minha Conta",
     myaccountMini: "MC",
-    subscription: "Plano",
-    subscriptionMini: "P",
+    subscription: "Meu Plano",
+    subscriptionMini: "MP",
 
     myassets: "Meus Ativos",
     wallets: "Carteiras",
@@ -925,15 +934,25 @@ const locale = {
     label_static_hint: "Algumas regras estão fixadas para tempos gráficos específicos.",
     label_category: "Categoria",
 
-    btn_run_hint: "Executar Estratégia.",
-    btn_view_hint: "Visualizar Estratégia.",
+    btn_save: "Salvar",
     btn_save_hint: "Salvar Estratégia.",
+    btn_unsave: "Remover de Salvas",
     btn_unsave_hint: "Remover da coleção.",
-    btn_update_hint: "Atualizar Estratégia.",
-    btn_delete_hint: "Deletar Estratégia.",
+
+    btn_stats: "Ir para Estatísticas",
+    btn_userProfile: "Ir para Perfil",
+    btn_share: "Compartilhar",
+    btn_view: "Ver detalhes",
+    btn_update: "Atualizar",
+    btn_delete: "Deletar",
+
+    btn_run_hint: "Executar Estratégia.",
   },
   strategygallery: {
     title: "Galeria",
+
+    card_mostRuns_title: "As mais Executadas",
+    card_mostSaved_title: "As mais Salvas",
   },
   strategypanel: {
     title: "Painel de Controle",
@@ -944,11 +963,11 @@ const locale = {
     label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua e então trazer estratégias e indicadores disponíveis por lá! ;)",
     btn_goToWallets: "Ir para Carteiras",
 
-    label_myStrategies_noStrategies_p1: "Está preparado para começar a economizar tempo e ainda ter as melhores oportunidades do mercado à um clique?",
-    label_myStrategies_noStrategies_p2: "Então comece criando a sua primeira Estratégia !",
+    label_myStrategies_noStrategies_p1: "Crie, teste e compartilhe estratégias com seus amigos...",
+    label_myStrategies_noStrategies_p2: "Saiba quando as melhores oportunidades do mercado acontecem em tempo real.",
 
-    label_savedStrategies_noStrategies_p1: "Não encontrei nenhuma Estratégia salva por aqui... Que tal visitar a Galeria para saber as Estratégias mais usadas por outros usuários ultimamente?",
-    label_savedStrategies_noStrategies_p2: "Se gostar de algo por lá, você pode salvá-las e elas vão aparecer aqui. ;)",
+    label_savedStrategies_noStrategies_p1: "Você não tem estratégias salvas ainda... ",
+    label_savedStrategies_noStrategies_p2: "Na Galeria, você encontra as estratégias mais populares entre os usuários. ;)",
 
     card_myStrategies_title: "Minhas",
     card_savedStrategies_title: "Salvas",
@@ -966,7 +985,22 @@ const locale = {
     alert_deleted_title: "Removida!",
     alert_deleted_text: "Sua Estratégia foi removida com sucesso.",
   },
-  strategyresults: {
+  strategypopularitem: {
+    btn_save: "Salvar",
+    btn_save_hint: "Salvar Estratégia.",
+    btn_unsave: "Remover de Salvas",
+    btn_unsave_hint: "Remover da coleção.",
+
+    btn_stats: "Ir para Estatísticas",
+    btn_userProfile: "Ir para Perfil",
+    btn_share: "Compartilhar",
+    btn_view: "Ver detalhes",
+    btn_update: "Atualizar",
+    btn_delete: "Deletar",
+
+    btn_run_hint: "Executar Estratégia.",
+  },
+  modalstrategyresults: {
     header_asset: "Ativo",
     header_name: "Nome",
     header_quote: "Cotação",
@@ -1083,6 +1117,20 @@ const locale = {
     phibo_305_down_p1: "Preço alcançou uma resistência técnica importante após retração de <fibo_pct_retraction>% da Onda 1 e confirmou um Pivô de Baixa.",
     phibo_305_down_p2: "Linhas de Resistência estão alinhadas para baixo, o que aumenta a probabilidade de início de onda 3.",
     phibo_72_down_p1: "Preço alcançou uma resistência técnica após retração de <fibo_pct_retraction>% da Onda 1 e confirmou um Pivô de Baixa, aumentando a probabilidade de, ao menos, o preço testar o fundo anterior novamente.",
+  },
+  userprofile: {
+    label_editProfile: "Editar Perfil",
+    label_follow: "Seguir",
+    label_following: "Seguindo",
+    label_unfollow: "Deixar de Seguir",
+    label_followers: "Seguidores",
+    label_share: "Compartilhar",
+    label_strategies: "Estratégias",
+    label_report: "Reportar usuário",
+
+    title_popularStrategies: "Estratégias Populares",
+
+    label_shareLinkCopied: "Link do Perfil copiado para área de transferência.",
   },
   usersubscription: {
     label_monthly: "Mensal",

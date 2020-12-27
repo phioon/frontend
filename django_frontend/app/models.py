@@ -158,6 +158,20 @@ class UserCustom(models.Model):
         return self.user.username
 
 
+class UserFollowing(models.Model):
+    create_time = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
+    following_user = models.ForeignKey(User, related_name="followers", on_delete=models.CASCADE)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', 'following_user'])
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'following_user'], name='unique_followers')
+        ]
+
+
 class UserPreferences(models.Model):
     user = models.OneToOneField(User, related_name='userPrefs', on_delete=models.CASCADE)
     locale = models.CharField(max_length=8)
@@ -217,7 +231,7 @@ class Strategy(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
-    owner = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, related_name='strategies', editable=False, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
     desc = models.CharField(max_length=2048, blank=True)
     type = models.CharField(max_length=8, verbose_name='buy or sell')
@@ -258,24 +272,36 @@ class Strategy(models.Model):
 
         return instance
 
-    def set_save(self, user, value):
-        try:
-            # Try to update instance...
-            instance = StrategyRating.objects.get(strategy=self, user=user)
-            instance.is_saved = value
-            instance.save()
-        except StrategyRating.DoesNotExist:
-            instance = StrategyRating.objects.create(strategy=self, user=user, is_saved=value)
+    def save_strategy(self, user):
+        is_saved = StrategySaved.objects.filter(user=user, strategy=self)
+        is_saved = is_saved.count() > 0
 
-        self.update_stats('ratings')
+        if not is_saved:
+            StrategySaved.objects.create(user=user, strategy=self)
 
-        return instance
+        self.update_stats('saved')
+
+    def unsave_strategy(self, user):
+        StrategySaved.objects.filter(user=user, strategy=self).delete()
+        self.update_stats('saved')
+
+    # Stats
+    def get_stats(self):
+        stats = {
+            'rating_avg': self.stats.rating_avg,
+            'saved_count': self.stats.saved_count,
+            'runs_last_30_days': self.stats.runs_last_30_days,
+            'total_runs': self.stats.total_runs
+        }
+        return stats
 
     def update_stats(self, related_name):
-        if related_name == 'usage':
-            self.update_usage()
-        elif related_name == 'ratings':
+        if related_name == 'ratings':
             self.update_ratings()
+        elif related_name == 'saved':
+            self.update_saved_count()
+        elif related_name == 'usage':
+            self.update_usage()
 
     def update_ratings(self):
         # Ratings
@@ -284,8 +310,9 @@ class Strategy(models.Model):
             avg = round(aggr['rating__avg'], 2)
             self.stats.rating_avg = avg
 
-        # Is Saved
-        saved_count = self.ratings.filter(is_saved=True).count()
+    def update_saved_count(self):
+        # Saved count
+        saved_count = self.saved.filter(strategy=self).count()
         self.stats.saved_count = saved_count
         self.stats.save()
 
@@ -293,18 +320,35 @@ class Strategy(models.Model):
         # IMPORTANT! Variable [queryset] is reusable to avoid database hits...
         today = datetime.utcnow().date()
 
+        # Total Runs
+        self.stats.total_runs = self.stats.total_runs + 1
+
+        # 30 days
+        date_from = today - timedelta(days=30)
+        queryset = self.usage.filter(date__gte=date_from)
+        usage = queryset.aggregate(runs_last_30_days=Sum('runs'))
+        self.stats.runs_last_30_days = usage['runs_last_30_days']
+
         # 14 days
         date_from = today - timedelta(days=14)
-        queryset = self.usage.filter(date__gte=date_from)
-        usage = queryset.aggregate(runs_last_14_days=Sum('runs'))
+        usage = queryset.filter(date__gte=date_from).aggregate(runs_last_14_days=Sum('runs'))
         self.stats.runs_last_14_days = usage['runs_last_14_days']
 
-        # 7 days
-        date_from = today - timedelta(days=7)
-        usage = queryset.filter(date__gte=date_from).aggregate(runs_last_7_days=Sum('runs'))
-        self.stats.runs_last_7_days = usage['runs_last_7_days']
-
         self.stats.save()
+
+
+class StrategySaved(models.Model):
+    create_time = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, related_name='saved_strategies', on_delete=models.CASCADE)
+    strategy = models.ForeignKey(Strategy, related_name='saved', on_delete=models.CASCADE)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', 'strategy'])
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'strategy'], name='unique_saved_strategies')
+        ]
 
 
 class StrategyStats(models.Model):
@@ -312,8 +356,9 @@ class StrategyStats(models.Model):
     rating_avg = models.FloatField(default=0)
     saved_count = models.IntegerField(default=0)
 
-    runs_last_7_days = models.IntegerField(default=0)
     runs_last_14_days = models.IntegerField(default=0)
+    runs_last_30_days = models.IntegerField(default=0)
+    total_runs = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.strategy.pk) + '__' + str(self.rating_avg)
@@ -323,7 +368,6 @@ class StrategyRating(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
     strategy = models.ForeignKey(Strategy, related_name='ratings', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    is_saved = models.BooleanField(default=False)
     rating = models.IntegerField(default=0, validators=[
         validators.MinValueValidator(1),
         validators.MaxValueValidator(5)]

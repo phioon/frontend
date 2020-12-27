@@ -13,11 +13,13 @@ urlpatterns = [
     path('app/positionTypes/', apiApp.PositionTypeList.as_view()),
     path('app/mystrategies/', apiApp.MyStrategyList.as_view()),
     path('app/mystrategies/<int:pk>/', apiApp.MyStrategyDetail.as_view()),
+    path('app/strategies/saved/', apiApp.SavedSrategyList.as_view()),
     path('app/strategies/', apiApp.StrategyList.as_view()),
     path('app/strategies/<int:pk>/', apiApp.StrategyDetail.as_view()),
     path('app/strategies/<int:pk>/run/', apiApp.strategy_run),
     path('app/strategies/<int:pk>/rate/', apiApp.strategy_rate),
-    path('app/strategies/<int:pk>/set-save/', apiApp.strategy_set_save),
+    path('app/strategies/<int:pk>/save/', apiApp.strategy_save),
+    path('app/strategies/<int:pk>/unsave/', apiApp.strategy_unsave),
     path('app/subscriptions/', apiApp.SubscriptionList.as_view()),
     path('app/countries/', apiApp.CountryList.as_view()),
     path('app/currencies/', apiApp.CurrencyList.as_view()),
@@ -27,6 +29,13 @@ urlpatterns = [
     # On demand
     path('app/task/runStockSplit/<symbol>/<split_date>/<int:split_into>/<apiKey>',
          apiApp.run_stock_split, name='Run adjustments on user positions when there is a Stock Split'),
+]
+
+# Users Interaction
+urlpatterns += [
+    path('app/user/<username>/profile/', apiApp.user_profile_retrieve),
+    path('app/user/<username>/follow/', apiApp.user_follow),
+    path('app/user/<username>/unfollow/', apiApp.user_unfollow),
 ]
 
 # Auth

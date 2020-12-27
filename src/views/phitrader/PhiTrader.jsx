@@ -460,7 +460,7 @@ class PhiTrader extends React.Component {
                 >
                   {getString(prefs.locale, this.compId, "btn_goToWallets")}
                 </Button>
-                {this.state.goToWallets && <Redirect to="/app/myassets/wallets" />}
+                {this.state.goToWallets && <Redirect to="/app/myassets/wallets/" />}
               </CardFooter>
             </Card>
             :

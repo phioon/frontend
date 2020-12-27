@@ -15,11 +15,15 @@ const config = {
       version: 0.01
     },
     mystrategies: {
-      syncLimit: 60,
+      syncLimit: 15,
+      version: 0.01
+    },
+    savedstrategies: {
+      syncLimit: 15,
       version: 0.01
     },
     strategies: {
-      syncLimit: 15,
+      syncLimit: 0.015,
       version: 0.01
     },
     positionTypes: {
@@ -33,6 +37,10 @@ const config = {
     subscriptions: {
       syncLimit: 43200,
       version: 0.04
+    },
+    userprofiles: {
+      syncLimit: 5,
+      version: 0.02
     },
     wallets: {
       syncLimit: 8640,
@@ -93,7 +101,7 @@ const config = {
       version: 0.06
     },
     stockExchanges: {
-      syncLimit: 8640,
+      syncLimit: 43200,
       version: 0.01
     },
     technicalConditions: {

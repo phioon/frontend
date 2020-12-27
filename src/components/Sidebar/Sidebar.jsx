@@ -214,13 +214,13 @@ class Sidebar extends React.Component {
               <Collapse isOpen={this.state.openAvatar}>
                 <ul className="nav">
                   <li>
-                    <NavLink to="/app/user/myaccount" activeClassName="">
-                      <span className="sidebar-mini-icon">{getString(prefs.locale, this.compId, 'myaccountMini')}</span>
-                      <span className="sidebar-normal">{getString(prefs.locale, this.compId, 'myaccount')}</span>
+                    <NavLink to={`/app/u/${user.username}/`} activeClassName="">
+                      <span className="sidebar-mini-icon">{getString(prefs.locale, this.compId, 'profileMini')}</span>
+                      <span className="sidebar-normal">{getString(prefs.locale, this.compId, 'profile')}</span>
                     </NavLink>
                   </li>
                   <li>
-                    <NavLink to="/app/user/subscription" activeClassName="">
+                    <NavLink to="/app/u/subscription/" activeClassName="">
                       <span className="sidebar-mini-icon">{getString(prefs.locale, this.compId, 'subscriptionMini')}</span>
                       <span className="sidebar-normal">{getString(prefs.locale, this.compId, 'subscription')}</span>
                     </NavLink>

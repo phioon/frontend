@@ -41,7 +41,7 @@ class UserSubscription extends React.Component {
   async prepareRequirements() {
     let { subscription } = this.state
 
-    if (window.location.pathname.includes("/app/order/success") && window.location.search) {
+    if (window.location.pathname.includes("/app/order/success/") && window.location.search) {
       this.validateSession()
     }
 
@@ -124,7 +124,7 @@ class UserSubscription extends React.Component {
   }
   reloadApp() {
     this.setState({ alert: null });
-    window.location.href = window.location.origin + "/app/user/subscription"
+    window.location.href = window.location.origin + "/app/user/subscription/"
   }
   hideAlert() {
     this.setState({ alert: null });

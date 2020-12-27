@@ -118,7 +118,7 @@ class AppNavBar extends React.Component {
   }
 
   render() {
-    let { getString, prefs, navbarTitleId } = this.props;
+    let { getString, prefs, navbarTitleId, user } = this.props;
     let { langList } = this.state;
 
     return (
@@ -166,7 +166,6 @@ class AppNavBar extends React.Component {
               aria-expanded={this.state.collapseOpen}
               aria-label="Toggle navigation"
               className="navbar-toggler"
-              // data-target="#navigation"
               data-toggle="collapse"
               type="button"
               onClick={() => this.toggleCollapse()}
@@ -233,10 +232,10 @@ class AppNavBar extends React.Component {
                     <i className="nc-icon nc-settings-gear-65" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-navbar" right tag="ul">
-                    <DropdownItem onClick={() => this.pushRouterHistory('/app/user/myaccount')}>
-                      {getString(prefs.locale, this.compId, "label_myaccount")}
+                    <DropdownItem onClick={() => this.pushRouterHistory(`/app/u/${user.username}/`)}>
+                      {getString(prefs.locale, this.compId, "label_profile")}
                     </DropdownItem>
-                    <DropdownItem onClick={() => this.pushRouterHistory('/app/user/subscription')}>
+                    <DropdownItem onClick={() => this.pushRouterHistory('/app/u/subscription/')}>
                       {getString(prefs.locale, this.compId, "label_subscription")}
                     </DropdownItem>
                     <DropdownItem divider tag="li" />

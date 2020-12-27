@@ -1,13 +1,11 @@
 import React from "react";
+import PropTypes from "prop-types";
 // reactstrap components
 import {
-  Badge,
-  Button,
   Card,
   CardHeader,
   CardTitle,
   CardBody,
-  CardFooter,
   Carousel,
   CarouselItem,
   CarouselControl,
@@ -18,13 +16,11 @@ import {
   InputGroupAddon,
   InputGroupText,
   Row,
-  UncontrolledTooltip
 } from "reactstrap";
 
-import { orderBy, getDistinctValuesFromList, deepCloneObj, retrieveObjFromObjList, sleep } from "../../core/utils";
+import { getValueListFromObjList, deepCloneObj } from "../../core/utils";
 
 import ModalStrategy from "../modals/strategy/ModalStrategy";
-import ModalStrategyView from "../modals/strategy/ModalStrategyView";
 
 import StrategyCardMini from "./StrategyCardMini";
 import CarouselEmpty from "./CarouselEmpty";
@@ -53,7 +49,7 @@ class StrategyGallery extends React.Component {
         activeIndex: 0,
       },
 
-      mySavedStrategies: []
+      savedStrategyIds: []
     };
 
     this.toggleModal = this.toggleModal.bind(this);
@@ -92,7 +88,7 @@ class StrategyGallery extends React.Component {
 
   async prepareRequirements() {
     let tasks = [
-      this.prepareMySavedStrategies(),
+      this.prepareSavedStrategies(),
       this.prepareMostRuns(),
       this.prepareMostSaved()
     ]
@@ -100,23 +96,11 @@ class StrategyGallery extends React.Component {
 
     this.setState({ pageFirstLoading: false })
   }
-  async prepareMySavedStrategies() {
-    // 1. Query
-    let query = {
-      filters: {},
-      order_by: "-usage",
-      only_saved: true,
-      page_size: 50
-    }
-    // 2. Strategies
-    let strategies = await this.props.managers.app.strategyData(false, query)
+  async prepareSavedStrategies() {
+    let savedStrategies = await this.props.managers.app.savedStrategyData()
+    let savedStrategyIds = getValueListFromObjList(savedStrategies, "id")
 
-    // 3. Saved IDs
-    let mySavedStrategies = []
-    for (var strategy of strategies.results) {
-      mySavedStrategies.push(strategy.id)
-    }
-    this.setState({ mySavedStrategies })
+    this.setState({ savedStrategyIds })
   }
   async prepareMostRuns() {
     // 1. Query
@@ -176,7 +160,7 @@ class StrategyGallery extends React.Component {
   renderStrategyItem(slide) {
     return slide.map((strategy) => {
       strategy.isOwner = this.props.user.username === strategy.owner_username
-      strategy.isSaved = this.state.mySavedStrategies.includes(strategy.id)
+      strategy.isSaved = this.state.savedStrategyIds.includes(strategy.id)
 
       return (
         <Col key={"strategy__" + strategy.id} xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
@@ -236,14 +220,29 @@ class StrategyGallery extends React.Component {
 
   async onClick(action, obj) {
     switch (action) {
+      case "run":
+        this.runClick(obj)
+        await sleep(250)          // Wait a bit or smooth scroll will get stuck
+        this.scrollPage("strategyresults")
+        break;
       case "view":
         this.viewClick(obj)
         break;
       case "save":
         await this.saveClick(obj)
-        this.prepareRequirements()
+        break;
+      case "goToProfile":
+        this.goToProfile(obj.owner_username)
         break;
     }
+  }
+  runClick(obj) {
+    let { selected } = this.state;
+
+    this.props.managers.app.strategyRun(obj.id)
+    selected.strategy = obj
+
+    this.setState({ selected, isLoading: true })
   }
   viewClick(obj) {
     let objData = {
@@ -260,11 +259,16 @@ class StrategyGallery extends React.Component {
     this.toggleModal("strategyDetail")
   }
   async saveClick(obj) {
-    let payload = {
-      id: obj.id,
-      is_saved: !obj.isSaved
-    }
-    await this.props.managers.app.strategySetSave(payload)
+    if (obj.isSaved)
+      await this.props.managers.app.strategyUnsave(obj.id)
+    else
+      await this.props.managers.app.strategySave(obj.id)
+
+    this.prepareSavedStrategies()
+  }
+  goToProfile(username) {
+    let path = this.props.managers.app.userProfilePath(username)
+    this.props.history.push(path)
   }
 
   toggleModal(modalId) {
@@ -401,3 +405,10 @@ class StrategyGallery extends React.Component {
 }
 
 export default StrategyGallery;
+
+StrategyGallery.propTypes = {
+  prefs: PropTypes.object.isRequired,
+  getString: PropTypes.func.isRequired,
+  managers: PropTypes.object.isRequired,
+  setNavbarTitleId: PropTypes.func.isRequired
+}

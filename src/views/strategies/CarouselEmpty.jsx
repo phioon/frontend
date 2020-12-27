@@ -3,6 +3,7 @@ import React from "react";
 import {
   Card,
   CardBody,
+  CardFooter,
   Carousel,
   CarouselItem,
   Col,
@@ -38,6 +39,7 @@ function CarouselEmpty(props) {
                   </Col>
                 </Row>
               </CardBody>
+              <CardFooter />
             </Card>
           </Col>
         </Row>

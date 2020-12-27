@@ -1,6 +1,6 @@
 import React from "react";
 import { Router, Route, Switch, Redirect, Link } from "react-router-dom";
-import { LoopCircleLoading } from 'react-loadingg';
+import { RingLoader } from "react-spinners";
 
 import { createBrowserHistory } from "history";
 
@@ -54,6 +54,7 @@ class App extends React.Component {
     this.setAuthStatus = this.setAuthStatus.bind(this);
     this.setLocale = this.setLocale.bind(this);
     this.getHttpTranslation = this.getHttpTranslation.bind(this);
+    this.notify = this.notify.bind(this);
     this.managers = {
       gtag: new GtagManager(),
       app: new AppManager(this.getHttpTranslation),
@@ -227,9 +228,9 @@ class App extends React.Component {
             msg.id = model + "_profileUpdated"
           break;
         case "strategy":
-          if (context === "strategyaddedtocollection")
+          if (context === "strategysave")
             msg.id = model + "_addedToCollection"
-          else if (context === "strategyremovedfromcollection")
+          else if (context === "strategyunsave")
             msg.id = model + "_removedFromCollection"
           break;
       }
@@ -365,8 +366,10 @@ class App extends React.Component {
             <Route
               path="/auth"
               render={props =>
-                typeof isAuthenticated === 'undefined' ?
-                  <LoopCircleLoading color='#07242b' /> :
+                typeof isAuthenticated === "undefined" ?
+                  <div className="wrapper centered">
+                    <RingLoader color="#3a5966" />
+                  </div> :
                   isAuthenticated ?
                     <Redirect to="/app/wallet/openpositions" /> :
                     <AuthLayout {...props}
@@ -382,8 +385,10 @@ class App extends React.Component {
             <Route
               path="/app"
               render={props =>
-                typeof isAuthenticated === 'undefined' ?
-                  <LoopCircleLoading color='#07242b' /> :
+                typeof isAuthenticated === "undefined" ?
+                  <div className="wrapper centered">
+                    <RingLoader color="#3a5966" />
+                  </div> :
                   !isAuthenticated ?
                     <Redirect to="/auth/login" /> :
                     <AppLayout {...props}
@@ -392,6 +397,7 @@ class App extends React.Component {
                       user={user}
                       getString={getTranslation}
                       getHttpTranslation={this.getHttpTranslation}
+                      notify={this.notify}
                       setPrefs={this.setPrefs}
                       setLocale={this.setLocale}
                       setAuthStatus={this.setAuthStatus}

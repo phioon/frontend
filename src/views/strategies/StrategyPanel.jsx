@@ -32,13 +32,19 @@ import Select from "react-select";
 import ReactBSAlert from "react-bootstrap-sweetalert";
 
 import ModalStrategy from "../modals/strategy/ModalStrategy";
-import ModalStrategyView from "../modals/strategy/ModalStrategyView";
 
 import StrategyCardMini from "./StrategyCardMini";
-import StrategyResults from "./StrategyResults";
+import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
 import CarouselSkeleton from "./CarouselSkeleton";
 import CarouselEmpty from "./CarouselEmpty";
-import { orderBy, getDistinctValuesFromList, deepCloneObj, retrieveObjFromObjList, sleep } from "../../core/utils";
+import {
+  deepCloneObj,
+  getDistinctValuesFromList,
+  getValueListFromObjList,
+  orderBy,
+  retrieveObjFromObjList,
+  sleep
+} from "../../core/utils";
 
 class StrategyPanel extends React.Component {
   constructor(props) {
@@ -82,6 +88,7 @@ class StrategyPanel extends React.Component {
 
       strategies: [],
       sStrategyNames: [],
+      savedStrategyIds: [],
       redirectTo: undefined,
       alert: null,
     };
@@ -191,20 +198,14 @@ class StrategyPanel extends React.Component {
     this.setState({ strategies, sStrategyNames, myStrategies: carousel })
   }
   async prepareSavedStrategies() {
-    // 1. Query
-    let query = {
-      filters: {},
-      order_by: "-usage",
-      only_saved: true,
-      page_size: 50
-    }
-    // 2. Strategies
-    let strategies = await this.props.managers.app.strategyData(false, query)
+    // 1. Strategies
+    let strategies = await this.props.managers.app.savedStrategyData()
+    let savedStrategyIds = getValueListFromObjList(strategies, "id")
 
-    // 3. Carousel
-    let carousel = this.prepareSlides(this.state.savedStrategies, strategies.results)
+    // 2. Carousel
+    let carousel = this.prepareSlides(this.state.savedStrategies, strategies)
 
-    this.setState({ savedStrategies: carousel })
+    this.setState({ savedStrategyIds, savedStrategies: carousel })
   }
   prepareSlides(carousel, strategies) {
     let slides = []
@@ -233,7 +234,7 @@ class StrategyPanel extends React.Component {
   renderStrategyItem(context, slide) {
     return slide.map((strategy) => {
       strategy.isOwner = this.props.user.username === strategy.owner_username
-      strategy.isSaved = context === "savedStrategies"
+      strategy.isSaved = this.state.savedStrategyIds.includes(strategy.id)
 
       return (
         <Col key={"strategy__" + strategy.id} xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
@@ -321,17 +322,19 @@ class StrategyPanel extends React.Component {
 
   async onClick(action, obj) {
     switch (action) {
+      case "run":
+        this.runClick(obj)
+        await sleep(250)          // Wait a bit or smooth scroll will get stuck
+        this.scrollPage("strategyresults")
+        break;
       case "view":
         this.viewClick(obj)
         break;
       case "save":
         await this.saveClick(obj)
-        this.prepareRequirements()
         break;
-      case "run":
-        this.runClick(obj)
-        await sleep(250)          // Wait a bit or smooth scroll will get stuck
-        this.scrollPage("strategyresults")
+      case "goToProfile":
+        this.goToProfile(obj.owner_username)
         break;
       case "create":
         this.createClick()
@@ -343,6 +346,14 @@ class StrategyPanel extends React.Component {
         this.deleteClick(obj)
         break;
     }
+  }
+  runClick(obj) {
+    let { selected } = this.state;
+
+    this.props.managers.app.strategyRun(obj.id)
+    selected.strategy = obj
+
+    this.setState({ selected, isLoading: true })
   }
   viewClick(obj) {
     let objData = {
@@ -359,19 +370,16 @@ class StrategyPanel extends React.Component {
     this.toggleModal("strategyDetail")
   }
   async saveClick(obj) {
-    let payload = {
-      id: obj.id,
-      is_saved: !obj.isSaved
-    }
-    await this.props.managers.app.strategySetSave(payload)
+    if (obj.isSaved)
+      await this.props.managers.app.strategyUnsave(obj.id)
+    else
+      await this.props.managers.app.strategySave(obj.id)
+
+    this.prepareSavedStrategies()
   }
-  runClick(obj) {
-    let { selected } = this.state;
-
-    this.props.managers.app.strategyRun(obj.id)
-    selected.strategy = obj
-
-    this.setState({ selected, isLoading: true })
+  goToProfile(username) {
+    let path = this.props.managers.app.userProfilePath(username)
+    this.props.history.push(path)
   }
   createClick() {
     let objData = {}
@@ -542,7 +550,7 @@ class StrategyPanel extends React.Component {
                 >
                   {getString(prefs.locale, this.compId, "btn_goToWallets")}
                 </Button>
-                {this.state.goToWallets && <Redirect to="/app/myassets/wallets" />}
+                {this.state.goToWallets && <Redirect to="/app/myassets/wallets/" />}
               </CardFooter>
             </Card>
             :
@@ -569,32 +577,35 @@ class StrategyPanel extends React.Component {
                     </Col>
                   </Row>
                   {/* Search... */}
-                  <Row>
-                    <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6">
-                      <Form>
-                        <InputGroup className="no-border">
-                          <Input
-                            defaultValue=""
-                            placeholder={getString(prefs.locale, "generic", "input_search")}
-                            type="text"
-                            onChange={e => this.search(myStrategies.id, e.target.value)}
-                          />
-                          <InputGroupAddon addonType="append">
-                            <InputGroupText>
-                              <i className="nc-icon nc-zoom-split" />
-                            </InputGroupText>
-                          </InputGroupAddon>
-                        </InputGroup>
-                      </Form>
-                    </Col>
-                  </Row>
+                  {myStrategies.slides.length > 0 &&
+                    <Row>
+                      <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6">
+                        <Form>
+                          <InputGroup className="no-border">
+                            <Input
+                              defaultValue=""
+                              placeholder={getString(prefs.locale, "generic", "input_search")}
+                              type="text"
+                              onChange={e => this.search(myStrategies.id, e.target.value)}
+                            />
+                            <InputGroupAddon addonType="append">
+                              <InputGroupText>
+                                <i className="nc-icon nc-zoom-split" />
+                              </InputGroupText>
+                            </InputGroupAddon>
+                          </InputGroup>
+                        </Form>
+                      </Col>
+                    </Row>
+                  }
                 </CardHeader>
                 <CardBody>
                   {myStrategies.slides.length == 0 ?
                     <CarouselEmpty
                       prefs={prefs}
                       getString={getString}
-                      compId={this.compId} /> :
+                      compId={this.compId}
+                      context={myStrategies.id} /> :
                     <Carousel
                       activeIndex={myStrategies.activeIndex}
                       next={() => this.moveSlide(myStrategies, "next")}
@@ -626,31 +637,33 @@ class StrategyPanel extends React.Component {
                         className="btn-round"
                         outline
                         color="success"
-                        onClick={() => this.setState({ redirectTo: "/app/strategies/gallery" })}
+                        onClick={() => this.setState({ redirectTo: "/app/strategies/gallery/" })}
                       >
                         {getString(prefs.locale, this.compId, "btn_goToGallery")}
                       </Button>
                     </Col>
                   </Row>
                   {/* Search... */}
-                  <Row>
-                    <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6">
-                      <Form>
-                        <InputGroup className="no-border">
-                          <Input
-                            defaultValue=""
-                            placeholder={getString(prefs.locale, "generic", "input_search")}
-                            type="text"
-                          />
-                          <InputGroupAddon addonType="append">
-                            <InputGroupText>
-                              <i className="nc-icon nc-zoom-split" />
-                            </InputGroupText>
-                          </InputGroupAddon>
-                        </InputGroup>
-                      </Form>
-                    </Col>
-                  </Row>
+                  {savedStrategies.slides.length > 0 &&
+                    <Row>
+                      <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6">
+                        <Form>
+                          <InputGroup className="no-border">
+                            <Input
+                              defaultValue=""
+                              placeholder={getString(prefs.locale, "generic", "input_search")}
+                              type="text"
+                            />
+                            <InputGroupAddon addonType="append">
+                              <InputGroupText>
+                                <i className="nc-icon nc-zoom-split" />
+                              </InputGroupText>
+                            </InputGroupAddon>
+                          </InputGroup>
+                        </Form>
+                      </Col>
+                    </Row>
+                  }
                 </CardHeader>
                 <CardBody>
                   {savedStrategies.slides.length == 0 ?
@@ -738,7 +751,7 @@ class StrategyPanel extends React.Component {
                   </Row>
                 </CardHeader>
                 <CardBody>
-                  <StrategyResults
+                  <ModalStrategyResults
                     {...this.props}
                     toggleLoading={this.toggleLoading}
                     isLoading={isLoading}

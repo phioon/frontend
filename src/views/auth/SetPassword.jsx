@@ -18,7 +18,7 @@ import {
 } from "reactstrap";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
-import { LoopCircleLoading } from 'react-loadingg';
+import { RingLoader } from "react-spinners";
 
 import PropTypes from "prop-types";
 
@@ -249,10 +249,9 @@ class SetPassword extends React.Component {
                 {pageFirstLoading ?
                   // First Loading
                   <CardBody>
-                    <br />
-                    <LoopCircleLoading color='#4f4f4f' />
-                    <br />
-                    <br />
+                    <div className="centered">
+                      <RingLoader color="#3a5966" />
+                    </div>
                   </CardBody> :
                   isTokenExpired ?
                     // Token is Expired

@@ -75,13 +75,7 @@ class StrategySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_stats(self, obj):
-        stats = {
-            'rating_avg': obj.stats.rating_avg,
-            'saved_count': obj.stats.saved_count,
-            'runs_last_14_days': obj.stats.runs_last_14_days
-        }
-
-        return stats
+        return obj.get_stats()
 
     def create(self, validated_data):
         instance = app_models.Strategy.objects.create(**validated_data)
@@ -114,6 +108,66 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         for price in obj.prices.filter(is_active=True):
             prices[price.name] = price.id
         return prices
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    subscription = serializers.ReadOnlyField(source='userCustom.subscription.name')
+    strategies = serializers.SerializerMethodField()
+    is_followed_by_me = serializers.SerializerMethodField()
+    amount_following = serializers.SerializerMethodField()
+    amount_followers = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'subscription',
+                  'is_followed_by_me', 'amount_following', 'amount_followers', 'strategies']
+
+    def get_is_followed_by_me(self, obj):
+        requestor = self.context['request'].user
+        is_followed_by_me = obj.followers.filter(user=requestor)
+        is_followed_by_me = is_followed_by_me.count() > 0
+        return is_followed_by_me
+
+    def get_amount_following(self, obj):
+        return obj.following.count()
+
+    def get_amount_followers(self, obj):
+        return obj.followers.count()
+
+    def get_strategies(self, obj):
+        strategies = obj.strategies.filter(is_public=True)
+        serializer = StrategySerializer(strategies, many=True)
+        return serializer.data
+
+
+class FollowingSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source='following_user.username')
+    full_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = app_models.UserFollowing
+        fields = ['username', 'full_name']
+
+    def get_full_name(self, obj):
+        first_name = obj.following_user.first_name
+        last_name = obj.following_user.last_name
+        full_name = str(first_name + ' ' + last_name)
+        return full_name
+
+
+class FollowersSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source='user.username')
+    full_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = app_models.UserFollowing
+        fields = ['username', 'full_name']
+
+    def get_full_name(self, obj):
+        first_name = obj.user.first_name
+        last_name = obj.user.last_name
+        full_name = str(first_name + ' ' + last_name)
+        return full_name
 
 
 class WalletSerializer(serializers.ModelSerializer):

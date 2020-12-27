@@ -1,7 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
+from django.db.models import Q
+
 from rest_framework import generics, permissions, status
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
@@ -55,6 +57,17 @@ class MyStrategyDetail(generics.RetrieveUpdateDestroyAPIView):
         return app_models.Strategy.objects.filter(owner=self.request.user)
 
 
+class SavedSrategyList(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = serializers.StrategySerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        saved_pks = user.saved_strategies.values_list('strategy', flat=True)
+
+        return app_models.Strategy.objects.filter(pk__in=saved_pks)
+
+
 class StrategyList(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = serializers.StrategySerializer
@@ -68,12 +81,7 @@ class StrategyList(generics.ListAPIView):
         order_by = self.request.query_params['order_by']
         order_by = self.convert_order_by(order_by)
 
-        # 1.2 Only Saved
-        only_saved = None
-        if 'only_saved' in self.request.query_params:
-            only_saved = str(self.request.query_params['only_saved']).lower()
-
-        # 1.3 Filters
+        # 1.2 Filters
         f_keys = f_values = []
         filters = {}
         if 'f_keys' in self.request.query_params:
@@ -94,12 +102,9 @@ class StrategyList(generics.ListAPIView):
         filters['is_public'] = True  # MANDATORY filter.
 
         # 2. Queryset
-        if only_saved == 'true':
-            strategies = self.get_saved_strategies()
-            strategies = strategies.filter(**filters).order_by(order_by)
-        else:
-            strategies = app_models.Strategy.objects.filter(**filters).order_by(order_by)
-
+        strategies = app_models.Strategy.objects.filter(**filters)
+        strategies = strategies.order_by(order_by)
+        
         return strategies
 
     def convert_order_by(self, order_by):
@@ -111,13 +116,6 @@ class StrategyList(generics.ListAPIView):
             order_by = order_by.replace('saved', 'stats__saved_count')
 
         return order_by
-
-    def get_saved_strategies(self):
-        # Saved strategies...
-        fav_pks = list(app_models.StrategyRating.objects
-                       .filter(user=self.request.user, is_saved=True)
-                       .values_list('strategy', flat=True))
-        return app_models.Strategy.objects.filter(pk__in=fav_pks)
 
 
 class StrategyDetail(generics.RetrieveAPIView):
@@ -157,20 +155,22 @@ def strategy_rate(request, pk):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def strategy_set_save(request, pk):
+def strategy_save(request, pk):
     strategy = get_object_or_404(app_models.Strategy, pk=pk)
-
-    if 'is_saved' not in request.data:
-        raise serializers.ValidationError({'is_saved': 'is missing.'})
-
     user = request.user
-    value = request.data['is_saved']
 
-    if isinstance(value, bool):
-        strategy.set_save(user=user, value=value)
-        return Response(status=status.HTTP_200_OK)
+    strategy.save_strategy(user)
+    return Response()
 
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def strategy_unsave(request, pk):
+    strategy = get_object_or_404(app_models.Strategy, pk=pk)
+    user = request.user
+
+    strategy.unsave_strategy(user)
+    return Response()
 
 
 class SubscriptionList(generics.ListAPIView):
@@ -208,6 +208,46 @@ class PositionDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return app_models.Position.objects.filter(owner=self.request.user)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def user_profile_retrieve(request, username):
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = serializers.UserProfileSerializer(user, context={'request': request})
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def user_follow(request, username):
+    following_user = get_object_or_404(User, username=username)
+    user = request.user
+
+    is_follower = app_models.UserFollowing.objects.filter(user=user, following_user=following_user)
+    is_follower = is_follower.count() > 0
+
+    if not is_follower:
+        app_models.UserFollowing.objects.create(user=user, following_user=following_user)
+
+    serializer = serializers.UserProfileSerializer(following_user, context={'request': request})
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def user_unfollow(request, username):
+    following_user = get_object_or_404(User, username=username)
+    user = request.user
+
+    app_models.UserFollowing.objects.filter(user=user, following_user=following_user).delete()
+
+    serializer = serializers.UserProfileSerializer(following_user, context={'request': request})
+    return Response(serializer.data)
 
 
 class WalletList(generics.ListCreateAPIView):

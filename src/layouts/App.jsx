@@ -40,24 +40,15 @@ class AppLayout extends React.Component {
       document.documentElement.scrollTop = 0;
       document.scrollingElement.scrollTop = 0;
       this.mainPanelRef.current.scrollTop = 0;
-
-      let isStrategyPage = this.props.location.pathname.indexOf("/strategies/panel") > -1
-
-      if (isStrategyPage)
-        this.destroyPerfectScrollbar()
-      else
-        this.mountPerfectScrollbar(isStrategyPage)
     }
   }
 
   // Perfect Scrollbar
-  mountPerfectScrollbar(isStrategyPage) {
+  mountPerfectScrollbar() {
     let isWindows = navigator.platform.indexOf("Win") > -1
     let isMounted = document.documentElement.classList.contains("perfect-scrollbar-on")
 
-    if (isStrategyPage)
-      return
-    else if (isWindows && !isMounted) {
+    if (isWindows && !isMounted) {
       document.documentElement.className += " perfect-scrollbar-on";
       document.documentElement.classList.remove("perfect-scrollbar-off");
       ps = new PerfectScrollbar(this.mainPanelRef.current);
@@ -89,13 +80,14 @@ class AppLayout extends React.Component {
     let wallets = await this.props.managers.app.offlineWalletList()       // [First Call] Used to check if syncFull is needed
 
     if (wallets.data) {
-      // Here, we'll check if last user logged is the same as the one logging in now.
-      // This situation is only valid if user was logged off by timeout. Otherwise, Phioon removes personal data automatically.
+      // Here, we'll check if last user logged is the same as the one logging in right now.
+      // This situation is only valid if user had their token expired. Otherwise, Phioon removes personal data automatically.
       if (wallets.data.length > 0 && wallets.data[0].owner === sUser.id)
         syncFull = false
     }
 
     this.props.managers.app.myStrategyList(syncFull)                      // async call
+    this.props.managers.app.savedStrategyList(syncFull)                   // async call
     wallets = await this.props.managers.app.walletList(syncFull)
     let positions = await this.props.managers.app.positionList(syncFull)
 
@@ -132,8 +124,8 @@ class AppLayout extends React.Component {
           <Route
             path={prop.layout + prop.path}
             render={(props) => <prop.component
-              {...props}
-              {...this.props}
+              {...this.props}   // This first!
+              {...props}        // Then, this one.
               setNavbarTitleId={this.setNavbarTitleId} />}
             key={key}
           />

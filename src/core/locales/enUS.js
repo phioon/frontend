@@ -13,18 +13,20 @@ const locale = {
   },
   appnavbar: {
     title_default: "Dashboard",
+    title_empty: "",
+    title_myaccount: "My Account",
     title_openpositions: "Open Positions",
+    title_phitrader: "Technical Analysis",
     title_positions: "My Assets",
     title_strategypanel: "Strategies",
     title_strategygallery: "Strategies",
-    title_phitrader: "Technical Analysis",
-    title_myaccount: "My Account",
+    title_userprofile: "User",
     title_usersubscription: "My Plan",
     title_walletoverview: "Overview",
     title_wallets: "My Assets",
 
-    label_myaccount: "My Account",
-    label_subscription: "Subscription",
+    label_profile: "Profile",
+    label_subscription: "My Plan",
     label_logout: "Log out"
   },
   assetfilter: {
@@ -678,6 +680,11 @@ const locale = {
     item_buy: "Purchase",
     item_sell: "Sale",
   },
+  pagenotfound: {
+    label_title: "Page not available. :(",
+    label_desc: "The link you followed may be broken, or the page may have been removed.",
+    btn_footer: "Go back to PHIOON"
+  },
   phitrader: {
     title: "Phi Trader",
     label_intro_p1: "Hi! I'm Phi, the Artificial Intelligence behind PHIOON's main trading strategies...",
@@ -872,10 +879,12 @@ const locale = {
     alert_passwordReseted_text: "Now we can log in again. ;)",
   },
   sidebar: {
+    profile: "Profile",
+    profileMini: "P",
     myaccount: "My Account",
     myaccountMini: "MA",
-    subscription: "Subscription",
-    subscriptionMini: "S",
+    subscription: "My Plan",
+    subscriptionMini: "MP",
 
     myassets: "My Assets",
     wallets: "Wallets",
@@ -925,12 +934,19 @@ const locale = {
     label_static_hint: "Some rules are fixed to a specific time interval.",
     label_category: "Category",
 
-    btn_run_hint: "Run Strategy.",
-    btn_view_hint: "See details.",
+    btn_save: "Save",
     btn_save_hint: "Save Strategy.",
+    btn_unsave: "Remove from Saved",
     btn_unsave_hint: "Remove from Saved collection.",
-    btn_update_hint: "Update Strategy.",
-    btn_delete_hint: "Delete Strategy.",
+
+    btn_stats: "Go to Stats",
+    btn_userProfile: "Go to User Profile",
+    btn_share: "Share",
+    btn_view: "See details",
+    btn_update: "Update",
+    btn_delete: "Delete",
+
+    btn_run_hint: "Run Strategy.",
   },
   strategygallery: {
     title: "Gallery",
@@ -947,11 +963,11 @@ const locale = {
     label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can bring you strategies and indicators that are available there! ;)",
     btn_goToWallets: "Go to Wallets",
 
-    label_myStrategies_noStrategies_p1: "Are you ready to start saving time and always having the best opportunities at one click?",
-    label_myStrategies_noStrategies_p2: "Go ahead and create your first Strategy !",
+    label_myStrategies_noStrategies_p1: "Create, test and share strategies with your friends...",
+    label_myStrategies_noStrategies_p2: "Be aware when the market's best opportunities happen in real time.",
 
-    label_savedStrategies_noStrategies_p1: "I couldn't find any Strategy saved over here... You can always go to Gallery and see what other users are using lately...",
-    label_savedStrategies_noStrategies_p2: "If you like something there, save it! So it will appear right here. ;)",
+    label_savedStrategies_noStrategies_p1: "You don't have strategies saved yet... ",
+    label_savedStrategies_noStrategies_p2: "You can always go to Gallery and see what most users are using lately. ;)",
 
     card_myStrategies_title: "My Strategies",
     card_savedStrategies_title: "Saved",
@@ -969,7 +985,22 @@ const locale = {
     alert_deleted_title: "Deleted!",
     alert_deleted_text: "Your Strategy has been deleted.",
   },
-  strategyresults: {
+  strategypopularitem: {
+    btn_save: "Save",
+    btn_save_hint: "Save Strategy.",
+    btn_unsave: "Remove from Saved",
+    btn_unsave_hint: "Remove from Saved collection.",
+
+    btn_stats: "Go to Stats",
+    btn_userProfile: "Go to User Profile",
+    btn_share: "Share",
+    btn_view: "See details",
+    btn_update: "Update",
+    btn_delete: "Delete",
+
+    btn_run_hint: "Run Strategy.",
+  },
+  modalstrategyresults: {
     header_asset: "Asset",
     header_name: "Name",
     header_quote: "Quote",
@@ -1086,6 +1117,22 @@ const locale = {
     phibo_305_down_p1: "Price reached an important technical resistance after a retracement of <fibo_pct_retraction>% of Wave 1 and drew a Pivot Down.",
     phibo_305_down_p2: "Resistance Lines are aligned down, increasing the probability of starting a Wave 3.",
     phibo_72_down_p1: "Price reached a technical resistance after a retracement of 21% from the recent bottom and drew a Pivot Down, increasing the probability of, at least, testing last bottom again.",
+  },
+  userprofile: {
+    label_editProfile: "Edit Profile",
+    label_follow: "Follow",
+    label_following: "Following",
+    label_unfollow: "Unfollow",
+    label_followers: "Followers",
+    label_share: "Share",
+    label_strategies: "Strategies",
+    label_report: "Report user",
+
+    title_popularStrategies: "Popular Strategies",
+    label_showMore: "Show 2 more",
+    label_showLess: "Show less",
+
+    label_shareLinkCopied: "Profile link copied to clipboard.",
   },
   usersubscription: {
     label_monthly: "Monthly",

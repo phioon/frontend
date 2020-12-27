@@ -76,6 +76,15 @@ class AppManager {
         },
         request: "/api/app/strategies/"
       },
+      wsUser: {
+        options: {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": ""
+          }
+        },
+        request: "/api/app/user/"
+      },
       wsWallets: {
         options: {
           headers: {
@@ -338,7 +347,6 @@ class AppManager {
     // Return it with http error details
     return sItem
   }
-
   // .. Dimensions
   async positionAsSelectDimension(onlyOpen = false) {
     let sItem = onlyOpen ? await this.positionListOnlyOpen() : await this.positionList()
@@ -538,7 +546,7 @@ class AppManager {
     return dimension
   }
 
-  // My Strategy
+  // My Strategies
   async myStrategyList(syncFull = false) {
     const sKey = "mystrategies"
     await this.startRequest(sKey)
@@ -624,7 +632,48 @@ class AppManager {
     return result
   }
 
+  // Saved Strategies
+  async savedStrategyList(syncFull = false) {
+    const sKey = "savedstrategies"
+    await this.startRequest(sKey)
+    let result = undefined
+
+    if (!syncFull) {
+      result = await StorageManager.isUpToDate(this.sModule, sKey)
+      if (result) {
+        this.finishRequest(sKey)
+        return result
+      }
+    }
+
+    let wsInfo = this.getApi("wsStrategies")
+    wsInfo.request += "saved/"
+    wsInfo.method = "get"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status == 200)
+      result = await StorageManager.store(sKey, result.data)
+    else {
+      this.getHttpTranslation(result, "savedstrategylist", "strategy", true)
+      result = await StorageManager.getItem(sKey)
+    }
+
+    this.finishRequest(sKey)
+    return result
+  }
+  async savedStrategyData(syncFull = false) {
+    let sItem = await this.savedStrategyList(syncFull)
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
+  }
+
   // Strategies  
+  // .. Data
   async strategyList(syncFull = false, query) {
     const sKey = "strategies"
     await this.startRequest(sKey)
@@ -700,29 +749,39 @@ class AppManager {
 
     return result
   }
-  async strategySetSave(payload) {
-    // payload.is_saved needed...
+  async strategySave(pk) {
     let wsInfo = this.getApi("wsStrategies")
-    wsInfo.request += payload.id + "/set-save/"
+    wsInfo.request += pk + "/save/"
     wsInfo.method = "post"
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
-    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, payload)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 200) {
-      let context = payload.is_saved ? "strategyaddedtocollection" : "strategyremovedfromcollection"
-      this.getHttpTranslation(
-        result,
-        context,
-        "strategy",
-        true
-      )
+      this.getHttpTranslation(result, "strategysave", "strategy", true)
       let syncFull = true
-      let query = { only_saved: true, page_size: 50 }
-      await this.strategyList(syncFull, query)
+      await this.savedStrategyList(syncFull)
     }
     else
-      this.getHttpTranslation(result, "strategysetsave", "strategy")
+      this.getHttpTranslation(result, "strategysave", "strategy")
+
+    return result
+  }
+  async strategyUnsave(pk) {
+    let wsInfo = this.getApi("wsStrategies")
+    wsInfo.request += pk + "/unsave/"
+    wsInfo.method = "post"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status == 200) {
+      this.getHttpTranslation(result, "strategyunsave", "strategy", true)
+      let syncFull = true
+      await this.savedStrategyList(syncFull)
+    }
+    else
+      this.getHttpTranslation(result, "strategyunsave", "strategy")
 
     return result
   }
@@ -868,6 +927,76 @@ class AppManager {
     }
 
     return options
+  }
+
+  // User
+  // .. Data
+  async userProfileRetrieve(syncFull = false, username) {
+    const sKey = "userprofiles"
+    await this.startRequest(sKey)
+    let result = undefined
+
+    if (!syncFull) {
+      result = await StorageManager.isUpToDate(this.sModule, sKey, username)
+
+      if (result) {
+        this.finishRequest(sKey)
+        return result
+      }
+    }
+
+    let wsInfo = this.getApi("wsUser")
+    wsInfo.request += `${username}/profile/`
+    wsInfo.method = "get"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status == 200) {
+      result = result.data
+      result = await StorageManager.store(sKey, result, result.username)
+    }
+
+    this.finishRequest(sKey)
+    return result
+  }
+  // .. Functions
+  async userFollow(username) {
+    const sKey = "user"
+    await this.startRequest(sKey)
+
+    let wsInfo = this.getApi("wsUser")
+    wsInfo.request += `${username}/follow/`
+    wsInfo.method = "post"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status != 200)
+      this.getHttpTranslation(result, "userfollow", "user", true)
+
+    this.finishRequest(sKey)
+    return result
+  }
+  async userUnfollow(username) {
+    const sKey = "user"
+    await this.startRequest(sKey)
+
+    let wsInfo = this.getApi("wsUser")
+    wsInfo.request += `${username}/unfollow/`
+    wsInfo.method = "post"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status != 200)
+      this.getHttpTranslation(result, "userunfollow", "user", true)
+
+    this.finishRequest(sKey)
+    return result
+  }
+  userProfileLink(username) {
+    return `${window.location.protocol}//${window.location.host}${this.userProfilePath(username)}`
+  }
+  userProfilePath(username) {
+    return `/app/u/${username}/`
   }
 
   // Wallet
