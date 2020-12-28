@@ -45,7 +45,6 @@ class PhiTrader extends React.Component {
     }
 
     this.onSelectionChange = this.onSelectionChange.bind(this)
-    this.toggleModal = this.toggleModal.bind(this);
   }
   componentDidMount() {
     this.props.setNavbarTitleId("title_" + this.compId)
@@ -336,10 +335,6 @@ class PhiTrader extends React.Component {
       )
     });
   }
-
-  toggleModal(modalId) {
-    this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
-  };
 
   render() {
     let { prefs, getString } = this.props;

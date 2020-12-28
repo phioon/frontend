@@ -18,16 +18,12 @@ import {
   CarouselIndicators,
   Col,
   Form,
-  FormGroup,
   Input,
   InputGroup,
   InputGroupAddon,
   InputGroupText,
   Row,
-  UncontrolledTooltip
 } from "reactstrap";
-// react plugin used to create DropdownMenu for selecting items
-import Select from "react-select";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
 
@@ -42,8 +38,6 @@ import {
   getDistinctValuesFromList,
   getValueListFromObjList,
   orderBy,
-  retrieveObjFromObjList,
-  sleep
 } from "../../core/utils";
 
 class StrategyPanel extends React.Component {
@@ -53,8 +47,9 @@ class StrategyPanel extends React.Component {
 
     this.state = {
       pageFirstLoading: true,
-      isLoading: false,
+      run_isLoading: false,
       modal_strategyDetail_isOpen: false,
+      modal_strategyResults_isOpen: false,
 
       action: "create",
       objData: {},
@@ -71,32 +66,22 @@ class StrategyPanel extends React.Component {
       },
 
       selected: {
-        filters: {
-          variables: {
-            interval: { value: "d", label: "Test" }
-          },
-          general: {
-            stockExchange: { value: "BVMF", label: "" }
-          },
-        },
         strategy: { rules: "{}" },
       },
 
       cWallets: 0,
-      stockExchangeOptions: [],
-      intervalOptions: [],
 
+      savedStrategyIds: [],
       strategies: [],
       sStrategyNames: [],
-      savedStrategyIds: [],
       redirectTo: undefined,
       alert: null,
     };
 
     this.resize = this.resize.bind(this);
     this.prepareMyStrategies = this.prepareMyStrategies.bind(this);
+    this.setLoading = this.setLoading.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
-    this.toggleLoading = this.toggleLoading.bind(this);
     this.onClick = this.onClick.bind(this);
   }
   componentDidMount() {
@@ -129,62 +114,19 @@ class StrategyPanel extends React.Component {
     else
       return 8
   }
-  scrollPage(elementId) {
-    let element = document.getElementById(elementId)
-    element.scrollIntoView({ behavior: "smooth" });
-  }
 
   async prepareRequirements() {
     // Check User's subscription
 
+    let wallets = await this.props.managers.app.walletData()
+
     let tasks = [
-      this.prepareContext(),
       this.prepareMyStrategies(),
       this.prepareSavedStrategies()
     ]
     await Promise.all(tasks)
 
-    this.setState({ pageFirstLoading: false })
-  }
-  async prepareContext() {
-    let { prefs, getString } = this.props;
-
-    let iItems = await this.props.managers.market.indicatorData()
-
-    let wallets = await this.props.managers.app.walletList()
-    let stockExchanges = getDistinctValuesFromList(wallets.data, "se_short")
-    let stockExchangeOptions = []
-    let intervalOptions = []
-
-    for (var se_short of stockExchanges) {
-      let stockExchange = await this.props.managers.market.stockExchangeRetrieve(se_short)
-      let option = {
-        value: stockExchange.se_short,
-        label: stockExchange.se_name
-      }
-
-      stockExchangeOptions.push(option)
-    }
-
-    // Default option
-    if (stockExchangeOptions.length > 0)
-      this.onSelectChange("stockExchange", stockExchangeOptions[0])
-
-    for (var indicator of iItems)
-      for (var instance of indicator.instances)
-        if (!retrieveObjFromObjList(intervalOptions, "value", instance.interval)) {
-          let option = {
-            value: instance.interval,
-            label: getString(prefs.locale, "indicators", instance.interval)
-          }
-          intervalOptions.push(option)
-
-          // Default option
-          if (option.value == "d")
-            this.onSelectChange("interval", option)
-        }
-
-    this.setState({ cWallets: wallets.data.length, stockExchangeOptions, intervalOptions })
+    this.setState({ pageFirstLoading: false, cWallets: wallets.length })
   }
   async prepareMyStrategies() {
     // 1. Strategies
@@ -243,7 +185,7 @@ class StrategyPanel extends React.Component {
             context={context}
             strategy={deepCloneObj(strategy)}
             onClick={this.onClick}
-            isLoading={this.state.isLoading}
+            isLoading={this.state.run_isLoading}
           />
         </Col>
       )
@@ -292,40 +234,10 @@ class StrategyPanel extends React.Component {
     this.setState({ [carousel.id]: carousel })
   }
 
-  onSelectChange(fieldName, value) {
-    let newState = { selected: this.state.selected }
-
-    let runStrategy = false
-
-    switch (fieldName) {
-      case "stockExchange":
-        if (newState.selected.filters.general.stockExchange !== value)
-          runStrategy = true
-
-        newState.selected.filters.general.stockExchange = value
-        break;
-      case "interval":
-        if (newState.selected.filters.variables.interval !== value)
-          runStrategy = true
-
-        newState.selected.filters.variables.interval = value
-        break;
-    }
-
-    this.setState(newState)
-
-    if (runStrategy && newState.selected.strategy.id) {
-      // If a Strategy is selected, for each select change, run it again.
-      this.runClick(this.state.selected.strategy)
-    }
-  }
-
   async onClick(action, obj) {
     switch (action) {
       case "run":
         this.runClick(obj)
-        await sleep(250)          // Wait a bit or smooth scroll will get stuck
-        this.scrollPage("strategyresults")
         break;
       case "view":
         this.viewClick(obj)
@@ -350,10 +262,10 @@ class StrategyPanel extends React.Component {
   runClick(obj) {
     let { selected } = this.state;
 
-    this.props.managers.app.strategyRun(obj.id)
     selected.strategy = obj
 
-    this.setState({ selected, isLoading: true })
+    this.setState({ selected })
+    this.toggleModal("strategyResults")
   }
   viewClick(obj) {
     let objData = {
@@ -450,11 +362,11 @@ class StrategyPanel extends React.Component {
     this.prepareMyStrategies()
   }
 
-  toggleLoading(value) {
-    this.setState({ isLoading: value })
+  setLoading(context, value) {
+    this.setState({ [`${context}_isLoading`]: value })
   }
   toggleModal(modalId) {
-    this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
+    this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
   };
   hideAlert() {
     this.setState({
@@ -466,8 +378,9 @@ class StrategyPanel extends React.Component {
     let { prefs, getString } = this.props;
     let {
       pageFirstLoading,
-      isLoading,
+      run_isLoading,
       modal_strategyDetail_isOpen,
+      modal_strategyResults_isOpen,
 
       action,
       objData,
@@ -477,8 +390,6 @@ class StrategyPanel extends React.Component {
       selected,
 
       cWallets,
-      stockExchangeOptions,
-      intervalOptions,
 
       sStrategyNames,
       redirectTo,
@@ -498,6 +409,16 @@ class StrategyPanel extends React.Component {
           objData={objData}
           sStrategyNames={sStrategyNames}
           runItIfSuccess={this.prepareMyStrategies}
+        />
+        <ModalStrategyResults
+          {...this.props}
+          modalId="strategyResults"
+          isOpen={modal_strategyResults_isOpen}
+          toggleModal={this.toggleModal}
+          setLoading={this.setLoading}
+          isLoading={run_isLoading}
+          onClick={this.onClick}
+          strategy={selected.strategy}
         />
         <div className="header text-center">
           <h3 className="title">{getString(prefs.locale, this.compId, "title")}</h3>
@@ -688,78 +609,6 @@ class StrategyPanel extends React.Component {
                     </Carousel>
                   }
                 </CardBody>
-              </Card>
-              {/* Results */}
-              <Card id="strategyresults">
-                <CardHeader>
-                  <Row>
-                    <Col>
-                      <CardTitle tag="h5">{getString(prefs.locale, this.compId, "card_results_title")}</CardTitle>
-                    </Col>
-                    <Col>
-                      <div className="align-center pull-right">
-                        <Badge color="default" pill>
-                          {selected.strategy.name && selected.strategy.name}
-                        </Badge>
-                      </div>
-                    </Col>
-                  </Row>
-                  {/* Filters */}
-                  <Row className="justify-content-center">
-                    {/* Stock Exchange */}
-                    <Col xl="3" lg="3" md="4" xs="6">
-                      <FormGroup>
-                        <label>{getString(prefs.locale, this.compId, "input_stockExchange")}
-                          {" "}
-                          <i id={"input_stockExchange_hint"} className="nc-icon nc-alert-circle-i" />
-                        </label>
-                        <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_stockExchange_hint"}>
-                          {getString(prefs.locale, this.compId, "input_stockExchange_hint")}
-                        </UncontrolledTooltip>
-                        <Select
-                          className="react-select"
-                          classNamePrefix="react-select"
-                          name="stockExchange"
-                          placeholder={getString(prefs.locale, "generic", "input_select")}
-                          value={selected.filters.general.stockExchange}
-                          options={stockExchangeOptions}
-                          onChange={value => this.onSelectChange("stockExchange", value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                    {/* Time Interval */}
-                    <Col xl="2" lg="3" md="3" xs="6">
-                      <FormGroup>
-                        <label>{getString(prefs.locale, this.compId, "input_interval")}
-                          {" "}
-                          <i id={"input_interval_hint"} className="nc-icon nc-alert-circle-i" />
-                        </label>
-                        <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_interval_hint"}>
-                          {getString(prefs.locale, this.compId, "input_interval_hint")}
-                        </UncontrolledTooltip>
-                        <Select
-                          className="react-select"
-                          classNamePrefix="react-select"
-                          name="interval"
-                          placeholder={getString(prefs.locale, "generic", "input_select")}
-                          value={selected.filters.variables.interval}
-                          options={intervalOptions}
-                          onChange={value => this.onSelectChange("interval", value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                </CardHeader>
-                <CardBody>
-                  <ModalStrategyResults
-                    {...this.props}
-                    toggleLoading={this.toggleLoading}
-                    isLoading={isLoading}
-                    strategy={selected.strategy}
-                    filters={selected.filters}
-                  />
-                </CardBody>
-                <CardFooter />
               </Card>
             </>
         }

@@ -77,8 +77,8 @@ class StrategyCardMini extends React.Component {
       </DropdownItem>
     )
   }
-  renderSave(prefs, getString, strategy, context = "any", format = "item") {
-    if (format === "item")
+  renderSave(prefs, getString, strategy, context = "any", format = "listItem") {
+    if (format === "listItem")
       return (
         <DropdownItem
           id="strategy_save"
@@ -121,15 +121,35 @@ class StrategyCardMini extends React.Component {
       </DropdownItem>
     )
   }
-  renderView(prefs, getString, strategy) {
-    return (
-      <DropdownItem
-        id="strategy_view"
-        onClick={() => this.onClick("view", strategy)}
-      >
-        {getString(prefs.locale, this.compId, "btn_view")}
-      </DropdownItem>
-    )
+  renderView(prefs, getString, strategy, context = "any", format = "listItem") {
+    if (format === "listItem")
+      return (
+        <DropdownItem
+          id="strategy_view"
+          onClick={() => this.onClick("view", strategy)}
+        >
+          {getString(prefs.locale, this.compId, "btn_view")}
+        </DropdownItem>
+      )
+    else if (format === "btn")
+      return (
+        <>
+          <Button
+            className="btn-icon btn-round"
+            color="warning"
+            outline
+            size="sm"
+            id={`${context}__${strategy.id}`}
+            type="button"
+            onClick={() => this.onClick("view", strategy)}
+          >
+            <i id="strategy_view" className="far fa-eye" />
+          </Button>
+          <UncontrolledTooltip delay={{ show: 1000 }} placement="top" target={`${context}__${strategy.id}`}>
+            {getString(prefs.locale, this.compId, "btn_view")}
+          </UncontrolledTooltip>
+        </>
+      )
   }
   renderEdit(prefs, getString, strategy) {
     return (
@@ -157,7 +177,10 @@ class StrategyCardMini extends React.Component {
       return this.renderMyActions();
     else if (context === "savedStrategies")
       return this.renderSavedActions();
-    else if (context === "gallery")
+
+    else if (context === "mostRuns")
+      return this.renderGalleryActions();
+    else if (context === "mostSaved")
       return this.renderGalleryActions();
   }
   renderMyActions() {

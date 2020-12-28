@@ -167,7 +167,7 @@ class ConfirmEmail extends React.Component {
                   {pageFirstLoading ?
                     // First Loading
                     <div className="centered">
-                      <RingLoader color="#3a5966" />
+                      <RingLoader color="#3a5966" size={67} />
                     </div> :
                     <LabelAlert alertState={alertState} alertMsg={alertMsg} />
                   }

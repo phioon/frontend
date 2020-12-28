@@ -581,6 +581,25 @@ const locale = {
     btn_update: "Atualizar",
     btn_view: "Voltar"
   },
+  modalstrategyresults: {
+    label_createdBy: "Criada por",
+
+    input_stockExchange: "Bolsa de Valores",
+    input_stockExchange_hint: "Estamos falando de qual Bolsa de Valores?",
+    input_interval: "Intervalo",
+    input_interval_hint: "As regras da estratégia devem ser aplicada em qual tempo gráfico?",
+
+    header_asset: "Ativo",
+    header_name: "Nome",
+    header_quote: "Cotação",
+    header_volume: "Vol. Médio",
+    header_lastTradeTime: "Última negociação",
+
+    table_emptyData: "Nesse momento, não há ativos nesta condição técnica. Talvez mais tarde...",
+    table_noDataFound: "hmm... Não encontrei nenhum ativo com esses filtros. Será que perdi algo?",
+
+    btn_footer: "Voltar"
+  },
   modalupdateposition: {
     title: "Atualizar Posição",
     label_intro_p1: "Uma posição possui 2 eventos: Abertura e Fechamento.",
@@ -953,6 +972,9 @@ const locale = {
 
     card_mostRuns_title: "As mais Executadas",
     card_mostSaved_title: "As mais Salvas",
+
+    label_gallery_noStrategies_p1: "Oops! Algo deu errado.",
+    label_gallery_noStrategies_p2: "Estou avisando meu time sobre isso...",
   },
   strategypanel: {
     title: "Painel de Controle",
@@ -971,12 +993,6 @@ const locale = {
 
     card_myStrategies_title: "Minhas",
     card_savedStrategies_title: "Salvas",
-    card_results_title: "Resultado",
-
-    input_stockExchange: "Bolsa de Valores",
-    input_stockExchange_hint: "Estamos falando de qual Bolsa de Valores?",
-    input_interval: "Intervalo",
-    input_interval_hint: "As regras da estratégia devem ser aplicada em qual tempo gráfico?",
 
     btn_alert_cancel: "Cancelar",
     btn_alert_confirm: "Confirmar",
@@ -999,17 +1015,6 @@ const locale = {
     btn_delete: "Deletar",
 
     btn_run_hint: "Executar Estratégia.",
-  },
-  modalstrategyresults: {
-    header_asset: "Ativo",
-    header_name: "Nome",
-    header_quote: "Cotação",
-    header_volume: "Vol. Médio",
-    header_lastTradeTime: "Última negociação",
-
-    table_firstLoad: "Execute uma Estratégia e vamos ver o que encontramos... ;)",
-    table_emptyData: "Nesse momento, não há ativos nesta condição técnica. Talvez mais tarde...",
-    table_noDataFound: "hmm... Será que perdi algo?! Por favor, dê uma olhada nos seus filtros. ;)"
   },
   subscriptionbasic: {
     label_title: "BASIC",
@@ -1129,6 +1134,8 @@ const locale = {
     label_report: "Reportar usuário",
 
     title_popularStrategies: "Estratégias Populares",
+    label_showMore: "Mostrar mais 2",
+    label_showLess: "Mostrar menos",
 
     label_shareLinkCopied: "Link do Perfil copiado para área de transferência.",
   },

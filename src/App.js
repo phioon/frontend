@@ -368,7 +368,7 @@ class App extends React.Component {
               render={props =>
                 typeof isAuthenticated === "undefined" ?
                   <div className="wrapper centered">
-                    <RingLoader color="#3a5966" />
+                    <RingLoader color="#3a5966" size={67} />
                   </div> :
                   isAuthenticated ?
                     <Redirect to="/app/wallet/openpositions" /> :
@@ -387,7 +387,7 @@ class App extends React.Component {
               render={props =>
                 typeof isAuthenticated === "undefined" ?
                   <div className="wrapper centered">
-                    <RingLoader color="#3a5966" />
+                    <RingLoader color="#3a5966" size={67} />
                   </div> :
                   !isAuthenticated ?
                     <Redirect to="/auth/login" /> :

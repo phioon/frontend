@@ -18,7 +18,6 @@ class StrategyPopularItem extends React.Component {
 
     this.state = {
       onHover: undefined,
-      isLoading: undefined,
     };
   }
 
@@ -27,9 +26,6 @@ class StrategyPopularItem extends React.Component {
 
     // Handle immediate actions...
     switch (action) {
-      case "run":
-        this.setState({ isLoading: true })
-        break;
       case "save":
         strategy.isSaved = !strategy.isSaved
         this.setState({ strategy })
@@ -102,7 +98,7 @@ class StrategyPopularItem extends React.Component {
     return (
       <DropdownItem
         id="strategy_share"
-        onClick={() => this.onClick("share", strategy)}
+        onClick={() => this.onClick("shareStrategy", strategy)}
       >
         {getString(prefs.locale, this.compId, "btn_share")}
       </DropdownItem>
@@ -171,8 +167,8 @@ class StrategyPopularItem extends React.Component {
   }
 
   render() {
-    let { getString, prefs, strategy } = this.props;
-    let { onHover, isLoading } = this.state;
+    let { getString, prefs, strategy, isLoading } = this.props;
+    let { onHover } = this.state;
 
     return (
       <Row

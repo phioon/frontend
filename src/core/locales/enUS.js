@@ -581,6 +581,25 @@ const locale = {
     btn_update: "Update",
     btn_view: "Back"
   },
+  modalstrategyresults: {
+    label_createdBy: "Created by",
+
+    input_stockExchange: "Stock Exchange",
+    input_stockExchange_hint: "Which Stock Exchange are we talking about?",
+    input_interval: "Interval",
+    input_interval_hint: "Which time interval the Strategy's rules should be applied to?",
+
+    header_asset: "Asset",
+    header_name: "Name",
+    header_quote: "Quote",
+    header_volume: "Volume Avg.",
+    header_lastTradeTime: "Last trade time",
+
+    table_emptyData: "Right now, there are no assets matching this technical condition. Maybe later...",
+    table_noDataFound: "hmm... I couldn't find any asset with these filters. Did I miss something?",
+
+    btn_footer: "Back"
+  },
   modalupdateposition: {
     title: "Update Position",
     label_intro_p1: "A Position is made of 2 events: Open and Close.",
@@ -707,7 +726,7 @@ const locale = {
     card_title: "Positions",
     btn_newPosition: "New Position",
 
-    table_noDataFound: "hmm... I didn't find any Position with this filter. Did I miss something?! ",
+    table_noDataFound: "hmm... I couldn't find any position with these filters. Did I miss something?",
     table_emptyData: "Don't have your Positions here yet? Create it clicking on the button at your right. ;)",
 
     header_startedOn: "Started On",
@@ -953,6 +972,9 @@ const locale = {
 
     card_mostRuns_title: "Most Runs",
     card_mostSaved_title: "Most Saved",
+
+    label_gallery_noStrategies_p1: "Oops! Something went wrong.",
+    label_gallery_noStrategies_p2: "Let me report my team about that...",
   },
   strategypanel: {
     title: "Control Panel",
@@ -971,12 +993,6 @@ const locale = {
 
     card_myStrategies_title: "My Strategies",
     card_savedStrategies_title: "Saved",
-    card_results_title: "Results",
-
-    input_stockExchange: "Stock Exchange",
-    input_stockExchange_hint: "Which Stock Exchange are we talking about?",
-    input_interval: "Interval",
-    input_interval_hint: "Which time interval the Strategy's rules should be applied in?",
 
     btn_alert_cancel: "Cancel",
     btn_alert_confirm: "Confirm",
@@ -999,17 +1015,6 @@ const locale = {
     btn_delete: "Delete",
 
     btn_run_hint: "Run Strategy.",
-  },
-  modalstrategyresults: {
-    header_asset: "Asset",
-    header_name: "Name",
-    header_quote: "Quote",
-    header_volume: "Volume Avg.",
-    header_lastTradeTime: "Last trade time",
-
-    table_firstLoad: "Run a Strategy and let's see what we can find... ;)",
-    table_emptyData: "Right now, there are no assets matching this technical condition. Maybe later...",
-    table_noDataFound: "hmm... Did I miss something?! Please, check your filters. ;)"
   },
   subscriptionbasic: {
     label_title: "BASIC",
@@ -1159,7 +1164,7 @@ const locale = {
     card_title: "Wallets",
     btn_newWallet: "New Wallet",
 
-    table_noDataFound: "hmm... I didn't find any wallets with these filters. Did I miss something?. ;)",
+    table_noDataFound: "hmm... I couldn't find any wallet with these filters. Did I miss something?",
     table_emptyData: "Don't have a Wallet yet? Create it clicking on the button at your right. ;)",
 
     header_name: "Name",

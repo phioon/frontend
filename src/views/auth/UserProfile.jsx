@@ -20,6 +20,8 @@ import {
 import Skeleton from "react-loading-skeleton";
 
 import { getFirstAndLastName, getInitials, getValueListFromObjList, orderBy } from "../../core/utils";
+import ModalStrategy from "../modals/strategy/ModalStrategy";
+import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
 import StrategyPopularItem from "../../components/listItems/StrategyPopularItem";
 
 class UserProfile extends React.Component {
@@ -29,8 +31,14 @@ class UserProfile extends React.Component {
 
     this.state = {
       pageFirstLoading: true,
-      redirectTo: undefined,
+      run_isLoading: false,
+      modal_strategyDetail_isOpen: false,
+      modal_strategyResults_isOpen: false,
 
+      action: "view",
+      objData: {},
+
+      redirectTo: undefined,
       btnFollow_onHover: undefined,
 
       user: {
@@ -39,9 +47,15 @@ class UserProfile extends React.Component {
       },
       savedStrategyIds: [],
 
+      selected: {
+        strategy: { rules: "{}" },
+      },
+
       popularShowMore: undefined,
     }
 
+    this.setLoading = this.setLoading.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
     this.onClick = this.onClick.bind(this)
   }
   componentDidMount() {
@@ -87,8 +101,6 @@ class UserProfile extends React.Component {
       this.setState({ redirectTo: `/app/notfound/` })
     }
 
-    console.log(user)
-
     this.setState({ user })
   }
   async prepareSavedStrategies() {
@@ -127,6 +139,9 @@ class UserProfile extends React.Component {
       case "run":
         this.runClick(obj)
         break;
+      case "view":
+        this.viewClick(obj)
+        break;
       case "save":
         this.saveClick(obj)
         break;
@@ -138,6 +153,28 @@ class UserProfile extends React.Component {
         break;
     }
   }
+  runClick(obj) {
+    let { selected } = this.state;
+
+    selected.strategy = obj
+
+    this.setState({ selected })
+    this.toggleModal("strategyResults")
+  }
+  viewClick(obj) {
+    let objData = {
+      id: obj.id,
+      name: obj.name,
+      desc: obj.desc,
+      type: obj.type,
+      isDynamic: obj.is_dynamic,
+      isPublic: obj.is_public,
+      rules: obj.rules
+    }
+
+    this.setState({ action: "view", objData })
+    this.toggleModal("strategyDetail")
+  }
   async saveClick(obj) {
     if (obj.isSaved)
       await this.props.managers.app.strategyUnsave(obj.id)
@@ -147,7 +184,7 @@ class UserProfile extends React.Component {
     this.prepareSavedStrategies()
   }
   async followClick(user) {
-    this.setState({ follow_isLoading: true })
+    this.setState({ isLoading_follow: true })
     let result = undefined
 
     if (user.is_followed_by_me)
@@ -161,7 +198,7 @@ class UserProfile extends React.Component {
       await this.prepareUser(syncFull)
     }
 
-    this.setState({ follow_isLoading: false })
+    this.setState({ isLoading_follow: false })
   }
   shareClick(username) {
     let { getString, prefs } = this.props;
@@ -206,7 +243,7 @@ class UserProfile extends React.Component {
   }
   renderTheirActions(user) {
     let { getString, prefs } = this.props;
-    let { btnFollow_onHover, follow_isLoading } = this.state;
+    let { btnFollow_onHover, isLoading_follow } = this.state;
 
     return (
       <UncontrolledDropdown>
@@ -214,20 +251,18 @@ class UserProfile extends React.Component {
         <Button className="btn-round"
           size="sm"
           outline
-          color={follow_isLoading ?
+          color={isLoading_follow ?
             "default" :
-            user.is_followed_by_me ?
-              btnFollow_onHover ?
-                "danger" :
-                "default" :
+            user.is_followed_by_me && btnFollow_onHover ?
+              "danger" :
               "default"
           }
           onMouseOver={() => this.setState({ btnFollow_onHover: true })}
           onMouseOut={() => this.setState({ btnFollow_onHover: false })}
           onClick={() => this.onClick("follow", user)}
-          disabled={follow_isLoading ? true : false}
+          disabled={isLoading_follow ? true : false}
         >
-          {follow_isLoading ?
+          {isLoading_follow ?
             <Spinner size="sm" /> :
             user.is_followed_by_me ?
               btnFollow_onHover ?
@@ -276,19 +311,54 @@ class UserProfile extends React.Component {
     })
   }
 
+  setLoading(context, value) {
+    this.setState({ [`${context}_isLoading`]: value })
+  }
+  toggleModal(modalId) {
+    this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
+  };
+
   render() {
     let { getString, prefs, user: currentUser } = this.props;
     let {
       pageFirstLoading,
+      run_isLoading,
+      modal_strategyDetail_isOpen,
+      modal_strategyResults_isOpen,
+
+      action,
+      objData,
+
       redirectTo,
 
       user,
+
+      selected,
 
       popularShowMore,
     } = this.state;
 
     return (
       <div className="content">
+        <ModalStrategy
+          {...this.props}
+          modalId="strategyDetail"
+          isOpen={modal_strategyDetail_isOpen}
+          toggleModal={this.toggleModal}
+          action={action}
+          objData={objData}
+        />
+        <ModalStrategyResults
+          {...this.props}
+          modalId="strategyResults"
+          isOpen={modal_strategyResults_isOpen}
+          toggleModal={this.toggleModal}
+          setLoading={this.setLoading}
+          isLoading={run_isLoading}
+          onClick={this.onClick}
+          strategy={selected.strategy}
+        />
+
         <Card className="card-plain card-user">
           <CardBody>
             <Row className="justify-content-center">

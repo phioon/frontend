@@ -250,7 +250,7 @@ class SetPassword extends React.Component {
                   // First Loading
                   <CardBody>
                     <div className="centered">
-                      <RingLoader color="#3a5966" />
+                      <RingLoader color="#3a5966" size={67} />
                     </div>
                   </CardBody> :
                   isTokenExpired ?

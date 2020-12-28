@@ -152,6 +152,7 @@ class ModalStrategy extends React.Component {
   fakeUnmount() {
     let newState = { strategy: this.state.strategy }
 
+    newState.isLoading = false
     newState.activeWsMode = "basic"
 
     newState.strategy = {
@@ -235,6 +236,7 @@ class ModalStrategy extends React.Component {
         break;
       case "view":
         strategy = this.prepareStrategyObj(iItems, strategy, objData)
+        strategy.isValidated = true
         break;
     }
 
@@ -825,6 +827,9 @@ class ModalStrategy extends React.Component {
       case "update":
         this.updateObject(strategy)
         break;
+      case "view":
+        this.props.toggleModal(this.props.modalId)
+        break;
       default:
         break;
     }
@@ -929,7 +934,7 @@ class ModalStrategy extends React.Component {
   }
 
   toggleModal(modalId) {
-    this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
+    this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
   };
   toggleNavLink(navId, value) {
     this.setState({ [navId]: value })

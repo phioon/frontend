@@ -21,6 +21,7 @@ import {
 import { getValueListFromObjList, deepCloneObj } from "../../core/utils";
 
 import ModalStrategy from "../modals/strategy/ModalStrategy";
+import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
 
 import StrategyCardMini from "./StrategyCardMini";
 import CarouselEmpty from "./CarouselEmpty";
@@ -33,7 +34,9 @@ class StrategyGallery extends React.Component {
 
     this.state = {
       pageFirstLoading: true,
+      run_isLoading: false,
       modal_strategyDetail_isOpen: false,
+      modal_strategyResults_isOpen: false,
 
       action: "view",
       objData: {},
@@ -49,9 +52,14 @@ class StrategyGallery extends React.Component {
         activeIndex: 0,
       },
 
+      selected: {
+        strategy: { rules: "{}" },
+      },
+
       savedStrategyIds: []
     };
 
+    this.setLoading = this.setLoading.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.onClick = this.onClick.bind(this);
   }
@@ -157,7 +165,7 @@ class StrategyGallery extends React.Component {
     return carousel
   }
 
-  renderStrategyItem(slide) {
+  renderStrategyItem(context, slide) {
     return slide.map((strategy) => {
       strategy.isOwner = this.props.user.username === strategy.owner_username
       strategy.isSaved = this.state.savedStrategyIds.includes(strategy.id)
@@ -166,21 +174,21 @@ class StrategyGallery extends React.Component {
         <Col key={"strategy__" + strategy.id} xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
           <StrategyCardMini
             {...this.props}
-            context="gallery"
+            context={context}
             strategy={deepCloneObj(strategy)}
             onClick={this.onClick}
-            isLoading={this.state.isLoading}
+            isLoading={this.state.run_isLoading}
           />
         </Col>
       )
     })
   }
-  renderStrategySlides(slides) {
+  renderStrategySlides(context, slides) {
     return slides.map((slide, key) => {
       return (
         <CarouselItem key={"item__" + key}>
           <Row>
-            {this.renderStrategyItem(slide)}
+            {this.renderStrategyItem(context, slide)}
           </Row>
           <br />
           <br />
@@ -222,8 +230,6 @@ class StrategyGallery extends React.Component {
     switch (action) {
       case "run":
         this.runClick(obj)
-        await sleep(250)          // Wait a bit or smooth scroll will get stuck
-        this.scrollPage("strategyresults")
         break;
       case "view":
         this.viewClick(obj)
@@ -239,10 +245,10 @@ class StrategyGallery extends React.Component {
   runClick(obj) {
     let { selected } = this.state;
 
-    this.props.managers.app.strategyRun(obj.id)
     selected.strategy = obj
 
-    this.setState({ selected, isLoading: true })
+    this.setState({ selected })
+    this.toggleModal("strategyResults")
   }
   viewClick(obj) {
     let objData = {
@@ -271,21 +277,27 @@ class StrategyGallery extends React.Component {
     this.props.history.push(path)
   }
 
+  setLoading(context, value) {
+    this.setState({ [`${context}_isLoading`]: value })
+  }
   toggleModal(modalId) {
-    this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
+    this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
   };
-
   render() {
     let { getString, prefs } = this.props;
     let {
       pageFirstLoading,
+      run_isLoading,
       modal_strategyDetail_isOpen,
+      modal_strategyResults_isOpen,
 
       action,
       objData,
 
       mostRuns,
       mostSaved,
+
+      selected,
 
     } = this.state;
 
@@ -298,6 +310,16 @@ class StrategyGallery extends React.Component {
           toggleModal={this.toggleModal}
           action={action}
           objData={objData}
+        />
+        <ModalStrategyResults
+          {...this.props}
+          modalId="strategyResults"
+          isOpen={modal_strategyResults_isOpen}
+          toggleModal={this.toggleModal}
+          setLoading={this.setLoading}
+          isLoading={run_isLoading}
+          onClick={this.onClick}
+          strategy={selected.strategy}
         />
         <div className="header text-center">
           <h3 className="title">{getString(prefs.locale, this.compId, "title")}</h3>
@@ -362,7 +384,7 @@ class StrategyGallery extends React.Component {
                       activeIndex={mostRuns.activeIndex}
                       onClickHandler={index => this.moveSlide(mostRuns, "goto", index)}
                     />
-                    {this.renderStrategySlides(mostRuns.slides)}
+                    {this.renderStrategySlides(mostRuns.id, mostRuns.slides)}
                     <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide(mostRuns, "previous")} />
                     <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide(mostRuns, "next")} />
                   </Carousel>
@@ -390,7 +412,7 @@ class StrategyGallery extends React.Component {
                       activeIndex={mostSaved.activeIndex}
                       onClickHandler={index => this.moveSlide(mostSaved, "goto", index)}
                     />
-                    {this.renderStrategySlides(mostSaved.slides)}
+                    {this.renderStrategySlides(mostSaved.id, mostSaved.slides)}
                     <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide(mostSaved, "previous")} />
                     <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide(mostSaved, "next")} />
                   </Carousel>
