@@ -68,14 +68,10 @@ class PositionTypeSerializer(serializers.ModelSerializer):
 class StrategySerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
     owner_username = serializers.ReadOnlyField(source='owner.username')
-    stats = serializers.SerializerMethodField()
 
     class Meta:
         model = Strategy
         fields = '__all__'
-
-    def get_stats(self, obj):
-        return obj.get_stats()
 
     def create(self, validated_data):
         instance = app_models.Strategy.objects.create(**validated_data)
@@ -94,6 +90,19 @@ class StrategySerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class StrategyDetailSerializer(serializers.ModelSerializer):
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    owner_username = serializers.ReadOnlyField(source='owner.username')
+    stats = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Strategy
+        fields = '__all__'
+
+    def get_stats(self, obj):
+        return obj.get_stats()
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -136,7 +145,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def get_strategies(self, obj):
         strategies = obj.strategies.filter(is_public=True)
-        serializer = StrategySerializer(strategies, many=True)
+        serializer = StrategyDetailSerializer(strategies, many=True)
         return serializer.data
 
 

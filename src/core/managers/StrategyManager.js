@@ -1,5 +1,11 @@
 import React from "react";
-import { Col, Row } from "reactstrap";
+import {
+  Button,
+  Col,
+  DropdownItem,
+  Row,
+  UncontrolledTooltip,
+} from "reactstrap";
 
 import {
   convertFloatToPercentage,
@@ -7,6 +13,7 @@ import {
   deepCloneObj,
   distance,
   joinContentObjLists,
+  orderBy,
   retrieveObjFromObjList,
 } from "../utils";
 import jsonLogic from "json-logic-js";
@@ -22,8 +29,9 @@ jsonLogic.add_operation("const", constant);
 
 
 class StrategyManager {
-  constructor(marketManager) {
+  constructor(appManager, marketManager) {
     this.managers = {
+      app: appManager,
       market: marketManager
     }
     this.sModule = "strategy"
@@ -251,16 +259,16 @@ class StrategyManager {
 
     return stdObj
   }
-  // --------------------
 
-  // Workspaces into JSON string (before sending it to database)
-  jsonRulesAsString(workspaces) {
+  // --------------------
+  // Workspaces into JSON (before sending it to database)
+  prepareRules(workspaces) {
     let jsonRules = {}
 
     for (var ws of workspaces)
       jsonRules[ws.id] = ws.rules
 
-    return JSON.stringify(jsonRules)
+    return jsonRules
   }
 
   // WS into JSON
@@ -385,6 +393,30 @@ class StrategyManager {
 
     return rule
   }
+  // --------------------
+  // Tags 
+  prepareTags(workspaces) {
+    let exception = ["constant"]
+    let tags = []
+
+    for (var ws of workspaces)
+      switch (ws.type) {
+        case "basic":
+          for (var indicator of ws.items)
+            if (!tags.includes(indicator.id))
+              tags.push(indicator.id)
+          break;
+        case "advanced":
+          for (var item of ws.items)
+            for (var indicator of item.items)
+              if (!tags.includes(indicator.id) && !exception.includes(indicator.id))
+                tags.push(indicator.id)
+          break;
+      }
+
+    return tags
+  }
+
   // --------------------
   // JSON into WS
   convertJSONRulesIntoWS(getString, prefs, currency, iItems, wsId, wsRules) {
@@ -542,6 +574,7 @@ class StrategyManager {
   }
   // --------------------
   // React Elements
+  // .. Tools
   buildElements(getString, prefs, currency, wsItems) {
     for (var item of wsItems) {
       switch (item.toolId) {
@@ -666,6 +699,157 @@ class StrategyManager {
       </Row>
     )
   }
+  // .. Buttons
+  // Components
+  runBtn(prefs, getString, onClick, strategy, isRunning, size = "sm") {
+    return (
+      <>
+        <Button
+          className="btn-icon btn-round"
+          size={size}
+          color="info"
+          outline
+          id={"run__" + strategy.id}
+          disabled={isRunning}
+          onClick={() => onClick("run", strategy)}
+        >
+          <i id="strategy_run" className="nc-icon nc-button-play" />
+        </Button>
+        <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={"run__" + strategy.id}>
+          {getString(prefs.locale, "strategycomponents", "btn_run_hint")}
+        </UncontrolledTooltip>
+      </>
+    )
+  }
+  goToStrategyPageBtn(prefs, getString, onClick, strategy) {
+    return (
+      <DropdownItem
+        href={this.managers.app.strategyPagePath(strategy.id)}
+        onClick={e => {
+          e.preventDefault()
+          onClick("goToStrategyPage", strategy)
+        }}
+      >
+        {getString(prefs.locale, "strategycomponents", "btn_strategyPage")}
+      </DropdownItem>
+    )
+  }
+  goToProfileBtn(prefs, getString, onClick, strategy) {
+    return (
+      <DropdownItem
+        href={this.managers.app.userProfilePath(strategy.owner_username)}
+        onClick={e => {
+          e.preventDefault()
+          onClick("goToProfile", strategy)
+        }}
+      >
+        {getString(prefs.locale, "strategycomponents", "btn_userProfile")}
+      </DropdownItem>
+    )
+  }
+  editBtn(prefs, getString, onClick, strategy) {
+    return (
+      <DropdownItem
+        id="strategy_update"
+        onClick={() => onClick("update", strategy)}
+      >
+        {getString(prefs.locale, "strategycomponents", "btn_update")}
+      </DropdownItem>
+    )
+  }
+  deleteBtn(prefs, getString, onClick, strategy) {
+    return (
+      <DropdownItem
+        id="strategy_delete"
+        onClick={() => onClick("delete", strategy)}
+      >
+        {getString(prefs.locale, "strategycomponents", "btn_delete")}
+      </DropdownItem>
+    )
+  }
+  saveBtn(prefs, getString, onClick, strategy, context = "any", format = "listItem", size = "md") {
+    if (format === "listItem")
+      return (
+        <DropdownItem
+          id="strategy_save"
+          onClick={() => onClick("save", strategy)}
+        >
+          {strategy.isSaved ?
+            getString(prefs.locale, "strategycomponents", "btn_unsave") :
+            getString(prefs.locale, "strategycomponents", "btn_save")
+          }
+        </DropdownItem>
+      )
+    else if (format === "btn")
+      return (
+        <>
+          <Button
+            className={`btn-icon btn-neutral btn-${size}`}
+            color={strategy.isSaved ? "success" : "default"}
+            id={`${context}__${strategy.id}`}
+            onClick={() => onClick("save", strategy)}
+          >
+            <i id="strategy_save" className={strategy.isSaved ? "fas fa-bookmark" : "nc-icon nc-bookmark-2"} />
+          </Button>
+          <UncontrolledTooltip delay={{ show: 1000 }} placement="top" target={`${context}__${strategy.id}`}>
+            {strategy.isSaved ?
+              getString(prefs.locale, "strategycomponents", "btn_unsave_hint") :
+              getString(prefs.locale, "strategycomponents", "btn_save_hint")
+            }
+          </UncontrolledTooltip>
+        </>
+      )
+  }
+  rateBtn(prefs, getString, onClick, strategy) {
+    return (
+      <DropdownItem
+        id="strategy_rate"
+        onClick={() => onClick("rate", strategy)}
+      >
+        {getString(prefs.locale, "strategycomponents", "btn_rate")}
+      </DropdownItem>
+    )
+  }
+  shareBtn(prefs, getString, onClick, strategy) {
+    return (
+      <DropdownItem
+        id="strategy_share"
+        onClick={() => onClick("share", strategy)}
+      >
+        {getString(prefs.locale, "strategycomponents", "btn_share")}
+      </DropdownItem>
+    )
+  }
+  viewBtn(prefs, getString, onClick, strategy, context = "any", format = "listItem") {
+    if (format === "listItem")
+      return (
+        <DropdownItem
+          id="strategy_view"
+          onClick={() => onClick("view", strategy)}
+        >
+          {getString(prefs.locale, "strategycomponents", "btn_view")}
+        </DropdownItem>
+      )
+    else if (format === "btn")
+      return (
+        <>
+          <Button
+            className="btn-icon btn-round"
+            color="warning"
+            outline
+            size="sm"
+            id={`${context}__${strategy.id}`}
+            onClick={() => onClick("view", strategy)}
+          >
+            <i id="strategy_view" className="far fa-eye" />
+          </Button>
+          <UncontrolledTooltip delay={{ show: 1000 }} placement="top" target={`${context}__${strategy.id}`}>
+            {getString(prefs.locale, "strategycomponents", "btn_view")}
+          </UncontrolledTooltip>
+        </>
+      )
+  }
+
   // --------------------
   // General Utils
   getOffsetFromVariable(variable) {

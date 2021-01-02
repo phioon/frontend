@@ -230,7 +230,7 @@ class ChartManager {
     return chart
   }
 
-  static polar_amountInvested(langId, rawData, aggrProps, chartProps) {
+  static polar_amountInvested(locale, rawData, aggrProps, chartProps) {
     let chart = { data: {}, options: {} }
 
     chartProps.mField = "amountInvested_percentage"
@@ -248,7 +248,7 @@ class ChartManager {
     aggrData = orderBy(aggrData, ["-amountInvested_percentage"])
 
     let labels = getValueListFromObjList(aggrData, chartProps.xDimension)
-    labels = this.translateLabels(langId, labels, chartProps.xDimension)
+    labels = this.translateLabels(locale, labels, chartProps.xDimension)
 
     chart.data.labels = labels
     chart.data.datasets = this.polar_getDatasetsFromData(aggrData, chartProps)
@@ -257,7 +257,7 @@ class ChartManager {
     return chart
   }
 
-  static line_result(langId, rawData, aggrProps, chartProps) {
+  static line_result(locale, rawData, aggrProps, chartProps) {
     let chart = { data: {}, options: {} }
     let aggrData = []
 
@@ -284,7 +284,7 @@ class ChartManager {
       options = this.getChartOptions("line", undefined)
 
     let labels = getDistinctValuesFromList(aggrData, chartProps.xDimension)
-    labels = this.translateLabels(langId, labels, chartProps.xDimension)
+    labels = this.translateLabels(locale, labels, chartProps.xDimension)
 
     let datasets = this.line_getDatasetsFromData(aggrData, chartProps)
     datasets = orderBy(datasets, ["label"])
@@ -292,6 +292,21 @@ class ChartManager {
     chart.data.labels = labels
     chart.data.datasets = datasets
     chart.options = options
+
+    return chart
+  }
+
+  static line_usage(rawData, chartProps) {
+    let chart = { data: {}, options: {} }
+
+    chartProps.xDimension = "date"
+    chartProps.mField = "runs"
+
+    let labels = [...new Array(rawData.length)].map(() => "")
+
+    chart.data.labels = labels
+    chart.data.datasets = this.line_getDatasetsFromData(rawData, chartProps)
+    chart.options = this.getChartOptions("line_summary")
 
     return chart
   }
@@ -375,13 +390,15 @@ class ChartManager {
             yAxes: [
               {
                 gridLines: {
+                  display: true,
                   drawBorder: false,
                   zeroLineColor: "rgba(180,180,180,1)",
                   color: "rgba(200,200,200,0.5)"
                 },
                 ticks: {
                   fontColor: "#9f9f9f",
-                  beginAtZero: false
+                  beginAtZero: false,
+                  maxTicksLimit: 4,
                 }
               }
             ],
@@ -390,10 +407,70 @@ class ChartManager {
               {
                 barPercentage: 1.6,
                 gridLines: {
+                  display: false,
                   drawBorder: false,
-                  color: "rgba(255,255,255,0.1)",
                   zeroLineColor: "transparent",
-                  display: false
+                  color: "rgba(255,255,255,0.1)",
+                },
+                ticks: {
+                  fontColor: "#9f9f9f"
+                }
+              }
+            ]
+          }
+        }
+        break;
+      case "line_summary":
+        chartOptions = {
+          legend: {
+            display: legPos ? true : false,
+            position: legPos,
+            labels: {
+              boxWidth: 3
+            }
+          },
+          tooltips: {
+            tooltipFillColor: "rgba(0,0,0,0.5)",
+            tooltipFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+            tooltipFontSize: 14,
+            tooltipFontStyle: "normal",
+            tooltipFontColor: "#fff",
+            tooltipTitleFontFamily:
+              "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+            tooltipTitleFontSize: 14,
+            tooltipTitleFontStyle: "bold",
+            tooltipTitleFontColor: "#fff",
+            tooltipYPadding: 6,
+            tooltipXPadding: 6,
+            tooltipCaretSize: 8,
+            tooltipCornerRadius: 6,
+            tooltipXOffset: 10
+          },
+          scales: {
+            yAxes: [
+              {
+                gridLines: {
+                  display: true,
+                  drawBorder: false,
+                  zeroLineColor: "rgba(180,180,180,0.1)",
+                  color: "rgba(200,200,200,0.1)"
+                },
+                ticks: {
+                  fontColor: "#9f9f9f",
+                  beginAtZero: true,
+                  maxTicksLimit: 4,
+                }
+              }
+            ],
+
+            xAxes: [
+              {
+                barPercentage: 1.6,
+                gridLines: {
+                  display: false,
+                  drawBorder: false,
+                  zeroLineColor: "transparent",
+                  color: "rgba(255,255,255,0.1)",
                 },
                 ticks: {
                   fontColor: "#9f9f9f"
@@ -439,7 +516,7 @@ class ChartManager {
   }
 
   // Translations
-  static translateLabels(langId, labels_ori, chartField) {
+  static translateLabels(locale, labels_ori, chartField) {
     let labels = deepCloneObj(labels_ori)
 
     switch (chartField) {
@@ -447,7 +524,7 @@ class ChartManager {
         let country_code = ""
         for (var x = 0; x < labels.length; x++) {
           country_code = String(labels[x]).toLowerCase()
-          labels[x] = String(getTranslation(langId, "countries", country_code))
+          labels[x] = String(getTranslation(locale, "countries", country_code))
         }
         break;
       case "date":
@@ -458,9 +535,9 @@ class ChartManager {
           let date = strDate[2]
 
           if (x == 0)
-            labels[x] = String(year + "-" + getTranslation(langId, "monthShort", month) + "-" + date)
+            labels[x] = String(year + "-" + getTranslation(locale, "monthShort", month) + "-" + date)
           else
-            labels[x] = String(getTranslation(langId, "monthShort", month) + "-" + date)
+            labels[x] = String(getTranslation(locale, "monthShort", month) + "-" + date)
         }
         break;
       case "month":
@@ -469,14 +546,14 @@ class ChartManager {
           let year = yearMonth[0]
           let month = yearMonth[1]
 
-          labels[x] = String(year + "-" + getTranslation(langId, "monthShort", month))
+          labels[x] = String(year + "-" + getTranslation(locale, "monthShort", month))
         }
         break;
       case "sector_id":
         let sector_id = ""
         for (var x = 0; x < labels.length; x++) {
           sector_id = String(labels[x]).toLowerCase()
-          labels[x] = String(getTranslation(langId, "sectors", sector_id))
+          labels[x] = String(getTranslation(locale, "sectors", sector_id))
         }
         break;
       default:

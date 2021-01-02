@@ -121,11 +121,11 @@ class ProfitabilityRanking extends Component {
               </label>
               {" "}
               <Button
-                className="btn-link"
-                color=""
+                className="btn-icon btn-round"
+                color="default"
                 id="profitabilityRanking_orderBy_hint"
-                size="mm"
-                type="button"
+                size="sm"
+                outline
                 onClick={() => this.reverseRanking(rankingType)}
               >
                 {rankingType == "top" ?
@@ -144,7 +144,7 @@ class ProfitabilityRanking extends Component {
         </CardHeader>
         <CardBody>
           <h6 className="big-title">
-            {getString(prefs.locale, "charts", "chart_title_profitabilityRanking")}
+            {getString(prefs.locale, "charts", "chart_profitabilityRanking_title")}
           </h6>
           {
             pageFirstLoading ?
@@ -161,24 +161,25 @@ class ProfitabilityRanking extends Component {
           <Row>
             <Col className="text-right">
               <Button
-                className={`btn-link ${selected === "groupByAsset" && "active"}`}
+                className={`btn-neutral btn-info ${selected === "groupByAsset" && "btn-round"}`}
                 color="primary"
                 id="profitabilityRanking_groupByAsset"
                 size="sm"
-                type="button"
+                outline={selected === "groupByAsset"}
                 onClick={() => this.changeChart(undefined, "groupByAsset")}
               >
                 {getString(prefs.locale, "charts", "label_assets")}
               </Button>
+              {" "}
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="profitabilityRanking_groupByAsset">
                 {getString(prefs.locale, "charts", chart.generic.groupByAsset.hintId)}
               </UncontrolledTooltip>
               <Button
-                className={`btn-link ${selected === "groupByWallet" && "active"}`}
+                className={`btn-neutral btn-info ${selected === "groupByWallet" && "btn-round"}`}
                 color="primary"
                 id="profitabilityRanking_groupByWallet"
                 size="sm"
-                type="button"
+                outline={selected === "groupByWallet"}
                 onClick={() => this.changeChart(undefined, "groupByWallet")}
               >
                 {getString(prefs.locale, "charts", "label_wallets")}

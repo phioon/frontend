@@ -60,12 +60,12 @@ class OpCost extends Component {
           <Row>
             <Col className="text-right">
               <Button
-                className={`btn-icon btn-link ${format === "percentage" && "active"}`}
-                color="primary"
+                className={`btn-icon btn-neutral btn-info ${format === "percentage" && "btn-round"}`}
+                color="info"
                 id={measure.id + "__percentage"}
                 value="%"
                 size="sm"
-                type="button"
+                outline={format === "percentage"}
                 onClick={() => this.changeKpiFormat("percentage")}
               >
                 %
@@ -75,12 +75,13 @@ class OpCost extends Component {
                   getString(prefs.locale, "measures", measure.percentage.hintId)
                 }
               </UncontrolledTooltip>
+              {" "}
               <Button
-                className={`btn-icon btn-link ${format === "currency" && "active"}`}
+                className={`btn-icon btn-neutral btn-success ${format === "currency" && "btn-round"}`}
                 color="success"
                 id={measure.id + "__currency"}
                 size="sm"
-                type="button"
+                outline={format === "currency"}
                 onClick={() => this.changeKpiFormat("currency")}
               >
                 $

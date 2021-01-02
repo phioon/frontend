@@ -35,7 +35,7 @@ class ModalStrategyResults extends React.Component {
     this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      firstLoading: undefined,
+      firstLoading: true,
 
       iItems: [],
       jsonLogic: {},
@@ -55,7 +55,6 @@ class ModalStrategyResults extends React.Component {
       },
       stockExchange: {},
       currency: { code: "BRL", symbol: "R$", thousands_separator_symbol: ".", decimal_symbol: "," },
-      alert: null,
     }
   }
   componentDidMount() {
@@ -152,7 +151,7 @@ class ModalStrategyResults extends React.Component {
         break;
     }
 
-    if (runStrategy && this.props.strategy.id) {
+    if (!this.state.firstLoading && runStrategy && this.props.strategy.id) {
       // Selection changed...
       this.runClick(this.props.strategy)
     }
@@ -169,13 +168,11 @@ class ModalStrategyResults extends React.Component {
   }
   async runClick(strategy) {
     this.setState({ firstLoading: false })
-    this.props.setLoading("run", true)
+    this.props.setFlag("Running", true)
     let { filters } = this.state;
 
     // Stats...
     this.props.managers.app.strategyRun(strategy.id)
-
-    strategy.rules = JSON.parse(strategy.rules)
 
     let stockExchange = await this.props.managers.market.stockExchangeRetrieve(filters.general.stockExchange.value)
     let currency = await this.props.managers.app.currencyRetrieve(stockExchange.currency_code)
@@ -187,13 +184,14 @@ class ModalStrategyResults extends React.Component {
     let tableData = await this.prepareTableData(result)
 
     this.setState({ tableData, stockExchange, currency })
-    this.props.setLoading("run", false)
+    this.props.setFlag("Running", false)
   }
 
   // Components
   renderLoading() {
     return (
       <>
+        <Row className="mt-5" />
         <div className="centered">
           <RingLoader color="#3a5966" size={67} />
         </div>
@@ -204,9 +202,10 @@ class ModalStrategyResults extends React.Component {
       </>
     )
   }
-  renderRun(strategy, isLoading) {
+  renderRunBtn(strategy, isRunning) {
     return (
       <>
+        <Row className="mt-5" />
         <div className="centered">
           <Button
             className="btn-icon btn-round"
@@ -214,7 +213,7 @@ class ModalStrategyResults extends React.Component {
             color="info"
             outline
             type="button"
-            disabled={isLoading}
+            disabled={isRunning}
             onClick={() => this.onClick("run", strategy)}
           >
             <i id="strategy_run" className="nc-icon nc-button-play" />
@@ -229,7 +228,7 @@ class ModalStrategyResults extends React.Component {
   }
 
   render() {
-    let { prefs, getString, modalId, isOpen, strategy, isLoading } = this.props;
+    let { prefs, getString, modalId, isOpen, strategy, isRunning } = this.props;
     let {
       firstLoading,
 
@@ -320,8 +319,8 @@ class ModalStrategyResults extends React.Component {
             <Row className="mt-4" />
 
             {firstLoading ?
-              this.renderRun(strategy, isLoading) :
-              isLoading ?
+              this.renderRunBtn(strategy, isRunning) :
+              isRunning ?
                 this.renderLoading() :
                 <ReactTable
                   data={tableData}
@@ -380,7 +379,7 @@ class ModalStrategyResults extends React.Component {
                   ofText={getString(prefs.locale, "reacttable", "label_of")}
                   rowsText={getString(prefs.locale, "reacttable", "label_rows")}
                   noDataText={
-                    isLoading ? getString(prefs.locale, "generic", "label_loading") :
+                    isRunning ? getString(prefs.locale, "generic", "label_loading") :
                       tableData.length == 0 ?
                         getString(prefs.locale, this.compId, "table_emptyData") :
                         getString(prefs.locale, this.compId, "table_noDataFound")
@@ -414,5 +413,6 @@ ModalStrategyResults.propTypes = {
   getString: PropTypes.func.isRequired,
   managers: PropTypes.object.isRequired,
 
-  strategy: PropTypes.object.isRequired
+  strategy: PropTypes.object.isRequired,
+  setFlag: PropTypes.func.isRequired,
 }

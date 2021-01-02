@@ -28,6 +28,7 @@ import Positions from "views/myassets/Positions";
 import PhiTrader from "views/phitrader/PhiTrader";
 import WalletOverview from "views/wallet/WalletOverview";
 import Wallets from "views/myassets/Wallets";
+import StrategyPage from "./views/strategies/StrategyPage";
 import StrategyPanel from "views/strategies/StrategyPanel";
 import StrategyGallery from "views/strategies/StrategyGallery";
 
@@ -211,7 +212,19 @@ const routes = [
         name: "strategygallery",
         component: StrategyGallery,
         layout: "/app"
-      }
+      },
+      {
+        path: "/strategies/:pk/",
+        name: "strategygallery",
+        component: StrategyPage,
+        layout: "/app"
+      },
+      {
+        path: "/strategies/",
+        name: "strategygallery",
+        component: StrategyPage,
+        layout: "/app"
+      },
     ]
   },
   {

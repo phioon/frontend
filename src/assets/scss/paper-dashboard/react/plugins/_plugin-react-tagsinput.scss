@@ -2,7 +2,7 @@
 
 .react-tagsinput {
     display: inline-block;
-    // max-width: 100%;             Disabled for Filter Card usage
+    max-width: 100%;
     line-height: 22px;
 }
 
@@ -29,7 +29,7 @@
 
 .react-tagsinput-tag a::before {
     font-family: 'nucleo-icons';
-    content: "\ea4f";
+    content: "\ea64";
     padding: 0px 2px;
 }
 .react-tagsinput-tag a{

@@ -29,10 +29,10 @@ import ReactBSAlert from "react-bootstrap-sweetalert";
 
 import ModalStrategy from "../modals/strategy/ModalStrategy";
 
-import StrategyCardMini from "./StrategyCardMini";
+import StrategyCardMini from "./components/StrategyCardMini";
 import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
-import CarouselSkeleton from "./CarouselSkeleton";
-import CarouselEmpty from "./CarouselEmpty";
+import CarouselSkeleton from "./components/CarouselSkeleton";
+import CarouselEmpty from "./components/CarouselEmpty";
 import {
   deepCloneObj,
   getDistinctValuesFromList,
@@ -47,7 +47,8 @@ class StrategyPanel extends React.Component {
 
     this.state = {
       pageFirstLoading: true,
-      run_isLoading: false,
+      isRunning: false,
+
       modal_strategyDetail_isOpen: false,
       modal_strategyResults_isOpen: false,
 
@@ -73,14 +74,14 @@ class StrategyPanel extends React.Component {
 
       savedStrategyIds: [],
       strategies: [],
-      sStrategyNames: [],
+      myStrategyNames: [],
       redirectTo: undefined,
       alert: null,
     };
 
     this.resize = this.resize.bind(this);
     this.prepareMyStrategies = this.prepareMyStrategies.bind(this);
-    this.setLoading = this.setLoading.bind(this);
+    this.setFlag = this.setFlag.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.onClick = this.onClick.bind(this);
   }
@@ -132,12 +133,12 @@ class StrategyPanel extends React.Component {
     // 1. Strategies
     let strategies = await this.props.managers.app.myStrategyData()
     strategies = orderBy(strategies, ['-create_time'])
-    let sStrategyNames = getDistinctValuesFromList(strategies, "name")
+    let myStrategyNames = getDistinctValuesFromList(strategies, "name")
 
     // 2. Carousel
     let carousel = this.prepareSlides(this.state.myStrategies, strategies)
 
-    this.setState({ strategies, sStrategyNames, myStrategies: carousel })
+    this.setState({ strategies, myStrategyNames, myStrategies: carousel })
   }
   async prepareSavedStrategies() {
     // 1. Strategies
@@ -174,6 +175,8 @@ class StrategyPanel extends React.Component {
   }
 
   renderStrategyItem(context, slide) {
+    let { isRunning } = this.state;
+
     return slide.map((strategy) => {
       strategy.isOwner = this.props.user.username === strategy.owner_username
       strategy.isSaved = this.state.savedStrategyIds.includes(strategy.id)
@@ -181,11 +184,13 @@ class StrategyPanel extends React.Component {
       return (
         <Col key={"strategy__" + strategy.id} xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
           <StrategyCardMini
-            {...this.props}
+            managers={this.props.managers}
+            getString={this.props.getString}
+            prefs={this.props.prefs}
             context={context}
             strategy={deepCloneObj(strategy)}
             onClick={this.onClick}
-            isLoading={this.state.run_isLoading}
+            isRunning={isRunning}
           />
         </Col>
       )
@@ -245,6 +250,12 @@ class StrategyPanel extends React.Component {
       case "save":
         await this.saveClick(obj)
         break;
+      case "share":
+        this.shareClick(obj.id)
+        break;
+      case "goToStrategyPage":
+        this.goToStrategyPage(obj.id)
+        break;
       case "goToProfile":
         this.goToProfile(obj.owner_username)
         break;
@@ -288,6 +299,19 @@ class StrategyPanel extends React.Component {
       await this.props.managers.app.strategySave(obj.id)
 
     this.prepareSavedStrategies()
+  }
+  shareClick(pk) {
+    let { getString, prefs } = this.props;
+
+    let pageLink = this.props.managers.app.strategyPageLink(pk)
+    navigator.clipboard.writeText(pageLink)
+
+    let message = getString(prefs.locale, "generic", "label_sharedLinkCopied")
+    this.props.notify("br", "success", "nc-icon nc-send", "shareStrategy", message)
+  }
+  goToStrategyPage(pk) {
+    let path = this.props.managers.app.strategyPagePath(pk)
+    this.props.history.push(path)
   }
   goToProfile(username) {
     let path = this.props.managers.app.userProfilePath(username)
@@ -335,7 +359,7 @@ class StrategyPanel extends React.Component {
     });
   }
   async deleteObject(obj) {
-    let result = await this.props.managers.app.myStrategyDelete(obj.id)
+    let result = await this.props.managers.app.myStrategyDelete(obj)
 
     if (result.status == 204)
       this.objectDeleted()
@@ -362,8 +386,8 @@ class StrategyPanel extends React.Component {
     this.prepareMyStrategies()
   }
 
-  setLoading(context, value) {
-    this.setState({ [`${context}_isLoading`]: value })
+  setFlag(context, value) {
+    this.setState({ [`is${context}`]: value })
   }
   toggleModal(modalId) {
     this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
@@ -378,7 +402,8 @@ class StrategyPanel extends React.Component {
     let { prefs, getString } = this.props;
     let {
       pageFirstLoading,
-      run_isLoading,
+      isRunning,
+
       modal_strategyDetail_isOpen,
       modal_strategyResults_isOpen,
 
@@ -391,7 +416,7 @@ class StrategyPanel extends React.Component {
 
       cWallets,
 
-      sStrategyNames,
+      myStrategyNames,
       redirectTo,
       alert,
     } = this.state;
@@ -407,16 +432,16 @@ class StrategyPanel extends React.Component {
           toggleModal={this.toggleModal}
           action={action}
           objData={objData}
-          sStrategyNames={sStrategyNames}
+          myStrategyNames={myStrategyNames}
           runItIfSuccess={this.prepareMyStrategies}
         />
         <ModalStrategyResults
           {...this.props}
           modalId="strategyResults"
           isOpen={modal_strategyResults_isOpen}
+          setFlag={this.setFlag}
           toggleModal={this.toggleModal}
-          setLoading={this.setLoading}
-          isLoading={run_isLoading}
+          isRunning={isRunning}
           onClick={this.onClick}
           strategy={selected.strategy}
         />

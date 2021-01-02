@@ -68,7 +68,7 @@ class App extends React.Component {
       this.setPrefs,
       this.setUser
     );
-    this.managers.strategy = new StrategyManager(this.managers.market);
+    this.managers.strategy = new StrategyManager(this.managers.app, this.managers.market);
     this.managers.measure = new MeasureManager(this.managers.app, this.managers.market);
 
     this.msgQueue = [];
@@ -232,6 +232,8 @@ class App extends React.Component {
             msg.id = model + "_addedToCollection"
           else if (context === "strategyunsave")
             msg.id = model + "_removedFromCollection"
+          else if (context === "strategyrate")
+            msg.id = model + "_thanksForFeedback"
           break;
       }
     }

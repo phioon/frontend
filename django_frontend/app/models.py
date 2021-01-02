@@ -3,6 +3,7 @@ from django.db.models import Avg, Sum
 from django.core import validators
 from django.db import models
 from datetime import datetime, timedelta
+import json
 
 
 class Currency(models.Model):
@@ -238,7 +239,8 @@ class Strategy(models.Model):
 
     is_public = models.BooleanField(default=True, verbose_name='Visibility')
     is_dynamic = models.BooleanField(default=False, verbose_name='Logic type')
-    rules = models.TextField()
+    rules = models.JSONField()
+    tags = models.JSONField(default=list())
 
     def __str__(self):
         return str(self.pk)
@@ -247,7 +249,7 @@ class Strategy(models.Model):
         try:
             # Try to update instance...
             instance = StrategyRating.objects.get(strategy=self, user=user)
-            instance.rating_avg = value
+            instance.rating = value
             instance.save()
         except StrategyRating.DoesNotExist:
             instance = StrategyRating.objects.create(strategy=self, user=user, rating=value)
@@ -287,36 +289,70 @@ class Strategy(models.Model):
 
     # Stats
     def get_stats(self):
-        stats = {
-            'rating_avg': self.stats.rating_avg,
-            'saved_count': self.stats.saved_count,
-            'runs_last_30_days': self.stats.runs_last_30_days,
-            'total_runs': self.stats.total_runs
+        data = {
+            'ratings': self.get_rating_stats(),
+            'saved': self.get_saved_stats(),
+            'usage': self.get_usage()
         }
-        return stats
+        return data
 
     def update_stats(self, related_name):
         if related_name == 'ratings':
-            self.update_ratings()
+            self.update_rating_stats()
         elif related_name == 'saved':
-            self.update_saved_count()
+            self.update_saved_stats()
         elif related_name == 'usage':
-            self.update_usage()
+            self.update_usage_stats()
 
-    def update_ratings(self):
-        # Ratings
+    # Ratings
+    def get_rating_stats(self):
+        data = {
+            'avg': self.stats.rating_avg,
+            'count': self.ratings.count(),
+        }
+        return data
+
+    def update_rating_stats(self):
         aggr = self.ratings.aggregate(Avg('rating'))
         if aggr['rating__avg'] is not None:
-            avg = round(aggr['rating__avg'], 2)
+            avg = round(aggr['rating__avg'], 1)
             self.stats.rating_avg = avg
+            self.stats.save()
 
-    def update_saved_count(self):
+    # Saved
+    def get_saved_stats(self):
+        data = {
+            'count': self.stats.saved_count
+        }
+        return data
+
+    def update_saved_stats(self):
         # Saved count
         saved_count = self.saved.filter(strategy=self).count()
         self.stats.saved_count = saved_count
         self.stats.save()
 
-    def update_usage(self):
+    # Usage
+    def get_usage(self):
+        data = {
+            'runs_last_30_days': self.stats.runs_last_30_days,
+            'total_runs': self.stats.total_runs,
+            'history': self.get_usage_history()
+        }
+        return data
+
+    def get_usage_history(self, last_x_days=30):
+        dateFrom = str(datetime.today().date() - timedelta(days=last_x_days))
+        data = []
+        for usage in self.usage.filter(date__gte=dateFrom):
+            data.append({
+                'date': usage.date,
+                'runs': usage.runs
+            })
+
+        return data
+
+    def update_usage_stats(self):
         # IMPORTANT! Variable [queryset] is reusable to avoid database hits...
         today = datetime.utcnow().date()
 
@@ -372,6 +408,7 @@ class StrategyRating(models.Model):
         validators.MinValueValidator(1),
         validators.MaxValueValidator(5)]
     )
+    review = models.CharField(max_length=1024, null=True)
 
     class Meta:
         indexes = [

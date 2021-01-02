@@ -213,7 +213,7 @@ class OpenPositions extends React.Component {
   }
   async handleCharts(selection, measures) {
     let { prefs } = this.props;
-    let { charts } = this.state
+    let { charts } = this.state;
     let aggrProps, chartProps = {}
 
     // Raw Data for Charts
@@ -277,8 +277,8 @@ class OpenPositions extends React.Component {
       chartProps
     )
     charts.positions.result.daily.groupByWallet.hintId = "result_groupByWallet_hint"
-    // // 1.2 Monthly
-    // // 1.2.1 Overall
+    // 1.2 Monthly
+    // 1.2.1 Overall
     aggrProps = {
       action: "sum",
       toAggregate: ["month"]
@@ -296,7 +296,7 @@ class OpenPositions extends React.Component {
       chartProps
     )
     charts.positions.result.monthly.overall.hintId = "result_overall_hint"
-    // // 1.2.2 Group By Asset
+    // 1.2.2 Group By Asset
     aggrProps = {
       action: "sum",
       toAggregate: ["month", "asset_label"]
@@ -314,7 +314,7 @@ class OpenPositions extends React.Component {
       chartProps
     )
     charts.positions.result.monthly.groupByAsset.hintId = "result_groupByAsset_hint"
-    // // 1.2.3 Group By Wallet
+    // 1.2.3 Group By Wallet
     aggrProps = {
       action: "sum",
       toAggregate: ["month", "wallet_name"]

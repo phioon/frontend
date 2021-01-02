@@ -18,14 +18,14 @@ import {
   Row,
 } from "reactstrap";
 
-import { getValueListFromObjList, deepCloneObj } from "../../core/utils";
-
 import ModalStrategy from "../modals/strategy/ModalStrategy";
 import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
 
-import StrategyCardMini from "./StrategyCardMini";
-import CarouselEmpty from "./CarouselEmpty";
-import CarouselSkeleton from "./CarouselSkeleton";
+import StrategyCardMini from "./components/StrategyCardMini";
+import CarouselEmpty from "./components/CarouselEmpty";
+import CarouselSkeleton from "./components/CarouselSkeleton";
+
+import { getValueListFromObjList, deepCloneObj } from "../../core/utils";
 
 class StrategyGallery extends React.Component {
   constructor(props) {
@@ -34,7 +34,7 @@ class StrategyGallery extends React.Component {
 
     this.state = {
       pageFirstLoading: true,
-      run_isLoading: false,
+      isRunning: false,
       modal_strategyDetail_isOpen: false,
       modal_strategyResults_isOpen: false,
 
@@ -59,7 +59,7 @@ class StrategyGallery extends React.Component {
       savedStrategyIds: []
     };
 
-    this.setLoading = this.setLoading.bind(this);
+    this.setFlag = this.setFlag.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.onClick = this.onClick.bind(this);
   }
@@ -166,6 +166,8 @@ class StrategyGallery extends React.Component {
   }
 
   renderStrategyItem(context, slide) {
+    let { isRunning } = this.state;
+
     return slide.map((strategy) => {
       strategy.isOwner = this.props.user.username === strategy.owner_username
       strategy.isSaved = this.state.savedStrategyIds.includes(strategy.id)
@@ -173,11 +175,13 @@ class StrategyGallery extends React.Component {
       return (
         <Col key={"strategy__" + strategy.id} xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
           <StrategyCardMini
-            {...this.props}
+            managers={this.props.managers}
+            getString={this.props.getString}
+            prefs={this.props.prefs}
             context={context}
             strategy={deepCloneObj(strategy)}
             onClick={this.onClick}
-            isLoading={this.state.run_isLoading}
+            isRunning={isRunning}
           />
         </Col>
       )
@@ -237,6 +241,12 @@ class StrategyGallery extends React.Component {
       case "save":
         await this.saveClick(obj)
         break;
+      case "share":
+        this.shareClick(obj.id)
+        break;
+      case "goToStrategyPage":
+        this.goToStrategyPage(obj.id)
+        break;
       case "goToProfile":
         this.goToProfile(obj.owner_username)
         break;
@@ -272,22 +282,36 @@ class StrategyGallery extends React.Component {
 
     this.prepareSavedStrategies()
   }
+  shareClick(pk) {
+    let { getString, prefs } = this.props;
+
+    let pageLink = this.props.managers.app.strategyPageLink(pk)
+    navigator.clipboard.writeText(pageLink)
+
+    let message = getString(prefs.locale, "generic", "label_sharedLinkCopied")
+    this.props.notify("br", "success", "nc-icon nc-send", "shareStrategy", message)
+  }
+  goToStrategyPage(pk) {
+    let path = this.props.managers.app.strategyPagePath(pk)
+    this.props.history.push(path)
+  }
   goToProfile(username) {
     let path = this.props.managers.app.userProfilePath(username)
     this.props.history.push(path)
   }
 
-  setLoading(context, value) {
-    this.setState({ [`${context}_isLoading`]: value })
+  setFlag(context, value) {
+    this.setState({ [`is${context}`]: value })
   }
   toggleModal(modalId) {
     this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
   };
+
   render() {
     let { getString, prefs } = this.props;
     let {
       pageFirstLoading,
-      run_isLoading,
+      isRunning,
       modal_strategyDetail_isOpen,
       modal_strategyResults_isOpen,
 
@@ -315,9 +339,9 @@ class StrategyGallery extends React.Component {
           {...this.props}
           modalId="strategyResults"
           isOpen={modal_strategyResults_isOpen}
+          setFlag={this.setFlag}
           toggleModal={this.toggleModal}
-          setLoading={this.setLoading}
-          isLoading={run_isLoading}
+          isRunning={isRunning}
           onClick={this.onClick}
           strategy={selected.strategy}
         />

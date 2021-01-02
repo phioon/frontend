@@ -548,7 +548,7 @@ class AppManager {
 
   // My Strategies
   async myStrategyList(syncFull = false) {
-    const sKey = "mystrategies"
+    const sKey = "myStrategies"
     await this.startRequest(sKey)
     let result = undefined
 
@@ -591,15 +591,23 @@ class AppManager {
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
 
+    console.log(strategy)
+    console.log({ result })
+
     if (result.status == 201) {
+      strategy = result.data
       let syncFull = true
+
       await this.myStrategyList(syncFull)
+      this.userProfileRetrieve(syncFull, strategy.owner_username)     // async call
     }
 
     // Return it with http error details
     return result
   }
   async myStrategyUpdate(strategy) {
+    const sKey_strategies = "strategies"
+
     let wsInfo = this.getApi("wsMyStrategies")
     wsInfo.request += strategy.id + "/"
     wsInfo.method = "patch"
@@ -609,14 +617,22 @@ class AppManager {
     if (result.status == 200) {
       let syncFull = true
       await this.myStrategyList(syncFull)
+
+      // Checks if the updated strategy has been retrieved before...
+      let sStrategy = await StorageManager.getData(sKey_strategies, strategy.id)
+      if (sStrategy)
+        this.strategyRetrieve(syncFull, strategy.id)      // async call
     }
 
     // Return it with http error details
     return result
   }
-  async myStrategyDelete(pk) {
+  async myStrategyDelete(strategy) {
+    const sKey_strategies = "strategies"
+    const sKey_savedStrategies = "savedStrategies"
+
     var wsInfo = this.getApi("wsMyStrategies")
-    wsInfo.request += pk + "/"
+    wsInfo.request += strategy.id + "/"
     wsInfo.method = "delete"
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
@@ -625,6 +641,9 @@ class AppManager {
     if (result.status == 204) {
       let syncFull = true
       await this.myStrategyList(syncFull)
+      this.userProfileRetrieve(syncFull, strategy.owner_username)
+      StorageManager.removeItem(sKey_strategies, strategy.id)        // async call
+      StorageManager.removeItem(sKey_savedStrategies, strategy.id)   // async call
     }
     else
       this.getHttpTranslation(result, "mystrategydelete", "strategy", true)
@@ -634,7 +653,7 @@ class AppManager {
 
   // Saved Strategies
   async savedStrategyList(syncFull = false) {
-    const sKey = "savedstrategies"
+    const sKey = "savedStrategies"
     await this.startRequest(sKey)
     let result = undefined
 
@@ -675,8 +694,8 @@ class AppManager {
   // Strategies  
   // .. Data
   async strategyList(syncFull = false, query) {
+    // [!] Do not implement this.startRequest(). It was made to process concurrent calls...
     const sKey = "strategies"
-    await this.startRequest(sKey)
     let result = undefined
 
     // Defaults...
@@ -692,7 +711,6 @@ class AppManager {
     if (!syncFull) {
       result = await StorageManager.isUpToDate(this.sModule, sKey, strQueryParams)
       if (result) {
-        this.finishRequest(sKey)
         return result
       }
     }
@@ -710,7 +728,6 @@ class AppManager {
       result = await StorageManager.getItem(sKey, strQueryParams)
     }
 
-    this.finishRequest(sKey)
     return result
   }
   async strategyData(syncFull = false, query) {
@@ -722,6 +739,39 @@ class AppManager {
     // Return it with http error details
     return sItem
   }
+  async strategyRetrieve(syncFull = false, pk) {
+    const sKey = "strategies"
+    await this.startRequest(sKey)
+    let result = undefined
+
+    if (!syncFull) {
+      result = await StorageManager.isUpToDate(this.sModule, sKey, pk)
+      if (result) {
+        this.finishRequest(sKey)
+        return result
+      }
+    }
+
+    let wsInfo = this.getApi("wsStrategies")
+    wsInfo.request += `${pk}/`
+    wsInfo.method = "get"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status == 200)
+      result = await StorageManager.store(sKey, result.data, pk)
+    else if (result.response.status == 404) {
+      // Clean cache...
+      StorageManager.removeItem(sKey, pk)
+    }
+    else {
+      // Other error codes...
+      this.getHttpTranslation(result, "strategyretrieve", "strategy", true)
+    }
+
+    this.finishRequest(sKey)
+    return result
+  }
   async strategyRate(payload) {
     // payload.rating needed...
     let wsInfo = this.getApi("wsStrategies")
@@ -731,8 +781,7 @@ class AppManager {
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, payload)
 
-    if (result.status !== 200)
-      this.getHttpTranslation(result, "strategyrate", "strategy")
+    this.getHttpTranslation(result, "strategyrate", "strategy", true)
 
     return result
   }
@@ -831,6 +880,12 @@ class AppManager {
     queryParams = queryParams.slice(0, -1)
 
     return queryParams
+  }
+  strategyPageLink(pk) {
+    return `${window.location.protocol}//${window.location.host}${this.strategyPagePath(pk)}`
+  }
+  strategyPagePath(pk) {
+    return `/app/strategies/${pk}/`
   }
 
   // Position Type
@@ -932,7 +987,7 @@ class AppManager {
   // User
   // .. Data
   async userProfileRetrieve(syncFull = false, username) {
-    const sKey = "userprofiles"
+    const sKey = "userProfiles"
     await this.startRequest(sKey)
     let result = undefined
 

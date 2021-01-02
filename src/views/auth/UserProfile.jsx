@@ -19,10 +19,10 @@ import {
 } from "reactstrap";
 import Skeleton from "react-loading-skeleton";
 
-import { getFirstAndLastName, getInitials, getValueListFromObjList, orderBy } from "../../core/utils";
 import ModalStrategy from "../modals/strategy/ModalStrategy";
 import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
 import StrategyPopularItem from "../../components/listItems/StrategyPopularItem";
+import { deepCloneObj, getFirstAndLastName, getInitials, getValueListFromObjList, orderBy } from "../../core/utils";
 
 class UserProfile extends React.Component {
   constructor(props) {
@@ -30,8 +30,8 @@ class UserProfile extends React.Component {
     this.compId = this.constructor.name.toLowerCase()
 
     this.state = {
-      pageFirstLoading: true,
-      run_isLoading: false,
+      isPageLoading: true,
+      isRunning: false,
       modal_strategyDetail_isOpen: false,
       modal_strategyResults_isOpen: false,
 
@@ -54,12 +54,12 @@ class UserProfile extends React.Component {
       popularShowMore: undefined,
     }
 
-    this.setLoading = this.setLoading.bind(this);
+    this.setFlag = this.setFlag.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.onClick = this.onClick.bind(this)
   }
   componentDidMount() {
-    this.props.setNavbarTitleId(`title_empty`)
+    this.props.setNavbarTitleId(`title_${this.compId}`)
     this.prepareRequirements()
   }
   componentDidUpdate(prevProps) {
@@ -74,7 +74,7 @@ class UserProfile extends React.Component {
     ]
     await Promise.all(tasks)
 
-    this.setState({ pageFirstLoading: false })
+    this.setState({ isPageLoading: false })
   }
   async prepareUser(syncFull = false) {
     let { user } = this.state;
@@ -84,7 +84,7 @@ class UserProfile extends React.Component {
       user.username = this.props.match.params.username
     }
     else {
-      // If [username] param was not given, set current user's...
+      // [username] param was not given. Setting current user's...
       this.setState({ redirectTo: `/app/u/${this.props.user.username}/` })
     }
 
@@ -111,8 +111,8 @@ class UserProfile extends React.Component {
   }
   prepareStrategies(strategies) {
     for (var strategy of strategies) {
-      strategy.runs_last_30_days = strategy.stats.runs_last_30_days
-      strategy.total_runs = strategy.stats.total_runs
+      strategy.runs_last_30_days = strategy.stats.usage.runs_last_30_days
+      strategy.total_runs = strategy.stats.usage.total_runs
     }
 
     strategies = orderBy(strategies, ["-runs_last_30_days", "name"])
@@ -150,6 +150,9 @@ class UserProfile extends React.Component {
         break;
       case "share":
         this.shareClick(obj.username)
+        break;
+      case "goToStrategyPage":
+        this.goToStrategyPage(obj.id)
         break;
     }
   }
@@ -206,8 +209,12 @@ class UserProfile extends React.Component {
     let profileLink = this.props.managers.app.userProfileLink(username)
     navigator.clipboard.writeText(profileLink)
 
-    let message = getString(prefs.locale, this.compId, "label_shareLinkCopied")
+    let message = getString(prefs.locale, "generic", "label_sharedLinkCopied")
     this.props.notify("br", "success", "nc-icon nc-send", "shareProfile", message)
+  }
+  goToStrategyPage(pk) {
+    let path = this.props.managers.app.strategyPagePath(pk)
+    this.props.history.push(path)
   }
 
   renderMyActions(user) {
@@ -227,7 +234,7 @@ class UserProfile extends React.Component {
         </Button>
         {/* ... */}
         <DropdownToggle
-          className="btn-sm btn-icon btn-round btn-simple"
+          className="btn-icon btn-round btn-simple btn-sm"
           data-toggle="dropdown"
           type="button"
         >
@@ -291,7 +298,7 @@ class UserProfile extends React.Component {
     )
   }
   renderPopularStrategies(strategies) {
-    let { savedStrategyIds, popularShowMore } = this.state;
+    let { savedStrategyIds, popularShowMore, isRunning } = this.state;
     let popularSize = popularShowMore ? 5 : 3
 
     return strategies.map((strategy, i) => {
@@ -302,17 +309,20 @@ class UserProfile extends React.Component {
         return (
           <StrategyPopularItem
             key={i}
+            managers={this.props.managers}
             getString={this.props.getString}
             prefs={this.props.prefs}
-            strategy={strategy}
+            notify={this.props.notify}
+            strategy={deepCloneObj(strategy)}
             onClick={this.onClick}
+            isRunning={isRunning}
           />
         )
     })
   }
 
-  setLoading(context, value) {
-    this.setState({ [`${context}_isLoading`]: value })
+  setFlag(context, value) {
+    this.setState({ [`is${context}`]: value })
   }
   toggleModal(modalId) {
     this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
@@ -321,15 +331,15 @@ class UserProfile extends React.Component {
   render() {
     let { getString, prefs, user: currentUser } = this.props;
     let {
-      pageFirstLoading,
-      run_isLoading,
+      redirectTo,
+      isPageLoading,
+      isRunning,
+
       modal_strategyDetail_isOpen,
       modal_strategyResults_isOpen,
 
       action,
       objData,
-
-      redirectTo,
 
       user,
 
@@ -352,9 +362,9 @@ class UserProfile extends React.Component {
           {...this.props}
           modalId="strategyResults"
           isOpen={modal_strategyResults_isOpen}
+          setFlag={this.setFlag}
           toggleModal={this.toggleModal}
-          setLoading={this.setLoading}
-          isLoading={run_isLoading}
+          isRunning={isRunning}
           onClick={this.onClick}
           strategy={selected.strategy}
         />
@@ -372,32 +382,26 @@ class UserProfile extends React.Component {
                   </a>
                 </div>
               </Col>
-              {/* Username and Name */}
+              {/* Username, Name and Actions */}
               <Col xl="6" md="7" xs="8">
+                {/* Username */}
+                <p className="description">
+                  {isPageLoading ?
+                    <Skeleton /> :
+                    `@${user.username}`
+                  }
+                </p>
+                {/* Full Name */}
+                <a href="" onClick={e => e.preventDefault()}>
+                  <h5 className="title">
+                    {isPageLoading ?
+                      <Skeleton /> :
+                      user.full_name
+                    }
+                  </h5>
+                </a>
+                {/* Button Actions */}
                 <Row>
-                  {/* Username */}
-                  <Col xs="12">
-                    <p className="description align-center">
-                      {pageFirstLoading ?
-                        <Skeleton /> :
-                        `@${user.username}`
-                      }
-                    </p>
-                  </Col>
-                  {/* Full Name */}
-                  <Col xs="12">
-                    <a href="" onClick={e => e.preventDefault()}>
-                      <h5 className="title">
-                        {pageFirstLoading ?
-                          <Skeleton /> :
-                          user.full_name
-                        }
-                      </h5>
-                    </a>
-                  </Col>
-                </Row>
-                <Row>
-                  {/* Button Actions */}
                   <Col className="text-right">
                     {currentUser.username === user.username ?
                       this.renderMyActions(user) :
@@ -413,19 +417,20 @@ class UserProfile extends React.Component {
               <Row>
                 <Col className="ml-auto" lg="2" md="4" xs="5">
                   <h6>
-                    {user.strategies.length} <br />
+                    {!isPageLoading && user.strategies.length}
+                    <br />
                     <small>{getString(prefs.locale, this.compId, "label_strategies")}</small>
                   </h6>
                 </Col>
                 <Col className="ml-auto mr-auto" lg="2" md="4" xs="5">
                   <h6>
-                    {user.amount_following} <br />
+                    {!isPageLoading && user.amount_following} <br />
                     <small>{getString(prefs.locale, this.compId, "label_following")}</small>
                   </h6>
                 </Col>
                 <Col className="mr-auto" lg="2" md="4">
                   <h6>
-                    {user.amount_followers} <br />
+                    {!isPageLoading && user.amount_followers} <br />
                     <small>{getString(prefs.locale, this.compId, "label_followers")}</small>
                   </h6>
                 </Col>

@@ -60,11 +60,11 @@ class CloseVolume extends Component {
           <Row>
             <Col className="text-right">
               <Button
-                className={`btn-icon btn-link ${format === "currency" && "active"}`}
+                className={`btn-icon btn-neutral btn-success ${format === "currency" && "btn-round"}`}
                 color="success"
                 id={measure.id + "__currency"}
                 size="sm"
-                type="button"
+                outline={format === "currency"}
                 onClick={() => this.changeKpiFormat("currency")}
               >
                 $

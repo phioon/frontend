@@ -38,7 +38,7 @@
     }
 
     // btn-neutral style
-    @if $btn-color == $white-color{
+    @if $btn-color == $transparent-bg{
         color: $primary-color;
 
         &.btn-danger{
@@ -105,7 +105,7 @@
         .show > &.dropdown-toggle,
         .show > &.dropdown-toggle:focus,
         .show > &.dropdown-toggle:hover {
-            background-color: $white-color !important;
+            background-color: $transparent-bg !important;
             color: $primary-states-color !important;
             box-shadow: none !important;
         }

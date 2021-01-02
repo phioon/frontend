@@ -54,11 +54,11 @@ class AmountPositions extends Component {
           <Row>
             <Col className="text-right">
               <Button
-                className={`btn-icon btn-link ${format === "number" && "active"}`}
+                className={`btn-icon btn-neutral btn-warning ${format === "number" && "btn-round"}`}
                 color="warning"
                 id={measure.id + "__number"}
                 size="sm"
-                type="button"
+                outline={format === "number"}
                 onClick={() => this.changeKpiFormat("number")}
               >
                 #

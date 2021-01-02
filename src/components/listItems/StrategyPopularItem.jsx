@@ -1,13 +1,13 @@
 import React from "react";
+import PropTypes from "prop-types";
+// reactstrap components
 import {
-  Button,
   Row,
   Col,
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
   UncontrolledDropdown,
-  UncontrolledTooltip,
 } from "reactstrap";
 import { integerWithThousandsSeparator } from "../../core/utils";
 
@@ -19,120 +19,35 @@ class StrategyPopularItem extends React.Component {
     this.state = {
       onHover: undefined,
     };
+
+    this.onClick = this.onClick.bind(this);
   }
 
-  onClick(action, strategy) {
-    this.props.onClick(action, strategy)
-
+  onClick(action, obj) {
     // Handle immediate actions...
     switch (action) {
       case "save":
-        strategy.isSaved = !strategy.isSaved
-        this.setState({ strategy })
+        this.props.onClick(action, obj)
+
+        obj.isSaved = !obj.isSaved
+        this.setState({ strategy: obj })
+        break;
+      case "share":
+        this.shareClick(obj.id)
+        break;
+      default:
+        this.props.onClick(action, obj)
         break;
     }
   }
+  shareClick(pk) {
+    let { getString, prefs } = this.props;
 
-  renderRun(prefs, getString, strategy, isLoading) {
-    return (
-      <>
-        <Button
-          className="btn-icon btn-round"
-          size="sm"
-          color="info"
-          outline
-          id={"run__" + strategy.id}
-          type="button"
-          disabled={isLoading}
-          onClick={() => this.onClick("run", strategy)}
-        >
-          <i id="strategy_run" className="nc-icon nc-button-play" />
-        </Button>
-        <UncontrolledTooltip delay={{ show: 1000 }} placement="top" target={"run__" + strategy.id}>
-          {getString(prefs.locale, this.compId, "btn_run_hint")}
-        </UncontrolledTooltip>
-      </>
-    )
-  }
-  renderGoToStats(prefs, getString, strategy) {
-    return (
-      <DropdownItem>
-        {getString(prefs.locale, this.compId, "btn_stats")}
-      </DropdownItem>
-    )
-  }
-  renderSave(prefs, getString, strategy, format = "item") {
-    if (format === "item")
-      return (
-        <DropdownItem
-          id="strategy_save"
-          onClick={() => this.onClick("save", strategy)}
-        >
-          {strategy.isSaved ?
-            getString(prefs.locale, this.compId, "btn_unsave") :
-            getString(prefs.locale, this.compId, "btn_save")
-          }
-        </DropdownItem>
-      )
-    else if (format === "btn")
-      return (
-        <>
-          <Button
-            id={`save__${strategy.id}`}
-            className="btn-icon btn-neutral"
-            color={strategy.isSaved ? "success" : "default"}
-            onClick={() => this.onClick("save", strategy)}
-          >
-            <i id="strategy_save" className={strategy.isSaved ? "fas fa-bookmark" : "far fa-bookmark"} />
-          </Button>
-          <UncontrolledTooltip delay={{ show: 1000 }} placement="top" target={`save__${strategy.id}`}>
-            {strategy.isSaved ?
-              getString(prefs.locale, this.compId, "btn_unsave_hint") :
-              getString(prefs.locale, this.compId, "btn_save_hint")
-            }
-          </UncontrolledTooltip>
-        </>
-      )
-  }
-  renderShare(prefs, getString, strategy) {
-    return (
-      <DropdownItem
-        id="strategy_share"
-        onClick={() => this.onClick("shareStrategy", strategy)}
-      >
-        {getString(prefs.locale, this.compId, "btn_share")}
-      </DropdownItem>
-    )
-  }
-  renderView(prefs, getString, strategy) {
-    return (
-      <DropdownItem
-        id="strategy_view"
-        onClick={() => this.onClick("view", strategy)}
-      >
-        {getString(prefs.locale, this.compId, "btn_view")}
-      </DropdownItem>
-    )
-  }
-  renderEdit(prefs, getString, strategy) {
-    return (
-      <DropdownItem
-        id="strategy_update"
-        onClick={() => this.props.onClick("update", strategy)}
-      >
-        {getString(prefs.locale, this.compId, "btn_update")}
-      </DropdownItem>
-    )
-  }
-  renderDelete(prefs, getString, strategy) {
-    return (
-      <DropdownItem
-        id="strategy_delete"
-        onClick={() => this.props.onClick("delete", strategy)}
-      >
-        {getString(prefs.locale, this.compId, "btn_delete")}
-      </DropdownItem>
-    )
+    let pageLink = this.props.managers.app.strategyPageLink(pk)
+    navigator.clipboard.writeText(pageLink)
+
+    let message = getString(prefs.locale, "generic", "label_sharedLinkCopied")
+    this.props.notify("br", "success", "nc-icon nc-send", "shareStrategy", message)
   }
 
   renderActions(prefs, getString, strategy) {
@@ -146,21 +61,18 @@ class StrategyPopularItem extends React.Component {
           <i className="fas fa-ellipsis-h" />
         </DropdownToggle>
         <DropdownMenu right>
-          {/* Stats */}
-          {this.renderGoToStats(prefs, getString, strategy)}
+          {/* Strategy Page */}
+          {this.props.managers.strategy.goToStrategyPageBtn(prefs, getString, this.onClick, strategy)}
           <DropdownItem divider />
           {/* Save/Unsave */}
-          {this.renderSave(prefs, getString, strategy)}
+          {this.props.managers.strategy.saveBtn(prefs, getString, this.onClick, strategy)}
           {/* Share */}
-          {this.renderShare(prefs, getString, strategy)}
+          {this.props.managers.strategy.shareBtn(prefs, getString, this.onClick, strategy)}
           <DropdownItem divider />
-          {/* View/Edit */}
-          {strategy.isOwner ?
-            this.renderEdit(prefs, getString, strategy) :
-            this.renderView(prefs, getString, strategy)
-          }
+          {/* Edit */}
+          {strategy.isOwner && this.props.managers.strategy.editBtn(prefs, getString, this.onClick, strategy)}
           {/* Delete */}
-          {strategy.isOwner && this.renderDelete(prefs, getString, strategy)}
+          {strategy.isOwner && this.props.managers.strategy.deleteBtn(prefs, getString, this.onClick, strategy)}
         </DropdownMenu>
       </UncontrolledDropdown>
     )
@@ -176,25 +88,33 @@ class StrategyPopularItem extends React.Component {
         onMouseOver={() => this.setState({ onHover: true })}
         onMouseLeave={() => this.setState({ onHover: false })}
       >
-        <Col xs="1" className="centered">
+        <Col sm="1" xs="2" className="centered">
           {onHover ?
-            this.renderRun(prefs, getString, strategy, isLoading) :
+            this.props.managers.strategy.runBtn(prefs, getString, this.onClick, strategy, isLoading) :
             <label>{strategy.index}</label>
           }
         </Col>
         <Col xs="1" className="centered">
-          {this.renderSave(prefs, getString, strategy, "btn")}
+          {this.props.managers.strategy.saveBtn(prefs, getString, this.onClick, strategy, "any", "btn")}
         </Col>
 
-        <Col xs="6">
-          {strategy.name}
+        <Col sm="7" xs="5">
+          <a
+            href={this.props.managers.app.strategyPagePath(strategy.id)}
+            onClick={e => {
+              e.preventDefault()
+              this.onClick("goToStrategyPage", strategy)
+            }}
+          >
+            {strategy.name}
+          </a>
         </Col>
 
         <Col xs="1" centered="centered">
           {onHover && this.renderActions(prefs, getString, strategy)}
         </Col>
 
-        <Col sm="3" xs="2" className="text-right">
+        <Col sm="2" xs="2" className="text-right">
           <label>
             {integerWithThousandsSeparator(strategy.total_runs, ",")}
           </label>
@@ -205,3 +125,12 @@ class StrategyPopularItem extends React.Component {
 }
 
 export default StrategyPopularItem;
+
+StrategyPopularItem.propTypes = {
+  getString: PropTypes.func.isRequired,
+  prefs: PropTypes.object.isRequired,
+
+  strategy: PropTypes.object.isRequired,
+  onClick: PropTypes.func.isRequired,
+  isRunning: PropTypes.bool.isRequired,
+}

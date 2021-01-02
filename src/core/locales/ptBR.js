@@ -7,6 +7,8 @@ const locale = {
     label_loading: "Carregando...",
     label_days: "dias",
 
+    label_sharedLinkCopied: "Link copiado para área de transferência (CTRL-C).",
+
     input_search: "Procurar...",
     input_select: "Selecione...",
     input_noOptions: "Opções indisponíveis..."
@@ -19,6 +21,7 @@ const locale = {
     title_phitrader: "Análise Técnica",
     title_positions: "Meus Ativos",
     title_strategypanel: "Estratégias",
+    title_strategypage: "Estratégia",
     title_strategygallery: "Estratégias",
     title_userprofile: "Usuário",
     title_usersubscription: "Meu Plano",
@@ -44,9 +47,11 @@ const locale = {
     last: "Última"
   },
   charts: {
-    chart_title_diversification: "Diversificação (%)",
-    chart_title_profitability: "Rentabilidade pelo tempo (%)",
-    chart_title_profitabilityRanking: "Ranking de Rentabilidade (%)",
+    chart_diversification_title: "Diversificação (%)",
+    chart_profitability_title: "Rentabilidade pelo tempo (%)",
+    chart_profitabilityRanking_title: "Ranking de Rentabilidade (%)",
+    chart_usage_title: "Execuções",
+    chart_usage_desc: "Últimos 30 dias",
 
     chart_tooltip_profitability: "% Rentabilidade",
 
@@ -144,6 +149,7 @@ const locale = {
     strategy_limitReached: "Precisa de mais estratégias para melhorar seus resultados? Atualize seu plano e aproveite! ;)",
     strategy_addedToCollection: "Estratégia adicionada à sua coleção.",
     strategy_removedFromCollection: "Estratégia removida da sua coleção.",
+    strategy_thanksForFeedback: "Enviado! Obrigado pelo feedback. ;)",
 
     user_profileUpdated: "Perfil atualizado!",
     user_planPastDue_p1: "hmm... Houve algum problema com a renovação do seu plano :/",
@@ -521,7 +527,7 @@ const locale = {
   },
   modalstrategy: {
     title_create: "Criar Estratégia",
-    title_update: "Atualizar Estratégia",
+    title_update: "Alterar Estratégia",
     title_view: "Detalhes da Estratégia",
 
     label_intro_p1: "Uma Estratégia é um conjunto de regras/filtros que pode ser aplicado à relação entre Preço e Indicadores.",
@@ -543,7 +549,7 @@ const locale = {
     label_logic_dynamic: "Dinâmica",
     label_logic_static: "Estática",
     input_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico (s, d, m60...). Ela se torna Estática se um tempo gráfico específico é selecionado em uma das regras.",
-    input_description: "Descrição",
+    input_description: "Descrição Técnica",
     label_description_placeholder: "Uma descrição bem escrita pode ajudar outros usuários a entender melhor como sua Estratégia funciona...",
     input_public: "Pública",
     input_public_hint: "Outros usuários podem ver esta estratégia.",
@@ -578,8 +584,15 @@ const locale = {
 
     btn_add: "Adicionar",
     btn_create: "Criar",
-    btn_update: "Atualizar",
+    btn_update: "Alterar",
     btn_view: "Voltar"
+  },
+  modalstrategyrating: {
+    input_review: "Avaliação",
+
+    error_review: "Avaliação muito longa, não? Tente mante-la com no máximo 1000 caracteres.",
+
+    btn_footer: "Rate",
   },
   modalstrategyresults: {
     label_createdBy: "Criada por",
@@ -952,18 +965,21 @@ const locale = {
     label_static: "Estática",
     label_static_hint: "Algumas regras estão fixadas para tempos gráficos específicos.",
     label_category: "Categoria",
-
-    btn_save: "Salvar",
+  },
+  strategycomponents: {
+    btn_save: "Adicionar à Salvas",
     btn_save_hint: "Salvar Estratégia.",
     btn_unsave: "Remover de Salvas",
-    btn_unsave_hint: "Remover da coleção.",
+    btn_unsave_hint: "Remover de Salvas.",
 
-    btn_stats: "Ir para Estatísticas",
-    btn_userProfile: "Ir para Perfil",
-    btn_share: "Compartilhar",
     btn_view: "Ver detalhes",
-    btn_update: "Atualizar",
+    btn_update: "Alterar",
     btn_delete: "Deletar",
+
+    btn_strategyPage: "Ver detalhes",
+    btn_userProfile: "Ir para Perfil",
+    btn_rate: "Avaliar",
+    btn_share: "Compartilhar",
 
     btn_run_hint: "Executar Estratégia.",
   },
@@ -975,6 +991,22 @@ const locale = {
 
     label_gallery_noStrategies_p1: "Oops! Algo deu errado.",
     label_gallery_noStrategies_p2: "Estou avisando meu time sobre isso...",
+  },
+  strategypage: {
+    label_createdBy: "Criada por",
+
+    label_totalRuns: "Execuções",
+    label_saved: "Salvamentos",
+    label_rating: "Avaliação",
+
+    card_description_title: "Descrição Técnica",
+    card_description_noDesc: "Esta estratégia ainda não possui uma descrição... :(",
+
+    card_indicators_title: "Indicadores",
+    card_reviews_title: "Avaliações e Comentários",
+
+    label_showMore: "Mostrar mais",
+    label_showLess: "Mostrar menos",
   },
   strategypanel: {
     title: "Painel de Controle",
@@ -1000,21 +1032,6 @@ const locale = {
     alert_confirming_text: "Uma vez removida, não é possível recupera-la.",
     alert_deleted_title: "Removida!",
     alert_deleted_text: "Sua Estratégia foi removida com sucesso.",
-  },
-  strategypopularitem: {
-    btn_save: "Salvar",
-    btn_save_hint: "Salvar Estratégia.",
-    btn_unsave: "Remover de Salvas",
-    btn_unsave_hint: "Remover da coleção.",
-
-    btn_stats: "Ir para Estatísticas",
-    btn_userProfile: "Ir para Perfil",
-    btn_share: "Compartilhar",
-    btn_view: "Ver detalhes",
-    btn_update: "Atualizar",
-    btn_delete: "Deletar",
-
-    btn_run_hint: "Executar Estratégia.",
   },
   subscriptionbasic: {
     label_title: "BASIC",
@@ -1136,8 +1153,6 @@ const locale = {
     title_popularStrategies: "Estratégias Populares",
     label_showMore: "Mostrar mais 2",
     label_showLess: "Mostrar menos",
-
-    label_shareLinkCopied: "Link do Perfil copiado para área de transferência.",
   },
   usersubscription: {
     label_monthly: "Mensal",

@@ -14,17 +14,17 @@ const config = {
       syncLimit: 43200,
       version: 0.01
     },
-    mystrategies: {
+    myStrategies: {
       syncLimit: 15,
-      version: 0.01
+      version: 0.02
     },
-    savedstrategies: {
+    savedStrategies: {
       syncLimit: 15,
-      version: 0.01
+      version: 0.02
     },
     strategies: {
-      syncLimit: 0.015,
-      version: 0.01
+      syncLimit: 15,
+      version: 0.03
     },
     positionTypes: {
       syncLimit: 43200,
@@ -38,9 +38,9 @@ const config = {
       syncLimit: 43200,
       version: 0.04
     },
-    userprofiles: {
+    userProfiles: {
       syncLimit: 5,
-      version: 0.02
+      version: 0.03
     },
     wallets: {
       syncLimit: 8640,

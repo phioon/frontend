@@ -132,7 +132,7 @@ class ProfitabilityOverTime extends Component {
         </CardHeader>
         <CardBody>
           <h6 className="big-title">
-            {getString(prefs.locale, "charts", "chart_title_profitability")}
+            {getString(prefs.locale, "charts", "chart_profitability_title")}
           </h6>
           {
             pageFirstLoading ?
@@ -148,23 +148,22 @@ class ProfitabilityOverTime extends Component {
           <hr />
           <Row>
             <Col className="text-right">
-              <span id="result_groupByAsset">
-                <Button
-                  className={`btn-link ${selected === "groupByAsset" && "active"}`}
-                  color="primary"
-                  size="sm"
-                  type="button"
-                  onClick={() => this.changeChart(undefined, "groupByAsset")}
-                  disabled={
-                    chart.monthly.groupByAsset.data.datasets &&
-                      chart.monthly.groupByAsset.data.datasets.length < dimensionsLimit ?
-                      false :
-                      true
-                  }
-                >
-                  {getString(prefs.locale, "charts", "label_assets")}
-                </Button>
-              </span>
+              <Button
+                className={`btn-neutral btn-info ${selected === "groupByAsset" && "btn-round"}`}
+                id="result_groupByAsset"
+                color="info"
+                size="sm"
+                outline={selected === "groupByAsset"}
+                onClick={() => this.changeChart(undefined, "groupByAsset")}
+                disabled={
+                  chart.monthly.groupByAsset.data.datasets &&
+                    chart.monthly.groupByAsset.data.datasets.length < dimensionsLimit ?
+                    false :
+                    true
+                }
+              >
+                {getString(prefs.locale, "charts", "label_assets")}
+              </Button>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="result_groupByAsset">
                 {chart.monthly.groupByAsset.data.datasets &&
                   chart.monthly.groupByAsset.data.datasets.length < dimensionsLimit ?
@@ -172,23 +171,23 @@ class ProfitabilityOverTime extends Component {
                   getString(prefs.locale, "charts", "limitReached_asset_hint")
                 }
               </UncontrolledTooltip>
-              <span id="result_groupByWallet">
-                <Button
-                  className={`btn-link ${selected === "groupByWallet" && "active"}`}
-                  color="primary"
-                  size="sm"
-                  type="button"
-                  onClick={() => this.changeChart(undefined, "groupByWallet")}
-                  disabled={
-                    chart.monthly.groupByWallet.data.datasets &&
-                      chart.monthly.groupByWallet.data.datasets.length < dimensionsLimit ?
-                      false :
-                      true
-                  }
-                >
-                  {getString(prefs.locale, "charts", "label_wallets")}
-                </Button>
-              </span>
+              {" "}
+              <Button
+                className={`btn-neutral btn-info ${selected === "groupByWallet" && "btn-round"}`}
+                id="result_groupByWallet"
+                color="info"
+                size="sm"
+                outline={selected === "groupByWallet"}
+                onClick={() => this.changeChart(undefined, "groupByWallet")}
+                disabled={
+                  chart.monthly.groupByWallet.data.datasets &&
+                    chart.monthly.groupByWallet.data.datasets.length < dimensionsLimit ?
+                    false :
+                    true
+                }
+              >
+                {getString(prefs.locale, "charts", "label_wallets")}
+              </Button>
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="result_groupByWallet">
                 {
                   chart.monthly.groupByWallet.data.datasets &&
@@ -197,12 +196,13 @@ class ProfitabilityOverTime extends Component {
                     getString(prefs.locale, "charts", "limitReached_wallet_hint")
                 }
               </UncontrolledTooltip>
+              {" "}
               <Button
-                className={`btn-link ${selected === "overall" && "active"}`}
-                color="primary"
+                className={`btn-neutral btn-info ${selected === "overall" && "btn-round"}`}
+                color="info"
                 id="result_overall"
                 size="sm"
-                type="button"
+                outline={selected === "overall"}
                 onClick={() => this.changeChart(undefined, "overall")}
               >
                 {getString(prefs.locale, "charts", "label_overall")}

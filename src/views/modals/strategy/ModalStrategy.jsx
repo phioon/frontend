@@ -240,8 +240,6 @@ class ModalStrategy extends React.Component {
         break;
     }
 
-    // console.log(iItems)
-
     this.setState({ currency, iItems, strategy, selected })
   }
   prepareToCreate(iItems) {
@@ -254,9 +252,8 @@ class ModalStrategy extends React.Component {
   prepareStrategyObj(iItems, strategy, objData) {
     let { getString, prefs } = this.props;
     let { currency } = this.state;
-    let wsRules = JSON.parse(objData.rules)
 
-    for (var [wsId, rules] of Object.entries(wsRules)) {
+    for (var [wsId, rules] of Object.entries(objData.rules)) {
       let ws = this.props.managers.strategy.convertJSONRulesIntoWS(getString, prefs, currency, iItems, wsId, rules)
 
       for (var item of ws.items) {
@@ -288,7 +285,7 @@ class ModalStrategy extends React.Component {
       isValidated = true
       if (name == this.state.strategy.initial.name)
         isValidated = true
-      else if (this.props.sStrategyNames.includes(name))
+      else if (this.props.myStrategyNames.includes(name))
         isValidated = false
     }
 
@@ -326,8 +323,6 @@ class ModalStrategy extends React.Component {
           newState.strategy.states[stateName] = "has-success"
         else
           newState.strategy.states[stateName] = "has-danger"
-        break;
-      default:
         break;
     }
 
@@ -749,8 +744,10 @@ class ModalStrategy extends React.Component {
         }
       }
 
-    // Strategy's rules
-    strategy.data.rules = this.props.managers.strategy.jsonRulesAsString(strategy.workspaces)
+    // Rules
+    strategy.data.rules = this.props.managers.strategy.prepareRules(strategy.workspaces)
+    // Tags
+    strategy.data.tags = this.props.managers.strategy.prepareTags(strategy.workspaces)
 
     strategy.data.isDynamic = this.props.managers.strategy.isDynamic(strategy)
     strategy.isValidated = this.isValidated(strategy)
@@ -758,6 +755,7 @@ class ModalStrategy extends React.Component {
 
     if (this.props.action === "update") {
       strategy.patch.rules = strategy.data.rules
+      strategy.patch.tags = strategy.data.tags
       strategy.patch.isDynamic = strategy.data.isDynamic
     }
 
@@ -842,7 +840,8 @@ class ModalStrategy extends React.Component {
       type: strategy.data.type,
       is_public: strategy.data.isPublic,
       is_dynamic: strategy.data.isDynamic,
-      rules: strategy.data.rules
+      rules: strategy.data.rules,
+      tags: strategy.data.tags,
     }
 
     let result = await this.props.managers.app.myStrategyCreate(object)

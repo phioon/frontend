@@ -104,7 +104,7 @@ class StrategyList(generics.ListAPIView):
         # 2. Queryset
         strategies = app_models.Strategy.objects.filter(**filters)
         strategies = strategies.order_by(order_by)
-        
+
         return strategies
 
     def convert_order_by(self, order_by):
@@ -120,7 +120,7 @@ class StrategyList(generics.ListAPIView):
 
 class StrategyDetail(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = serializers.StrategySerializer
+    serializer_class = serializers.StrategyDetailSerializer
 
     def get_queryset(self):
         return app_models.Strategy.objects.filter(is_public=True)

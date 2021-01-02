@@ -7,6 +7,8 @@ const locale = {
     label_loading: "Loading...",
     label_days: "days",
 
+    label_sharedLinkCopied: "Link copied to clipboard (CRTL-C).",
+
     input_search: "Search...",
     input_select: "Select...",
     input_noOptions: "No options available..."
@@ -19,6 +21,7 @@ const locale = {
     title_phitrader: "Technical Analysis",
     title_positions: "My Assets",
     title_strategypanel: "Strategies",
+    title_strategypage: "Strategy",
     title_strategygallery: "Strategies",
     title_userprofile: "User",
     title_usersubscription: "My Plan",
@@ -44,9 +47,11 @@ const locale = {
     last: "Last"
   },
   charts: {
-    chart_title_profitability: "Profitability over time (%)",
-    chart_title_diversification: "Diversification (%)",
-    chart_title_profitabilityRanking: "Profitability Ranking (%)",
+    chart_profitability_title: "Profitability over time (%)",
+    chart_diversification_title: "Diversification (%)",
+    chart_profitabilityRanking_title: "Profitability Ranking (%)",
+    chart_usage_title: "Runs",
+    chart_usage_desc: "Last 30 days",
 
     chart_tooltip_profitability: "% Profitability",
 
@@ -144,6 +149,7 @@ const locale = {
     strategy_limitReached: "Neew more strategies to improve your results? Go premium and enjoy it! ;)",
     strategy_addedToCollection: "Strategy added to your collection.",
     strategy_removedFromCollection: "Strategy removed from your collection.",
+    strategy_thanksForFeedback: "Submitted! Thank you for your feedback. ;)",
 
     user_profileUpdated: "Profile updated!",
     user_planPastDue_p1: "hmm... Something wrong happened while renewing your Plan :/",
@@ -543,7 +549,7 @@ const locale = {
     label_logic_dynamic: "Dynamic",
     label_logic_static: "Static",
     input_logic_hint: "A Dynamic Strategy can be applied to any time interval (w, d, m60...). It becomes Static if a specific interval is set for one of the rules.",
-    input_description: "Description",
+    input_description: "Technical Description",
     label_description_placeholder: "A detailed description may help other users understand how your Strategy works...",
     input_public: "Public",
     input_public_hint: "Other users can see this strategy.",
@@ -574,12 +580,19 @@ const locale = {
     alert_created_text_p2: "Now, you can run it and see the results! ;) ",
 
     error_name: "It's important that the name is less than 24 characters and unique between your Strategies.",
-    error_desc: "It seems too long... Please, try to keep it lesser than 1000 characters.",
+    error_desc: "It seems too long... Please, try to keep it lesser than 2000 characters.",
 
     btn_add: "Add",
     btn_create: "Create",
     btn_update: "Update",
     btn_view: "Back"
+  },
+  modalstrategyrating: {
+    input_review: "Review",
+
+    error_review: "It seems too long... Please, try to keep it lesser than 1000 characters.",
+
+    btn_footer: "Avaliar",
   },
   modalstrategyresults: {
     label_createdBy: "Created by",
@@ -952,18 +965,21 @@ const locale = {
     label_static: "Static",
     label_static_hint: "Some rules are fixed to a specific time interval.",
     label_category: "Category",
-
-    btn_save: "Save",
-    btn_save_hint: "Save Strategy.",
+  },
+  strategycomponents: {
+    btn_save: "Add to Saved",
+    btn_save_hint: "Add to Saved.",
     btn_unsave: "Remove from Saved",
-    btn_unsave_hint: "Remove from Saved collection.",
+    btn_unsave_hint: "Remove from Saved.",
 
-    btn_stats: "Go to Stats",
-    btn_userProfile: "Go to User Profile",
-    btn_share: "Share",
     btn_view: "See details",
     btn_update: "Update",
     btn_delete: "Delete",
+
+    btn_strategyPage: "See details",
+    btn_userProfile: "Go to User Profile",
+    btn_rate: "Rate",
+    btn_share: "Share",
 
     btn_run_hint: "Run Strategy.",
   },
@@ -975,6 +991,25 @@ const locale = {
 
     label_gallery_noStrategies_p1: "Oops! Something went wrong.",
     label_gallery_noStrategies_p2: "Let me report my team about that...",
+  },
+  strategypage: {
+    label_createdBy: "Created by",
+
+    label_totalRuns: "Runs",
+    label_saved: "Saved",
+    label_rating: "Rating",
+
+    card_description_title: "Technical Description",
+    card_description_noDesc: "This strategy doesn't have a description yet... :(",
+
+    card_reviews_title: "Ratings e Reviews",
+    label_clickToRate: "Click to Rate",
+    label_tapToRate: "Tap to Rate",
+
+    card_indicators_title: "Indicators",
+
+    label_showMore: "Show more",
+    label_showLess: "Show less",
   },
   strategypanel: {
     title: "Control Panel",
@@ -1000,21 +1035,6 @@ const locale = {
     alert_confirming_text: "Once deleted, it's not possible to recover it back.",
     alert_deleted_title: "Deleted!",
     alert_deleted_text: "Your Strategy has been deleted.",
-  },
-  strategypopularitem: {
-    btn_save: "Save",
-    btn_save_hint: "Save Strategy.",
-    btn_unsave: "Remove from Saved",
-    btn_unsave_hint: "Remove from Saved collection.",
-
-    btn_stats: "Go to Stats",
-    btn_userProfile: "Go to User Profile",
-    btn_share: "Share",
-    btn_view: "See details",
-    btn_update: "Update",
-    btn_delete: "Delete",
-
-    btn_run_hint: "Run Strategy.",
   },
   subscriptionbasic: {
     label_title: "BASIC",
@@ -1136,8 +1156,6 @@ const locale = {
     title_popularStrategies: "Popular Strategies",
     label_showMore: "Show 2 more",
     label_showLess: "Show less",
-
-    label_shareLinkCopied: "Profile link copied to clipboard.",
   },
   usersubscription: {
     label_monthly: "Monthly",

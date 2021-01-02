@@ -42,14 +42,13 @@ class MeasureManager {
   }
   handleKpiPresentation(format, kpiValue, currency, includePlusMinus = false) {
     let strKpi = ""
+    let suffix = ""
 
     if (includePlusMinus && kpiValue > 0)
       strKpi += "+"
 
     switch (format) {
       case "nominal_currency":
-        let suffix = ""
-
         if (kpiValue > 1000000) {
           kpiValue = round(kpiValue / 1000000, 1)
           suffix = "M+"
@@ -65,6 +64,20 @@ class MeasureManager {
         break;
       case "currency":
         strKpi += convertFloatToCurrency(kpiValue, currency)
+        break;
+      case "nominal_number":
+        if (kpiValue > 1000000) {
+          kpiValue = round(kpiValue / 1000000, 1)
+          suffix = "M"
+        }
+        else if (kpiValue > 1000) {
+          kpiValue = round(kpiValue / 1000, 1)
+          suffix = "K"
+        }
+        else
+          kpiValue = round(kpiValue, 0)
+
+        strKpi += String(`${kpiValue}${suffix}`)
         break;
       case "nominal_percentage":
         let value = round(kpiValue, 1)

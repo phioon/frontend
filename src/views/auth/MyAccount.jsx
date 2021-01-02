@@ -361,7 +361,10 @@ class MyAccount extends React.Component {
                     {/* Change Password */}
                     <Col md="4" sm="4" xs="4" className="centered">
                       <Button
-                        className="btn-neutral"
+                        className="btn-round"
+                        size="sm"
+                        color="default"
+                        outline
                         onClick={() => this.toggleModal("changePassword")}
                       >
                         {getString(prefs.locale, this.compId, "btn_changePassword")}
