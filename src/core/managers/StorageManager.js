@@ -16,15 +16,15 @@ const config = {
     },
     myStrategies: {
       syncLimit: 15,
-      version: 0.02
+      version: 0.03
     },
     savedStrategies: {
       syncLimit: 15,
-      version: 0.02
+      version: 0.03
     },
     strategies: {
       syncLimit: 15,
-      version: 0.03
+      version: 0.04
     },
     positionTypes: {
       syncLimit: 43200,
@@ -39,7 +39,7 @@ const config = {
       version: 0.04
     },
     userProfiles: {
-      syncLimit: 5,
+      syncLimit: 2,
       version: 0.03
     },
     wallets: {
@@ -187,12 +187,10 @@ class StorageManager {
     else {
       if (cacheStorageNotSupported) {
         // Cache Storage not supported! Using Local Storage...
-
         localStorage.removeItem(sKey)
       }
       else {
         // Cache Storage supported...
-
         await cache.delete(this.getRequestId(sKey))
       }
     }
@@ -202,6 +200,13 @@ class StorageManager {
 
     if (subKey)
       sItem[subKey][strData] = null
+    else if (!Object.keys(sItem).includes(strData)) {
+      // sItem contains [subKey] structure and [subKey] was not given
+      // Cleaning up all subKeys...
+      for (var k of Object.keys(sItem))
+        if (sItem[k][strData])
+          delete sItem[k]
+    }
     else
       sItem[strData] = null
 

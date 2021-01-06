@@ -391,6 +391,28 @@ export function distance(v1, v2, threshold) {
   return distance <= threshold
 }
 
+// Icons
+export function getIconFromURL(value) {
+  let icon = "fas fa-link";
+
+  if (value.includes("https://facebook.com"))
+    icon = "fab fa-facebook-f"
+  else if (value.includes("https://instagram.com"))
+    icon = "fab fa-instagram"
+  else if (value.includes("https://linkedin.com"))
+    icon = "fab fa-linkedin-in"
+  else if (value.includes("https://t.me"))
+    icon = "fab fa-telegram"
+  else if (value.includes("https://twitter.com"))
+    icon = "fab fa-twitter"
+  else if (value.includes("https://whatsapp.com"))
+    icon = "fab fa-whatsapp"
+  else if (value.includes("https://youtube.com") || value.includes("https://youtu.be"))
+    icon = "fab fa-youtube"
+
+  return icon
+}
+
 // String
 export function substringText(text, maxLength) {
   text = String(text)
@@ -404,7 +426,7 @@ export function substringText(text, maxLength) {
   return text
 }
 export function getInitials(fullName) {
-  
+
   var names = trim(String(fullName)).split(" ")
   var fisrtName = names.shift().toUpperCase()
   var lastName = names.pop().toUpperCase()
@@ -414,7 +436,7 @@ export function getInitials(fullName) {
   return initials
 }
 export function getFirstAndLastName(fullName) {
-  
+
   let maxLength = 18
 
   let names = trim(String(fullName)).split(" ")
@@ -473,6 +495,13 @@ export function verifyLength(value, minLen, maxLen = undefined) {
 // function that verifies if a string has only letters
 export function verifyOnlyLetters(value) {
   return /^[a-zA-Z- ]+$/.test(value);
+}
+// function that returns true if value is a valid URL, false otherwise
+export function verifyURL(value) {
+  var linkRex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+  if (linkRex.test(value))
+    return true;
+  return false;
 }
 // function that verifies if a string is valid for username
 export function verifyUsernameStr(value) {

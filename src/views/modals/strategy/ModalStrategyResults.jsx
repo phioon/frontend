@@ -151,7 +151,7 @@ class ModalStrategyResults extends React.Component {
         break;
     }
 
-    if (!this.state.firstLoading && runStrategy && this.props.strategy.id) {
+    if (!this.state.firstLoading && runStrategy && this.props.strategy.uuid) {
       // Selection changed...
       this.runClick(this.props.strategy)
     }
@@ -172,7 +172,7 @@ class ModalStrategyResults extends React.Component {
     let { filters } = this.state;
 
     // Stats...
-    this.props.managers.app.strategyRun(strategy.id)
+    this.props.managers.app.strategyRun(strategy.uuid)
 
     let stockExchange = await this.props.managers.market.stockExchangeRetrieve(filters.general.stockExchange.value)
     let currency = await this.props.managers.app.currencyRetrieve(stockExchange.currency_code)

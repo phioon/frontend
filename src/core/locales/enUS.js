@@ -263,6 +263,10 @@ const locale = {
     enUS: "English",
     ptBR: "Português",
   },
+  linkitem: {
+    input_name: "Link Name",
+    input_url: "URL",
+  },
   locales: {
     enUS: "en-us",
     ptBR: "pt-br",
@@ -324,6 +328,7 @@ const locale = {
   myaccount: {
     title_personalData: "Personal Data",
     title_prefs: "Preferences",
+    title_links: "Links",
 
     input_email: "Email",
     btn_changePassword: "Change Password",
@@ -333,12 +338,14 @@ const locale = {
     input_nationality: "Nationality",
     input_birthday: "Birthday",
     input_birthday_hint: "I could send birthday gifts. Who knows...",
+    input_aboutMe: "About",
 
     input_currency: "Main Currency",
     input_currency_hint: "Do you invest in different countries? I could convert the currencies to your preferred one on dashboards and reports. ",
     input_language: "Language",
 
     error_username_minReq: "Letters (a-z), numbers (0-9), underscores (_) and periods (.)",
+    error_username_length: "It's important that it has between 3 and 32 characters. ;)",
     error_username_taken: "Username taken :/",
     error_username_couldNotCheck: "Something went wrong :/ Let's try again later.",
 
@@ -439,6 +446,14 @@ const locale = {
 
     btn_add: "Add",
     btn_save: "Save",
+  },
+  modalfollowers: {
+    title: "Followers",
+    label_noFollowers: "User doesn't have followers yet."
+  },
+  modalfollowing: {
+    title: "Following",
+    label_noFollowing: "User doesn't follow anyone yet."
   },
   modalmovingavgdetail: {
     title: "Moving Average",
@@ -924,7 +939,7 @@ const locale = {
     positions: "Positions",
     positionsMini: "P",
 
-    wallet: "Wallet",
+    dashboards: "Dashboards",
     walletoverview: "Overview",
     walletoverviewMini: "O",
     openpositions: "Open Positions",
@@ -972,7 +987,7 @@ const locale = {
     btn_unsave: "Remove from Saved",
     btn_unsave_hint: "Remove from Saved.",
 
-    btn_view: "See details",
+    btn_view: "See Rules",
     btn_update: "Update",
     btn_delete: "Delete",
 
@@ -998,6 +1013,9 @@ const locale = {
     label_totalRuns: "Runs",
     label_saved: "Saved",
     label_rating: "Rating",
+
+    label_ratings_available_hint: "out of 5.",
+    label_ratings_notAvailable_hint: "There is no ratings enough.",
 
     card_description_title: "Technical Description",
     card_description_noDesc: "This strategy doesn't have a description yet... :(",
@@ -1143,9 +1161,15 @@ const locale = {
     phibo_305_down_p2: "Resistance Lines are aligned down, increasing the probability of starting a Wave 3.",
     phibo_72_down_p1: "Price reached a technical resistance after a retracement of 21% from the recent bottom and drew a Pivot Down, increasing the probability of, at least, testing last bottom again.",
   },
+  userfollowingitem: {
+    label_follow: "Follow",
+    label_following: "Following",
+    label_unfollow: "Unfollow",
+  },
   userprofile: {
     label_editProfile: "Edit Profile",
     label_follow: "Follow",
+    label_followBack: "Follow Back",
     label_following: "Following",
     label_unfollow: "Unfollow",
     label_followers: "Followers",
@@ -1153,9 +1177,17 @@ const locale = {
     label_strategies: "Strategies",
     label_report: "Report user",
 
-    title_popularStrategies: "Popular Strategies",
+    tab_overview: "Overview",
+    tab_about: "About",
+
+    card_popularStrategies_title: "Popular Strategies",
     label_showMore: "Show 2 more",
     label_showLess: "Show less",
+
+    card_bio_title: "Bio",
+    card_bio_noBio: "User doesn't have a Bio yet... :(",
+
+    card_links_title: "Mais Informações",
   },
   usersubscription: {
     label_monthly: "Monthly",

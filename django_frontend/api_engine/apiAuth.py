@@ -253,7 +253,7 @@ def user_update(request):
     # All fields in [UserPreferences] are supposed to be updatable
     updatable_fields = [
         'email', 'username', 'first_name', 'last_name',
-        'birthday', 'nationality']
+        'birthday', 'nationality', 'about_me', 'links']
     user_updated = userCustom_updated = userPrefs_updated = None
 
     for attr, value in data.items():

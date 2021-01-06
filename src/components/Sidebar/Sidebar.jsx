@@ -38,6 +38,7 @@ class Sidebar extends React.Component {
     this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
+      openAvatar: true,
       ...this.getCollapseStates(props.routes)
     }
 

@@ -38,6 +38,7 @@ class StrategyCardMini extends React.Component {
       case "save":
         strategy.isSaved = !strategy.isSaved
         this.setState({ strategy })
+        break;
     }
   }
 
@@ -168,7 +169,7 @@ class StrategyCardMini extends React.Component {
             <Row>
               <Col xs="9" className="align-center">
                 <a
-                  href={`/app/strategies/${strategy.id}/`}
+                  href={`/app/strategies/${strategy.uuid}/`}
                   onClick={e => {
                     e.preventDefault()
                     this.onClick("goToStrategyPage", strategy)
@@ -191,11 +192,11 @@ class StrategyCardMini extends React.Component {
               <label>{getString(prefs.locale, this.compId, "label_category")}</label>
             </Col>
             <Col className="text-right">
-              <label id={"category__" + strategy.id}>
+              <label id={"category__" + strategy.uuid}>
                 {getString(prefs.locale, this.compId, this.getCategoryId(strategy.rules))}
               </label>
             </Col>
-            <UncontrolledTooltip delay={{ show: 500 }} placement="top" target={"category__" + strategy.id}>
+            <UncontrolledTooltip delay={{ show: 500 }} placement="top" target={"category__" + strategy.uuid}>
               {getString(prefs.locale, this.compId, [this.getCategoryId(strategy.rules) + "_hint"])}
             </UncontrolledTooltip>
           </Row>
@@ -205,13 +206,13 @@ class StrategyCardMini extends React.Component {
               <label>{getString(prefs.locale, this.compId, "label_logic")}</label>
             </Col>
             <Col className="text-right">
-              <label id={"logic__" + strategy.id}>
+              <label id={"logic__" + strategy.uuid}>
                 {strategy.is_dynamic ?
                   getString(prefs.locale, this.compId, "label_dynamic") :
                   getString(prefs.locale, this.compId, "label_static")}
               </label>
             </Col>
-            <UncontrolledTooltip delay={{ show: 500 }} placement="top" target={"logic__" + strategy.id}>
+            <UncontrolledTooltip delay={{ show: 500 }} placement="top" target={"logic__" + strategy.uuid}>
               {strategy.is_dynamic ?
                 getString(prefs.locale, this.compId, "label_dynamic_hint") :
                 getString(prefs.locale, this.compId, "label_static_hint")

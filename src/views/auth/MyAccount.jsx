@@ -21,6 +21,7 @@ import ReactDatetime from "react-datetime";
 import Select from "react-select";
 
 import ModalChangePassword from "../modals/auth/ModalChangePassword";
+import ModalLink from "../modals/auth/ModalLink";
 
 import TimeManager from "../../core/managers/TimeManager";
 import { localeList } from "../../core/locales";
@@ -29,10 +30,12 @@ import {
   deepCloneObj,
   verifyLength,
   verifyOnlyLetters,
+  verifyURL,
   verifyUsernameStr,
   getInitials,
   getFirstAndLastName
 } from "../../core/utils";
+import SortableLinks from "../../components/sortables/SortableLinks";
 
 class MyAccount extends React.Component {
   constructor(props) {
@@ -43,6 +46,7 @@ class MyAccount extends React.Component {
       isCheckingUsername: false,
 
       modal_changePassword_isOpen: false,
+      modal_link_isOpen: false,
 
       personalData: {
         data: {
@@ -53,6 +57,7 @@ class MyAccount extends React.Component {
           initials: "",
           nationality: "",
           birthday: "",
+          about_me: "",
         },
         states: {},
 
@@ -69,11 +74,29 @@ class MyAccount extends React.Component {
         isLoading: false,
         isValidated: undefined
       },
+      links: {
+        data: {
+          links: []
+        },
+        items: [],
+
+        isLoading: false,
+        isValidated: undefined
+      },
+
+      selected: {
+        action: undefined,
+        link: undefined,
+        index: undefined,
+      },
+
       currencies: [],
       languages: []
     }
 
-    this.toggleModal = this.toggleModal.bind(this)
+    this.onLinkCommit = this.onLinkCommit.bind(this);
+    this.onLinkChange = this.onLinkChange.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
   }
   componentDidMount() {
     this.props.setNavbarTitleId("title_" + this.compId)
@@ -84,7 +107,7 @@ class MyAccount extends React.Component {
   }
   async prepareUserData() {
     let { getString, prefs: prefsFromProps } = this.props;
-    let { personalData, preferences } = this.state;
+    let { personalData, preferences, links } = this.state;
 
     let user = this.props.user
     user.initials = this.returnUserInitals(user)
@@ -94,6 +117,10 @@ class MyAccount extends React.Component {
         personalData.data[k] = v
       else if (Object.keys(preferences.data).includes(k))
         preferences.data[k] = v
+      else if (Object.keys(links.data).includes(k)) {
+        links.data[k] = v
+        links.items = this.prepareLinkItems(v)
+      }
     }
 
     // Currencies
@@ -122,8 +149,37 @@ class MyAccount extends React.Component {
     this.setState({
       personalData,
       prefs: preferences,
+      links: links,
       currencies, languages,
     })
+  }
+  prepareLinkItems(linkList) {
+    let items = []
+
+    for (var link of linkList) {
+      let link_obj = {
+        data: { name: link.name, url: link.url },
+        states: { name: "has-success", url: "has-success" },
+        isValidated: true
+      }
+      link_obj.initial = deepCloneObj(link_obj.data)
+
+      items.push(link_obj)
+    }
+
+    return items
+  }
+  prepareLinkData(linkItems) {
+    let data = []
+
+    for (var link of linkItems) {
+      if (link.isValidated)
+        data.push({
+          name: link.data.name,
+          url: link.data.url
+        })
+    }
+    return data
   }
 
   returnUserInitals(user) {
@@ -149,30 +205,34 @@ class MyAccount extends React.Component {
         newState[type].data.username_msgId = ""
         newState[type].data[fieldName] = value.toLowerCase()     // Keep it lowercase
 
-        if (verifyLength(value, 3) && verifyUsernameStr(value)) {
-          if (newState[type].initial[fieldName] === value) {
-            // Username is the same as before
-            newState.personalData.states[fieldName] = ""
+        if (verifyLength(value, 3, 32)) {
+          if (verifyUsernameStr(value)) {
+            if (newState[type].initial[fieldName] === value) {
+              // Username is the same as before
+              newState.personalData.states[fieldName] = ""
+            }
+            else {
+              // Username is different as the initial one...
+              this.checkUsernameAvailability(newState[type], fieldName, value)
+              newState[type].states[fieldName] = "has-success"
+            }
           }
           else {
-            // Username is different as the initial one...
-            this.checkUsernameAvailability(newState[type], fieldName, value)
-            newState[type].states[fieldName] = "has-success"
+            // Username is not complaint with the minimum requirements
+            newState[type].data.username_msgId = "error_username_minReq"
+            newState[type].states[fieldName] = "has-danger"
           }
         }
         else {
-          // Username is not complaint with the minimum requirements
-          newState[type].data.username_msgId = "error_username_minReq"
+          // Username is too short or too long
+          newState[type].data.username_msgId = "error_username_length"
           newState[type].states[fieldName] = "has-danger"
         }
         break;
       case "first_name":
         if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
           newState[type].states[fieldName] = "has-success";
-
           newState[type].data.initials = getInitials(`${value} ${newState[type].data.last_name}`)
-          //newState[type].data.initials = `${value[0]}${newState[type].data.last_name[0]}`
-          //newState[type].data.initials = newState[type].data.initials
         }
         else
           newState[type].states[fieldName] = "has-danger";
@@ -180,15 +240,10 @@ class MyAccount extends React.Component {
       case "last_name":
         if (verifyLength(value, 3) && verifyOnlyLetters(value)) {
           newState[type].states[fieldName] = "has-success";
-
           newState[type].data.initials = getInitials(`${newState[type].data.first_name} ${value}`)
-          //newState[type].data.initials = `${newState[type].data.first_name[0]}${value[0]}`
-          //newState[type].data.initials = newState[type].data.initials
         }
         else
           newState[type].states[fieldName] = "has-danger";
-        break;
-      default:
         break;
     }
 
@@ -224,6 +279,88 @@ class MyAccount extends React.Component {
 
     this.setState(newState)
   }
+  onLinkChange(itemIndex, fieldName, value) {
+    let newState = { links: this.state.links };
+
+    if (this.state.labelAlertState !== null) {
+      newState.alertState = null
+      newState.alertMsg = ""
+    }
+
+    newState.links.items[itemIndex].data[fieldName] = value
+
+    switch (fieldName) {
+      case "name":
+        if (verifyLength(value, 1))
+          newState.links.items[itemIndex].states[fieldName] = "has-success"
+        else
+          newState.links.items[itemIndex].states[fieldName] = "has-danger"
+        break;
+      case "url":
+        if (verifyURL(value))
+          newState.links.items[itemIndex].states[fieldName] = "has-success"
+        else
+          newState.links.items[itemIndex].states[fieldName] = "has-danger"
+        break;
+    }
+
+    newState.links.items[itemIndex].isValidated = this.isLinkValidated(newState.links.items[itemIndex])
+    newState.links.isValidated = this.areLinksValidated(newState.links.items)
+
+    // Prepare links for database...
+    newState.links.data.links = this.prepareLinkData(newState.links.items)
+
+    this.setState(newState)
+  }
+  onLinkCommit(action, item) {
+    let { links } = this.state;
+
+    switch (action) {
+      case "add":
+        links.items.push(item)
+        break;
+      case "delete":
+        // item here means 'index'.
+        links.items.splice(item, 1)
+        break;
+      case "sort":
+        // item here means 'items' (plural). It's triggered every time the items are reordered.
+        links.items = item
+        break;
+    }
+
+    links.isValidated = this.areLinksValidated(links.items)
+
+    // Prepare links for database....
+    links.data.links = this.prepareLinkData(links.items)
+
+    this.setState({ links })
+  }
+
+  isValidated(obj) {
+    if (areObjsEqual(obj.data, obj.initial))
+      return false
+
+    if (Object.values(obj.states).includes("has-danger"))
+      return false
+
+    return true
+  }
+  isLinkValidated(obj) {
+    for (var state of Object.values(obj.states))
+      if (state != "has-success")
+        return false
+
+    return true
+  }
+  areLinksValidated(objs) {
+    for (var link of objs)
+      if (!link.isValidated)
+        return false
+
+    return true
+  }
+
   async checkUsernameAvailability(personalData, fieldName, value) {
     this.setState({ isCheckingUsername: true })
 
@@ -248,33 +385,39 @@ class MyAccount extends React.Component {
     this.setState(newState)
   }
 
-  isValidated(obj) {
-    if (areObjsEqual(obj.data, obj.initial))
-      return false
-
-    if (Object.values(obj.states).includes("has-danger"))
-      return false
-
-    return true
+  onClick(action, context, obj) {
+    switch (action) {
+      case "addLink":
+        this.addLinkClick()
+        break;
+      case "save":
+        this.saveClick(context, obj)
+        break;
+    }
   }
+  addLinkClick() {
+    let link = {
+      data: { name: "", url: "https://" },
+      initial: { name: "", url: "https://" },
+      states: { name: "", url: "" },
+      isValidated: undefined
+    }
 
-  isDateValid(date) {
-    var today = new Date()
-    return date.isBefore(today) ? true : false
+    this.onLinkCommit("add", link)
   }
-
-  async saveClick(e, type, obj) {
-    e.preventDefault();
+  async saveClick(context, obj) {
     obj.isLoading = true
-    this.setState({ [type]: obj })
+    this.setState({ [context]: obj })
 
     let obj_data = deepCloneObj(obj.data)
 
     for (let [k, v] of Object.entries(obj_data)) {
-
       switch (k) {
         case "birthday":
-          obj_data[k] = TimeManager.getDateString(v)
+          if (v)
+            obj_data[k] = TimeManager.getDateString(v)
+          else
+            obj_data[k] = v
           break;
         case "first_name":
           obj_data[k] = trim(v)
@@ -282,14 +425,19 @@ class MyAccount extends React.Component {
         case "last_name":
           obj_data[k] = trim(v)
           break;
+        case "links":
+          obj_data[k] = v
+          break;
         default:
           if (typeof v === "object") {
             // Data from Selects {value: "", label: ""} must be readable for the API. So, just considers the field 'value'
             obj_data[k] = v ? v.value : v
           }
+          else {
+            obj_data[k] = v
+          }
           break;
       }
-
     }
 
     await this.props.managers.auth.userUpdate(obj_data)
@@ -299,9 +447,13 @@ class MyAccount extends React.Component {
     obj.states = {}
     obj.initial = deepCloneObj(obj.data)
 
-    this.setState({ [type]: obj })
+    this.setState({ [context]: obj })
   }
 
+  isDateValid(date) {
+    var today = new Date()
+    return date.isBefore(today) ? true : false
+  }
   hideAlert() {
     this.setState({
       alert: null
@@ -320,6 +472,7 @@ class MyAccount extends React.Component {
 
       personalData,
       preferences,
+      links,
 
       currencies,
       languages,
@@ -344,123 +497,132 @@ class MyAccount extends React.Component {
                 <h5 className="title">{getString(prefs.locale, this.compId, "title_personalData")}</h5>
               </CardHeader>
               <CardBody>
-                <Form>
-                  <Row className="justify-content-center">
-                    {/* Email */}
-                    <Col md="8" sm="8" xs="8">
-                      <FormGroup>
-                        <label>{getString(prefs.locale, this.compId, "input_email")}</label>
-                        <Input
-                          type="email"
-                          name="email"
-                          value={personalData.data.email}
-                          disabled
-                        />
-                      </FormGroup>
-                    </Col>
-                    {/* Change Password */}
-                    <Col md="4" sm="4" xs="4" className="centered">
-                      <Button
-                        className="btn-round"
-                        size="sm"
-                        color="default"
-                        outline
-                        onClick={() => this.toggleModal("changePassword")}
-                      >
-                        {getString(prefs.locale, this.compId, "btn_changePassword")}
-                      </Button>
-                    </Col>
-                  </Row>
-                  <Row className="justify-content-center">
-                    {/* Username */}
-                    <Col md="8" sm="8" xs="8">
-                      <FormGroup className={`has-label ${personalData.states.username}`}>
-                        <label>{getString(prefs.locale, this.compId, "input_username")}</label>
-                        <Input
-                          type="text"
-                          name="username"
-                          value={personalData.data.username}
-                          onChange={e => this.onChange("personalData", e.target.name, e.target.value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col md="4" sm="4" xs="4" className="align-center">
-                      {isCheckingUsername && <Spinner color="info" size="sm" />}
-                      <label className="text-danger">
-                        {personalData.states.username === "has-danger" &&
-                          getString(prefs.locale, this.compId, personalData.data.username_msgId)
-                        }
+                <Row className="justify-content-center">
+                  {/* Email */}
+                  <Col md="8" sm="8" xs="8">
+                    <FormGroup>
+                      <label>{getString(prefs.locale, this.compId, "input_email")}</label>
+                      <Input
+                        type="email"
+                        name="email"
+                        value={personalData.data.email}
+                        disabled
+                      />
+                    </FormGroup>
+                  </Col>
+                  {/* Change Password */}
+                  <Col md="4" sm="4" xs="4" className="centered">
+                    <Button
+                      className="btn-round"
+                      size="sm"
+                      color="default"
+                      outline
+                      onClick={() => this.toggleModal("changePassword")}
+                    >
+                      {getString(prefs.locale, this.compId, "btn_changePassword")}
+                    </Button>
+                  </Col>
+                </Row>
+                <Row className="justify-content-center">
+                  {/* Username */}
+                  <Col md="8" sm="8" xs="8">
+                    <FormGroup className={`has-label ${personalData.states.username}`}>
+                      <label>{getString(prefs.locale, this.compId, "input_username")}</label>
+                      <Input
+                        type="text"
+                        name="username"
+                        value={personalData.data.username}
+                        onChange={e => this.onChange("personalData", e.target.name, e.target.value)}
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md="4" sm="4" xs="4" className="align-center">
+                    {isCheckingUsername && <Spinner color="info" size="sm" />}
+                    <label className="text-danger">
+                      {personalData.states.username === "has-danger" &&
+                        getString(prefs.locale, this.compId, personalData.data.username_msgId)
+                      }
+                    </label>
+                  </Col>
+                </Row>
+                <Row>
+                  {/* First Name */}
+                  <Col md="6">
+                    <FormGroup className={`has-label ${personalData.states.first_name}`}>
+                      <label>{getString(prefs.locale, this.compId, "input_firstName")}</label>
+                      <Input
+                        placeholder={getString(prefs.locale, this.compId, "input_firstName")}
+                        type="text"
+                        name="first_name"
+                        value={personalData.data.first_name}
+                        onChange={e => this.onChange("personalData", e.target.name, e.target.value)}
+                      />
+                    </FormGroup>
+                  </Col>
+                  {/* Last Name */}
+                  <Col md="6">
+                    <FormGroup className={`has-label ${personalData.states.last_name}`}>
+                      <label>{getString(prefs.locale, this.compId, "input_lastName")}</label>
+                      <Input
+                        placeholder={getString(prefs.locale, this.compId, "input_lastName")}
+                        type="text"
+                        name="last_name"
+                        value={personalData.data.last_name}
+                        onChange={e => this.onChange("personalData", e.target.name, e.target.value)}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  {/* Nationality */}
+                  <Col md="6">
+                    <FormGroup>
+                      <label>{getString(prefs.locale, this.compId, "input_nationality")}</label>
+                      <Input
+                        value={getString(prefs.locale, "countries", String(personalData.data.nationality).toLowerCase())}
+                        placeholder={getString(prefs.locale, this.compId, "input_nationality")}
+                        type="text"
+                        disabled
+                      />
+                    </FormGroup>
+                  </Col>
+                  {/* Birthday */}
+                  <Col md="6">
+                    <FormGroup className={`has-label ${personalData.states.birthday}`}>
+                      <label>{getString(prefs.locale, this.compId, "input_birthday")}
+                        {" "}
+                        <i id="input_birthday_hint" className="nc-icon nc-alert-circle-i" />
                       </label>
-                    </Col>
-                  </Row>
-                  <Row>
-                    {/* First Name */}
-                    <Col md="6">
-                      <FormGroup className={`has-label ${personalData.states.first_name}`}>
-                        <label>{getString(prefs.locale, this.compId, "input_firstName")}</label>
-                        <Input
-                          placeholder={getString(prefs.locale, this.compId, "input_firstName")}
-                          type="text"
-                          name="first_name"
-                          value={personalData.data.first_name}
-                          onChange={e => this.onChange("personalData", e.target.name, e.target.value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                    {/* Last Name */}
-                    <Col md="6">
-                      <FormGroup className={`has-label ${personalData.states.last_name}`}>
-                        <label>{getString(prefs.locale, this.compId, "input_lastName")}</label>
-                        <Input
-                          placeholder={getString(prefs.locale, this.compId, "input_lastName")}
-                          type="text"
-                          name="last_name"
-                          value={personalData.data.last_name}
-                          onChange={e => this.onChange("personalData", e.target.name, e.target.value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    {/* Nationality */}
-                    <Col md="6">
-                      <FormGroup>
-                        <label>{getString(prefs.locale, this.compId, "input_nationality")}</label>
-                        <Input
-                          value={getString(prefs.locale, "countries", String(personalData.data.nationality).toLowerCase())}
-                          placeholder={getString(prefs.locale, this.compId, "input_nationality")}
-                          type="text"
-                          disabled
-                        />
-                      </FormGroup>
-                    </Col>
-                    {/* Birthday */}
-                    <Col md="6">
-                      <FormGroup className={`has-label ${personalData.states.birthday}`}>
-                        <label>{getString(prefs.locale, this.compId, "input_birthday")}
-                          {" "}
-                          <i id="input_birthday_hint" className="nc-icon nc-alert-circle-i" />
-                        </label>
-                        <UncontrolledTooltip delay={{ show: 200 }} placement="top" target="input_birthday_hint">
-                          <label>{getString(prefs.locale, this.compId, "input_birthday_hint")}</label>
-                        </UncontrolledTooltip>
-                        <ReactDatetime
-                          inputProps={{
-                            className: "form-control",
-                            placeholder: this.props.getString(prefs.locale, "generic", "input_select")
-                          }}
-                          locale={getString(prefs.locale, "locales", prefs.locale)}
-                          value={personalData.data.birthday && TimeManager.getMoment(personalData.data.birthday, true)}
-                          onChange={value => this.onSelectChange("personalData", "birthday", value)}
-                          isValidDate={this.isDateValid}
-                          timeFormat={false}
-                          viewMode="years"
-                          closeOnSelect
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                </Form>
+                      <UncontrolledTooltip delay={{ show: 200 }} placement="top" target="input_birthday_hint">
+                        <label>{getString(prefs.locale, this.compId, "input_birthday_hint")}</label>
+                      </UncontrolledTooltip>
+                      <ReactDatetime
+                        inputProps={{
+                          className: "form-control",
+                          placeholder: this.props.getString(prefs.locale, "generic", "input_select")
+                        }}
+                        locale={getString(prefs.locale, "locales", prefs.locale)}
+                        value={personalData.data.birthday && TimeManager.getMoment(personalData.data.birthday, true)}
+                        onChange={value => this.onSelectChange("personalData", "birthday", value)}
+                        isValidDate={this.isDateValid}
+                        timeFormat={false}
+                        viewMode="years"
+                        closeOnSelect
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                {/* About Me */}
+                <FormGroup>
+                  <label>{getString(prefs.langId, this.compId, "input_aboutMe")}</label>
+                  <Input
+                    className="textarea"
+                    type="textarea"
+                    name="about_me"
+                    value={personalData.data.about_me}
+                    onChange={e => this.onChange("personalData", e.target.name, e.target.value)}
+                  />
+                </FormGroup>
               </CardBody>
               <CardFooter>
                 <Row className="centered">
@@ -472,9 +634,57 @@ class MyAccount extends React.Component {
                       color="success"
                       name="btnSavePersonalData"
                       disabled={personalData.isValidated ? false : true}
-                      onClick={e => this.saveClick(e, "personalData", personalData)}
+                      onClick={() => this.onClick("save", "personalData", personalData)}
                     >
                       {personalData.isLoading ?
+                        <Spinner size="sm" /> :
+                        getString(prefs.locale, this.compId, "btn_save")
+                      }
+                    </Button>
+                  </Col>
+                </Row>
+              </CardFooter>
+            </Card>
+            {/* Links */}
+            <Card>
+              <CardHeader>
+                <Row>
+                  <Col>
+                    <h5 className="title">{getString(prefs.locale, this.compId, "title_links")}</h5>
+                  </Col>
+                  <Col className="text-right">
+                    <Button className="btn-icon btn-round"
+                      size="sm"
+                      color="success"
+                      outline
+                      onClick={() => this.onClick("addLink")}
+                    >
+                      <i className="nc-icon nc-simple-add" />
+                    </Button>
+                  </Col>
+                </Row>
+              </CardHeader>
+              <CardBody>
+                <SortableLinks
+                  prefs={prefs}
+                  getString={getString}
+                  items={links.items}
+                  onChangeItem={this.onLinkChange}
+                  onLinkCommit={this.onLinkCommit} />
+              </CardBody>
+              <CardFooter>
+                <Row className="centered">
+                  <Col lg="4" md="6" xs="6">
+                    <Button
+                      block
+                      type="submit"
+                      className="btn-simple btn-round"
+                      color="success"
+                      name="btnSaveLinks"
+                      disabled={links.isValidated ? false : true}
+                      onClick={() => this.onClick("save", "links", links)}
+                    >
+                      {links.isLoading ?
                         <Spinner size="sm" /> :
                         getString(prefs.locale, this.compId, "btn_save")
                       }
@@ -535,7 +745,7 @@ class MyAccount extends React.Component {
                       color="success"
                       name="btnSaveprefs"
                       disabled={preferences.isValidated ? false : true}
-                      onClick={e => this.saveClick(e, "prefs", preferences)}
+                      onClick={() => this.onClick("save", "prefs", preferences)}
                     >
                       {preferences.isLoading ?
                         <Spinner size="sm" /> :

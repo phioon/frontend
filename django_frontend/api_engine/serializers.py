@@ -93,6 +93,7 @@ class StrategySerializer(serializers.ModelSerializer):
 
 
 class StrategyDetailSerializer(serializers.ModelSerializer):
+    id = serializers.HiddenField(default=None)
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
     owner_username = serializers.ReadOnlyField(source='owner.username')
     stats = serializers.SerializerMethodField()
@@ -120,16 +121,26 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    about_me = serializers.ReadOnlyField(source='userCustom.about_me')
+    links = serializers.ReadOnlyField(source='userCustom.links')
     subscription = serializers.ReadOnlyField(source='userCustom.subscription.name')
+
     strategies = serializers.SerializerMethodField()
-    is_followed_by_me = serializers.SerializerMethodField()
     amount_following = serializers.SerializerMethodField()
     amount_followers = serializers.SerializerMethodField()
+    is_a_follower = serializers.SerializerMethodField()
+    is_followed_by_me = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'subscription',
-                  'is_followed_by_me', 'amount_following', 'amount_followers', 'strategies']
+        fields = ['username', 'first_name', 'last_name', 'about_me',
+                  'links', 'subscription',
+                  'amount_following', 'amount_followers', 'is_a_follower', 'is_followed_by_me', 'strategies']
+
+    def get_is_a_follower(self, obj):
+        requestor = self.context['request'].user
+        is_a_follower = obj.following.filter(following_user=requestor).exists()
+        return is_a_follower
 
     def get_is_followed_by_me(self, obj):
         requestor = self.context['request'].user
@@ -149,13 +160,35 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return serializer.data
 
 
-class FollowingSerializer(serializers.ModelSerializer):
-    username = serializers.ReadOnlyField(source='following_user.username')
+class UserFollowerSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source='user.username')
     full_name = serializers.SerializerMethodField()
+    is_followed_by_me = serializers.SerializerMethodField()
 
     class Meta:
         model = app_models.UserFollowing
-        fields = ['username', 'full_name']
+        fields = ['username', 'full_name', 'is_followed_by_me']
+
+    def get_full_name(self, obj):
+        first_name = obj.user.first_name
+        last_name = obj.user.last_name
+        full_name = str(first_name + ' ' + last_name)
+        return full_name
+
+    def get_is_followed_by_me(self, obj):
+        requestor = self.context['request'].user
+        is_followed_by_me = requestor.following.filter(following_user=obj.user).exists()
+        return is_followed_by_me
+
+
+class UserFollowingSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source='following_user.username')
+    full_name = serializers.SerializerMethodField()
+    is_followed_by_me = serializers.SerializerMethodField()
+
+    class Meta:
+        model = app_models.UserFollowing
+        fields = ['username', 'full_name', 'is_followed_by_me']
 
     def get_full_name(self, obj):
         first_name = obj.following_user.first_name
@@ -163,20 +196,10 @@ class FollowingSerializer(serializers.ModelSerializer):
         full_name = str(first_name + ' ' + last_name)
         return full_name
 
-
-class FollowersSerializer(serializers.ModelSerializer):
-    username = serializers.ReadOnlyField(source='user.username')
-    full_name = serializers.SerializerMethodField()
-
-    class Meta:
-        model = app_models.UserFollowing
-        fields = ['username', 'full_name']
-
-    def get_full_name(self, obj):
-        first_name = obj.user.first_name
-        last_name = obj.user.last_name
-        full_name = str(first_name + ' ' + last_name)
-        return full_name
+    def get_is_followed_by_me(self, obj):
+        requestor = self.context['request'].user
+        is_followed_by_me = requestor.following.filter(following_user=obj.following_user).exists()
+        return is_followed_by_me
 
 
 class WalletSerializer(serializers.ModelSerializer):
@@ -226,6 +249,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    about_me = serializers.ReadOnlyField(source='userCustom.about_me')
+    links = serializers.ReadOnlyField(source='userCustom.links')
     birthday = serializers.ReadOnlyField(source='userCustom.birthday')
     nationality = serializers.ReadOnlyField(source='userCustom.nationality.code')
     subscription = serializers.SerializerMethodField()
@@ -233,8 +258,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name',
-                  'date_joined', 'birthday', 'nationality',
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'date_joined',
+                  'about_me', 'links', 'birthday', 'nationality',
                   'subscription', 'prefs']
 
     def get_subscription(self, obj):
@@ -262,7 +287,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserCustomSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCustom
-        fields = ['birthday', 'nationality']
+        fields = ['about_me', 'links', 'birthday', 'nationality']
 
 
 class RequestPasswordResetSerializer(rest_auth_serializers.PasswordResetSerializer):

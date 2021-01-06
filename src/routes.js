@@ -137,13 +137,6 @@ const routes = [
         component: UserProfile,
         layout: "/app"
       },
-      {
-        path: "/u/",
-        name: "profile",
-        mini: "P",
-        component: UserProfile,
-        layout: "/app"
-      },
     ]
   },
   {
@@ -172,20 +165,20 @@ const routes = [
   {
     sidebar: true,
     collapse: true,
-    name: "wallet",
-    icon: "nc-icon nc-bank",
-    state: "walletCollapse",
+    name: "dashboards",
+    icon: "nc-icon nc-layout-11",
+    state: "dashboardsCollapse",
     views: [
       {
         sidebar: true,
-        path: "/wallet/overview/",
+        path: "/dashboard/overview/",
         name: "walletoverview",
         component: WalletOverview,
         layout: "/app"
       },
       {
         sidebar: true,
-        path: "/wallet/openpositions/",
+        path: "/dashboard/openpositions/",
         name: "openpositions",
         component: OpenPositions,
         layout: "/app"
@@ -214,7 +207,7 @@ const routes = [
         layout: "/app"
       },
       {
-        path: "/strategies/:pk/",
+        path: "/strategies/:uuid/",
         name: "strategygallery",
         component: StrategyPage,
         layout: "/app"

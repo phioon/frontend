@@ -591,9 +591,6 @@ class AppManager {
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
 
-    console.log(strategy)
-    console.log({ result })
-
     if (result.status == 201) {
       strategy = result.data
       let syncFull = true
@@ -621,7 +618,7 @@ class AppManager {
       // Checks if the updated strategy has been retrieved before...
       let sStrategy = await StorageManager.getData(sKey_strategies, strategy.id)
       if (sStrategy)
-        this.strategyRetrieve(syncFull, strategy.id)      // async call
+        this.strategyRetrieve(syncFull, strategy.uuid)      // async call
     }
 
     // Return it with http error details
@@ -629,7 +626,6 @@ class AppManager {
   }
   async myStrategyDelete(strategy) {
     const sKey_strategies = "strategies"
-    const sKey_savedStrategies = "savedStrategies"
 
     var wsInfo = this.getApi("wsMyStrategies")
     wsInfo.request += strategy.id + "/"
@@ -642,8 +638,7 @@ class AppManager {
       let syncFull = true
       await this.myStrategyList(syncFull)
       this.userProfileRetrieve(syncFull, strategy.owner_username)
-      StorageManager.removeItem(sKey_strategies, strategy.id)        // async call
-      StorageManager.removeItem(sKey_savedStrategies, strategy.id)   // async call
+      StorageManager.removeItem(sKey_strategies, strategy.uuid)        // async call
     }
     else
       this.getHttpTranslation(result, "mystrategydelete", "strategy", true)
@@ -739,13 +734,13 @@ class AppManager {
     // Return it with http error details
     return sItem
   }
-  async strategyRetrieve(syncFull = false, pk) {
+  async strategyRetrieve(syncFull = false, uuid) {
     const sKey = "strategies"
     await this.startRequest(sKey)
     let result = undefined
 
     if (!syncFull) {
-      result = await StorageManager.isUpToDate(this.sModule, sKey, pk)
+      result = await StorageManager.isUpToDate(this.sModule, sKey, uuid)
       if (result) {
         this.finishRequest(sKey)
         return result
@@ -753,16 +748,16 @@ class AppManager {
     }
 
     let wsInfo = this.getApi("wsStrategies")
-    wsInfo.request += `${pk}/`
+    wsInfo.request += `${uuid}/`
     wsInfo.method = "get"
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status == 200)
-      result = await StorageManager.store(sKey, result.data, pk)
+      result = await StorageManager.store(sKey, result.data, uuid)
     else if (result.response.status == 404) {
       // Clean cache...
-      StorageManager.removeItem(sKey, pk)
+      StorageManager.removeItem(sKey, uuid)
     }
     else {
       // Other error codes...
@@ -775,7 +770,7 @@ class AppManager {
   async strategyRate(payload) {
     // payload.rating needed...
     let wsInfo = this.getApi("wsStrategies")
-    wsInfo.request += payload.id + "/rate/"
+    wsInfo.request += payload.uuid + "/rate/"
     wsInfo.method = "post"
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
@@ -785,9 +780,9 @@ class AppManager {
 
     return result
   }
-  async strategyRun(pk) {
+  async strategyRun(uuid) {
     let wsInfo = this.getApi("wsStrategies")
-    wsInfo.request += pk + "/run/"
+    wsInfo.request += uuid + "/run/"
     wsInfo.method = "post"
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
@@ -798,39 +793,37 @@ class AppManager {
 
     return result
   }
-  async strategySave(pk) {
+  async strategySave(uuid) {
     let wsInfo = this.getApi("wsStrategies")
-    wsInfo.request += pk + "/save/"
+    wsInfo.request += uuid + "/save/"
     wsInfo.method = "post"
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
+    this.getHttpTranslation(result, "strategysave", "strategy", true)
+
     if (result.status == 200) {
-      this.getHttpTranslation(result, "strategysave", "strategy", true)
       let syncFull = true
       await this.savedStrategyList(syncFull)
     }
-    else
-      this.getHttpTranslation(result, "strategysave", "strategy")
 
     return result
   }
-  async strategyUnsave(pk) {
+  async strategyUnsave(uuid) {
     let wsInfo = this.getApi("wsStrategies")
-    wsInfo.request += pk + "/unsave/"
+    wsInfo.request += uuid + "/unsave/"
     wsInfo.method = "post"
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
+    this.getHttpTranslation(result, "strategyunsave", "strategy", true)
+
     if (result.status == 200) {
-      this.getHttpTranslation(result, "strategyunsave", "strategy", true)
       let syncFull = true
       await this.savedStrategyList(syncFull)
     }
-    else
-      this.getHttpTranslation(result, "strategyunsave", "strategy")
 
     return result
   }
@@ -881,11 +874,11 @@ class AppManager {
 
     return queryParams
   }
-  strategyPageLink(pk) {
-    return `${window.location.protocol}//${window.location.host}${this.strategyPagePath(pk)}`
+  strategyPageLink(uuid) {
+    return `${window.location.protocol}//${window.location.host}${this.strategyPagePath(uuid)}`
   }
-  strategyPagePath(pk) {
-    return `/app/strategies/${pk}/`
+  strategyPagePath(uuid) {
+    return `/app/strategies/${uuid}/`
   }
 
   // Position Type
@@ -1010,13 +1003,50 @@ class AppManager {
       result = result.data
       result = await StorageManager.store(sKey, result, result.username)
     }
+    else if (result.response.status == 404) {
+      // Clean cache...
+      StorageManager.removeItem(sKey, username)
+    }
+    else {
+      // Other error codes...
+      this.getHttpTranslation(result, "userprofileretrieve", "user", true)
+    }
+
 
     this.finishRequest(sKey)
     return result
   }
+  async userFollowers(username, cursor = null) {
+    let wsInfo = this.getApi("wsUser")
+    wsInfo.request += `${username}/followers/`
+    wsInfo.method = "get"
+    wsInfo.params = cursor ? { cursor: cursor } : null
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.params)
+
+    if (result.status != 200)
+      this.getHttpTranslation(result, "userfollowers", "user", true)
+
+    return result
+  }
+  async userFollowing(username, cursor = null) {
+    let wsInfo = this.getApi("wsUser")
+    wsInfo.request += `${username}/following/`
+    wsInfo.method = "get"
+    wsInfo.params = cursor ? { cursor: cursor } : null
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.params)
+
+    if (result.status != 200)
+      this.getHttpTranslation(result, "userfollowing", "user", true)
+
+    return result
+  }
   // .. Functions
   async userFollow(username) {
-    const sKey = "user"
+    const sKey = "userProfiles"
     await this.startRequest(sKey)
 
     let wsInfo = this.getApi("wsUser")
@@ -1025,14 +1055,19 @@ class AppManager {
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
-    if (result.status != 200)
+    if (result.status == 200) {
+      // Follow/Unfollow API returns fresh UserProfile instances for [user] and [followingUser]
+      await StorageManager.store(sKey, result.data.user, result.data.user.username)
+      await StorageManager.store(sKey, result.data.following_user, result.data.following_user.username)
+    }
+    else
       this.getHttpTranslation(result, "userfollow", "user", true)
 
     this.finishRequest(sKey)
     return result
   }
   async userUnfollow(username) {
-    const sKey = "user"
+    const sKey = "userProfiles"
     await this.startRequest(sKey)
 
     let wsInfo = this.getApi("wsUser")
@@ -1041,7 +1076,12 @@ class AppManager {
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
-    if (result.status != 200)
+    if (result.status == 200) {
+      // Follow/Unfollow API returns fresh UserProfile instances for [user] and [followingUser]
+      await StorageManager.store(sKey, result.data.user, result.data.user.username)
+      await StorageManager.store(sKey, result.data.following_user, result.data.following_user.username)
+    }
+    else
       this.getHttpTranslation(result, "userunfollow", "user", true)
 
     this.finishRequest(sKey)

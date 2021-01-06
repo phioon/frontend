@@ -224,7 +224,7 @@ class App extends React.Component {
 
       switch (model) {
         case "user":
-          if (context === "profileupdate")
+          if (context === "userupdate")
             msg.id = model + "_profileUpdated"
           break;
         case "strategy":
@@ -373,7 +373,7 @@ class App extends React.Component {
                     <RingLoader color="#3a5966" size={67} />
                   </div> :
                   isAuthenticated ?
-                    <Redirect to="/app/wallet/openpositions" /> :
+                    <Redirect to={this.managers.app.userProfilePath(user.username)} /> :
                     <AuthLayout {...props}
                       managers={this.managers}
                       prefs={prefs}

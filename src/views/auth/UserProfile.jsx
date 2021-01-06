@@ -10,19 +10,33 @@ import {
   CardBody,
   CardFooter,
   Col,
-  Row,
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
+  Nav,
+  NavItem,
+  NavLink,
+  TabContent,
+  TabPane,
+  Row,
   UncontrolledDropdown,
   Spinner,
 } from "reactstrap";
 import Skeleton from "react-loading-skeleton";
 
+import ModalFollowers from "../modals/auth/ModalFollowers";
 import ModalStrategy from "../modals/strategy/ModalStrategy";
 import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
 import StrategyPopularItem from "../../components/listItems/StrategyPopularItem";
-import { deepCloneObj, getFirstAndLastName, getInitials, getValueListFromObjList, orderBy } from "../../core/utils";
+import {
+  deepCloneObj,
+  getFirstAndLastName,
+  getInitials,
+  getValueListFromObjList,
+  getIconFromURL,
+  orderBy
+} from "../../core/utils";
+import ModalFollowing from "../modals/auth/ModalFollowing";
 
 class UserProfile extends React.Component {
   constructor(props) {
@@ -32,8 +46,13 @@ class UserProfile extends React.Component {
     this.state = {
       isPageLoading: true,
       isRunning: false,
+
+      modal_followers_isOpen: false,
+      modal_following_isOpen: false,
       modal_strategyDetail_isOpen: false,
       modal_strategyResults_isOpen: false,
+
+      activeNavId: "overview",
 
       action: "view",
       objData: {},
@@ -76,7 +95,7 @@ class UserProfile extends React.Component {
 
     this.setState({ isPageLoading: false })
   }
-  async prepareUser(syncFull = false) {
+  async prepareUser() {
     let { user } = this.state;
 
     if (this.props.match.params.username) {
@@ -88,7 +107,7 @@ class UserProfile extends React.Component {
       this.setState({ redirectTo: `/app/u/${this.props.user.username}/` })
     }
 
-    let result = await this.props.managers.app.userProfileRetrieve(syncFull, user.username)
+    let result = await this.props.managers.app.userProfileRetrieve(false, user.username)
 
     if (result.data) {
       // Username found...
@@ -105,7 +124,7 @@ class UserProfile extends React.Component {
   }
   async prepareSavedStrategies() {
     let savedStrategies = await this.props.managers.app.savedStrategyData()
-    let savedStrategyIds = getValueListFromObjList(savedStrategies, "id")
+    let savedStrategyIds = getValueListFromObjList(savedStrategies, "uuid")
 
     this.setState({ savedStrategyIds })
   }
@@ -151,8 +170,20 @@ class UserProfile extends React.Component {
       case "share":
         this.shareClick(obj.username)
         break;
+      case "goToProfile":
+        this.goToProfile(obj.username)
+        break;
       case "goToStrategyPage":
-        this.goToStrategyPage(obj.id)
+        this.goToStrategyPage(obj.uuid)
+        break;
+      case "showFollowers":
+        this.toggleModal("followers")
+        break;
+      case "showFollowing":
+        this.toggleModal("following")
+        break;
+      case "refreshProfile":
+        this.prepareUser()
         break;
     }
   }
@@ -180,14 +211,14 @@ class UserProfile extends React.Component {
   }
   async saveClick(obj) {
     if (obj.isSaved)
-      await this.props.managers.app.strategyUnsave(obj.id)
+      await this.props.managers.app.strategyUnsave(obj.uuid)
     else
-      await this.props.managers.app.strategySave(obj.id)
+      await this.props.managers.app.strategySave(obj.uuid)
 
     this.prepareSavedStrategies()
   }
   async followClick(user) {
-    this.setState({ isLoading_follow: true })
+    this.setState({ isLoading_follow: true });
     let result = undefined
 
     if (user.is_followed_by_me)
@@ -196,9 +227,7 @@ class UserProfile extends React.Component {
       result = await this.props.managers.app.userFollow(user.username)
 
     if (result.status == 200) {
-      user = result.data
-      let syncFull = true
-      await this.prepareUser(syncFull)
+      this.prepareUser()
     }
 
     this.setState({ isLoading_follow: false })
@@ -212,8 +241,12 @@ class UserProfile extends React.Component {
     let message = getString(prefs.locale, "generic", "label_sharedLinkCopied")
     this.props.notify("br", "success", "nc-icon nc-send", "shareProfile", message)
   }
-  goToStrategyPage(pk) {
-    let path = this.props.managers.app.strategyPagePath(pk)
+  goToProfile(username) {
+    let path = this.props.managers.app.userProfilePath(username)
+    this.props.history.push(path)
+  }
+  goToStrategyPage(uuid) {
+    let path = this.props.managers.app.strategyPagePath(uuid)
     this.props.history.push(path)
   }
 
@@ -262,7 +295,9 @@ class UserProfile extends React.Component {
             "default" :
             user.is_followed_by_me && btnFollow_onHover ?
               "danger" :
-              "default"
+              user.is_a_follower && btnFollow_onHover ?
+                "success" :
+                "default"
           }
           onMouseOver={() => this.setState({ btnFollow_onHover: true })}
           onMouseOut={() => this.setState({ btnFollow_onHover: false })}
@@ -275,7 +310,10 @@ class UserProfile extends React.Component {
               btnFollow_onHover ?
                 getString(prefs.locale, this.compId, "label_unfollow") :
                 getString(prefs.locale, this.compId, "label_following") :
-              getString(prefs.locale, this.compId, "label_follow")
+
+              user.is_a_follower ?
+                getString(prefs.locale, this.compId, "label_followBack") :
+                getString(prefs.locale, this.compId, "label_follow")
           }
         </Button>
         {/* ... */}
@@ -294,16 +332,60 @@ class UserProfile extends React.Component {
             {getString(prefs.locale, this.compId, "label_report")}
           </DropdownItem>
         </DropdownMenu>
-      </UncontrolledDropdown>
+      </UncontrolledDropdown >
     )
   }
-  renderPopularStrategies(strategies) {
+
+  overviewPane(isPageLoading, user, popularShowMore) {
+    let { prefs, getString } = this.props;
+
+    return (
+      <TabPane tabId="overview">
+        <Row>
+          {/* Popular Strategies */}
+          <Col md="8">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h5">
+                  {getString(prefs.locale, this.compId, "card_popularStrategies_title")}
+                </CardTitle>
+              </CardHeader>
+              {isPageLoading ?
+                <CardBody>
+                  {this.descriptionSkeleton()}
+                </CardBody> : <CardBody>
+                  {this.popularStrategies(user.strategies)}
+                </CardBody>
+              }
+              <CardFooter className="text-center">
+                {user.strategies.length > 3 &&
+                  <Button
+                    className="btn-round"
+                    color="info"
+                    size="sm"
+                    outline
+                    onClick={() => this.setState({ popularShowMore: !popularShowMore })}
+                  >
+                    {popularShowMore ?
+                      getString(prefs.locale, this.compId, "label_showLess") :
+                      getString(prefs.locale, this.compId, "label_showMore")
+                    }
+                  </Button>
+                }
+              </CardFooter>
+            </Card>
+          </Col>
+        </Row>
+      </TabPane>
+    )
+  }
+  popularStrategies(strategies) {
     let { savedStrategyIds, popularShowMore, isRunning } = this.state;
     let popularSize = popularShowMore ? 5 : 3
 
     return strategies.map((strategy, i) => {
       strategy.index = i + 1
-      strategy.isSaved = savedStrategyIds.includes(strategy.id)
+      strategy.isSaved = savedStrategyIds.includes(strategy.uuid)
 
       if (i < popularSize)
         return (
@@ -321,22 +403,136 @@ class UserProfile extends React.Component {
     })
   }
 
+  aboutPane(isLoading, user) {
+    return (
+      <TabPane tabId="about">
+        <Row>
+          {/* About */}
+          <Col md="8">
+            {this.bioCard(isLoading, user)}
+          </Col>
+          <Col md="4">
+            {user.links && this.linksCard(user)}
+          </Col>
+        </Row>
+      </TabPane>
+    )
+  }
+  bioCard(isLoading, user) {
+    let { getString, prefs } = this.props;
+
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle tag="h5">
+            {getString(prefs.locale, this.compId, "card_bio_title")}
+          </CardTitle>
+        </CardHeader>
+        {isLoading ?
+          <CardBody>
+            {this.descriptionSkeleton()}
+          </CardBody> :
+          <CardBody>
+            <div className="typography-line">
+              <pre className="description">
+                {user.about_me}
+              </pre>
+            </div>
+            {user.about_me.length > 0 ?
+              <div className="description text-right">
+                {`- `}
+                <a
+                  className="description"
+                  href={this.props.managers.app.userProfilePath(user.username)}
+                  onClick={e => {
+                    e.preventDefault()
+                    this.onClick("goToProfile", user)
+                  }}
+                >
+                  @{user.username}
+                </a>
+              </div> :
+              <div className="description text-center">
+                {getString(prefs.locale, this.compId, "card_bio_noBio")}
+              </div>
+            }
+          </CardBody>
+        }
+        <CardFooter />
+      </Card>
+    )
+  }
+  linksCard(user) {
+    let { getString, prefs } = this.props;
+
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle tag="h5">
+            {getString(prefs.locale, this.compId, "card_links_title")}
+          </CardTitle>
+        </CardHeader>
+        <CardBody>
+          {this.links(user.links)}
+        </CardBody>
+        <CardFooter />
+      </Card>
+    )
+  }
+  links(links) {
+    return links.map((link, i) => {
+      return (
+        <a href={link.url} className="description" target="_blank">
+          <Row key={i}>
+            <Col xs="2">
+              <Button className="btn-icon btn-neutral">
+                <i className={getIconFromURL(link.url)} />
+              </Button>
+            </Col>
+            <Col className="align-center">
+
+              {link.name}
+
+            </Col>
+          </Row>
+        </a>
+      )
+    })
+  }
+  descriptionSkeleton() {
+    return (
+      <div>
+        <Skeleton />
+        <Skeleton />
+        <Skeleton />
+        <Skeleton />
+      </div>
+    )
+  }
+
   setFlag(context, value) {
     this.setState({ [`is${context}`]: value })
   }
   toggleModal(modalId) {
     this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
   };
+  toggleNavLink(navId, value) {
+    this.setState({ [navId]: value })
+  }
 
   render() {
-    let { getString, prefs, user: currentUser } = this.props;
+    let { getString, prefs } = this.props;
     let {
       redirectTo,
       isPageLoading,
       isRunning,
 
+      modal_followers_isOpen,
+      modal_following_isOpen,
       modal_strategyDetail_isOpen,
       modal_strategyResults_isOpen,
+
+      activeNavId,
 
       action,
       objData,
@@ -350,6 +546,28 @@ class UserProfile extends React.Component {
 
     return (
       <div className="content">
+        <ModalFollowing
+          prefs={prefs}
+          getString={getString}
+          managers={this.props.managers}
+          user={this.props.user}
+          modalId="following"
+          isOpen={modal_following_isOpen}
+          toggleModal={this.toggleModal}
+          onClick={this.onClick}
+          username={user.username}
+        />
+        <ModalFollowers
+          prefs={prefs}
+          getString={getString}
+          managers={this.props.managers}
+          user={this.props.user}
+          modalId="followers"
+          isOpen={modal_followers_isOpen}
+          toggleModal={this.toggleModal}
+          onClick={this.onClick}
+          username={user.username}
+        />
         <ModalStrategy
           {...this.props}
           modalId="strategyDetail"
@@ -382,17 +600,13 @@ class UserProfile extends React.Component {
                   </a>
                 </div>
               </Col>
-              {/* Username, Name and Actions */}
+              {/* Header */}
               <Col xl="6" md="7" xs="8">
-                {/* Username */}
-                <p className="description">
-                  {isPageLoading ?
-                    <Skeleton /> :
-                    `@${user.username}`
-                  }
-                </p>
-                {/* Full Name */}
-                <a href="" onClick={e => e.preventDefault()}>
+                {/* Username and Full Name */}
+                <a className="muted" href="" onClick={e => e.preventDefault()}>
+                  <small className="description">
+                    @{user.username}
+                  </small>
                   <h5 className="title">
                     {isPageLoading ?
                       <Skeleton /> :
@@ -403,7 +617,7 @@ class UserProfile extends React.Component {
                 {/* Button Actions */}
                 <Row>
                   <Col className="text-right">
-                    {currentUser.username === user.username ?
+                    {this.props.user.username === user.username ?
                       this.renderMyActions(user) :
                       this.renderTheirActions(user)
                     }
@@ -411,65 +625,79 @@ class UserProfile extends React.Component {
                 </Row>
               </Col>
             </Row>
-            {/* Stats */}
             <hr />
-            <div className="button-container">
-              <Row>
-                <Col className="ml-auto" lg="2" md="4" xs="5">
-                  <h6>
-                    {!isPageLoading && user.strategies.length}
-                    <br />
-                    <small>{getString(prefs.locale, this.compId, "label_strategies")}</small>
-                  </h6>
-                </Col>
-                <Col className="ml-auto mr-auto" lg="2" md="4" xs="5">
+            {/* Stats */}
+            <Row className="button-container">
+              {/* Strategies */}
+              <Col className="ml-auto" lg="2" md="4" xs="5">
+                <h6>
+                  {!isPageLoading && user.strategies.length}
+                  <br />
+                  <small>{getString(prefs.locale, this.compId, "label_strategies")}</small>
+                </h6>
+              </Col>
+              {/* Following */}
+              <Col className="ml-auto mr-auto" lg="2" md="4" xs="5">
+                <a className="muted text-default" href="following/" onClick={e => {
+                  e.preventDefault()
+                  this.onClick("showFollowing")
+                }}>
                   <h6>
                     {!isPageLoading && user.amount_following} <br />
-                    <small>{getString(prefs.locale, this.compId, "label_following")}</small>
+                    <small>
+                      {getString(prefs.locale, this.compId, "label_following")}
+                    </small>
                   </h6>
-                </Col>
-                <Col className="mr-auto" lg="2" md="4">
+                </a>
+              </Col>
+              {/* Followers */}
+              <Col className="mr-auto" lg="2" md="4">
+                <a className="muted text-default" href="followers/" onClick={e => {
+                  e.preventDefault()
+                  this.onClick("showFollowers")
+                }}>
                   <h6>
                     {!isPageLoading && user.amount_followers} <br />
-                    <small>{getString(prefs.locale, this.compId, "label_followers")}</small>
+                    <small>
+                      {getString(prefs.locale, this.compId, "label_followers")}
+                    </small>
                   </h6>
-                </Col>
-              </Row>
-            </div>
+                </a>
+              </Col>
+            </Row>
             <hr />
           </CardBody>
         </Card>
-        {/* Popular Strategies */}
-        <Row>
-          <Col md="8">
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h5">
-                  {getString(prefs.locale, this.compId, "title_popularStrategies")}
-                </CardTitle>
-              </CardHeader>
-              <CardBody>
-                {this.renderPopularStrategies(user.strategies)}
-              </CardBody>
-              <CardFooter className="text-center">
-                {user.strategies.length > 3 &&
-                  <Button
-                    className="btn-round"
-                    color="info"
-                    size="sm"
-                    outline
-                    onClick={() => this.setState({ popularShowMore: !popularShowMore })}
-                  >
-                    {popularShowMore ?
-                      getString(prefs.locale, this.compId, "label_showLess") :
-                      getString(prefs.locale, this.compId, "label_showMore")
-                    }
-                  </Button>
-                }
-              </CardFooter>
-            </Card>
-          </Col>
-        </Row>
+        <div className="nav-tabs-navigation">
+          <div className="nav-tabs-wrapper">
+            <Nav tabs>
+              {/* Overview */}
+              <NavItem>
+                <NavLink
+                  href="#"
+                  className={activeNavId == "overview" ? "active" : ""}
+                  onClick={() => this.toggleNavLink("activeNavId", "overview")}
+                >
+                  {getString(prefs.locale, this.compId, "tab_overview")}
+                </NavLink>
+              </NavItem>
+              {/* About */}
+              <NavItem>
+                <NavLink
+                  href="#"
+                  className={activeNavId == "about" ? "active" : ""}
+                  onClick={() => this.toggleNavLink("activeNavId", "about")}
+                >
+                  {getString(prefs.locale, this.compId, "tab_about")}
+                </NavLink>
+              </NavItem>
+            </Nav>
+          </div>
+        </div>
+        <TabContent activeTab={activeNavId}>
+          {this.overviewPane(isPageLoading, user, popularShowMore)}
+          {this.aboutPane(isPageLoading, user)}
+        </TabContent>
         {redirectTo && <Redirect to={redirectTo} />}
       </div>
     )

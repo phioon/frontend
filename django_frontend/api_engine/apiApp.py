@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.db.models import F, Exists
 
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
@@ -71,7 +71,7 @@ class SavedSrategyList(generics.ListAPIView):
 class StrategyList(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = serializers.StrategySerializer
-    pagination_class = paginators.StandardResultsSetPagination
+    pagination_class = paginators.StandardPageNumberPagination
 
     def get_queryset(self):
         # 1. Payload
@@ -118,27 +118,34 @@ class StrategyList(generics.ListAPIView):
         return order_by
 
 
-class StrategyDetail(generics.RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = serializers.StrategyDetailSerializer
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def strategy_retrieve(request, uuid):
+    if len(uuid) < 32:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def get_queryset(self):
-        return app_models.Strategy.objects.filter(is_public=True)
+    strategy = get_object_or_404(app_models.Strategy, uuid=uuid)
+
+    if strategy.is_public:
+        serializer = serializers.StrategyDetailSerializer(strategy)
+        return Response(serializer.data)
+
+    res_obj = {'detail': 'not found'}
+    return Response(data=res_obj, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def strategy_run(request, pk):
-    strategy = get_object_or_404(app_models.Strategy, pk=pk)
+def strategy_run(request, uuid):
+    strategy = get_object_or_404(app_models.Strategy, uuid=uuid)
     strategy.run()
-
     return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def strategy_rate(request, pk):
-    strategy = get_object_or_404(app_models.Strategy, pk=pk)
+def strategy_rate(request, uuid):
+    strategy = get_object_or_404(app_models.Strategy, uuid=uuid)
 
     if 'rating' not in request.data:
         raise serializers.ValidationError({'rating': 'is missing.'})
@@ -155,8 +162,8 @@ def strategy_rate(request, pk):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def strategy_save(request, pk):
-    strategy = get_object_or_404(app_models.Strategy, pk=pk)
+def strategy_save(request, uuid):
+    strategy = get_object_or_404(app_models.Strategy, uuid=uuid)
     user = request.user
 
     strategy.save_strategy(user)
@@ -165,8 +172,8 @@ def strategy_save(request, pk):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def strategy_unsave(request, pk):
-    strategy = get_object_or_404(app_models.Strategy, pk=pk)
+def strategy_unsave(request, uuid):
+    strategy = get_object_or_404(app_models.Strategy, uuid=uuid)
     user = request.user
 
     strategy.unsave_strategy(user)
@@ -213,13 +220,34 @@ class PositionDetail(generics.RetrieveUpdateDestroyAPIView):
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def user_profile_retrieve(request, username):
-    try:
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    user = get_object_or_404(app_models.User, username=username)
 
     serializer = serializers.UserProfileSerializer(user, context={'request': request})
     return Response(serializer.data)
+
+
+class UserFollowerList(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = serializers.UserFollowerSerializer
+    pagination_class = paginators.FollowingCursorPagination
+    lookup_url_kwarg = 'username'
+
+    def get_queryset(self):
+        username = self.kwargs.get(self.lookup_url_kwarg)
+        user = get_object_or_404(app_models.User, username=username)
+        return user.followers.all()
+
+
+class UserFollowingList(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = serializers.UserFollowingSerializer
+    pagination_class = paginators.FollowingCursorPagination
+    lookup_url_kwarg = 'username'
+
+    def get_queryset(self):
+        username = self.kwargs.get(self.lookup_url_kwarg)
+        user = get_object_or_404(app_models.User, username=username)
+        return user.following.all()
 
 
 @api_view(['POST'])
@@ -234,8 +262,13 @@ def user_follow(request, username):
     if not is_follower:
         app_models.UserFollowing.objects.create(user=user, following_user=following_user)
 
-    serializer = serializers.UserProfileSerializer(following_user, context={'request': request})
-    return Response(serializer.data)
+    serializer_user = serializers.UserProfileSerializer(user, context={'request': request})
+    serializer_following_user = serializers.UserProfileSerializer(following_user, context={'request': request})
+    obj_res = {
+        'user': serializer_user.data,
+        'following_user': serializer_following_user.data
+    }
+    return Response(obj_res)
 
 
 @api_view(['POST'])
@@ -246,8 +279,13 @@ def user_unfollow(request, username):
 
     app_models.UserFollowing.objects.filter(user=user, following_user=following_user).delete()
 
-    serializer = serializers.UserProfileSerializer(following_user, context={'request': request})
-    return Response(serializer.data)
+    serializer_user = serializers.UserProfileSerializer(user, context={'request': request})
+    serializer_following_user = serializers.UserProfileSerializer(following_user, context={'request': request})
+    obj_res = {
+        'user': serializer_user.data,
+        'following_user': serializer_following_user.data
+    }
+    return Response(obj_res)
 
 
 class WalletList(generics.ListCreateAPIView):

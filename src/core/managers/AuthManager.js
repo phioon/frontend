@@ -180,19 +180,22 @@ class AuthManager {
 
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, data)
 
+    this.getHttpTranslation(result, "userupdate", "user", true)
+
     if (result.status == 200) {
-      this.getHttpTranslation(result, "profileupdate", "user", true)
       result = result.data
       this.instantUser(result)
+
       let sUser = await StorageManager.getData(sKey)
       sUser.user = result
       await this.storePrefs(sUser.user.prefs)
       this.setPrefs(sUser.user.prefs)
+
       return await StorageManager.store(sKey, sUser)
     }
-    else
-      return result
 
+    // Return HTTP error...
+    return result
   }
   async userRetrieve() {
     const sKey = "user"
@@ -236,17 +239,19 @@ class AuthManager {
   }
   async clearUserLocalData() {
     const sKey_user = "user"
+    const sKey_userProfiles = "userProfiles"
     const sKey_wallets = "wallets"
     const sKey_positions = "positions"
-    const sKey_strategies = "strategies"
+    const sKey_myStrategies = "myStrategies"
 
     this.instantUser({})
     AuthManager.instantToken({})
 
     StorageManager.removeData(sKey_user)
+    StorageManager.removeData(sKey_userProfiles)
     StorageManager.removeData(sKey_wallets)
     StorageManager.removeData(sKey_positions)
-    StorageManager.removeData(sKey_strategies)
+    StorageManager.removeData(sKey_myStrategies)
   }
 
   // Prefs

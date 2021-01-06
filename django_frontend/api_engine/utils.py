@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template import loader
 from rest_framework import status
+from operator import itemgetter
 import smtplib
 import time
 
@@ -46,3 +47,14 @@ def convert_epoch_to_timestamp(epoch):
 
     timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(epoch))
     return timestamp
+
+
+# Data structures
+def order_by_asc(obj_list, field):
+    obj_list = sorted(obj_list, key=itemgetter(field))
+    return obj_list
+
+
+def order_by_desc(obj_list, field):
+    obj_list = sorted(obj_list, key=itemgetter(field), reverse=True)
+    return obj_list

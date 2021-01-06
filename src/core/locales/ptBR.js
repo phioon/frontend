@@ -263,6 +263,10 @@ const locale = {
     enUS: "English",
     ptBR: "Português",
   },
+  linkitem: {
+    input_name: "Nome do Link",
+    input_url: "URL",
+  },
   locales: {
     enUS: "en-us",
     ptBR: "pt-br",
@@ -324,6 +328,7 @@ const locale = {
   myaccount: {
     title_personalData: "Dados Pessoais",
     title_prefs: "Preferências",
+    title_links: "Links",
 
     input_email: "E-mail",
     btn_changePassword: "Alterar Senha",
@@ -333,12 +338,14 @@ const locale = {
     input_nationality: "Nacionalidade",
     input_birthday: "Data de Nascimento",
     input_birthday_hint: "Eu poderia enviar presentes de aniversário. Quem sabe...",
+    input_aboutMe: "Sobre",
 
     input_currency: "Moeda Principal",
     input_currency_hint: "Investe em diferentes países? Posso converter outras moedas para a de sua preferência em relatórios e dashboards. ",
     input_language: "Idioma",
 
     error_username_minReq: "Letras (a-z), números (0-9), underscores (_) e pontos (.)",
+    error_username_length: "Importante que tenha entre 3 e 32 caracteres. ;)",
     error_username_taken: "Nome de usuário em uso :/",
     error_username_couldNotCheck: "Algo deu errado :/ Vamos tentar novamente mais tarde.",
 
@@ -439,6 +446,14 @@ const locale = {
 
     btn_add: "Adicionar",
     btn_save: "Salvar",
+  },
+  modalfollowers: {
+    title: "Seguidores",
+    label_noFollowers: "Este usuário ainda não possui seguidores."
+  },
+  modalfollowing: {
+    title: "Seguindo",
+    label_noFollowing: "Este usuário ainda não segue ninguém."
   },
   modalmovingavgdetail: {
     title: "Média Móvel",
@@ -924,7 +939,7 @@ const locale = {
     positions: "Posições",
     positionsMini: "P",
 
-    wallet: "Carteira",
+    dashboards: "Dashboards",
     walletoverview: "Visão Geral",
     walletoverviewMini: "VG",
     openpositions: "Posições Abertas",
@@ -972,7 +987,7 @@ const locale = {
     btn_unsave: "Remover de Salvas",
     btn_unsave_hint: "Remover de Salvas.",
 
-    btn_view: "Ver detalhes",
+    btn_view: "Ver Regras",
     btn_update: "Alterar",
     btn_delete: "Deletar",
 
@@ -999,11 +1014,17 @@ const locale = {
     label_saved: "Salvamentos",
     label_rating: "Avaliação",
 
+    label_ratings_available_hint: "de 5.",
+    label_ratings_notAvailable_hint: "Não há avaliações suficientes.",
+
     card_description_title: "Descrição Técnica",
     card_description_noDesc: "Esta estratégia ainda não possui uma descrição... :(",
 
-    card_indicators_title: "Indicadores",
     card_reviews_title: "Avaliações e Comentários",
+    label_clickToRate: "Clique para Avaliar",
+    label_tapToRate: "Toque para Avaliar",
+
+    card_indicators_title: "Indicadores",
 
     label_showMore: "Mostrar mais",
     label_showLess: "Mostrar menos",
@@ -1140,9 +1161,15 @@ const locale = {
     phibo_305_down_p2: "Linhas de Resistência estão alinhadas para baixo, o que aumenta a probabilidade de início de onda 3.",
     phibo_72_down_p1: "Preço alcançou uma resistência técnica após retração de <fibo_pct_retraction>% da Onda 1 e confirmou um Pivô de Baixa, aumentando a probabilidade de, ao menos, o preço testar o fundo anterior novamente.",
   },
+  userfollowingitem: {
+    label_follow: "Seguir",
+    label_following: "Seguindo",
+    label_unfollow: "Deixar de Seguir",
+  },
   userprofile: {
     label_editProfile: "Editar Perfil",
     label_follow: "Seguir",
+    label_followBack: "Seguir de volta",
     label_following: "Seguindo",
     label_unfollow: "Deixar de Seguir",
     label_followers: "Seguidores",
@@ -1150,9 +1177,17 @@ const locale = {
     label_strategies: "Estratégias",
     label_report: "Reportar usuário",
 
-    title_popularStrategies: "Estratégias Populares",
+    tab_overview: "Resumo",
+    tab_about: "Sobre",
+
+    card_popularStrategies_title: "Estratégias Populares",
     label_showMore: "Mostrar mais 2",
     label_showLess: "Mostrar menos",
+
+    card_bio_title: "Bio",
+    card_bio_noBio: "Usuário não possui Bio ainda... :(",
+
+    card_links_title: "Mais Informações",
   },
   usersubscription: {
     label_monthly: "Mensal",

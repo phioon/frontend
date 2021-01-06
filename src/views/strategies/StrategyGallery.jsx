@@ -106,7 +106,7 @@ class StrategyGallery extends React.Component {
   }
   async prepareSavedStrategies() {
     let savedStrategies = await this.props.managers.app.savedStrategyData()
-    let savedStrategyIds = getValueListFromObjList(savedStrategies, "id")
+    let savedStrategyIds = getValueListFromObjList(savedStrategies, "uuid")
 
     this.setState({ savedStrategyIds })
   }
@@ -114,8 +114,7 @@ class StrategyGallery extends React.Component {
     // 1. Query
     let query = {
       filters: {},
-      order_by: "-usage",
-      page_size: 20
+      order_by: "-usage"
     }
     // 2. Strategies
     let strategies = await this.props.managers.app.strategyData(false, query)
@@ -129,8 +128,7 @@ class StrategyGallery extends React.Component {
     // 1. Query
     let query = {
       filters: {},
-      order_by: "-saved",
-      page_size: 20
+      order_by: "-saved"
     }
     // 2. Strategies
     let strategies = await this.props.managers.app.strategyData(false, query)
@@ -170,10 +168,10 @@ class StrategyGallery extends React.Component {
 
     return slide.map((strategy) => {
       strategy.isOwner = this.props.user.username === strategy.owner_username
-      strategy.isSaved = this.state.savedStrategyIds.includes(strategy.id)
+      strategy.isSaved = this.state.savedStrategyIds.includes(strategy.uuid)
 
       return (
-        <Col key={"strategy__" + strategy.id} xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
+        <Col key={"strategy__" + strategy.uuid} xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
           <StrategyCardMini
             managers={this.props.managers}
             getString={this.props.getString}
@@ -242,10 +240,10 @@ class StrategyGallery extends React.Component {
         await this.saveClick(obj)
         break;
       case "share":
-        this.shareClick(obj.id)
+        this.shareClick(obj.uuid)
         break;
       case "goToStrategyPage":
-        this.goToStrategyPage(obj.id)
+        this.goToStrategyPage(obj.uuid)
         break;
       case "goToProfile":
         this.goToProfile(obj.owner_username)
@@ -276,23 +274,23 @@ class StrategyGallery extends React.Component {
   }
   async saveClick(obj) {
     if (obj.isSaved)
-      await this.props.managers.app.strategyUnsave(obj.id)
+      await this.props.managers.app.strategyUnsave(obj.uuid)
     else
-      await this.props.managers.app.strategySave(obj.id)
+      await this.props.managers.app.strategySave(obj.uuid)
 
     this.prepareSavedStrategies()
   }
-  shareClick(pk) {
+  shareClick(uuid) {
     let { getString, prefs } = this.props;
 
-    let pageLink = this.props.managers.app.strategyPageLink(pk)
+    let pageLink = this.props.managers.app.strategyPageLink(uuid)
     navigator.clipboard.writeText(pageLink)
 
     let message = getString(prefs.locale, "generic", "label_sharedLinkCopied")
     this.props.notify("br", "success", "nc-icon nc-send", "shareStrategy", message)
   }
-  goToStrategyPage(pk) {
-    let path = this.props.managers.app.strategyPagePath(pk)
+  goToStrategyPage(uuid) {
+    let path = this.props.managers.app.strategyPagePath(uuid)
     this.props.history.push(path)
   }
   goToProfile(username) {

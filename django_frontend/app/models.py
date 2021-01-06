@@ -3,7 +3,7 @@ from django.db.models import Avg, Sum
 from django.core import validators
 from django.db import models
 from datetime import datetime, timedelta
-import json
+import uuid
 
 
 class Currency(models.Model):
@@ -154,6 +154,9 @@ class UserCustom(models.Model):
     subscription_status = models.CharField(max_length=16, default='undefined')
     subscription_expires_on = models.DateField(null=True, db_index=True)
     subscription_renews_on = models.DateField(null=True, db_index=True)
+    # social
+    about_me = models.CharField(max_length=2048, blank=True, default='')
+    links = models.JSONField(default=list())
 
     def __str__(self):
         return self.user.username
@@ -171,6 +174,9 @@ class UserFollowing(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user', 'following_user'], name='unique_followers')
         ]
+
+    def __str__(self):
+        return str(self.user.username + '__' + self.following_user.username)
 
 
 class UserPreferences(models.Model):
@@ -229,6 +235,7 @@ class Position(models.Model):
 
 
 class Strategy(models.Model):
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     create_time = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 

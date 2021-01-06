@@ -33,17 +33,17 @@ class StrategyPopularItem extends React.Component {
         this.setState({ strategy: obj })
         break;
       case "share":
-        this.shareClick(obj.id)
+        this.shareClick(obj.uuid)
         break;
       default:
         this.props.onClick(action, obj)
         break;
     }
   }
-  shareClick(pk) {
+  shareClick(uuid) {
     let { getString, prefs } = this.props;
 
-    let pageLink = this.props.managers.app.strategyPageLink(pk)
+    let pageLink = this.props.managers.app.strategyPageLink(uuid)
     navigator.clipboard.writeText(pageLink)
 
     let message = getString(prefs.locale, "generic", "label_sharedLinkCopied")
@@ -100,7 +100,8 @@ class StrategyPopularItem extends React.Component {
 
         <Col sm="7" xs="5">
           <a
-            href={this.props.managers.app.strategyPagePath(strategy.id)}
+            className="text-default"
+            href={this.props.managers.app.strategyPagePath(strategy.uuid)}
             onClick={e => {
               e.preventDefault()
               this.onClick("goToStrategyPage", strategy)

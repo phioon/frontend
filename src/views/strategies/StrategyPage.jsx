@@ -105,23 +105,23 @@ class StrategyPage extends React.Component {
     let strategy = tasks[0]
     let savedStrategyIds = tasks[1]
 
-    strategy.isSaved = savedStrategyIds.includes(strategy.id)
+    strategy.isSaved = savedStrategyIds.includes(strategy.uuid)
 
     this.setState({ strategy, savedStrategyIds, isPageLoading: false })
   }
   async prepareStrategy() {
     let { strategy } = this.state;
 
-    if (this.props.match.params.pk) {
-      // Set [strategy.id] value...
-      strategy.id = this.props.match.params.pk
+    if (this.props.match.params.uuid) {
+      // Set [strategy.uuid] value...
+      strategy.uuid = this.props.match.params.uuid
     }
     else {
       // [strategy] param was not given...
       this.setState({ redirectTo: `/app/strategies/panel/` })
     }
 
-    let result = await this.props.managers.app.strategyRetrieve(false, strategy.id)
+    let result = await this.props.managers.app.strategyRetrieve(false, strategy.uuid)
 
     if (result.data) {
       // Strategy found...
@@ -145,7 +145,7 @@ class StrategyPage extends React.Component {
   }
   async prepareSavedStrategies() {
     let savedStrategies = await this.props.managers.app.savedStrategyData()
-    let savedStrategyIds = getValueListFromObjList(savedStrategies, "id")
+    let savedStrategyIds = getValueListFromObjList(savedStrategies, "uuid")
 
     return savedStrategyIds
   }
@@ -213,6 +213,9 @@ class StrategyPage extends React.Component {
       case "goToProfile":
         this.goToProfile(obj.owner_username)
         break;
+      case "view":
+        this.viewClick(obj)
+        break;
       case "update":
         this.updateClick(obj)
         break;
@@ -226,7 +229,7 @@ class StrategyPage extends React.Component {
         this.rateClick(obj)
         break;
       case "share":
-        this.shareClick(obj.id)
+        this.shareClick(obj.uuid)
         break;
       case "tag":
         this.tagClick(obj)
@@ -239,6 +242,20 @@ class StrategyPage extends React.Component {
   goToProfile(username) {
     let path = this.props.managers.app.userProfilePath(username)
     this.props.history.push(path)
+  }
+  viewClick(obj) {
+    let objData = {
+      id: obj.id,
+      name: obj.name,
+      desc: obj.desc,
+      type: obj.type,
+      isDynamic: obj.is_dynamic,
+      isPublic: obj.is_public,
+      rules: obj.rules
+    }
+
+    this.setState({ action: "view", objData })
+    this.toggleModal("strategyDetail")
   }
   updateClick(obj) {
     let objData = {
@@ -278,23 +295,23 @@ class StrategyPage extends React.Component {
   }
   async saveClick(obj) {
     if (obj.isSaved)
-      await this.props.managers.app.strategyUnsave(obj.id)
+      await this.props.managers.app.strategyUnsave(obj.uuid)
     else
-      await this.props.managers.app.strategySave(obj.id)
+      await this.props.managers.app.strategySave(obj.uuid)
 
     this.prepareRequirements()
   }
   rateClick(value) {
     let payload = {
-      id: this.state.strategy.id,
+      uuid: this.state.strategy.uuid,
       rating: value
     }
     this.props.managers.app.strategyRate(payload)
   }
-  shareClick(pk) {
+  shareClick(uuid) {
     let { getString, prefs } = this.props;
 
-    let pageLink = this.props.managers.app.strategyPageLink(pk)
+    let pageLink = this.props.managers.app.strategyPageLink(uuid)
     navigator.clipboard.writeText(pageLink)
 
     let message = getString(prefs.locale, "generic", "label_sharedLinkCopied")
@@ -574,6 +591,9 @@ class StrategyPage extends React.Component {
                   {/* Name */}
                   <Col className="align-center">
                     <a href="" onClick={e => e.preventDefault()}>
+                      <small className="description">
+                        #{strategy.uuid}
+                      </small>
                       <h5 className="title">
                         {isPageLoading ?
                           <Skeleton /> :
@@ -617,30 +637,43 @@ class StrategyPage extends React.Component {
             </Row>
             <hr />
             {/* Stats */}
-            <div className="button-container">
-              <Row>
-                <Col className="ml-auto" lg="2" md="4" xs="5">
-                  <h6>
-                    {strategy.stats && strategy.stats.usage.total_runs} <br />
-                    <small>{getString(prefs.locale, this.compId, "label_totalRuns")}</small>
-                  </h6>
-                </Col>
-                <Col className="ml-auto mr-auto" lg="2" md="4" xs="5">
-                  <h6>
-                    {strategy.stats && strategy.stats.saved.count} <br />
-                    <small>{getString(prefs.locale, this.compId, "label_saved")}</small>
-                  </h6>
-                </Col>
-                <Col className="mr-auto" lg="2" md="4">
-                  <h6>
-                    {strategy.stats && strategy.stats.ratings.count > 0 && strategy.stats.ratings.avg} <br />
-                    <small>
-                      {getString(prefs.locale, this.compId, "label_rating")}
-                    </small>
-                  </h6>
-                </Col>
-              </Row>
-            </div>
+            <Row className="button-container">
+              <Col className="ml-auto" lg="2" md="4" xs="5">
+                <h6>
+                  {strategy.stats && strategy.stats.usage.total_runs} <br />
+                  <small>{getString(prefs.locale, this.compId, "label_totalRuns")}</small>
+                </h6>
+              </Col>
+              <Col className="ml-auto mr-auto" lg="2" md="4" xs="5">
+                <h6>
+                  {strategy.stats && strategy.stats.saved.count} <br />
+                  <small>{getString(prefs.locale, this.compId, "label_saved")}</small>
+                </h6>
+              </Col>
+              <Col className="mr-auto" lg="2" md="4">
+                <h6 id="stats_rating">
+                  {
+                    strategy.stats ?
+                      strategy.stats.ratings.count >= 5 ?
+                        strategy.stats.ratings.avg :
+                        "-" :
+                      null
+                  }
+                  <br />
+                  <small>
+                    {getString(prefs.locale, this.compId, "label_rating")}
+                  </small>
+                </h6>
+                {strategy.stats &&
+                  <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={"stats_rating"}>
+                    {strategy.stats.ratings.count >= 5 ?
+                      getString(prefs.locale, this.compId, "label_ratings_available_hint") :
+                      getString(prefs.locale, this.compId, "label_ratings_notAvailable_hint")
+                    }
+                  </UncontrolledTooltip>
+                }
+              </Col>
+            </Row>
             <hr />
           </CardBody>
         </Card>

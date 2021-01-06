@@ -130,8 +130,6 @@ class ModalQuoteDetail extends React.Component {
       case "type":
         newState.indicator.states[fieldName] = "has-success"
         break;
-      default:
-        break;
     }
 
     newState.indicator.item = this.getSelectedItem(newState.indicator)

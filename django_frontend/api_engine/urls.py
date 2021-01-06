@@ -15,11 +15,11 @@ urlpatterns = [
     path('app/mystrategies/<int:pk>/', apiApp.MyStrategyDetail.as_view()),
     path('app/strategies/saved/', apiApp.SavedSrategyList.as_view()),
     path('app/strategies/', apiApp.StrategyList.as_view()),
-    path('app/strategies/<int:pk>/', apiApp.StrategyDetail.as_view()),
-    path('app/strategies/<int:pk>/run/', apiApp.strategy_run),
-    path('app/strategies/<int:pk>/rate/', apiApp.strategy_rate),
-    path('app/strategies/<int:pk>/save/', apiApp.strategy_save),
-    path('app/strategies/<int:pk>/unsave/', apiApp.strategy_unsave),
+    path('app/strategies/<uuid>/', apiApp.strategy_retrieve),
+    path('app/strategies/<uuid>/run/', apiApp.strategy_run),
+    path('app/strategies/<uuid>/rate/', apiApp.strategy_rate),
+    path('app/strategies/<uuid>/save/', apiApp.strategy_save),
+    path('app/strategies/<uuid>/unsave/', apiApp.strategy_unsave),
     path('app/subscriptions/', apiApp.SubscriptionList.as_view()),
     path('app/countries/', apiApp.CountryList.as_view()),
     path('app/currencies/', apiApp.CurrencyList.as_view()),
@@ -34,6 +34,8 @@ urlpatterns = [
 # Users Interaction
 urlpatterns += [
     path('app/user/<username>/profile/', apiApp.user_profile_retrieve),
+    path('app/user/<username>/followers/', apiApp.UserFollowerList.as_view()),
+    path('app/user/<username>/following/', apiApp.UserFollowingList.as_view()),
     path('app/user/<username>/follow/', apiApp.user_follow),
     path('app/user/<username>/unfollow/', apiApp.user_unfollow),
 ]
