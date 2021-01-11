@@ -21,7 +21,6 @@ import ReactDatetime from "react-datetime";
 import Select from "react-select";
 
 import ModalChangePassword from "../modals/auth/ModalChangePassword";
-import ModalLink from "../modals/auth/ModalLink";
 
 import TimeManager from "../../core/managers/TimeManager";
 import { localeList } from "../../core/locales";

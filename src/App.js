@@ -1,6 +1,6 @@
 import React from "react";
 import { Router, Route, Switch, Redirect, Link } from "react-router-dom";
-import { RingLoader } from "react-spinners";
+import { CircularLoader } from "./components/Loaders";
 
 import { createBrowserHistory } from "history";
 
@@ -25,6 +25,7 @@ import AppManager from "./core/managers/AppManager";
 import MarketManager from "./core/managers/MarketManager";
 import MeasureManager from "./core/managers/MeasureManager";
 import StrategyManager from "./core/managers/StrategyManager";
+import SearchManager from "./core/managers/SearchManager";
 import StripeManager from "./core/managers/StripeManager";
 import GtagManager from "./core/managers/GtagManager";
 
@@ -59,6 +60,7 @@ class App extends React.Component {
       gtag: new GtagManager(),
       app: new AppManager(this.getHttpTranslation),
       market: new MarketManager(this.getHttpTranslation),
+      search: new SearchManager(this.getHttpTranslation),
       stripe: new StripeManager(this.getHttpTranslation)
     };
     this.managers.auth = new AuthManager(
@@ -370,7 +372,7 @@ class App extends React.Component {
               render={props =>
                 typeof isAuthenticated === "undefined" ?
                   <div className="wrapper centered">
-                    <RingLoader color="#3a5966" size={67} />
+                    <CircularLoader size="lg" />
                   </div> :
                   isAuthenticated ?
                     <Redirect to={this.managers.app.userProfilePath(user.username)} /> :
@@ -389,10 +391,10 @@ class App extends React.Component {
               render={props =>
                 typeof isAuthenticated === "undefined" ?
                   <div className="wrapper centered">
-                    <RingLoader color="#3a5966" size={67} />
+                    <CircularLoader size="lg" />
                   </div> :
                   !isAuthenticated ?
-                    <Redirect to="/auth/login" /> :
+                    <Redirect to="/auth/login/" /> :
                     <AppLayout {...props}
                       managers={this.managers}
                       prefs={prefs}
@@ -406,7 +408,7 @@ class App extends React.Component {
                     />
               }
             />
-            <Redirect to="/auth/login" />
+            <Redirect to="/auth/login/" />
           </Switch>
         </Router>
       </>

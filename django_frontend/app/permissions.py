@@ -1,4 +1,3 @@
-from app.models import UserCustom, Subscription
 from rest_framework import permissions
 
 

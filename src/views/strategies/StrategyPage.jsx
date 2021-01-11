@@ -32,7 +32,7 @@ import ModalStrategyRating from "../modals/strategy/ModalStrategyRating";
 import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
 import ChartManager from "../../core/managers/ChartManager";
 import UsageOverTime from "../../components/cards/charts/UsageOverTime";
-
+import PageNotFound from "../generics/PageNotFound";
 import {
   getDistinctValuesFromList,
   getValueListFromObjList,
@@ -50,6 +50,7 @@ class StrategyPage extends React.Component {
     this.state = {
       isPageLoading: true,
       isRunning: undefined,
+      notFound: undefined,
 
       modal_strategyDetail_isOpen: false,
       modal_strategyRating_isOpen: false,
@@ -118,7 +119,7 @@ class StrategyPage extends React.Component {
     }
     else {
       // [strategy] param was not given...
-      this.setState({ redirectTo: `/app/strategies/panel/` })
+      window.location.pathname = `/app/strategies/panel/`
     }
 
     let result = await this.props.managers.app.strategyRetrieve(false, strategy.uuid)
@@ -132,13 +133,16 @@ class StrategyPage extends React.Component {
       this.prepareCharts(strategy)
 
       if (this.props.user.username === strategy.owner_username) {
+        let myStrategy = await this.props.managers.app.myStrategyRetrieve(strategy.uuid)
         strategy.isOwner = true
+        strategy.id = myStrategy.id
+
         await this.prepareMyStrategyNames()
       }
     }
     else if (result.response.status == 404) {
       // Strategy doesn't exist...
-      this.setState({ redirectTo: `/app/notfound/` })
+      this.setState({ notFound: true })
     }
 
     return strategy
@@ -260,6 +264,7 @@ class StrategyPage extends React.Component {
   updateClick(obj) {
     let objData = {
       id: obj.id,
+      uuid: obj.uuid,
       name: obj.name,
       desc: obj.desc,
       type: obj.type,
@@ -521,9 +526,9 @@ class StrategyPage extends React.Component {
   render() {
     let { getString, prefs } = this.props;
     let {
-      redirectTo,
       isPageLoading,
       isRunning,
+      notFound,
 
       modal_strategyDetail_isOpen,
       modal_strategyRating_isOpen,
@@ -540,6 +545,9 @@ class StrategyPage extends React.Component {
 
       alert
     } = this.state;
+
+    if (notFound)
+      return <PageNotFound {...this.props} />
 
     return (
       <div className="content">
@@ -590,7 +598,7 @@ class StrategyPage extends React.Component {
                 <Row>
                   {/* Name */}
                   <Col className="align-center">
-                    <a href="" onClick={e => e.preventDefault()}>
+                    <a className="muted" href="" onClick={e => e.preventDefault()}>
                       <small className="description">
                         #{strategy.uuid}
                       </small>
@@ -732,7 +740,6 @@ class StrategyPage extends React.Component {
             </Card>
           </Col>
         </Row>
-        {redirectTo && <Redirect to={redirectTo} />}
       </div>
     )
   }

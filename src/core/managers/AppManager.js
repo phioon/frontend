@@ -584,6 +584,12 @@ class AppManager {
     // Return it with http error details
     return sItem
   }
+  async myStrategyRetrieve(uuid) {
+    let sItem = await this.myStrategyList()
+
+    let strategy = retrieveObjFromObjList(sItem.data, "uuid", uuid)
+    return strategy
+  }
   async myStrategyCreate(strategy) {
     let wsInfo = this.getApi("wsMyStrategies")
     wsInfo.method = "post"
@@ -616,7 +622,9 @@ class AppManager {
       await this.myStrategyList(syncFull)
 
       // Checks if the updated strategy has been retrieved before...
-      let sStrategy = await StorageManager.getData(sKey_strategies, strategy.id)
+      console.log(strategy)
+      let sStrategy = await StorageManager.getData(sKey_strategies, strategy.uuid)
+      console.log(sStrategy)
       if (sStrategy)
         this.strategyRetrieve(syncFull, strategy.uuid)      // async call
     }
@@ -1018,12 +1026,15 @@ class AppManager {
   }
   async userFollowers(username, cursor = null) {
     let wsInfo = this.getApi("wsUser")
+
     wsInfo.request += `${username}/followers/`
+    if (cursor)
+      wsInfo.request += `?cursor=${cursor}`
+
     wsInfo.method = "get"
-    wsInfo.params = cursor ? { cursor: cursor } : null
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
-    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.params)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status != 200)
       this.getHttpTranslation(result, "userfollowers", "user", true)
@@ -1032,12 +1043,15 @@ class AppManager {
   }
   async userFollowing(username, cursor = null) {
     let wsInfo = this.getApi("wsUser")
+
     wsInfo.request += `${username}/following/`
+    if (cursor)
+      wsInfo.request += `?cursor=${cursor}`
+
     wsInfo.method = "get"
-    wsInfo.params = cursor ? { cursor: cursor } : null
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
-    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.params)
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
     if (result.status != 200)
       this.getHttpTranslation(result, "userfollowing", "user", true)

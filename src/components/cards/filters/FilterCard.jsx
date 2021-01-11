@@ -34,7 +34,7 @@ class FilterCard extends Component {
     this.prepareCarousel()
   }
   componentWillUnmount() {
-    window.removeEventListener("resize", this.resize)
+    window.removeEventListener("resize", this.resize);
   }
   componentDidUpdate(prevProps) {
     if (this.props.dimensions !== prevProps.dimensions)

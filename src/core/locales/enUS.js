@@ -20,6 +20,10 @@ const locale = {
     title_openpositions: "Open Positions",
     title_phitrader: "Technical Analysis",
     title_positions: "My Assets",
+    title_recentsearches: "Recent Searches",
+    title_searchresults: "Results",
+    title_searchstrategyresults: "Strategies",
+    title_searchuserresults: "Users",
     title_strategypanel: "Strategies",
     title_strategypage: "Strategy",
     title_strategygallery: "Strategies",
@@ -804,6 +808,25 @@ const locale = {
     label_page: "Page",
     label_of: "of",
     label_rows: "rows",
+  },
+  search: {
+    label_noRecentSearch_title: "Search PHIOON",
+    label_noRecentSearch_desc: "Find users and strategies all around the world...",
+  },
+  searchresults: {
+    card_users_title: "Users",
+    card_strategies_title: "Strategies",
+
+    btn_seeMore: "See more",
+  },
+  searchstrategyresults: {
+    title: "Showing Strategies for"
+  },
+  searchuserresults: {
+    title: "Showing Users for"
+  },
+  recentsearches: {
+    btn_clear: "Clear recent searches"
   },
   register: {
     alert_generalErrorTitle: "Something went wrong...",

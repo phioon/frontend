@@ -1,28 +1,31 @@
-from . import utils
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-
 from django.contrib.auth import login, views as django_auth_views
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view, permission_classes
-
+from django.shortcuts import render, get_object_or_404
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from knox.settings import knox_settings
+from knox.views import LoginView as KnoxLoginView
 from rest_auth import views as rest_auth_views
-
+from rest_framework import permissions, status, generics
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-from rest_framework import generics, permissions, status
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
-from knox.views import LoginView as KnoxLoginView
-from knox.settings import knox_settings
+from app import models as models_app
+from app import models_auth
+from app import serializers_auth
+from app import views_stripe
+from django_engine.functions import utils
 
-from .serializers import UserSerializer, UserRegisterSerializer, UserCustomSerializer
-from . import serializers
 
-from api_engine import apiStripe
-from app.models import Country, Currency, UserCustom, UserPreferences, Subscription
+def frontend(request):
+    return render(request, 'app/index.html')
+
+
+def frontend_uidb64_token(request, uidb64, token):
+    return render(request, 'app/index.html')
 
 
 @api_view(['POST'])
@@ -42,27 +45,27 @@ def checkUsernameAvailability(request):
 
 
 class UserRegisterAPIView(generics.GenericAPIView):
-    serializer_class = UserRegisterSerializer
+    serializer_class = serializers_auth.UserRegisterSerializer
     permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
-        nationality = get_object_or_404(Country, pk=request.data['nationality'])
-        subscription = get_object_or_404(Subscription, name='basic')
+        nationality = get_object_or_404(models_app.Country, pk=request.data['nationality'])
+        subscription = get_object_or_404(models_app.Subscription, name='basic')
 
         if nationality:
             user = serializer.save()
 
             if user:
                 try:
-                    userCustom = UserCustom.objects.create(
+                    userCustom = models_auth.UserCustom.objects.create(
                         user=user,
                         nationality=nationality,
                         subscription=subscription)
 
-                    UserPreferences.objects.create(
+                    models_auth.UserPreferences.objects.create(
                         user=user,
                         locale=request.data['locale'],
                         currency=nationality.currency)
@@ -105,7 +108,7 @@ class UserRegisterAPIView(generics.GenericAPIView):
 
 class UserRetrieveAPIView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = UserSerializer
+    serializer_class = serializers_auth.UserSerializer
 
     def get_object(self):
         return self.request.user
@@ -113,25 +116,24 @@ class UserRetrieveAPIView(generics.RetrieveAPIView):
 
 class UserUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = UserSerializer
+    serializer_class = serializers_auth.UserSerializer
 
     def get_object(self):
         return self.request.user
 
 
-# User Custom
 class UserCustomUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = UserCustomSerializer
+    serializer_class = serializers_auth.UserCustomSerializer
 
     def get_object(self):
-        return UserCustom.objects.get(user=self.request.user)
+        return models_auth.UserCustom.objects.get(user=self.request.user)
 
     def perform_update(self, serializer):
         instance = serializer.save()
 
         if instance.stripe_customer_id:
-            apiStripe.update_stripe_customer(instance.stripe_customer_id, serializer.validated_data)
+            views_stripe.update_stripe_customer(instance.stripe_customer_id, serializer.validated_data)
 
 
 class LoginAPIView(KnoxLoginView):
@@ -169,16 +171,15 @@ class LoginAPIView(KnoxLoginView):
         return super(LoginAPIView, self).post(request, format=None)
 
 
-#Tokens
 INTERNAL_RESET_SESSION_TOKEN = '_password_reset_token'
 
 
 class RequestPasswordResetView(rest_auth_views.PasswordResetView):
-    serializer_class = serializers.RequestPasswordResetSerializer
+    serializer_class = serializers_auth.RequestPasswordResetSerializer
 
 
 class RequestEmailConfirmationView(generics.GenericAPIView):
-    serializer_class = serializers.RequestEmailConfirmationSerializer
+    serializer_class = serializers_auth.RequestEmailConfirmationSerializer
 
     permission_classes = [permissions.AllowAny]
 
@@ -205,7 +206,7 @@ class RequestEmailConfirmationView(generics.GenericAPIView):
 
         # Brings userCustom to get preferred language
         locale = 'ptBR'
-        if UserCustom.objects.filter(user__email__exact=user.email).exists():
+        if models_auth.UserCustom.objects.filter(user__email__exact=user.email).exists():
             locale = user.userPrefs.locale
 
         # Send Confirmation Email
@@ -240,14 +241,14 @@ class RequestEmailConfirmationView(generics.GenericAPIView):
 
 
 class ConfirmEmailView(rest_auth_views.PasswordResetConfirmView):
-    serializer_class = serializers.ConfirmEmailSerializer
+    serializer_class = serializers_auth.ConfirmEmailSerializer
 
 
 @api_view(['PATCH'])
 @permission_classes([permissions.IsAuthenticated])
 def user_update(request):
     user = request.user
-    serializer_class = UserSerializer
+    serializer_class = serializers_auth.UserSerializer
     data = request.data
 
     # All fields in [UserPreferences] are supposed to be updatable
@@ -268,7 +269,7 @@ def user_update(request):
                 userCustom_updated = True
 
                 if attr == 'nationality':
-                    country = get_object_or_404(Country, pk=value)
+                    country = get_object_or_404(models_app.Country, pk=value)
                     setattr(user.userCustom, attr, country)
                 else:
                     setattr(user.userCustom, attr, value)
@@ -278,7 +279,7 @@ def user_update(request):
             userPrefs_updated = True
 
             if attr == 'currency':
-                currency = get_object_or_404(Currency, pk=value)
+                currency = get_object_or_404(models_app.Currency, pk=value)
                 setattr(user.userPrefs, attr, currency)
             else:
                 setattr(user.userPrefs, attr, value)
@@ -289,7 +290,7 @@ def user_update(request):
         user.userCustom.save()
     if userPrefs_updated:
         user.userPrefs.save()
-        apiStripe.update_stripe_customer(user.userCustom.stripe_customer_id, data)
+        views_stripe.update_stripe_customer(user.userCustom.stripe_customer_id, data)
 
     serializer = serializer_class(instance=user)
     return Response(serializer.data)
@@ -297,7 +298,7 @@ def user_update(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
-def CheckToken(request, uidb64, token):
+def check_token(request, uidb64, token):
     obj_passwordResetConfirm = django_auth_views.PasswordResetConfirmView()
     reset_url_token = 'set-password'
     user = obj_passwordResetConfirm.get_user(uidb64)

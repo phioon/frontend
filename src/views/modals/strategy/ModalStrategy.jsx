@@ -264,6 +264,7 @@ class ModalStrategy extends React.Component {
 
     // Data
     strategy.data.id = objData.id
+    strategy.data.uuid = objData.uuid
     strategy.data.name = objData.name
     strategy.data.desc = objData.desc
     strategy.data.type = objData.type
@@ -859,7 +860,7 @@ class ModalStrategy extends React.Component {
     }
   }
   async updateObject(strategy) {
-    let object = { id: strategy.data.id }
+    let object = { id: strategy.data.id, uuid: strategy.data.uuid }
 
     for (var [k, v] of Object.entries(strategy.patch))
       if (strategy.initial[k] != v)

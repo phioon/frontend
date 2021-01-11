@@ -148,7 +148,7 @@ class AuthManager {
   }
   async checkToken(uidb64, token) {
     let wsInfo = this.getApi("wsUser")
-    wsInfo.request += "checkToken/" + uidb64 + "/" + token + "/"
+    wsInfo.request += "check-token/" + uidb64 + "/" + token + "/"
     wsInfo.method = "get"
 
     return await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)

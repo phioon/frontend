@@ -1,30 +1,21 @@
 from django.contrib.auth.models import User
-from django.contrib.auth.tokens import default_token_generator
-
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
-from rest_auth import serializers as rest_auth_serializers
-
-from django.utils.http import urlsafe_base64_decode as uid_decoder
-from django.shortcuts import get_object_or_404
-from django.utils.encoding import force_text
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime
 
-from app import models as app_models
-from app.models import Country, Currency, Strategy, Subscription, Position, PositionType, UserCustom, Wallet
+from app import models
 
 
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Country
+        model = models.Country
         fields = '__all__'
 
 
 class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Currency
+        model = models.Currency
         fields = '__all__'
 
 
@@ -32,7 +23,7 @@ class PositionSerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
-        model = Position
+        model = models.Position
         fields = '__all__'
 
     # Confirms requestor's ownership on wallet
@@ -61,7 +52,7 @@ class PositionTypeSerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
-        model = PositionType
+        model = models.PositionType
         fields = '__all__'
 
 
@@ -70,12 +61,12 @@ class StrategySerializer(serializers.ModelSerializer):
     owner_username = serializers.ReadOnlyField(source='owner.username')
 
     class Meta:
-        model = Strategy
+        model = models.Strategy
         fields = '__all__'
 
     def create(self, validated_data):
-        instance = app_models.Strategy.objects.create(**validated_data)
-        app_models.StrategyStats.objects.create(strategy=instance)      # Create stats instance
+        instance = models.Strategy.objects.create(**validated_data)
+        models.StrategyStats.objects.create(strategy=instance)      # Create stats instance
 
         return instance
 
@@ -99,18 +90,18 @@ class StrategyDetailSerializer(serializers.ModelSerializer):
     stats = serializers.SerializerMethodField()
 
     class Meta:
-        model = Strategy
+        model = models.Strategy
         fields = '__all__'
 
     def get_stats(self, obj):
-        return obj.get_stats()
+        return obj.stats
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     prices = serializers.SerializerMethodField()
 
     class Meta:
-        model = Subscription
+        model = models.Subscription
         fields = '__all__'
 
     def get_prices(self, obj):
@@ -144,8 +135,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def get_is_followed_by_me(self, obj):
         requestor = self.context['request'].user
-        is_followed_by_me = obj.followers.filter(user=requestor)
-        is_followed_by_me = is_followed_by_me.count() > 0
+        is_followed_by_me = obj.followers.filter(user=requestor).exists()
         return is_followed_by_me
 
     def get_amount_following(self, obj):
@@ -166,7 +156,7 @@ class UserFollowerSerializer(serializers.ModelSerializer):
     is_followed_by_me = serializers.SerializerMethodField()
 
     class Meta:
-        model = app_models.UserFollowing
+        model = models.UserFollowing
         fields = ['username', 'full_name', 'is_followed_by_me']
 
     def get_full_name(self, obj):
@@ -187,7 +177,7 @@ class UserFollowingSerializer(serializers.ModelSerializer):
     is_followed_by_me = serializers.SerializerMethodField()
 
     class Meta:
-        model = app_models.UserFollowing
+        model = models.UserFollowing
         fields = ['username', 'full_name', 'is_followed_by_me']
 
     def get_full_name(self, obj):
@@ -206,133 +196,17 @@ class WalletSerializer(serializers.ModelSerializer):
     positions = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
-        model = Wallet
+        model = models.Wallet
         fields = '__all__'
 
     def create(self, validated_data):
         requestor = self.context['request'].user
-        subscriptionPlan = Subscription.objects.get(usercustom__user=requestor)
+        subscriptionPlan = models.Subscription.objects.get(usercustom__user=requestor)
 
         if subscriptionPlan.name == 'basic':
-            walletAmount = Wallet.objects.filter(owner=requestor).count()
+            walletAmount = models.Wallet.objects.filter(owner=requestor).count()
             if walletAmount >= 2:
                 raise serializers.ValidationError("Wallets limit reached.")
 
-        instance = Wallet.objects.create(**validated_data)
+        instance = models.Wallet.objects.create(**validated_data)
         return instance
-
-
-# Auth
-class UserRegisterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['email', 'username', 'password', 'first_name', 'last_name']
-        write_only_fields = ['password']
-
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'].lower(),
-            email=validated_data['email'].lower(),
-            password=validated_data['password'],
-            first_name=validated_data['first_name'].title(),
-            last_name=validated_data['last_name'].title(),
-            is_active=False)
-
-        return user
-
-    def validate_email(self, value):
-        try:
-            user = User.objects.get(email=value)
-            raise ValidationError({'email': 'A user with that email already exists.'})
-        except User.DoesNotExist:
-            return value
-
-
-class UserSerializer(serializers.ModelSerializer):
-    about_me = serializers.ReadOnlyField(source='userCustom.about_me')
-    links = serializers.ReadOnlyField(source='userCustom.links')
-    birthday = serializers.ReadOnlyField(source='userCustom.birthday')
-    nationality = serializers.ReadOnlyField(source='userCustom.nationality.code')
-    subscription = serializers.SerializerMethodField()
-    prefs = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'date_joined',
-                  'about_me', 'links', 'birthday', 'nationality',
-                  'subscription', 'prefs']
-
-    def get_subscription(self, obj):
-        subscription = {
-            'name': obj.userCustom.subscription.name,
-            'status': obj.userCustom.subscription_status,
-            'expires_on': obj.userCustom.subscription_expires_on,
-            'renews_on': obj.userCustom.subscription_renews_on,
-        }
-        return subscription
-
-    def get_prefs(self, obj):
-        prefs = {}
-
-        for field_name in obj.userPrefs.get_field_list():
-            attrValue = getattr(obj.userPrefs, field_name)
-
-            if field_name == 'currency':
-                prefs[field_name] = attrValue.code
-            else:
-                prefs[field_name] = attrValue
-        return prefs
-
-
-class UserCustomSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserCustom
-        fields = ['about_me', 'links', 'birthday', 'nationality']
-
-
-class RequestPasswordResetSerializer(rest_auth_serializers.PasswordResetSerializer):
-    def get_email_options(self):
-        subject_template_name = 'emails/<locale>/password_reset_subject.txt'
-        html_email_template_name = 'emails/<locale>/password_reset_email.html'
-
-        user_email = self.validated_data['email']
-
-        user = get_object_or_404(User, email=user_email)
-        locale = user.userPrefs.locale
-        subject_template_name = subject_template_name.replace('<locale>', locale)
-        html_email_template_name = html_email_template_name.replace('<locale>', locale)
-
-        print('subject_template_name: %s' % subject_template_name)
-        return {
-            'subject_template_name': subject_template_name,
-            'email_template_name': html_email_template_name,
-            'html_email_template_name': html_email_template_name,
-        }
-
-
-class RequestEmailConfirmationSerializer(rest_auth_serializers.PasswordResetSerializer):
-    email = serializers.EmailField()
-
-
-class ConfirmEmailSerializer(serializers.Serializer):
-    uid = serializers.CharField()
-    token = serializers.CharField()
-
-    def validate(self, attrs):
-        self._errors = {}
-
-        # Decode the uidb64 to uid to get User object
-        try:
-            uid = force_text(uid_decoder(attrs['uid']))
-            self.user = User._default_manager.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            raise ValidationError({'uid': ['Invalid value']})
-
-        if not default_token_generator.check_token(self.user, attrs['token']):
-            raise ValidationError({'token': ['Invalid value']})
-
-        return attrs
-
-    def save(self):
-        self.user.is_active = True
-        self.user.save()

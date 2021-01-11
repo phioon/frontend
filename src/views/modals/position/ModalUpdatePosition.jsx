@@ -1058,7 +1058,7 @@ class ModalUpdatePosition extends React.Component {
             <br />
             <div className="nav-tabs-navigation">
               <div className="nav-tabs-wrapper">
-                <Nav tabs>
+                <Nav tabs className="justify-content-center">
                   {/* START */}
                   <NavItem>
                     <NavLink

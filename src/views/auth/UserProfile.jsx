@@ -27,7 +27,9 @@ import Skeleton from "react-loading-skeleton";
 import ModalFollowers from "../modals/auth/ModalFollowers";
 import ModalStrategy from "../modals/strategy/ModalStrategy";
 import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
+import ModalFollowing from "../modals/auth/ModalFollowing";
 import StrategyPopularItem from "../../components/listItems/StrategyPopularItem";
+import PageNotFound from "../generics/PageNotFound";
 import {
   deepCloneObj,
   getFirstAndLastName,
@@ -36,7 +38,6 @@ import {
   getIconFromURL,
   orderBy
 } from "../../core/utils";
-import ModalFollowing from "../modals/auth/ModalFollowing";
 
 class UserProfile extends React.Component {
   constructor(props) {
@@ -46,6 +47,7 @@ class UserProfile extends React.Component {
     this.state = {
       isPageLoading: true,
       isRunning: false,
+      notFound: undefined,
 
       modal_followers_isOpen: false,
       modal_following_isOpen: false,
@@ -57,9 +59,6 @@ class UserProfile extends React.Component {
       action: "view",
       objData: {},
 
-      redirectTo: undefined,
-      btnFollow_onHover: undefined,
-
       user: {
         initials: "",
         strategies: []
@@ -70,6 +69,7 @@ class UserProfile extends React.Component {
         strategy: { rules: "{}" },
       },
 
+      btnFollow_onHover: undefined,
       popularShowMore: undefined,
     }
 
@@ -98,13 +98,14 @@ class UserProfile extends React.Component {
   async prepareUser() {
     let { user } = this.state;
 
-    if (this.props.match.params.username) {
+    if (this.props.match.params.username && this.props.match.params.username.length > 0) {
       // Set [username] value...
       user.username = this.props.match.params.username
     }
     else {
       // [username] param was not given. Setting current user's...
-      this.setState({ redirectTo: `/app/u/${this.props.user.username}/` })
+      window.location.pathname = `/app/u/${this.props.user.username}/`
+      return
     }
 
     let result = await this.props.managers.app.userProfileRetrieve(false, user.username)
@@ -117,7 +118,7 @@ class UserProfile extends React.Component {
     }
     else if (result.response.status == 404) {
       // Username doesn't exist...
-      this.setState({ redirectTo: `/app/notfound/` })
+      this.setState({ notFound: true })
     }
 
     this.setState({ user })
@@ -140,17 +141,9 @@ class UserProfile extends React.Component {
   }
   getUserAdditionalInfo(user) {
     user.full_name = getFirstAndLastName(`${user.first_name} ${user.last_name}`)
-    user.initials = this.returnUserInitals(user)
+    user.initials = getInitials(user.full_name)
 
     return user
-  }
-
-  returnUserInitals(user) {
-    let name = getFirstAndLastName(`${user.first_name} ${user.last_name}`)
-
-    let userInitials = getInitials(name)
-
-    return userInitials
   }
 
   onClick(action, obj) {
@@ -482,17 +475,15 @@ class UserProfile extends React.Component {
   links(links) {
     return links.map((link, i) => {
       return (
-        <a href={link.url} className="description" target="_blank">
-          <Row key={i}>
+        <a key={`link_${i}`} href={link.url} className="description" target="_blank">
+          <Row>
             <Col xs="2">
               <Button className="btn-icon btn-neutral">
                 <i className={getIconFromURL(link.url)} />
               </Button>
             </Col>
             <Col className="align-center">
-
               {link.name}
-
             </Col>
           </Row>
         </a>
@@ -523,9 +514,9 @@ class UserProfile extends React.Component {
   render() {
     let { getString, prefs } = this.props;
     let {
-      redirectTo,
       isPageLoading,
       isRunning,
+      notFound,
 
       modal_followers_isOpen,
       modal_following_isOpen,
@@ -543,6 +534,9 @@ class UserProfile extends React.Component {
 
       popularShowMore,
     } = this.state;
+
+    if (notFound)
+      return <PageNotFound {...this.props} />
 
     return (
       <div className="content">
@@ -698,8 +692,7 @@ class UserProfile extends React.Component {
           {this.overviewPane(isPageLoading, user, popularShowMore)}
           {this.aboutPane(isPageLoading, user)}
         </TabContent>
-        {redirectTo && <Redirect to={redirectTo} />}
-      </div>
+      </div >
     )
   }
 }

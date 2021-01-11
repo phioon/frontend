@@ -1,5 +1,6 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
+import PropTypes from "prop-types";
 // reactstrap components
 import {
   Button,
@@ -18,14 +19,11 @@ import {
 } from "reactstrap";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
-import { RingLoader } from "react-spinners";
 
-import PropTypes from "prop-types";
-
-// CORE
+import { CircularLoader } from "../../components/Loaders";
 import { project } from "../../core/projectData";
 import LabelAlert from "../../components/LabelAlert";
-// --------------------
+
 
 class SetPassword extends React.Component {
   constructor(props) {
@@ -250,7 +248,7 @@ class SetPassword extends React.Component {
                   // First Loading
                   <CardBody>
                     <div className="centered">
-                      <RingLoader color="#3a5966" size={67} />
+                      <CircularLoader size="lg" />
                     </div>
                   </CardBody> :
                   isTokenExpired ?

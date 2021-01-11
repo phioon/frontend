@@ -2,6 +2,7 @@ export const project = {
   info: {
     name: "P H I O O N",
     website: "https://phioon.com",
+    app: "https://app.phioon.com",
 
     website_wallets: "https://phioon.com/products/wallets",
     website_strategies: "https://phioon.com/products/strategies",

@@ -5,15 +5,18 @@ import {
   Button,
   Card,
   CardHeader,
+  CardFooter,
   Col,
   Modal,
   Row
 } from "reactstrap";
+import { HorizontalLoader } from "../../../components/Loaders";
+import Skeleton from "react-loading-skeleton";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
-import Skeleton from "react-loading-skeleton";
 
 import UserFollowingItem from "../../../components/listItems/UserFollowingItem";
+import { getPaginationCursor } from "../../../core/utils";
 
 var ps;
 
@@ -24,6 +27,7 @@ class ModalFollowing extends React.Component {
 
     this.state = {
       firstLoading: true,
+      isLoading: undefined,
 
       iUsers: [],
       nextCursor: undefined,
@@ -50,7 +54,6 @@ class ModalFollowing extends React.Component {
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(this.userFollowingRef.current);
     }
-
     this.userFollowingRef.current.addEventListener("scroll", this.handleScroll);
   }
   onClosed() {
@@ -60,11 +63,13 @@ class ModalFollowing extends React.Component {
       ps.destroy();
       ps = null;
     }
+    this.userFollowingRef.current.removeEventListener("scroll", this.handleScroll)
   }
 
   handleScroll(e) {
     var node = e.target;
-    let bottom = Math.round(node.scrollHeight - node.scrollTop, 0) === node.clientHeight;
+    let scrolled = (node.scrollHeight - node.scrollTop)
+    let bottom = (scrolled - node.clientHeight) < 5;
 
     if (bottom) {
       this.fetchNext()
@@ -81,6 +86,7 @@ class ModalFollowing extends React.Component {
   async fetchNext() {
     let { username } = this.props;
     let { firstLoading, iUsers, nextCursor } = this.state;
+    this.setState({ isLoading: true })
 
     if (firstLoading || nextCursor) {
       let result = await this.props.managers.app.userFollowing(username, nextCursor)
@@ -89,20 +95,11 @@ class ModalFollowing extends React.Component {
         let data = result.data
         iUsers = iUsers.concat(data.results)
 
-        nextCursor = this.getCursor(data.next)
+        nextCursor = getPaginationCursor(data.next)
       }
     }
 
-    this.setState({ firstLoading: false, iUsers, nextCursor })
-  }
-  getCursor(url) {
-    let cursor = undefined
-    let strLookup = "cursor="
-
-    if (url)
-      cursor = String(url).substring(url.indexOf(strLookup) + strLookup.length)
-
-    return cursor
+    this.setState({ firstLoading: false, isLoading: false, iUsers, nextCursor })
   }
 
   async onClick(action, obj) {
@@ -181,7 +178,7 @@ class ModalFollowing extends React.Component {
 
   render() {
     let { prefs, getString, modalId, isOpen } = this.props;
-    let { firstLoading, iUsers } = this.state;
+    let { firstLoading, isLoading, iUsers } = this.state;
 
     return (
       <div>
@@ -215,6 +212,11 @@ class ModalFollowing extends React.Component {
                   this.renderUsers(iUsers)
               }
             </div>
+            <CardFooter>
+              <div className="centered">
+                {!firstLoading && isLoading && <HorizontalLoader size="sm" />}
+              </div>
+            </CardFooter>
           </Card>
         </Modal>
       </div>

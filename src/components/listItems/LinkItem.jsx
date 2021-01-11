@@ -25,7 +25,7 @@ class LinkItem extends React.Component {
 
 		return (
 			<Row
-				className="align-center"
+				className="list-item"
 				onMouseOver={() => this.setState({ onHover: true })}
 				onMouseLeave={() => this.setState({ onHover: false })}
 			>

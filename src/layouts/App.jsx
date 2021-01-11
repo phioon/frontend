@@ -1,13 +1,13 @@
 import React from "react";
-// javascript plugin used to create scrollbars on windows
-import PerfectScrollbar from "perfect-scrollbar";
 import { Route, Switch } from "react-router-dom";
 import PropTypes from "prop-types";
+// javascript plugin used to create scrollbars on windows
+import PerfectScrollbar from "perfect-scrollbar";
 
 import AppNavBar from "components/Navbars/AppNavbar.jsx";
 import Footer from "components/Footer/Footer.jsx";
 import Sidebar from "components/Sidebar/Sidebar.jsx";
-import { getDistinctValuesFromList } from "../core/utils";
+import { getDistinctValuesFromList, sleep } from "../core/utils";
 
 import routes from "routes.js";
 
@@ -16,15 +16,19 @@ export var ps;
 class AppLayout extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       navbarTitleId: "title_default",
 
       backgroundColor: "primary-dark",
       activeColor: "success",
       sidebarMini: false,
+
+      sQuery: "",
     };
 
     this.mainPanelRef = React.createRef()
+    this.onQueryChange = this.onQueryChange.bind(this)
     this.setNavbarTitleId = this.setNavbarTitleId.bind(this)
   }
   componentDidMount() {
@@ -108,8 +112,15 @@ class AppLayout extends React.Component {
         this.props.managers.market.dSetupList(se_short)                   // async call
       }
     }
+
+    // Clean-ups: awaits 20 seconds...
+    sleep(20000)
+    this.props.managers.search.multiSearchCleanUp()
   }
 
+  onQueryChange(value) {
+    this.setState({ sQuery: value })
+  }
   setNavbarTitleId(titleId) {
     this.setState({ navbarTitleId: titleId })
   }
@@ -126,7 +137,9 @@ class AppLayout extends React.Component {
             render={(props) => <prop.component
               {...this.props}   // This first!
               {...props}        // Then, this one.
-              setNavbarTitleId={this.setNavbarTitleId} />}
+              setNavbarTitleId={this.setNavbarTitleId}
+              sQuery={this.state.sQuery} />
+            }
             key={key}
           />
         );
@@ -151,7 +164,7 @@ class AppLayout extends React.Component {
   };
   render() {
     let { managers } = this.props;
-    let { navbarTitleId } = this.state
+    let { navbarTitleId, sQuery } = this.state
 
     return (
       <div className="wrapper">
@@ -162,11 +175,13 @@ class AppLayout extends React.Component {
           activeColor={this.state.activeColor}
           managers={managers}
         />
-        <div className="main-panel" ref={this.mainPanelRef}>
+        <div id="main-panel" className="main-panel" ref={this.mainPanelRef}>
           <AppNavBar
             {...this.props}
             handleMiniClick={this.handleMiniClick}
             navbarTitleId={navbarTitleId}
+            onQueryChange={this.onQueryChange}
+            sQuery={sQuery}
           />
           <Switch>{this.getRoutes(routes)}</Switch>
           {// we don't want the Footer to be rendered on full screen maps page

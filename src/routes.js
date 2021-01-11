@@ -32,6 +32,11 @@ import StrategyPage from "./views/strategies/StrategyPage";
 import StrategyPanel from "views/strategies/StrategyPanel";
 import StrategyGallery from "views/strategies/StrategyGallery";
 
+// Search
+import Search from "views/search/Search";
+import SearchStrategyResults from "views/search/SearchStrategyResults";
+import SearchUserResults from "views/search/SearchUserResults";
+
 // Generics
 import PageNotFound from "views/generics/PageNotFound";
 
@@ -117,7 +122,7 @@ const routes = [
         layout: "/app"
       },
       {
-        path: "/u/subscription/",
+        path: "/myplan/",
         name: "usersubscription",
         mini: "US",
         component: UserSubscription,
@@ -137,6 +142,42 @@ const routes = [
         component: UserProfile,
         layout: "/app"
       },
+      {
+        path: "/u/",
+        name: "profile",
+        mini: "P",
+        component: UserProfile,
+        layout: "/app"
+      },
+    ]
+  },
+  {
+    collapse: true,
+    name: "search",
+    icon: "nc-icon nc-zoom-split",
+    state: "searchCollapse",
+    views: [
+      {
+        path: "/search/strategies/",
+        name: "searchstrategy",
+        mini: "SS",
+        component: SearchStrategyResults,
+        layout: "/app"
+      },
+      {
+        path: "/search/users/",
+        name: "searchuser",
+        mini: "SU",
+        component: SearchUserResults,
+        layout: "/app"
+      },
+      {
+        path: "/search/",
+        name: "search",
+        mini: "S",
+        component: Search,
+        layout: "/app"
+      }
     ]
   },
   {

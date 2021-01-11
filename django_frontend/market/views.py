@@ -1,14 +1,15 @@
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework import permissions
-from api_engine.permissions import IsPremium, IsPlatinum
 from requests.auth import HTTPBasicAuth
+from rest_framework import permissions, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+
+from app.permissions import IsPremium, IsPlatinum
 from django_engine import settings
 
 import requests
 import json
 import os
+
 
 if os.getenv('GAE_APPLICATION', None):
     __backendHost__ = 'https://backend.phioon.com'
@@ -95,7 +96,6 @@ def IndicatorList(request):
     return Response(json.loads(r.text))
 
 
-# Based on Daily chart
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def D_RawList(request):

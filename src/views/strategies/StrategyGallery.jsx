@@ -59,6 +59,7 @@ class StrategyGallery extends React.Component {
       savedStrategyIds: []
     };
 
+    this.resize = this.resize.bind(this);
     this.setFlag = this.setFlag.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -76,8 +77,10 @@ class StrategyGallery extends React.Component {
   resize() {
     let maxItemsPerSlide = this.getMaxItemsPerSlide()
 
-    if (this.state.myStrategies.maxItemsPerSlide != maxItemsPerSlide)
-      this.prepareMyStrategies()          // async call
+    if (this.state.mostRuns.maxItemsPerSlide != maxItemsPerSlide) {
+      this.prepareMostRuns()          // async call
+      this.prepareMostSaved()         // async call
+    }
   }
   getMaxItemsPerSlide() {
     if (window.innerWidth < 576)
@@ -346,23 +349,6 @@ class StrategyGallery extends React.Component {
         <div className="header text-center">
           <h3 className="title">{getString(prefs.locale, this.compId, "title")}</h3>
         </div>
-        <Row className="mt-4" />
-        <Row className="justify-content-center">
-          <Col md="6">
-            <InputGroup className="no-border">
-              <Input
-                defaultValue=""
-                placeholder={getString(prefs.locale, "generic", "input_search")}
-                type="text" />
-              <InputGroupAddon addonType="append">
-                <InputGroupText>
-                  <i className="nc-icon nc-zoom-split" />
-                </InputGroupText>
-              </InputGroupAddon>
-            </InputGroup>
-          </Col>
-        </Row>
-
         {pageFirstLoading ?
           // Carousel Skeleton
           <>

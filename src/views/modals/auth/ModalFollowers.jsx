@@ -5,15 +5,18 @@ import {
   Button,
   Card,
   CardHeader,
+  CardFooter,
   Col,
   Modal,
   Row
 } from "reactstrap";
+import { HorizontalLoader } from "../../../components/Loaders";
+import Skeleton from "react-loading-skeleton";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
-import Skeleton from "react-loading-skeleton";
 
 import UserFollowingItem from "../../../components/listItems/UserFollowingItem";
+import { getPaginationCursor } from "../../../core/utils";
 
 var ps;
 
@@ -24,6 +27,7 @@ class ModalFollowers extends React.Component {
 
     this.state = {
       firstLoading: true,
+      isLoading: undefined,
 
       iUsers: [],
       nextCursor: undefined,
@@ -64,7 +68,8 @@ class ModalFollowers extends React.Component {
 
   handleScroll(e) {
     var node = e.target;
-    let bottom = Math.round(node.scrollHeight - node.scrollTop, 0) === node.clientHeight;
+    let scrolled = (node.scrollHeight - node.scrollTop)
+    let bottom = (scrolled - node.clientHeight) < 5;
 
     if (bottom) {
       this.fetchNext()
@@ -81,6 +86,7 @@ class ModalFollowers extends React.Component {
   async fetchNext() {
     let { username } = this.props;
     let { iUsers, nextCursor } = this.state;
+    this.setState({ isLoading: true })
 
     let result = await this.props.managers.app.userFollowers(username, nextCursor)
 
@@ -88,19 +94,10 @@ class ModalFollowers extends React.Component {
       let data = result.data
       iUsers = iUsers.concat(data.results)
 
-      nextCursor = this.getCursor(data.next)
+      nextCursor = getPaginationCursor(data.next)
     }
 
-    this.setState({ firstLoading: false, iUsers, nextCursor })
-  }
-  getCursor(url) {
-    let cursor = undefined
-    let strLookup = "cursor="
-
-    if (url)
-      cursor = String(url).substring(url.indexOf(strLookup) + strLookup.length)
-
-    return cursor
+    this.setState({ firstLoading: false, isLoading: false, iUsers, nextCursor })
   }
 
   async onClick(action, obj) {
@@ -180,7 +177,7 @@ class ModalFollowers extends React.Component {
 
   render() {
     let { prefs, getString, modalId, isOpen } = this.props;
-    let { firstLoading, iUsers } = this.state;
+    let { firstLoading, isLoading, iUsers } = this.state;
 
     return (
       <Modal isOpen={isOpen} toggle={() => this.props.toggleModal(modalId)} className="modal-following"
@@ -213,6 +210,11 @@ class ModalFollowers extends React.Component {
                 this.renderUsers(iUsers)
             }
           </div>
+          <CardFooter>
+            <div className="centered">
+              {!firstLoading && isLoading && <HorizontalLoader size="sm" />}
+            </div>
+          </CardFooter>
         </Card>
       </Modal>
     )

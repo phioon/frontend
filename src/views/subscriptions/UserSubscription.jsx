@@ -124,7 +124,7 @@ class UserSubscription extends React.Component {
   }
   reloadApp() {
     this.setState({ alert: null });
-    window.location.href = window.location.origin + "/app/user/subscription/"
+    window.location.href = window.location.origin + "/app/myplan/"
   }
   hideAlert() {
     this.setState({ alert: null });

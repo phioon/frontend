@@ -221,7 +221,7 @@ class Sidebar extends React.Component {
                     </NavLink>
                   </li>
                   <li>
-                    <NavLink to="/app/u/subscription/" activeClassName="">
+                    <NavLink to="/app/myplan/" activeClassName="">
                       <span className="sidebar-mini-icon">{getString(prefs.locale, this.compId, 'subscriptionMini')}</span>
                       <span className="sidebar-normal">{getString(prefs.locale, this.compId, 'subscription')}</span>
                     </NavLink>

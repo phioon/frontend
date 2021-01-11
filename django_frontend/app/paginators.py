@@ -1,10 +1,10 @@
-from rest_framework import pagination
 from rest_framework.response import Response
+from rest_framework import pagination
 
 
 class FollowingCursorPagination(pagination.CursorPagination):
     page_size = 14
-    max_page_size = 100
+    max_page_size = 14
     ordering = '-create_time'
 
 

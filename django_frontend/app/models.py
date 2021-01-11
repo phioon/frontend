@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
-from django.db.models import Avg, Sum
+from django.db.models import F, Q, Avg, Sum
 from django.core import validators
 from django.db import models
+from search_engine import utils as utils_search
 from datetime import datetime, timedelta
 import uuid
 
@@ -140,28 +141,6 @@ class PositionType(models.Model):
             defaults={'desc': 'Sell'})
 
 
-class UserCustom(models.Model):
-    # Want fields here to be retrieved by Frontend? Add them into UserSerializer (not UserCustomSerializer)
-    # UserCustomSerializer is used only for updating UserCustom objects
-
-    last_modified = models.DateTimeField(auto_now=True)
-    user = models.OneToOneField(User, related_name='userCustom', on_delete=models.CASCADE)
-    birthday = models.DateField(null=True)
-    nationality = models.ForeignKey(Country, on_delete=models.DO_NOTHING)
-    stripe_customer_id = models.CharField(max_length=32, null=True, unique=True)
-    # subscription
-    subscription = models.ForeignKey(Subscription, on_delete=models.DO_NOTHING)
-    subscription_status = models.CharField(max_length=16, default='undefined')
-    subscription_expires_on = models.DateField(null=True, db_index=True)
-    subscription_renews_on = models.DateField(null=True, db_index=True)
-    # social
-    about_me = models.CharField(max_length=2048, blank=True, default='')
-    links = models.JSONField(default=list())
-
-    def __str__(self):
-        return self.user.username
-
-
 class UserFollowing(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
@@ -177,25 +156,6 @@ class UserFollowing(models.Model):
 
     def __str__(self):
         return str(self.user.username + '__' + self.following_user.username)
-
-
-class UserPreferences(models.Model):
-    user = models.OneToOneField(User, related_name='userPrefs', on_delete=models.CASCADE)
-    locale = models.CharField(max_length=8)
-    currency = models.ForeignKey(Currency, on_delete=models.DO_NOTHING)
-
-    def __str__(self):
-        return self.user.username
-
-    def get_field_list(self):
-        fields = []
-
-        ignore_fields = ['id', 'user']
-        for field in self._meta.fields:
-            if field.name not in ignore_fields:
-                fields.append(field.name)
-
-        return fields
 
 
 class Wallet(models.Model):
@@ -234,23 +194,76 @@ class Position(models.Model):
         return str(self.pk)
 
 
+class StrategyManager(models.Manager):
+    def search(self, query=None, top=None):
+        qs = self.get_queryset()
+        if query is not None:
+            keywords = utils_search.get_keyword_list(query=query)
+
+            or_lookup = (Q(name__icontains=keywords[0]) |
+                         Q(desc__icontains=keywords[0]) |
+                         Q(owner__username__icontains=keywords[0]) |
+                         Q(owner__first_name__icontains=keywords[0]) |
+                         Q(owner__last_name__icontains=keywords[0]))
+            qs = qs.filter(or_lookup)
+
+            for keyword in keywords[1:]:
+                or_lookup = (Q(name__icontains=keyword) |
+                             Q(desc__icontains=keyword) |
+                             Q(owner__username__icontains=keyword) |
+                             Q(owner__first_name__icontains=keyword) |
+                             Q(owner__last_name__icontains=keyword))
+                qs = qs | qs.filter(or_lookup)
+
+            qs = qs.filter(is_public=True)
+            qs = qs.distinct()
+            qs = qs.annotate(rank_saved=F('statistics__saved_count') * 17)
+            qs = qs.annotate(rank_runs=F('statistics__runs_last_30_days'))
+            qs = qs.annotate(rank=F('rank_saved') + F('rank_runs'))
+            qs = qs.order_by('-rank')[:top]
+        return qs
+
+    def search_tags(self, query=None):
+        qs = self.get_queryset()
+        if query is not None:
+            qs = qs.filter(tags__icontains=query)
+
+        return qs
+
+
 class Strategy(models.Model):
+    objects = StrategyManager()
+
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     create_time = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
     owner = models.ForeignKey(User, related_name='strategies', editable=False, on_delete=models.CASCADE)
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, db_index=True)
     desc = models.CharField(max_length=2048, blank=True)
-    type = models.CharField(max_length=8, verbose_name='buy or sell')
+    type = models.CharField(max_length=8, verbose_name='buy or sell', db_index=True)
 
     is_public = models.BooleanField(default=True, verbose_name='Visibility')
     is_dynamic = models.BooleanField(default=False, verbose_name='Logic type')
     rules = models.JSONField()
-    tags = models.JSONField(default=list())
+    tags = models.JSONField(default=list)
 
     def __str__(self):
         return str(self.pk)
+
+    @property
+    def search_rank(self):
+        rank = self.statistics.runs_last_30_days * self.saved.count()
+        return rank
+
+    @property
+    def stats(self):
+        data = {
+            'ratings': self.get_rating_stats(),
+            'saved': self.get_saved_stats(),
+            'usage': self.get_usage()
+        }
+        return data
 
     def rate(self, user, value):
         try:
@@ -295,14 +308,6 @@ class Strategy(models.Model):
         self.update_stats('saved')
 
     # Stats
-    def get_stats(self):
-        data = {
-            'ratings': self.get_rating_stats(),
-            'saved': self.get_saved_stats(),
-            'usage': self.get_usage()
-        }
-        return data
-
     def update_stats(self, related_name):
         if related_name == 'ratings':
             self.update_rating_stats()
@@ -314,7 +319,7 @@ class Strategy(models.Model):
     # Ratings
     def get_rating_stats(self):
         data = {
-            'avg': self.stats.rating_avg,
+            'avg': self.statistics.rating_avg,
             'count': self.ratings.count(),
         }
         return data
@@ -323,27 +328,27 @@ class Strategy(models.Model):
         aggr = self.ratings.aggregate(Avg('rating'))
         if aggr['rating__avg'] is not None:
             avg = round(aggr['rating__avg'], 1)
-            self.stats.rating_avg = avg
-            self.stats.save()
+            self.statistics.rating_avg = avg
+            self.statistics.save()
 
     # Saved
     def get_saved_stats(self):
         data = {
-            'count': self.stats.saved_count
+            'count': self.statistics.saved_count
         }
         return data
 
     def update_saved_stats(self):
         # Saved count
         saved_count = self.saved.filter(strategy=self).count()
-        self.stats.saved_count = saved_count
-        self.stats.save()
+        self.statistics.saved_count = saved_count
+        self.statistics.save()
 
     # Usage
     def get_usage(self):
         data = {
-            'runs_last_30_days': self.stats.runs_last_30_days,
-            'total_runs': self.stats.total_runs,
+            'runs_last_30_days': self.statistics.runs_last_30_days,
+            'total_runs': self.statistics.total_runs,
             'history': self.get_usage_history()
         }
         return data
@@ -364,20 +369,33 @@ class Strategy(models.Model):
         today = datetime.utcnow().date()
 
         # Total Runs
-        self.stats.total_runs = self.stats.total_runs + 1
+        self.statistics.total_runs = self.statistics.total_runs + 1
 
         # 30 days
         date_from = today - timedelta(days=30)
         queryset = self.usage.filter(date__gte=date_from)
         usage = queryset.aggregate(runs_last_30_days=Sum('runs'))
-        self.stats.runs_last_30_days = usage['runs_last_30_days']
+        self.statistics.runs_last_30_days = usage['runs_last_30_days']
 
         # 14 days
         date_from = today - timedelta(days=14)
         usage = queryset.filter(date__gte=date_from).aggregate(runs_last_14_days=Sum('runs'))
-        self.stats.runs_last_14_days = usage['runs_last_14_days']
+        self.statistics.runs_last_14_days = usage['runs_last_14_days']
 
-        self.stats.save()
+        self.statistics.save()
+
+
+class StrategyStats(models.Model):
+    strategy = models.OneToOneField(Strategy, related_name='statistics', on_delete=models.CASCADE)
+    rating_avg = models.FloatField(default=0)
+    saved_count = models.IntegerField(default=0)
+
+    runs_last_14_days = models.IntegerField(default=0)
+    runs_last_30_days = models.IntegerField(default=0)
+    total_runs = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.strategy.pk) + '__' + str(self.rating_avg)
 
 
 class StrategySaved(models.Model):
@@ -392,19 +410,6 @@ class StrategySaved(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user', 'strategy'], name='unique_saved_strategies')
         ]
-
-
-class StrategyStats(models.Model):
-    strategy = models.OneToOneField(Strategy, related_name='stats', on_delete=models.CASCADE)
-    rating_avg = models.FloatField(default=0)
-    saved_count = models.IntegerField(default=0)
-
-    runs_last_14_days = models.IntegerField(default=0)
-    runs_last_30_days = models.IntegerField(default=0)
-    total_runs = models.IntegerField(default=0)
-
-    def __str__(self):
-        return str(self.strategy.pk) + '__' + str(self.rating_avg)
 
 
 class StrategyRating(models.Model):
@@ -432,8 +437,7 @@ class StrategyRating(models.Model):
 class StrategyUsage(models.Model):
     strategy = models.ForeignKey(Strategy, related_name='usage', db_index=True, on_delete=models.CASCADE)
     date = models.DateField(auto_now=True, db_index=True)
-    runs = models.IntegerField(default=1)
+    runs = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.strategy.pk) + '__' + str(self.date)
-

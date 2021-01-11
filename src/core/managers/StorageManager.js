@@ -109,6 +109,17 @@ const config = {
       version: 0.01
     },
   },
+  search: {
+    multiSearch: {
+      syncLimit: 60,
+      version: 0.01
+    },
+    recentSearches: {
+      // Used only locally. There is no sync with DB...
+      syncLimit: 0,
+      version: 0.02
+    }
+  }
 }
 let memData = {}
 

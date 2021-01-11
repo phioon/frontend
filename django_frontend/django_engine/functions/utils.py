@@ -3,11 +3,12 @@ from django.core.mail import EmailMultiAlternatives
 from django.template import loader
 from rest_framework import status
 from operator import itemgetter
+import uuid
 import smtplib
 import time
 
 
-# Function copied from class django.contrib.auth.forms.PasswordResetForm
+# Function copied from class django.contrib.auth_app.forms.PasswordResetForm
 def send_mail(subject_template_name, email_template_name, context, to_email,
               from_email=getattr(settings, 'DEFAULT_FROM_EMAIL'), html_email_template_name=None):
     """
@@ -37,6 +38,14 @@ def send_mail(subject_template_name, email_template_name, context, to_email,
         obj_res = {"status": status.HTTP_503_SERVICE_UNAVAILABLE}
 
     return obj_res
+
+
+def is_valid_uuid(value, version=4):
+    try:
+        uuid_obj = uuid.UUID(value, version=version)
+    except ValueError:
+        return False
+    return str(uuid_obj) == value
 
 
 # Time

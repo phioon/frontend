@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { RingLoader } from "react-spinners";
 // reactstrap components
 import {
   Button,
@@ -20,6 +19,7 @@ import Select from "react-select";
 import ReactTable from "react-table-v6";
 
 import TimeManager from "../../../core/managers/TimeManager";
+import { CircularLoader } from "../../../components/Loaders";
 import {
   convertFloatToCurrency,
   getDistinctValuesFromList,
@@ -193,7 +193,7 @@ class ModalStrategyResults extends React.Component {
       <>
         <Row className="mt-5" />
         <div className="centered">
-          <RingLoader color="#3a5966" size={67} />
+          <CircularLoader size="lg" />
         </div>
         <Row className="mt-5" />
         <Row className="mt-5" />

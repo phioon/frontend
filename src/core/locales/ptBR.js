@@ -20,6 +20,8 @@ const locale = {
     title_openpositions: "Posições Abertas",
     title_phitrader: "Análise Técnica",
     title_positions: "Meus Ativos",
+    title_recentsearches: "Pesquisas Recentes",
+    title_searchresults: "Resultado",
     title_strategypanel: "Estratégias",
     title_strategypage: "Estratégia",
     title_strategygallery: "Estratégias",
@@ -804,6 +806,25 @@ const locale = {
     label_page: "Página",
     label_of: "de",
     label_rows: "linhas",
+  },
+  search: {
+    label_noRecentSearch_title: "Procure no PHIOON",
+    label_noRecentSearch_desc: "Encontre usuários e estratégias por todo o mundo...",
+  },
+  searchresults: {
+    card_users_title: "Usuários",
+    card_strategies_title: "Estratégias",
+
+    btn_seeMore: "Ver mais",
+  },
+  searchstrategyresults: {
+    title: "Mostrando Estratégias para"
+  },
+  searchuserresults: {
+    title: "Mostrando Usuários para"
+  },
+  recentsearches: {
+    btn_clear: "Limpar Pesquisas Recentes"
   },
   register: {
     alert_generalErrorTitle: "Algo deu errado...",

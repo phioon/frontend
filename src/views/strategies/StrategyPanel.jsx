@@ -98,8 +98,10 @@ class StrategyPanel extends React.Component {
   resize() {
     let maxItemsPerSlide = this.getMaxItemsPerSlide()
 
-    if (this.state.myStrategies.maxItemsPerSlide != maxItemsPerSlide)
-      this.prepareMyStrategies()          // async call
+    if (this.state.myStrategies.maxItemsPerSlide != maxItemsPerSlide) {
+      this.prepareMyStrategies()            // async call
+      this.prepareSavedStrategies()         // async call
+    }
   }
   getMaxItemsPerSlide() {
     if (window.innerWidth < 576)
@@ -325,6 +327,7 @@ class StrategyPanel extends React.Component {
   updateClick(obj) {
     let objData = {
       id: obj.id,
+      uuid: obj.uuid,
       name: obj.name,
       desc: obj.desc,
       type: obj.type,

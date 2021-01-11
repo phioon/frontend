@@ -183,7 +183,7 @@ class SetupCard extends React.Component {
           <div className="timeline-body">
             <div className="nav-tabs-navigation">
               <div className="nav-tabs-wrapper">
-                <Nav id="tabs" role="tablist" tabs>
+                <Nav id="tabs" role="tablist" tabs className="justify-content-center">
                   {/* Summary */}
                   <NavItem>
                     <NavLink

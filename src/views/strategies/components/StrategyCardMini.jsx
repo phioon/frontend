@@ -169,7 +169,7 @@ class StrategyCardMini extends React.Component {
             <Row>
               <Col xs="9" className="align-center">
                 <a
-                  href={`/app/strategies/${strategy.uuid}/`}
+                  href={this.props.managers.app.strategyPagePath(strategy.uuid)}
                   onClick={e => {
                     e.preventDefault()
                     this.onClick("goToStrategyPage", strategy)

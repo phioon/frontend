@@ -1,15 +1,14 @@
 from django.contrib.sites.shortcuts import get_current_site
-from rest_framework import status
-from rest_framework.response import Response
+from rest_framework import permissions, status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework import permissions
+from rest_framework.response import Response
+
+from django_engine.functions import utils
+from app import models as models_app
+from app import models_auth
 from django_engine import settings
 
-from app import models as app_models
-from . import utils
-
 import stripe
-
 stripe.api_key = settings.STRIPE_API_KEY
 
 
@@ -28,11 +27,11 @@ def get_user(field_name, value):
     user = None
     try:
         if field_name == 'email':
-            user = app_models.UserCustom.objects.get(user__email=value)
+            user = models_auth.UserCustom.objects.get(user__email=value)
         elif field_name == 'stripe_customer_id':
-            user = app_models.UserCustom.objects.get(stripe_customer_id=value)
+            user = models_auth.UserCustom.objects.get(stripe_customer_id=value)
 
-    except app_models.UserCustom.DoesNotExist as e:
+    except models_auth.UserCustom.DoesNotExist as e:
         pass
 
     return user
@@ -71,8 +70,8 @@ def create_checkout_session(request):
         # the actual Session ID is returned in the query parameter when your customer
         # is redirected to the success page.
         checkout_session = stripe.checkout.Session.create(
-            success_url=current_site + "/app/order/success?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=current_site + "/app/user/subscription",
+            success_url=current_site + "/app/order/success/?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=current_site + "/app/plan/",
             payment_method_types=["card"],
             mode="subscription",
             customer=stripe_customer_id,
@@ -110,7 +109,7 @@ def create_customer_portal_session(request):
 
     try:
         portal_session = stripe.billing_portal.Session.create(
-            return_url=current_site + "/app/user/subscription",
+            return_url=current_site + "/app/plan/",
             customer=stripe_customer_id
         )
 
@@ -183,9 +182,9 @@ def webhook_listener(request):
 
                 try:
                     # Try to retrieve SubscriptionPrice...
-                    subscription_price = app_models.SubscriptionPrice.objects.get(pk=price_id)
+                    subscription_price = models_app.SubscriptionPrice.objects.get(pk=price_id)
                     user.subscription = subscription_price.subscription
-                except app_models.SubscriptionPrice.DoesNotExist as e:
+                except models_app.SubscriptionPrice.DoesNotExist as e:
                     res_obj = {
                         'status': status.HTTP_400_BAD_REQUEST,
                         'message': e
@@ -208,7 +207,7 @@ def webhook_listener(request):
             # Keep status always up to date.
             user.subscription_status = subscription['status']
 
-            user.subscription = app_models.Subscription.objects.get(pk='basic')
+            user.subscription = models_app.Subscription.objects.get(pk='basic')
             user.subscription_expires_on = None
             user.subscription_renews_on = None
             user.save()
