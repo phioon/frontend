@@ -52,6 +52,19 @@
     }
 }
 
+.modal-following {
+    height: 300px;
+
+    .card-body{
+        position: relative;
+        max-height:300px; 
+        overflow:hidden; 
+        overflow-y:scroll;
+        margin: 0;
+        padding: 0;
+    }
+}
+
 .modal-dialog {
     padding-top: 60px;
 }

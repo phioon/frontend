@@ -58,19 +58,13 @@ class CloseVolume extends Component {
         <CardFooter>
           <hr />
           <Row>
-            <Col>
-              <label className="stats">
-                <i className="fa fa-wrench" />
-                {getString(prefs.locale, "measures", "label_format")}:
-              </label>
-            </Col>
             <Col className="text-right">
               <Button
-                className="btn-icon btn-link"
+                className={`btn-icon btn-neutral btn-success ${format === "currency" && "btn-round"}`}
                 color="success"
                 id={measure.id + "__currency"}
                 size="sm"
-                type="button"
+                outline={format === "currency"}
                 onClick={() => this.changeKpiFormat("currency")}
               >
                 $

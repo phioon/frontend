@@ -587,7 +587,7 @@ class ModalComparisonDetail extends React.Component {
         if (obj.data.offset_0.value === obj.data.offset_1.value && obj.data.offset_0.value < 2) {
           // Offsets are the same and lesser than 2
           if (obj.data.operator.value !== "=") {
-            // It means it could be a Basic or Transition rule
+            // It means it could be a Basic rule
             alert = {
               state: "",
               msg: getString(prefs.locale, this.compId, "warning_couldUseBasicWS")

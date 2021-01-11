@@ -19,7 +19,7 @@ const SortableItem = SortableElement((props) => {
             size="sm"
             className="btn-icon btn-neutral edit"
           >
-            <i className="fa fa-edit" />
+            <i className="far fa-edit" />
           </Button>
         }
 
@@ -47,6 +47,7 @@ const SortableList = SortableContainer((props) => {
           key={index}
           index={index}
           item={item}
+          disabled={!Boolean(props.onSortableChange)}
 
           i={index}
           context={props.context}
@@ -83,9 +84,6 @@ class SortableRulesAdv extends React.Component {
 SortableRulesAdv.propTypes = {
   items: PropTypes.array.isRequired,
   context: PropTypes.string.isRequired,
-  onSortableChange: PropTypes.func.isRequired,
-  onUpdateItem: PropTypes.func.isRequired,
-  onRemoveItem: PropTypes.func.isRequired
 }
 
 export default SortableRulesAdv;

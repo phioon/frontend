@@ -6,6 +6,7 @@ export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Requests
 export async function httpRequest(method, url, headers, params, data) {
   let result = { status: undefined }
 
@@ -37,6 +38,20 @@ export async function httpRequest(method, url, headers, params, data) {
 
   return result
 }
+export function getPaginationCursor(url) {
+  let cursor = undefined
+  let strLookup = "cursor="
+  let strLimit = "&"
+
+  if (url) {
+    cursor = String(url).substring(url.indexOf(strLookup) + strLookup.length)
+
+    if (cursor.includes(strLimit))
+      cursor = cursor.substring(0, cursor.indexOf(strLimit))
+  }
+
+  return cursor
+}
 
 // Handling data structures
 export function retrieveLessFields(objList, fieldList) {
@@ -57,6 +72,14 @@ export function retrieveObjFromObjList(objList, keyField = "id", value) {
     if (obj[keyField] == value)
       return obj
   return null
+}
+export function indexOfObj(objList, keyField = "id", value) {
+  // Return the first occurrence found
+  for (var x = 0; x < objList.length; x++) {
+    if (objList[x][keyField] == value)
+      return x
+  }
+  return -1
 }
 export function applyFilterToObjList(objList, filters = { field: [undefined] }) {
   // Filter object and return only the matching occurrencies
@@ -391,6 +414,30 @@ export function distance(v1, v2, threshold) {
   return distance <= threshold
 }
 
+// Icons
+export function getIconFromURL(value) {
+  let icon = "fas fa-link";
+
+  if (value.includes("https://facebook.com"))
+    icon = "fab fa-facebook-f"
+  else if (value.includes("https://instagram.com"))
+    icon = "fab fa-instagram"
+  else if (value.includes("https://linkedin.com"))
+    icon = "fab fa-linkedin-in"
+  else if (value.includes("https://t.me"))
+    icon = "fab fa-telegram"
+  else if (value.includes("https://twitter.com"))
+    icon = "fab fa-twitter"
+  else if (value.includes("https://whatsapp.com"))
+    icon = "fab fa-whatsapp"
+  else if (value.includes("wikipedia.org"))
+    icon = "fab fa-wikipedia-w"
+  else if (value.includes("https://youtube.com") || value.includes("https://youtu.be"))
+    icon = "fab fa-youtube"
+
+  return icon
+}
+
 // String
 export function substringText(text, maxLength) {
   text = String(text)
@@ -404,7 +451,7 @@ export function substringText(text, maxLength) {
   return text
 }
 export function getInitials(fullName) {
-  
+
   var names = trim(String(fullName)).split(" ")
   var fisrtName = names.shift().toUpperCase()
   var lastName = names.pop().toUpperCase()
@@ -414,7 +461,7 @@ export function getInitials(fullName) {
   return initials
 }
 export function getFirstAndLastName(fullName) {
-  
+
   let maxLength = 18
 
   let names = trim(String(fullName)).split(" ")
@@ -431,32 +478,27 @@ export function getFirstAndLastName(fullName) {
 
   return fullName
 }
-// function that verifies if two objects are equal
 export function areObjsEqual(obj1, obj2) {
   return JSON.stringify(obj1) === JSON.stringify(obj2)
 }
-// function that verifies if two strings are equal
 export function compare(string1, string2) {
   if (string1 === string2) {
     return true;
   }
   return false;
 }
-// function that returns true if value is email, false otherwise
 export function verifyEmail(value) {
   var emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (emailRex.test(value))
     return true;
   return false;
 }
-// function that verifies if a number is greater than another number
 export function verifyGreaterThan(value, gt) {
   if (value > gt) {
     return true;
   }
   return false;
 }
-// function that verifies if a string has a given length or not
 export function verifyLength(value, minLen, maxLen = undefined) {
   value = String(value);
 
@@ -470,15 +512,19 @@ export function verifyLength(value, minLen, maxLen = undefined) {
   }
   return false;
 }
-// function that verifies if a string has only letters
 export function verifyOnlyLetters(value) {
   return /^[a-zA-Z- ]+$/.test(value);
+}
+export function verifyURL(value) {
+  var linkRex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+  if (linkRex.test(value))
+    return true;
+  return false;
 }
 // function that verifies if a string is valid for username
 export function verifyUsernameStr(value) {
   return /^[0-9a-zA-Z_.]+$/.test(value);
 }
-// function that verifies if number is a integer
 export function verifyIfInteger(value) {
   if (value % 1 === 0)
     return true;

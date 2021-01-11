@@ -14,6 +14,18 @@ const config = {
       syncLimit: 43200,
       version: 0.01
     },
+    myStrategies: {
+      syncLimit: 15,
+      version: 0.03
+    },
+    savedStrategies: {
+      syncLimit: 15,
+      version: 0.03
+    },
+    strategies: {
+      syncLimit: 15,
+      version: 0.04
+    },
     positionTypes: {
       syncLimit: 43200,
       version: 0.01
@@ -22,13 +34,13 @@ const config = {
       syncLimit: 15,
       version: 0.01
     },
-    strategies: {
-      syncLimit: 15,
-      version: 0.04
-    },
     subscriptions: {
       syncLimit: 43200,
       version: 0.04
+    },
+    userProfiles: {
+      syncLimit: 2,
+      version: 0.03
     },
     wallets: {
       syncLimit: 8640,
@@ -89,7 +101,7 @@ const config = {
       version: 0.06
     },
     stockExchanges: {
-      syncLimit: 8640,
+      syncLimit: 43200,
       version: 0.01
     },
     technicalConditions: {
@@ -97,6 +109,17 @@ const config = {
       version: 0.01
     },
   },
+  search: {
+    multiSearch: {
+      syncLimit: 60,
+      version: 0.01
+    },
+    recentSearches: {
+      // Used only locally. There is no sync with DB...
+      syncLimit: 0,
+      version: 0.02
+    }
+  }
 }
 let memData = {}
 
@@ -117,14 +140,11 @@ class StorageManager {
   static async setItem(sKey, value) {
     if (cacheStorageNotSupported) {
       // Cache Storage not supported! Using Local Storage...
-
       return localStorage.setItem(sKey, JSON.stringify(value))
     }
     else {
       // Cache Storage supported...
-
-      let options = { headers: { "content-type": "application/json" } }
-      return await cache.put(this.getRequestId(sKey), new Response(JSON.stringify(value), options))
+      return await cache.put(this.getRequestId(sKey), new Response(JSON.stringify(value)))
     }
   }
   static async getItem(sKey, subKey) {
@@ -178,12 +198,10 @@ class StorageManager {
     else {
       if (cacheStorageNotSupported) {
         // Cache Storage not supported! Using Local Storage...
-
         localStorage.removeItem(sKey)
       }
       else {
         // Cache Storage supported...
-
         await cache.delete(this.getRequestId(sKey))
       }
     }
@@ -193,6 +211,13 @@ class StorageManager {
 
     if (subKey)
       sItem[subKey][strData] = null
+    else if (!Object.keys(sItem).includes(strData)) {
+      // sItem contains [subKey] structure and [subKey] was not given
+      // Cleaning up all subKeys...
+      for (var k of Object.keys(sItem))
+        if (sItem[k][strData])
+          delete sItem[k]
+    }
     else
       sItem[strData] = null
 
@@ -348,7 +373,7 @@ class StorageManager {
       sItem = JSON.parse(localStorage.getItem(sKey))
       memData[sKey] = sItem
     }
-    console.log("It started using memory.")
+    console.log("Using memory...")
   }
   async initiator() {
     if ('caches' in window)

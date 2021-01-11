@@ -63,6 +63,7 @@
 @import 'paper-dashboard/sidebar-and-main-panel';
 @import 'paper-dashboard/timeline';
 @import 'paper-dashboard/sortable-list';
+@import 'paper-dashboard/lists';
 @import 'paper-dashboard/drag-and-drop';
 
 
@@ -71,7 +72,9 @@
 @import "paper-dashboard/cards/card-chart";
 @import "paper-dashboard/cards/card-map";
 @import "paper-dashboard/cards/card-user";
-
+@import "paper-dashboard/cards/card-user-mini";
+@import "paper-dashboard/cards/card-strategy-mini";
+@import "paper-dashboard/cards/card-subscription";
 @import "paper-dashboard/cards/card-background";
 @import "paper-dashboard/cards/card-collapse";
 @import "paper-dashboard/cards/card-contributions";

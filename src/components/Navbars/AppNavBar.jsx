@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import classnames from "classnames";
 import {
   Button,
@@ -13,7 +14,7 @@ import {
   UncontrolledDropdown,
 } from "reactstrap";
 
-import PropTypes from "prop-types";
+import SearchInput from "../SearchInput/SearchInput";
 import { localeList } from "../../core/locales";
 
 class AppNavBar extends React.Component {
@@ -27,6 +28,8 @@ class AppNavBar extends React.Component {
 
       langList: [],
     };
+
+    this.setCollapse = this.setCollapse.bind(this);   //Used by SearchInput onSubmit
   }
   componentDidMount() {
     window.addEventListener("resize", this.updateColor());
@@ -35,8 +38,7 @@ class AppNavBar extends React.Component {
     this.setState({ langList })
   }
   componentDidUpdate(e) {
-    if (
-      window.outerWidth < 993 &&
+    if (window.outerWidth < 993 &&
       e.history.location.pathname !== e.location.pathname &&
       document.documentElement.className.indexOf("nav-open") !== -1
     ) {
@@ -113,7 +115,7 @@ class AppNavBar extends React.Component {
   }
 
   render() {
-    let { getString, prefs, navbarTitleId } = this.props;
+    let { getString, prefs, navbarTitleId, user } = this.props;
     let { langList } = this.state;
 
     return (
@@ -161,7 +163,6 @@ class AppNavBar extends React.Component {
               aria-expanded={this.state.collapseOpen}
               aria-label="Toggle navigation"
               className="navbar-toggler"
-              // data-target="#navigation"
               data-toggle="collapse"
               type="button"
               onClick={() => this.toggleCollapse()}
@@ -171,6 +172,7 @@ class AppNavBar extends React.Component {
               <span className="navbar-toggler-bar navbar-kebab" />
             </button>
             <Collapse className="justify-content-end" navbar isOpen={this.state.collapseOpen}>
+              <SearchInput {...this.props} setCollapse={this.setCollapse} />
               <Nav navbar>
                 <UncontrolledDropdown className="btn-rotate" nav>
                   <DropdownToggle
@@ -215,10 +217,10 @@ class AppNavBar extends React.Component {
                     <i className="nc-icon nc-settings-gear-65" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-navbar" right tag="ul">
-                    <DropdownItem onClick={() => this.pushRouterHistory('/app/user/myaccount')}>
-                      {getString(prefs.locale, this.compId, "label_myaccount")}
+                    <DropdownItem onClick={() => this.pushRouterHistory(`/app/u/${user.username}/`)}>
+                      {getString(prefs.locale, this.compId, "label_profile")}
                     </DropdownItem>
-                    <DropdownItem onClick={() => this.pushRouterHistory('/app/user/subscription')}>
+                    <DropdownItem onClick={() => this.pushRouterHistory('/app/myplan/')}>
                       {getString(prefs.locale, this.compId, "label_subscription")}
                     </DropdownItem>
                     <DropdownItem divider tag="li" />

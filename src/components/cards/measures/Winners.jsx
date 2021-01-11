@@ -54,20 +54,14 @@ class Winners extends Component {
         <CardFooter>
           <hr />
           <Row>
-            <Col>
-              <label className="stats">
-                <i className="fa fa-wrench" />
-                {getString(prefs.locale, "measures", "label_format")}:
-              </label>
-            </Col>
             <Col className="text-right">
               <Button
-                className="btn-icon btn-link"
-                color="primary"
+                className={`btn-icon btn-neutral btn-info ${format === "percentage" && "btn-round"}`}
+                color="info"
                 id={measure.id + "__percentage"}
                 value="%"
                 size="sm"
-                type="button"
+                outline={format === "percentage"}
                 onClick={() => this.changeKpiFormat("percentage")}
               >
                 %
@@ -77,12 +71,13 @@ class Winners extends Component {
                   getString(prefs.locale, "measures", measure.percentage.hintId)
                 }
               </UncontrolledTooltip>
+              {" "}
               <Button
-                className="btn-icon btn-link"
+                className={`btn-icon btn-neutral btn-warning ${format === "number" && "btn-round"}`}
                 color="warning"
                 id={measure.id + "__number"}
                 size="sm"
-                type="button"
+                outline={format === "number"}
                 onClick={() => this.changeKpiFormat("number")}
               >
                 #

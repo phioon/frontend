@@ -25,6 +25,7 @@ import ModalUpdatePosition from "../modals/position/ModalUpdatePosition";
 import {
   convertFloatToCurrency,
   convertFloatToPercentage,
+  deepCloneObj,
   getDistinctValuesFromList,
   integerWithThousandsSeparator,
   orderBy,
@@ -185,7 +186,7 @@ class Positions extends React.Component {
                 size="sm"
                 className="btn-icon btn-link edit"
               >
-                <i id="position_edit" className="fa fa-edit" />
+                <i id="position_edit" className="far fa-edit" />
               </Button>{" "}
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"edit_" + obj.id}>
                 {getString(prefs.locale, this.compId, "positions_edit_hint")}
@@ -241,7 +242,7 @@ class Positions extends React.Component {
     let currency = await this.props.managers.app.currencyRetrieve(obj.wallet.currency)
 
     let position = {
-      data: obj,
+      data: deepCloneObj(obj),
       patch: {},
       states: {},
 
@@ -312,7 +313,7 @@ class Positions extends React.Component {
   };
 
   toggleModal(modalId) {
-    this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
+    this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
   };
 
   render() {

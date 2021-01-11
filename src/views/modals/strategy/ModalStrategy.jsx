@@ -59,7 +59,7 @@ class ModalStrategy extends React.Component {
     this.compId = this.constructor.name.toLowerCase()
 
     this.state = {
-      isOpen: props.isOpen,
+      isOpen: undefined,
       isLoading: false,
 
       action: undefined,
@@ -74,7 +74,7 @@ class ModalStrategy extends React.Component {
       modal_distanceDetail_isOpen: false,
       modal_slopeDetail_isOpen: false,
 
-      activeWsMode: "transition",
+      activeWsMode: "basic",
 
       iItems: [],
 
@@ -114,7 +114,6 @@ class ModalStrategy extends React.Component {
             type: "advanced",
             id: "advanced",
             showExplainer: false,
-            isDisabled: true,
           }
         ],
         isValidated: undefined
@@ -153,6 +152,7 @@ class ModalStrategy extends React.Component {
   fakeUnmount() {
     let newState = { strategy: this.state.strategy }
 
+    newState.isLoading = false
     newState.activeWsMode = "basic"
 
     newState.strategy = {
@@ -191,7 +191,6 @@ class ModalStrategy extends React.Component {
           type: "advanced",
           id: "advanced",
           showExplainer: false,
-          isDisabled: true,
         }
       ],
       isValidated: undefined
@@ -216,37 +215,7 @@ class ModalStrategy extends React.Component {
     let { currency, iItems, strategy, selected } = this.state;
 
     currency = await this.props.managers.app.currencyRetrieve(prefs.currency)
-    iItems = await this.props.managers.market.indicatorData()
-
-    let distinctValues = []
-    let constant = "constant"
-    let constantObj = {
-      id: constant,
-      instances: [],
-      category: constant,
-      subcategory: constant,
-      indicator: constant,
-      periods: 0,
-      value: constant
-    }
-
-    for (var obj of iItems) {
-      // iItems: Preparing to be read by Sortable (Basic WS)
-      obj.value = obj.id
-      obj.label = getString(prefs.locale, "indicators", obj.id)
-
-      // ManualInput: Getting all available intervals
-      for (var instance of obj.instances)
-        if (!distinctValues.includes(instance.interval)) {
-          distinctValues.push(instance.interval)
-
-          constantObj.instances.push({
-            name: `${instance.interval}_${constant}`,
-            interval: instance.interval
-          })
-        }
-    }
-    iItems.push(constantObj)
+    iItems = await this.props.managers.strategy.prepareIndicatorItems(getString, prefs)
 
     // Workspaces: Preparing to be read by List
     for (var obj of strategy.workspaces) {
@@ -263,11 +232,13 @@ class ModalStrategy extends React.Component {
         this.prepareToCreate(iItems)
         break;
       case "update":
-        strategy = this.prepareToUpdate(iItems, strategy, objData)
+        strategy = this.prepareStrategyObj(iItems, strategy, objData)
+        break;
+      case "view":
+        strategy = this.prepareStrategyObj(iItems, strategy, objData)
+        strategy.isValidated = true
         break;
     }
-
-    // console.log(iItems)
 
     this.setState({ currency, iItems, strategy, selected })
   }
@@ -278,12 +249,11 @@ class ModalStrategy extends React.Component {
         this.onWSCommit("add", "basic_0", obj)
     }
   }
-  prepareToUpdate(iItems, strategy, objData) {
+  prepareStrategyObj(iItems, strategy, objData) {
     let { getString, prefs } = this.props;
     let { currency } = this.state;
-    let wsRules = JSON.parse(objData.rules)
 
-    for (var [wsId, rules] of Object.entries(wsRules)) {
+    for (var [wsId, rules] of Object.entries(objData.rules)) {
       let ws = this.props.managers.strategy.convertJSONRulesIntoWS(getString, prefs, currency, iItems, wsId, rules)
 
       for (var item of ws.items) {
@@ -294,6 +264,7 @@ class ModalStrategy extends React.Component {
 
     // Data
     strategy.data.id = objData.id
+    strategy.data.uuid = objData.uuid
     strategy.data.name = objData.name
     strategy.data.desc = objData.desc
     strategy.data.type = objData.type
@@ -315,7 +286,7 @@ class ModalStrategy extends React.Component {
       isValidated = true
       if (name == this.state.strategy.initial.name)
         isValidated = true
-      else if (this.props.sStrategyNames.includes(name))
+      else if (this.props.myStrategyNames.includes(name))
         isValidated = false
     }
 
@@ -324,6 +295,11 @@ class ModalStrategy extends React.Component {
 
   // onChanges
   onChange(value, stateName) {
+    if (this.props.action === "view") {
+      // On view mode, nothing changes...
+      return
+    }
+
     let newState = { strategy: this.state.strategy }
 
     if (this.state.alertState !== null) {
@@ -349,8 +325,6 @@ class ModalStrategy extends React.Component {
         else
           newState.strategy.states[stateName] = "has-danger"
         break;
-      default:
-        break;
     }
 
     newState.strategy.isValidated = this.isValidated(newState.strategy)
@@ -372,6 +346,11 @@ class ModalStrategy extends React.Component {
     this.setState(newState)
   }
   onSelectChange(fieldName, value) {
+    if (this.props.action === "view") {
+      // On view mode, nothing changes...
+      return
+    }
+
     let newState = { selected: this.state.selected }
 
     switch (fieldName) {
@@ -423,6 +402,11 @@ class ModalStrategy extends React.Component {
   }
 
   renderSubcategoryAsCard(iItems, subcatId) {
+    if (this.props.action === "view") {
+      // On view mode, nothing changes...
+      return
+    }
+
     let filters = { subcategory: [subcatId] }
     iItems = applyFilterToObjList(iItems, filters)
     let subcategories = getDistinctValuesFromList(iItems, "subcategory")
@@ -448,6 +432,11 @@ class ModalStrategy extends React.Component {
     });
   }
   renderAdvancedToolsAsCard(toolId) {
+    if (this.props.action === "view") {
+      // On view mode, nothing changes...
+      return
+    }
+
     return (
       <Col xl="3" lg="4" md="6" sm="6" key={"card_" + toolId}>
         <Card
@@ -467,73 +456,7 @@ class ModalStrategy extends React.Component {
     )
   }
   renderBasicWS(workspaces) {
-    let { prefs, getString } = this.props;
-    let { isDragging } = this.state;
-
-    let filters = { id: ["basic_0"] }
-    let reversedWS = applyFilterToObjList(workspaces.slice(), filters)
-    reversedWS.reverse()
-
-    return reversedWS.map((ws) => {
-      return (
-        <Col key={ws.id} lg="6">
-          <Card
-            className={classnames("drop-area", isDragging && "dash-zone")}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => this.onDropSubcat(e, ws)}>
-            <CardHeader>
-              <p className="card-category">{getString(prefs.locale, this.compId, ["label_" + ws.id])}</p>
-              <div className="text-center">
-                <label>
-                  {getString(prefs.locale, this.compId, ["label_" + ws.id + "_intro"])}
-                </label>
-              </div>
-              <hr />
-            </CardHeader>
-            <CardBody>
-              <ReactCardFlip isFlipped={ws.showExplainer} flipDirection="vertical">
-                <SortableRulesBasic
-                  context={ws.id}
-                  items={ws.items}
-                  onUpdateItem={this.updateIndicatorClick}
-                  onRemoveItem={this.onWSCommit}
-                  onSortableChange={this.onWSCommit} />
-                <RulesExplainer
-                  managers={this.props.managers}
-                  prefs={this.props.prefs}
-                  getString={this.props.getString}
-                  workspace={ws} />
-              </ReactCardFlip>
-            </CardBody>
-            <CardFooter>
-              <Row>
-                <Col className="text-right">
-                  <Button
-                    className="btn-neutral"
-                    color="primary"
-                    id={ws.id + "__explainer_hint"}
-                    size="sm"
-                    type="button"
-                    onClick={() => ws.showExplainer ?
-                      this.onWSChange(ws.id, "showExplainer", false) :
-                      this.onWSChange(ws.id, "showExplainer", true)
-                    }
-                  >
-                    {ws.showExplainer ?
-                      getString(prefs.locale, this.compId, "btn_goToRules") :
-                      getString(prefs.locale, this.compId, "btn_goToExplainer")
-                    }
-                  </Button>
-                </Col>
-              </Row>
-            </CardFooter>
-          </Card>
-        </Col>
-      )
-    })
-  }
-  renderTransitionWS(workspaces) {
-    let { prefs, getString } = this.props;
+    let { prefs, getString, action } = this.props;
     let { isDragging } = this.state;
 
     let filters = { type: ["basic"] }
@@ -561,9 +484,9 @@ class ModalStrategy extends React.Component {
                 <SortableRulesBasic
                   context={ws.id}
                   items={ws.items}
-                  onUpdateItem={this.updateIndicatorClick}
-                  onRemoveItem={this.onWSCommit}
-                  onSortableChange={this.onWSCommit} />
+                  onUpdateItem={action !== "view" && this.updateIndicatorClick}
+                  onRemoveItem={action !== "view" && this.onWSCommit}
+                  onSortableChange={action !== "view" && this.onWSCommit} />
                 <RulesExplainer
                   managers={this.props.managers}
                   prefs={this.props.prefs}
@@ -599,7 +522,7 @@ class ModalStrategy extends React.Component {
     })
   }
   renderAdvancedWS(workspaces) {
-    let { prefs, getString } = this.props;
+    let { prefs, getString, action } = this.props;
     let { isDragging } = this.state;
 
     let filters = { type: ["advanced"] }
@@ -626,9 +549,9 @@ class ModalStrategy extends React.Component {
               <SortableRulesAdv
                 context={ws.id}
                 items={ws.items}
-                onUpdateItem={this.updateToolClick}
-                onRemoveItem={this.onWSCommit}
-                onSortableChange={this.onWSCommit} />
+                onUpdateItem={action !== "view" && this.updateToolClick}
+                onRemoveItem={action !== "view" && this.onWSCommit}
+                onSortableChange={action !== "view" && this.onWSCommit} />
             </CardBody>
           </Card>
         </Col>
@@ -644,13 +567,13 @@ class ModalStrategy extends React.Component {
     selected.subcatId = subcatId
     selected.indicator = undefined
 
-    if (["basic", "transition"].includes(activeWsMode))
+    if (activeWsMode === "basic")
       selected.workspace = retrieveObjFromObjList(strategy.workspaces, "id", "basic_0")
-    else if (activeWsMode === "advanced")
+    else
       selected.workspace = retrieveObjFromObjList(strategy.workspaces, "id", "advanced")
 
     this.setState({ selected })
-    if (activeWsMode === "transition")
+    if (activeWsMode === "basic")
       this.toggleModal("chooseWS")
     else
       this.openSubcategoryDetail("add", selected.workspace, subcatId)
@@ -822,8 +745,10 @@ class ModalStrategy extends React.Component {
         }
       }
 
-    // Strategy's rules
-    strategy.data.rules = this.props.managers.strategy.jsonRulesAsString(strategy.workspaces)
+    // Rules
+    strategy.data.rules = this.props.managers.strategy.prepareRules(strategy.workspaces)
+    // Tags
+    strategy.data.tags = this.props.managers.strategy.prepareTags(strategy.workspaces)
 
     strategy.data.isDynamic = this.props.managers.strategy.isDynamic(strategy)
     strategy.isValidated = this.isValidated(strategy)
@@ -831,6 +756,7 @@ class ModalStrategy extends React.Component {
 
     if (this.props.action === "update") {
       strategy.patch.rules = strategy.data.rules
+      strategy.patch.tags = strategy.data.tags
       strategy.patch.isDynamic = strategy.data.isDynamic
     }
 
@@ -900,6 +826,9 @@ class ModalStrategy extends React.Component {
       case "update":
         this.updateObject(strategy)
         break;
+      case "view":
+        this.props.toggleModal(this.props.modalId)
+        break;
       default:
         break;
     }
@@ -912,10 +841,11 @@ class ModalStrategy extends React.Component {
       type: strategy.data.type,
       is_public: strategy.data.isPublic,
       is_dynamic: strategy.data.isDynamic,
-      rules: strategy.data.rules
+      rules: strategy.data.rules,
+      tags: strategy.data.tags,
     }
 
-    let result = await this.props.managers.app.strategyCreate(object)
+    let result = await this.props.managers.app.myStrategyCreate(object)
 
     if (result.status == 201) {
       this.objectCreated()
@@ -930,7 +860,7 @@ class ModalStrategy extends React.Component {
     }
   }
   async updateObject(strategy) {
-    let object = { id: strategy.data.id }
+    let object = { id: strategy.data.id, uuid: strategy.data.uuid }
 
     for (var [k, v] of Object.entries(strategy.patch))
       if (strategy.initial[k] != v)
@@ -946,7 +876,7 @@ class ModalStrategy extends React.Component {
             break;
         }
 
-    let result = await this.props.managers.app.strategyUpdate(object)
+    let result = await this.props.managers.app.myStrategyUpdate(object)
 
     if (result.status == 200) {
       this.objectUpdated()
@@ -1004,7 +934,7 @@ class ModalStrategy extends React.Component {
   }
 
   toggleModal(modalId) {
-    this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
+    this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
   };
   toggleNavLink(navId, value) {
     this.setState({ [navId]: value })
@@ -1019,7 +949,7 @@ class ModalStrategy extends React.Component {
   };
 
   render() {
-    let { prefs, getString, modalId, isOpen } = this.props;
+    let { prefs, getString, modalId, isOpen, action } = this.props;
     let {
       isLoading,
       activeWsMode,
@@ -1214,95 +1144,101 @@ class ModalStrategy extends React.Component {
           <CardBody>
             {/* Type */}
             <Row className="justify-content-center">
-              <Col md="3" xs="5">
-                <div
-                  className={classnames("card-choice", { active: strategy.data.type == "buy" })}
-                  onClick={() => this.onChoiceChange("type", "buy")}
-                >
-                  <input
-                    id="buy"
-                    name="type"
-                    type="radio"
-                    defaultChecked={strategy.data.isPublic}
-                  />
-                  <div id="radio_buy" className="icon mm">
-                    <i className="nc-icon nc-spaceship mm" />
+              {action === "view" && strategy.data.type !== "buy" ? null :
+                <Col md="3" xs="5">
+                  <div
+                    className={classnames("card-choice", { active: strategy.data.type === "buy" })}
+                    onClick={() => this.onChoiceChange("type", "buy")}
+                  >
+                    <input
+                      id="buy"
+                      name="type"
+                      type="radio"
+                    />
+                    <div id="radio_buy" className="icon mm">
+                      <i className="nc-icon nc-spaceship mm" />
+                    </div>
+                    <label>{getString(prefs.locale, this.compId, "input_buy")}</label>
                   </div>
-                  <label>{getString(prefs.locale, this.compId, "input_buy")}</label>
-                </div>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_buy"}>
-                  {getString(prefs.locale, this.compId, "input_buy_hint")}
-                </UncontrolledTooltip>
-              </Col>
-              <Col md="3" xs="5">
-                <div
-                  className={classnames("card-choice", { active: strategy.data.type == "sell" })}
-                  onClick={() => this.onChoiceChange("type", "sell")}
-                >
-                  <input
-                    id="sell"
-                    name="type"
-                    type="radio"
-                  />
-                  <div id="radio_sell" className="icon mm">
-                    <i className="nc-icon nc-spaceship fa-rotate-90 mm" />
+                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_buy"}>
+                    {getString(prefs.locale, this.compId, "input_buy_hint")}
+                  </UncontrolledTooltip>
+                </Col>
+              }
+              {action === "view" && strategy.data.type !== "sell" ? null :
+                <Col md="3" xs="5">
+                  <div
+                    className={classnames("card-choice", { active: strategy.data.type === "sell" })}
+                    onClick={() => this.onChoiceChange("type", "sell")}
+                  >
+                    <input
+                      id="sell"
+                      name="type"
+                      type="radio"
+                    />
+                    <div id="radio_sell" className="icon mm">
+                      <i className="nc-icon nc-spaceship fa-rotate-90 mm" />
+                    </div>
+                    <label>{getString(prefs.locale, this.compId, "input_sell")}</label>
                   </div>
-                  <label>{getString(prefs.locale, this.compId, "input_sell")}</label>
-                </div>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="right" target={"radio_sell"}>
-                  {getString(prefs.locale, this.compId, "input_sell_hint")}
-                </UncontrolledTooltip>
-              </Col>
+                  <UncontrolledTooltip delay={{ show: 200 }} placement="right" target={"radio_sell"}>
+                    {getString(prefs.locale, this.compId, "input_sell_hint")}
+                  </UncontrolledTooltip>
+                </Col>
+              }
             </Row>
-            <br />
+            <Row className="mt-3" />
             {/* Visibility */}
             <Row className="justify-content-center">
-              <Col md="3" xs="5">
-                <div
-                  className={classnames("card-choice", { active: strategy.data.isPublic })}
-                  onClick={() => this.onChoiceChange("isPublic", true)}
-                >
-                  <input
-                    id="public"
-                    name="type"
-                    type="radio"
-                    defaultChecked={strategy.data.isPublic}
-                  />
-                  <div id="radio_public" className="icon mm">
-                    <i className="nc-icon nc-world-2 mm" />
+              {action !== "view" &&
+                <Col md="3" xs="5">
+                  <div
+                    className={classnames("card-choice", { active: strategy.data.isPublic })}
+                    onClick={() => this.onChoiceChange("isPublic", true)}
+                  >
+                    <input
+                      id="public"
+                      name="visilibity"
+                      type="radio"
+                      defaultChecked={strategy.data.isPublic}
+                    />
+                    <div id="radio_public" className="icon mm">
+                      <i className="nc-icon nc-world-2 mm" />
+                    </div>
+                    <label>{getString(prefs.locale, this.compId, "input_public")}</label>
                   </div>
-                  <label>{getString(prefs.locale, this.compId, "input_public")}</label>
-                </div>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_public"}>
-                  {getString(prefs.locale, this.compId, "input_public_hint")}
-                </UncontrolledTooltip>
-              </Col>
-              <Col md="3" xs="5">
-                <div
-                  className={classnames("card-choice", { active: !strategy.data.isPublic })}
-                  onClick={() => this.onChoiceChange("isPublic", false)}
-                >
-                  <input
-                    id="private"
-                    name="type"
-                    type="radio"
-                  />
-                  <div id="radio_private" className="icon mm">
-                    <i className="nc-icon nc-key-25 mm" />
+                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_public"}>
+                    {getString(prefs.locale, this.compId, "input_public_hint")}
+                  </UncontrolledTooltip>
+                </Col>}
+              {action !== "view" &&
+                <Col md="3" xs="5">
+                  <div
+                    className={classnames("card-choice", { active: !strategy.data.isPublic })}
+                    onClick={() => this.onChoiceChange("isPublic", false)}
+                  >
+                    <input
+                      id="private"
+                      name="visilibity"
+                      type="radio"
+                    />
+                    <div id="radio_private" className="icon mm">
+                      <i className="nc-icon nc-key-25 mm" />
+                    </div>
+                    <label>{getString(prefs.locale, this.compId, "input_private")}</label>
                   </div>
-                  <label>{getString(prefs.locale, this.compId, "input_private")}</label>
-                </div>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_private"}>
-                  {getString(prefs.locale, this.compId, "input_private_hint")}
-                </UncontrolledTooltip>
-              </Col>
+                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"radio_private"}>
+                    {getString(prefs.locale, this.compId, "input_private_hint")}
+                  </UncontrolledTooltip>
+                </Col>
+              }
             </Row>
-            <br />
+            <Row className="mt-3" />
             {/* Name and Logic */}
             <Row>
               {/* Name*/}
               <Col lg="9" xs="8">
-                <FormGroup className={`has-label ${strategy.states.name}`}>
+                <FormGroup className={`has-label ${action !== "view" && strategy.states.name}`}>
                   <label>{getString(prefs.locale, this.compId, "input_name")}</label>
                   <Input
                     type="text"
@@ -1342,13 +1278,13 @@ class ModalStrategy extends React.Component {
               </Col>
             </Row>
             {/* Description*/}
-            <FormGroup className={`has-label ${strategy.states.desc}`}>
+            <FormGroup className={`has-label ${action !== "view" && strategy.states.desc}`}>
               <label>{getString(prefs.locale, this.compId, "input_description")}</label>
               <Input
                 type="textarea"
                 name="desc"
                 value={strategy.data.desc}
-                placeholder={getString(prefs.locale, this.compId, "label_description_placeholder")}
+                placeholder={action === "view" ? "" : getString(prefs.locale, this.compId, "label_description_placeholder")}
                 onChange={e => this.onChange(e.target.value, e.target.name)}
               />
               {strategy.states.desc == "has-danger" &&
@@ -1357,7 +1293,7 @@ class ModalStrategy extends React.Component {
                 </label>
               }
             </FormGroup>
-            <br />
+            <Row className="mt-3" />
 
             {/* Workspaces */}
             <p className="card-category">
@@ -1376,18 +1312,6 @@ class ModalStrategy extends React.Component {
                   {getString(prefs.locale, this.compId, "label_basic")}
                 </NavLink>
               </NavItem>
-              {/* Transition */}
-              <NavItem>
-                <NavLink
-                  data-toggle="tab"
-                  href="#"
-                  role="wsMode"
-                  className={activeWsMode === "transition" ? "active" : ""}
-                  onClick={() => this.toggleNavLink("activeWsMode", "transition")}
-                >
-                  {getString(prefs.locale, this.compId, "label_transition")}
-                </NavLink>
-              </NavItem>
               {/* Advanced */}
               <NavItem>
                 <NavLink
@@ -1401,13 +1325,15 @@ class ModalStrategy extends React.Component {
                 </NavLink>
               </NavItem>
             </Nav>
-            <TabContent activeTab={activeWsMode} className="tab-space tab-subcategories">
+            <TabContent activeTab={activeWsMode} className="tab-space">
               <TabPane tabId="basic">
                 <div className="text-center">
-                  <label>
-                    <p>{getString(prefs.locale, this.compId, "label_basic_intro_p1")}</p>
-                    <p>{getString(prefs.locale, this.compId, "label_basic_intro_p2")}</p>
-                  </label>
+                  {action !== "view" &&
+                    <label>
+                      <p>{getString(prefs.locale, this.compId, "label_basic_intro_p1")}</p>
+                      <p>{getString(prefs.locale, this.compId, "label_basic_intro_p2")}</p>
+                    </label>
+                  }
                 </div>
                 {/* Indicators */}
                 <Row className="justify-content-center">
@@ -1415,35 +1341,19 @@ class ModalStrategy extends React.Component {
                   {this.renderSubcategoryAsCard(iItems, "moving_average")}
                   {this.renderSubcategoryAsCard(iItems, "phibo")}
                 </Row>
-                <br />
+                <Row className="mt-3" />
                 <Row className="justify-content-center">
                   {this.renderBasicWS(strategy.workspaces)}
                 </Row>
               </TabPane>
-              <TabPane tabId="transition">
-                <div className="text-center">
-                  <label>
-                    <p>{getString(prefs.locale, this.compId, "label_basic_intro_p1")}</p>
-                    <p>{getString(prefs.locale, this.compId, "label_basic_intro_p2")}</p>
-                  </label>
-                </div>
-                {/* Indicators */}
-                <Row className="justify-content-center">
-                  {this.renderSubcategoryAsCard(iItems, "quote")}
-                  {this.renderSubcategoryAsCard(iItems, "moving_average")}
-                  {this.renderSubcategoryAsCard(iItems, "phibo")}
-                </Row>
-                <br />
-                <Row className="justify-content-center">
-                  {this.renderTransitionWS(strategy.workspaces)}
-                </Row>
-              </TabPane>
               <TabPane tabId="advanced">
                 <div className="text-center">
-                  <label>
-                    <p>{getString(prefs.locale, this.compId, "label_advanced_intro_p1")}</p>
-                    <p>{getString(prefs.locale, this.compId, "label_advanced_intro_p2")}</p>
-                  </label>
+                  {action !== "view" &&
+                    <label>
+                      <p>{getString(prefs.locale, this.compId, "label_advanced_intro_p1")}</p>
+                      <p>{getString(prefs.locale, this.compId, "label_advanced_intro_p2")}</p>
+                    </label>
+                  }
                 </div>
                 {/* Tools */}
                 <Row className="justify-content-center">
@@ -1451,7 +1361,7 @@ class ModalStrategy extends React.Component {
                   {this.renderAdvancedToolsAsCard("distance")}
                   {this.renderAdvancedToolsAsCard("slope")}
                 </Row>
-                <br />
+                <Row className="mt-3" />
                 <Row className="justify-content-center">
                   {this.renderAdvancedWS(strategy.workspaces)}
                 </Row>
@@ -1498,5 +1408,5 @@ ModalStrategy.propTypes = {
   modalId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   toggleModal: PropTypes.func.isRequired,
-  runItIfSuccess: PropTypes.func.isRequired
+  runItIfSuccess: PropTypes.func
 }

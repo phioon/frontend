@@ -663,7 +663,7 @@ class WalletOverview extends React.Component {
     this.setState({ [dimension + "Collapsed"]: !this.state[dimension + "Collapsed"] })
   }
   toggleModal(modalId) {
-    this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
+    this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
   };
 
   changeChart(dimension, measure, interval, chart) {

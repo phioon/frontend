@@ -77,7 +77,7 @@ class Diversification extends Component {
         </CardHeader>
         <CardBody>
           <h6 className="big-title">
-            {getString(prefs.locale, "charts", "chart_title_diversification")}
+            {getString(prefs.locale, "charts", "chart_diversification_title")}
           </h6>
           {
             pageFirstLoading ?
@@ -94,19 +94,13 @@ class Diversification extends Component {
         <CardFooter>
           <hr />
           <Row>
-            <Col xl="4" md="4">
-              <label className="stats">
-                <i className="fa fa-cube" />
-                {getString(prefs.locale, "charts", "label_groupBy")}:
-              </label>
-            </Col>
             <Col className="text-right">
               <Button
-                className="btn-link"
-                color="primary"
+                className={`btn-neutral btn-info ${selected === "groupByAsset" && "btn-round"}`}
+                color="info"
                 id="amountInvested_groupByAsset"
                 size="sm"
-                type="button"
+                outline={selected === "groupByAsset"}
                 onClick={() => this.changeChart(undefined, "groupByAsset")}
               >
                 {getString(prefs.locale, "charts", "label_assets")}
@@ -114,12 +108,13 @@ class Diversification extends Component {
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="amountInvested_groupByAsset">
                 {getString(prefs.locale, "charts", chart.generic.groupByAsset.hintId)}
               </UncontrolledTooltip>
+              {" "}
               <Button
-                className="btn-link"
+                className={`btn-neutral btn-info ${selected === "groupBySector" && "btn-round"}`}
                 id="amountInvested_groupBySector"
-                color="primary"
+                color="info"
                 size="sm"
-                type="button"
+                outline={selected === "groupBySector"}
                 onClick={() => this.changeChart(undefined, "groupBySector")}
               >
                 {getString(prefs.locale, "charts", "label_sectors")}
@@ -127,12 +122,13 @@ class Diversification extends Component {
               <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="amountInvested_groupBySector">
                 {getString(prefs.locale, "charts", chart.generic.groupBySector.hintId)}
               </UncontrolledTooltip>
+              {" "}
               <Button
-                className="btn-link"
-                color="primary"
+                className={`btn-neutral btn-info ${selected === "groupByCountry" && "btn-round"}`}
+                color="info"
                 id="amountInvested_groupByCountry"
                 size="sm"
-                type="button"
+                outline={selected === "groupByCountry"}
                 onClick={() => this.changeChart(undefined, "groupByCountry")}
               >
                 {getString(prefs.locale, "charts", "label_countries")}

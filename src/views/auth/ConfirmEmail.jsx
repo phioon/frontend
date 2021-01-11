@@ -1,5 +1,6 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
+import PropTypes from "prop-types";
 // reactstrap components
 import {
   Button,
@@ -14,14 +15,10 @@ import {
 } from "reactstrap";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
-import { LoopCircleLoading } from 'react-loadingg';
 
-import PropTypes from "prop-types";
-
-// CORE
+import { CircularLoader } from "../../components/Loaders";
 import { project } from "../../core/projectData";
 import LabelAlert from "../../components/LabelAlert";
-// --------------------
 
 class ConfirmEmail extends React.Component {
   constructor(props) {
@@ -166,17 +163,13 @@ class ConfirmEmail extends React.Component {
                 <CardBody>
                   {pageFirstLoading ?
                     // First Loading
-                    <>
-                      <br />
-                      <LoopCircleLoading color='#4f4f4f' />
-                      <br />
-                      <br />
-                    </> :
+                    <div className="centered">
+                      <CircularLoader size="lg" />
+                    </div> :
                     <LabelAlert alertState={alertState} alertMsg={alertMsg} />
                   }
                 </CardBody>
                 <CardFooter>
-
                   <Button
                     block
                     type="submit"

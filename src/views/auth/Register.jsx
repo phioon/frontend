@@ -286,7 +286,7 @@ class Register extends React.Component {
   }
 
   toggleModal(modalId) {
-    this.setState({ ["modal_" + modalId + "_isOpen"]: !this.state["modal_" + modalId + "_isOpen"] });
+    this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
   };
 
   render() {

@@ -1,6 +1,6 @@
 import React from "react";
 import { Router, Route, Switch, Redirect, Link } from "react-router-dom";
-import { LoopCircleLoading } from 'react-loadingg';
+import { CircularLoader } from "./components/Loaders";
 
 import { createBrowserHistory } from "history";
 
@@ -25,6 +25,7 @@ import AppManager from "./core/managers/AppManager";
 import MarketManager from "./core/managers/MarketManager";
 import MeasureManager from "./core/managers/MeasureManager";
 import StrategyManager from "./core/managers/StrategyManager";
+import SearchManager from "./core/managers/SearchManager";
 import StripeManager from "./core/managers/StripeManager";
 import GtagManager from "./core/managers/GtagManager";
 
@@ -54,10 +55,12 @@ class App extends React.Component {
     this.setAuthStatus = this.setAuthStatus.bind(this);
     this.setLocale = this.setLocale.bind(this);
     this.getHttpTranslation = this.getHttpTranslation.bind(this);
+    this.notify = this.notify.bind(this);
     this.managers = {
       gtag: new GtagManager(),
       app: new AppManager(this.getHttpTranslation),
       market: new MarketManager(this.getHttpTranslation),
+      search: new SearchManager(this.getHttpTranslation),
       stripe: new StripeManager(this.getHttpTranslation)
     };
     this.managers.auth = new AuthManager(
@@ -67,7 +70,7 @@ class App extends React.Component {
       this.setPrefs,
       this.setUser
     );
-    this.managers.strategy = new StrategyManager(this.managers.market);
+    this.managers.strategy = new StrategyManager(this.managers.app, this.managers.market);
     this.managers.measure = new MeasureManager(this.managers.app, this.managers.market);
 
     this.msgQueue = [];
@@ -206,7 +209,7 @@ class App extends React.Component {
     let badRequestCodes = [400]
     let unauthorizedCodes = [401]
     let goneCodes = [410]
-    let internalErrorCodes = [403, 404, 500, 503]
+    let internalErrorCodes = [403, 404, 405, 500, 503]
     let rData = null
     let msg = {
       id: undefined,
@@ -221,9 +224,19 @@ class App extends React.Component {
       msg.icon = "nc-icon nc-check-2"
       msg.autoDismiss = 3
 
-      if (model == "user") {
-        if (context == "profileupdate")
-          msg.id = model + "_profileUpdated"
+      switch (model) {
+        case "user":
+          if (context === "userupdate")
+            msg.id = model + "_profileUpdated"
+          break;
+        case "strategy":
+          if (context === "strategysave")
+            msg.id = model + "_addedToCollection"
+          else if (context === "strategyunsave")
+            msg.id = model + "_removedFromCollection"
+          else if (context === "strategyrate")
+            msg.id = model + "_thanksForFeedback"
+          break;
       }
     }
     else if (rResult.response) {
@@ -357,10 +370,12 @@ class App extends React.Component {
             <Route
               path="/auth"
               render={props =>
-                typeof isAuthenticated === 'undefined' ?
-                  <LoopCircleLoading color='#07242b' /> :
+                typeof isAuthenticated === "undefined" ?
+                  <div className="wrapper centered">
+                    <CircularLoader size="lg" />
+                  </div> :
                   isAuthenticated ?
-                    <Redirect to="/app/wallet/openpositions" /> :
+                    <Redirect to={this.managers.app.userProfilePath(user.username)} /> :
                     <AuthLayout {...props}
                       managers={this.managers}
                       prefs={prefs}
@@ -374,23 +389,26 @@ class App extends React.Component {
             <Route
               path="/app"
               render={props =>
-                typeof isAuthenticated === 'undefined' ?
-                  <LoopCircleLoading color='#07242b' /> :
+                typeof isAuthenticated === "undefined" ?
+                  <div className="wrapper centered">
+                    <CircularLoader size="lg" />
+                  </div> :
                   !isAuthenticated ?
-                    <Redirect to="/auth/login" /> :
+                    <Redirect to="/auth/login/" /> :
                     <AppLayout {...props}
                       managers={this.managers}
                       prefs={prefs}
                       user={user}
                       getString={getTranslation}
                       getHttpTranslation={this.getHttpTranslation}
+                      notify={this.notify}
                       setPrefs={this.setPrefs}
                       setLocale={this.setLocale}
                       setAuthStatus={this.setAuthStatus}
                     />
               }
             />
-            <Redirect to="/auth/login" />
+            <Redirect to="/auth/login/" />
           </Switch>
         </Router>
       </>

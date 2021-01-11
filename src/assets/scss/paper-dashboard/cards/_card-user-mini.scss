@@ -1,0 +1,39 @@
+.card-user-mini{  
+    .avatar-picture{
+        font-size: 24px;
+        width: 78px;
+        height: 78px;
+        background-color: $brand-green-color;
+        overflow: hidden;
+        float: left;
+        z-index: 5;
+        margin-right: 15px;
+        border-radius: 50%;
+        @extend .animation-transition-general;
+
+        &.sm{
+            font-size: 16px;
+            width: 48px;
+            height: 48px;
+        }
+
+        img, span{
+            width: 100%;
+        }
+  }
+
+    p{
+        margin: 0px 0px 0px;
+    }
+
+    .card-body + .card-footer {
+        padding-top: 0;
+    }
+
+    .card-footer {
+        h5 {
+            font-size: 1.25em;
+            margin-bottom: 0;
+        }
+    }
+}

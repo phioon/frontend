@@ -7,24 +7,31 @@ const locale = {
     label_loading: "Carregando...",
     label_days: "dias",
 
+    label_sharedLinkCopied: "Link copiado para área de transferência (CTRL-C).",
+
+    input_search: "Procurar...",
     input_select: "Selecione...",
     input_noOptions: "Opções indisponíveis..."
   },
   appnavbar: {
     title_default: "Dashboard",
-    title_openpositions: "Posições Abertas",
-    title_positions: "Meus Ativos",
-    title_strategies: "Análise Técnica",
-    title_phitrader: "Análise Técnica",
+    title_empty: "",
     title_myaccount: "Minha Conta",
+    title_openpositions: "Posições Abertas",
+    title_phitrader: "Análise Técnica",
+    title_positions: "Meus Ativos",
+    title_recentsearches: "Pesquisas Recentes",
+    title_searchresults: "Resultado",
+    title_strategypanel: "Estratégias",
+    title_strategypage: "Estratégia",
+    title_strategygallery: "Estratégias",
+    title_userprofile: "Usuário",
     title_usersubscription: "Meu Plano",
     title_walletoverview: "Visão Geral",
     title_wallets: "Meus Ativos",
 
-    placeholder_search: "Pesquisar...",
-
-    label_myaccount: "Minha Conta",
-    label_subscription: "Plano",
+    label_profile: "Perfil",
+    label_subscription: "Meu Plano",
     label_logout: "Sair"
   },
   assetfilter: {
@@ -42,13 +49,14 @@ const locale = {
     last: "Última"
   },
   charts: {
-    chart_title_diversification: "Diversificação (%)",
-    chart_title_profitability: "Rentabilidade pelo tempo (%)",
-    chart_title_profitabilityRanking: "Ranking de Rentabilidade (%)",
+    chart_diversification_title: "Diversificação (%)",
+    chart_profitability_title: "Rentabilidade pelo tempo (%)",
+    chart_profitabilityRanking_title: "Ranking de Rentabilidade (%)",
+    chart_usage_title: "Execuções",
+    chart_usage_desc: "Últimos 30 dias",
 
     chart_tooltip_profitability: "% Rentabilidade",
 
-    label_groupBy: "Agrupar por",
     label_order: "Ordernar por",
     label_assets: "Ativo",
     label_countries: "País",
@@ -141,6 +149,9 @@ const locale = {
   httptranslation: {
     wallet_limitReached: "Precisa de mais carteiras para gerenciar seus investimentos? Atualize seu plano e aproveite! ;)",
     strategy_limitReached: "Precisa de mais estratégias para melhorar seus resultados? Atualize seu plano e aproveite! ;)",
+    strategy_addedToCollection: "Estratégia adicionada à sua coleção.",
+    strategy_removedFromCollection: "Estratégia removida da sua coleção.",
+    strategy_thanksForFeedback: "Enviado! Obrigado pelo feedback. ;)",
 
     user_profileUpdated: "Perfil atualizado!",
     user_planPastDue_p1: "hmm... Houve algum problema com a renovação do seu plano :/",
@@ -254,6 +265,10 @@ const locale = {
     enUS: "English",
     ptBR: "Português",
   },
+  linkitem: {
+    input_name: "Nome do Link",
+    input_url: "URL",
+  },
   locales: {
     enUS: "en-us",
     ptBR: "pt-br",
@@ -274,7 +289,6 @@ const locale = {
     currency: "Moeda",
     percentage: "Porcentagem",
     number: "Número",
-    label_format: "Formato",
 
     amountInvested_kpi_label: "Valor Aplicado",
     amountInvested_title_hint: "Custo Operacional incluso.",
@@ -316,6 +330,7 @@ const locale = {
   myaccount: {
     title_personalData: "Dados Pessoais",
     title_prefs: "Preferências",
+    title_links: "Links",
 
     input_email: "E-mail",
     btn_changePassword: "Alterar Senha",
@@ -325,12 +340,14 @@ const locale = {
     input_nationality: "Nacionalidade",
     input_birthday: "Data de Nascimento",
     input_birthday_hint: "Eu poderia enviar presentes de aniversário. Quem sabe...",
+    input_aboutMe: "Sobre",
 
     input_currency: "Moeda Principal",
     input_currency_hint: "Investe em diferentes países? Posso converter outras moedas para a de sua preferência em relatórios e dashboards. ",
     input_language: "Idioma",
 
     error_username_minReq: "Letras (a-z), números (0-9), underscores (_) e pontos (.)",
+    error_username_length: "Importante que tenha entre 3 e 32 caracteres. ;)",
     error_username_taken: "Nome de usuário em uso :/",
     error_username_couldNotCheck: "Algo deu errado :/ Vamos tentar novamente mais tarde.",
 
@@ -395,7 +412,7 @@ const locale = {
     input_constant: "Valor Fixo",
     input_constant_hint: "Um valor numérico a ser comparado com o valor do outro indicador.",
 
-    warning_couldUseBasicWS: "Analisando esta regra, parece que ela poderia ser realizada utilizando as áreas de trabalho Básica ou Transição... Sua estratégia executaria mais rápido, além de ficar mais simples.",
+    warning_couldUseBasicWS: "Analisando esta regra, parece que ela poderia ser realizada utilizando a área de trabalho Básica... Sua estratégia executaria mais rápido, além de ficar mais simples.",
     error_instancesAreEqual: "Hmm... Eu estou enganado ou estes 2 elementos são iguais? Eles vão ser sempre iguais um ao outro, a não ser que você queira compara-los entre diferentes intervalos de tempo ou deslocamentos...",
 
     btn_add: "Adicionar",
@@ -431,6 +448,14 @@ const locale = {
 
     btn_add: "Adicionar",
     btn_save: "Salvar",
+  },
+  modalfollowers: {
+    title: "Seguidores",
+    label_noFollowers: "Este usuário ainda não possui seguidores."
+  },
+  modalfollowing: {
+    title: "Seguindo",
+    label_noFollowing: "Este usuário ainda não segue ninguém."
   },
   modalmovingavgdetail: {
     title: "Média Móvel",
@@ -519,14 +544,15 @@ const locale = {
   },
   modalstrategy: {
     title_create: "Criar Estratégia",
-    title_update: "Atualizar Estratégia",
+    title_update: "Alterar Estratégia",
+    title_view: "Detalhes da Estratégia",
+
     label_intro_p1: "Uma Estratégia é um conjunto de regras/filtros que pode ser aplicado à relação entre Preço e Indicadores.",
     label_intro_p2: "Uma vez criada, ela pode ser aplicada à qualquer tempo gráfico, a menos que você force isso na área avançada.",
 
     label_workspaces: "Áreas de Trabalho",
 
     label_basic: "Básica",
-    label_transition: "Transição",
     label_basic_intro_p1: "Clique ou arraste nos seguintes indicadores para a Área de Trabalho desejada...",
     label_basic_intro_p2: "Depois, realinhe os indicadores da forma como eles deveriam aparecer em um gráfico.",
 
@@ -540,8 +566,8 @@ const locale = {
     label_logic_dynamic: "Dinâmica",
     label_logic_static: "Estática",
     input_logic_hint: "Uma estratégia Dinâmica pode ser aplicada em qualquer tempo gráfico (s, d, m60...). Ela se torna Estática se um tempo gráfico específico é selecionado em uma das regras.",
-    input_description: "Descrição",
-    label_description_placeholder: "Uma descrição bem escrita pode ajudar outros usuários a entenderem melhor como sua Estratégia funciona...",
+    input_description: "Descrição Técnica",
+    label_description_placeholder: "Uma descrição bem escrita pode ajudar outros usuários a entender melhor como sua Estratégia funciona...",
     input_public: "Pública",
     input_public_hint: "Outros usuários podem ver esta estratégia.",
     input_private: "Privada",
@@ -575,7 +601,34 @@ const locale = {
 
     btn_add: "Adicionar",
     btn_create: "Criar",
-    btn_update: "Atualizar"
+    btn_update: "Alterar",
+    btn_view: "Voltar"
+  },
+  modalstrategyrating: {
+    input_review: "Avaliação",
+
+    error_review: "Avaliação muito longa, não? Tente mante-la com no máximo 1000 caracteres.",
+
+    btn_footer: "Rate",
+  },
+  modalstrategyresults: {
+    label_createdBy: "Criada por",
+
+    input_stockExchange: "Bolsa de Valores",
+    input_stockExchange_hint: "Estamos falando de qual Bolsa de Valores?",
+    input_interval: "Intervalo",
+    input_interval_hint: "As regras da estratégia devem ser aplicada em qual tempo gráfico?",
+
+    header_asset: "Ativo",
+    header_name: "Nome",
+    header_quote: "Cotação",
+    header_volume: "Vol. Médio",
+    header_lastTradeTime: "Última negociação",
+
+    table_emptyData: "Nesse momento, não há ativos nesta condição técnica. Talvez mais tarde...",
+    table_noDataFound: "hmm... Não encontrei nenhum ativo com esses filtros. Será que perdi algo?",
+
+    btn_footer: "Voltar"
   },
   modalupdateposition: {
     title: "Atualizar Posição",
@@ -676,6 +729,11 @@ const locale = {
     item_buy: "Compra",
     item_sell: "Venda",
   },
+  pagenotfound: {
+    label_title: "Página não disponível. :(",
+    label_desc: "O link que você utilizou pode estar quebrado ou a página pode ter sido removida.",
+    btn_footer: "Voltar para PHIOON"
+  },
   phitrader: {
     title: "Phi Trader",
     label_intro_p1: "Olá! Sou o Phi, a Inteligência Artificial por trás das estratégias de mercado do PHIOON...",
@@ -748,6 +806,25 @@ const locale = {
     label_page: "Página",
     label_of: "de",
     label_rows: "linhas",
+  },
+  search: {
+    label_noRecentSearch_title: "Procure no PHIOON",
+    label_noRecentSearch_desc: "Encontre usuários e estratégias por todo o mundo...",
+  },
+  searchresults: {
+    card_users_title: "Usuários",
+    card_strategies_title: "Estratégias",
+
+    btn_seeMore: "Ver mais",
+  },
+  searchstrategyresults: {
+    title: "Mostrando Estratégias para"
+  },
+  searchuserresults: {
+    title: "Mostrando Usuários para"
+  },
+  recentsearches: {
+    btn_clear: "Limpar Pesquisas Recentes"
   },
   register: {
     alert_generalErrorTitle: "Algo deu errado...",
@@ -870,10 +947,12 @@ const locale = {
     alert_passwordReseted_text: "Agora, já podemos tentar logar novamente. ;)"
   },
   sidebar: {
+    profile: "Perfil",
+    profileMini: "P",
     myaccount: "Minha Conta",
     myaccountMini: "MC",
-    subscription: "Plano",
-    subscriptionMini: "P",
+    subscription: "Meu Plano",
+    subscriptionMini: "MP",
 
     myassets: "Meus Ativos",
     wallets: "Carteiras",
@@ -881,15 +960,18 @@ const locale = {
     positions: "Posições",
     positionsMini: "P",
 
-    wallet: "Carteira",
+    dashboards: "Dashboards",
     walletoverview: "Visão Geral",
     walletoverviewMini: "VG",
     openpositions: "Posições Abertas",
     openpositionsMini: "PA",
 
-    technicalAnalysis: "Análise Técnica",
-    strategiesMini: "E",
     strategies: "Estratégias",
+    strategypanel: "Painel",
+    strategypanelMini: "P",
+    strategygallery: "Galeria",
+    strategygalleryMini: "G",
+
     phitrader: "Phi Trader",
     phitraderMini: "PHI",
   },
@@ -898,31 +980,6 @@ const locale = {
   },
   stockexchangefilter: {
     label_title: "Bolsa de Valores",
-  },
-  strategies: {
-    title: "Estratégias",
-    btn_newStrategy: "Nova Estratégia",
-
-    label_noWallets_p1: "Hmm... Parece que você ainda tem Carteiras criadas por aqui... Que tal criar a primeira?",
-    label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua e então trazer estratégias e indicadores disponíveis por lá! ;)",
-    btn_goToWallets: "Ir para Carteiras",
-
-    label_noStrategies_p1: "Está preparado para começar a economizar tempo e ainda ter as melhores oportunidades do mercado à um clique?",
-    label_noStrategies_p2: "Então comece criando a sua primeira Estratégia !",
-
-    card_results_title: "Resultado",
-
-    input_stockExchange: "Bolsa de Valores",
-    input_stockExchange_hint: "Estamos falando de qual Bolsa de Valores?",
-    input_interval: "Intervalo",
-    input_interval_hint: "As regras da estratégia devem ser aplicada em qual tempo gráfico?",
-
-    btn_alert_cancel: "Cancelar",
-    btn_alert_confirm: "Confirmar",
-    alert_confirming_title: "Você tem certeza?",
-    alert_confirming_text: "Uma vez removida, não é possível recupera-la.",
-    alert_deleted_title: "Removida!",
-    alert_deleted_text: "Sua Estratégia foi removida com sucesso.",
   },
   strategycardmini: {
     label_public: "Pública",
@@ -934,11 +991,9 @@ const locale = {
     icon_type_sell_hint: "Estratégia de Venda.",
 
     label_cat_basic: "Básica",
-    label_cat_basic_hint: "Verifica a ordem dos indicadores no último período (candle).",
-    label_cat_transition: "Transição",
-    label_cat_transition_hint: "Procura por movimentos dentro dos 2 últimos períodos (candles). Exemplo: \"Preço superando MME 34.\"",
+    label_cat_basic_hint: "Procura por movimentos dentro dos 2 últimos períodos (candles). Exemplo: \"Preço superando MME 34.\"",
     label_cat_advanced: "Avançada",
-    label_cat_advanced_hint: "Geralmente, é bem planejada para identificar movimentos/comportamentos específicos.",
+    label_cat_advanced_hint: "Geralmente, é bem planejada para identificar movimentos técnicos específicos.",
 
     label_logic: "Lógica",
     label_dynamic: "Dinâmica",
@@ -946,22 +1001,79 @@ const locale = {
     label_static: "Estática",
     label_static_hint: "Algumas regras estão fixadas para tempos gráficos específicos.",
     label_category: "Categoria",
+  },
+  strategycomponents: {
+    btn_save: "Adicionar à Salvas",
+    btn_save_hint: "Salvar Estratégia.",
+    btn_unsave: "Remover de Salvas",
+    btn_unsave_hint: "Remover de Salvas.",
+
+    btn_view: "Ver Regras",
+    btn_update: "Alterar",
+    btn_delete: "Deletar",
+
+    btn_strategyPage: "Ver detalhes",
+    btn_userProfile: "Ir para Perfil",
+    btn_rate: "Avaliar",
+    btn_share: "Compartilhar",
 
     btn_run_hint: "Executar Estratégia.",
-    btn_view_hint: "Visualizar Estratégia.",
-    btn_update_hint: "Atualizar Estratégia.",
-    btn_delete_hint: "Deletar Estratégia.",
   },
-  strategyresults: {
-    header_asset: "Ativo",
-    header_name: "Nome",
-    header_quote: "Cotação",
-    header_volume: "Vol. Médio",
-    header_lastTradeTime: "Última negociação",
+  strategygallery: {
+    title: "Galeria",
 
-    table_firstLoad: "Execute uma Estratégia e vamos ver o que encontramos... ;)",
-    table_emptyData: "Nesse momento, não há ativos nesta condição técnica. Talvez mais tarde...",
-    table_noDataFound: "hmm... Será que perdi algo?! Por favor, dê uma olhada nos seus filtros. ;)"
+    card_mostRuns_title: "As mais Executadas",
+    card_mostSaved_title: "As mais Salvas",
+
+    label_gallery_noStrategies_p1: "Oops! Algo deu errado.",
+    label_gallery_noStrategies_p2: "Estou avisando meu time sobre isso...",
+  },
+  strategypage: {
+    label_createdBy: "Criada por",
+
+    label_totalRuns: "Execuções",
+    label_saved: "Salvamentos",
+    label_rating: "Avaliação",
+
+    label_ratings_available_hint: "de 5.",
+    label_ratings_notAvailable_hint: "Não há avaliações suficientes.",
+
+    card_description_title: "Descrição Técnica",
+    card_description_noDesc: "Esta estratégia ainda não possui uma descrição... :(",
+
+    card_reviews_title: "Avaliações e Comentários",
+    label_clickToRate: "Clique para Avaliar",
+    label_tapToRate: "Toque para Avaliar",
+
+    card_indicators_title: "Indicadores",
+
+    label_showMore: "Mostrar mais",
+    label_showLess: "Mostrar menos",
+  },
+  strategypanel: {
+    title: "Painel de Controle",
+    btn_newStrategy: "Nova Estratégia",
+    btn_goToGallery: "Ir para Galeria",
+
+    label_noWallets_p1: "Hmm... Parece que você ainda tem Carteiras criadas por aqui... Que tal criar a primeira?",
+    label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua e então trazer estratégias e indicadores disponíveis por lá! ;)",
+    btn_goToWallets: "Ir para Carteiras",
+
+    label_myStrategies_noStrategies_p1: "Crie, teste e compartilhe estratégias com seus amigos...",
+    label_myStrategies_noStrategies_p2: "Saiba quando as melhores oportunidades do mercado acontecem em tempo real.",
+
+    label_savedStrategies_noStrategies_p1: "Você não tem estratégias salvas ainda... ",
+    label_savedStrategies_noStrategies_p2: "Na Galeria, você encontra as estratégias mais populares entre os usuários. ;)",
+
+    card_myStrategies_title: "Minhas",
+    card_savedStrategies_title: "Salvas",
+
+    btn_alert_cancel: "Cancelar",
+    btn_alert_confirm: "Confirmar",
+    alert_confirming_title: "Você tem certeza?",
+    alert_confirming_text: "Uma vez removida, não é possível recupera-la.",
+    alert_deleted_title: "Removida!",
+    alert_deleted_text: "Sua Estratégia foi removida com sucesso.",
   },
   subscriptionbasic: {
     label_title: "BASIC",
@@ -1069,6 +1181,34 @@ const locale = {
     phibo_305_down_p1: "Preço alcançou uma resistência técnica importante após retração de <fibo_pct_retraction>% da Onda 1 e confirmou um Pivô de Baixa.",
     phibo_305_down_p2: "Linhas de Resistência estão alinhadas para baixo, o que aumenta a probabilidade de início de onda 3.",
     phibo_72_down_p1: "Preço alcançou uma resistência técnica após retração de <fibo_pct_retraction>% da Onda 1 e confirmou um Pivô de Baixa, aumentando a probabilidade de, ao menos, o preço testar o fundo anterior novamente.",
+  },
+  userfollowingitem: {
+    label_follow: "Seguir",
+    label_following: "Seguindo",
+    label_unfollow: "Deixar de Seguir",
+  },
+  userprofile: {
+    label_editProfile: "Editar Perfil",
+    label_follow: "Seguir",
+    label_followBack: "Seguir de volta",
+    label_following: "Seguindo",
+    label_unfollow: "Deixar de Seguir",
+    label_followers: "Seguidores",
+    label_share: "Compartilhar",
+    label_strategies: "Estratégias",
+    label_report: "Reportar usuário",
+
+    tab_overview: "Resumo",
+    tab_about: "Sobre",
+
+    card_popularStrategies_title: "Estratégias Populares",
+    label_showMore: "Mostrar mais 2",
+    label_showLess: "Mostrar menos",
+
+    card_bio_title: "Bio",
+    card_bio_noBio: "Usuário não possui Bio ainda... :(",
+
+    card_links_title: "Mais Informações",
   },
   usersubscription: {
     label_monthly: "Mensal",

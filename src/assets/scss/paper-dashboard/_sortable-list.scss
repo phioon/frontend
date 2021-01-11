@@ -37,8 +37,8 @@
   .sortable-item {
     display: flex;
     align-items: center;
+    min-height: 40px;
     cursor: grab;
-    line-height: 2.8em;
     z-index: 99999999;
     box-shadow: 0px 0.5px rgba(0, 0, 0, 0.2);
   }

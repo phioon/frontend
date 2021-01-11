@@ -13,9 +13,10 @@ export function localeList() {
 export function getTranslation(locale, compId, id) {
   if (locale in locales && compId in locales[locale] && id in locales[locale][compId]) {
     return locales[locale][compId][id];
-  } else {
+  }
+  else {
     if (id === "") {
-      // In some cases - labelAlerts - id can be ""
+      // In some cases (labelAlerts) id can be ""
       return ""
     }
     else

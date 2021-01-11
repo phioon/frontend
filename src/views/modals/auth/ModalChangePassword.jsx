@@ -247,10 +247,9 @@ class ModalChangePassword extends React.Component {
           <CardFooter className="text-center">
             <LabelAlert alertState={alertState} alertMsg={alertMsg} />
             <Button
+              type="submit"
               className="btn-simple btn-round"
               color="success"
-              data-dismiss="modal"
-              type="submit"
               disabled={!isLoading && object.isValidated ? false : true}
               onClick={e => this.submitClick(e)}
             >

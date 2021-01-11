@@ -1,13 +1,13 @@
 import React from "react";
-// javascript plugin used to create scrollbars on windows
-import PerfectScrollbar from "perfect-scrollbar";
 import { Route, Switch } from "react-router-dom";
 import PropTypes from "prop-types";
+// javascript plugin used to create scrollbars on windows
+import PerfectScrollbar from "perfect-scrollbar";
 
 import AppNavBar from "components/Navbars/AppNavbar.jsx";
 import Footer from "components/Footer/Footer.jsx";
 import Sidebar from "components/Sidebar/Sidebar.jsx";
-import { getDistinctValuesFromList } from "../core/utils";
+import { getDistinctValuesFromList, sleep } from "../core/utils";
 
 import routes from "routes.js";
 
@@ -16,15 +16,19 @@ export var ps;
 class AppLayout extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       navbarTitleId: "title_default",
 
       backgroundColor: "primary-dark",
       activeColor: "success",
       sidebarMini: false,
+
+      sQuery: "",
     };
 
     this.mainPanelRef = React.createRef()
+    this.onQueryChange = this.onQueryChange.bind(this)
     this.setNavbarTitleId = this.setNavbarTitleId.bind(this)
   }
   componentDidMount() {
@@ -40,13 +44,6 @@ class AppLayout extends React.Component {
       document.documentElement.scrollTop = 0;
       document.scrollingElement.scrollTop = 0;
       this.mainPanelRef.current.scrollTop = 0;
-
-      let isStrategies = this.props.location.pathname.indexOf("/strategies") > -1
-
-      if (isStrategies)
-        this.destroyPerfectScrollbar()
-      else
-        this.mountPerfectScrollbar()
     }
   }
 
@@ -54,11 +51,8 @@ class AppLayout extends React.Component {
   mountPerfectScrollbar() {
     let isWindows = navigator.platform.indexOf("Win") > -1
     let isMounted = document.documentElement.classList.contains("perfect-scrollbar-on")
-    let isStrategies = this.props.location.pathname.indexOf("/strategies") > -1
 
-    if (isStrategies)
-      return
-    else if (isWindows && !isMounted) {
+    if (isWindows && !isMounted) {
       document.documentElement.className += " perfect-scrollbar-on";
       document.documentElement.classList.remove("perfect-scrollbar-off");
       ps = new PerfectScrollbar(this.mainPanelRef.current);
@@ -90,13 +84,14 @@ class AppLayout extends React.Component {
     let wallets = await this.props.managers.app.offlineWalletList()       // [First Call] Used to check if syncFull is needed
 
     if (wallets.data) {
-      // Here, we'll check if last user logged is the same as the one logging in now.
-      // This situation is only valid if user was logged off by timeout. Otherwise, Phioon removes personal data automatically.
+      // Here, we'll check if last user logged is the same as the one logging in right now.
+      // This situation is only valid if user had their token expired. Otherwise, Phioon removes personal data automatically.
       if (wallets.data.length > 0 && wallets.data[0].owner === sUser.id)
         syncFull = false
     }
 
-    this.props.managers.app.strategyList(syncFull)                        // async call
+    this.props.managers.app.myStrategyList(syncFull)                      // async call
+    this.props.managers.app.savedStrategyList(syncFull)                   // async call
     wallets = await this.props.managers.app.walletList(syncFull)
     let positions = await this.props.managers.app.positionList(syncFull)
 
@@ -117,8 +112,15 @@ class AppLayout extends React.Component {
         this.props.managers.market.dSetupList(se_short)                   // async call
       }
     }
+
+    // Clean-ups: awaits 20 seconds...
+    sleep(20000)
+    this.props.managers.search.multiSearchCleanUp()
   }
 
+  onQueryChange(value) {
+    this.setState({ sQuery: value })
+  }
   setNavbarTitleId(titleId) {
     this.setState({ navbarTitleId: titleId })
   }
@@ -133,9 +135,11 @@ class AppLayout extends React.Component {
           <Route
             path={prop.layout + prop.path}
             render={(props) => <prop.component
-              {...props}
-              {...this.props}
-              setNavbarTitleId={this.setNavbarTitleId} />}
+              {...this.props}   // This first!
+              {...props}        // Then, this one.
+              setNavbarTitleId={this.setNavbarTitleId}
+              sQuery={this.state.sQuery} />
+            }
             key={key}
           />
         );
@@ -160,7 +164,7 @@ class AppLayout extends React.Component {
   };
   render() {
     let { managers } = this.props;
-    let { navbarTitleId } = this.state
+    let { navbarTitleId, sQuery } = this.state
 
     return (
       <div className="wrapper">
@@ -171,11 +175,13 @@ class AppLayout extends React.Component {
           activeColor={this.state.activeColor}
           managers={managers}
         />
-        <div className="main-panel" ref={this.mainPanelRef}>
+        <div id="main-panel" className="main-panel" ref={this.mainPanelRef}>
           <AppNavBar
             {...this.props}
             handleMiniClick={this.handleMiniClick}
             navbarTitleId={navbarTitleId}
+            onQueryChange={this.onQueryChange}
+            sQuery={sQuery}
           />
           <Switch>{this.getRoutes(routes)}</Switch>
           {// we don't want the Footer to be rendered on full screen maps page

@@ -18,16 +18,27 @@ import LockScreen from "views/auth/LockScreen.jsx";
 import Login from "views/auth/Login.jsx";
 import SetPassword from "views/auth/SetPassword.jsx";
 import Register from "views/auth/Register.jsx";
+import UserProfile from "views/auth/UserProfile.jsx";
 import MyAccount from "views/auth/MyAccount.jsx";
 import UserSubscription from "views/subscriptions/UserSubscription.jsx";
 
 // App
-import Strategies from "views/technicalanalysis/strategy/Strategies";
 import OpenPositions from "views/wallet/OpenPositions";
 import Positions from "views/myassets/Positions";
-import PhiTrader from "views/technicalanalysis/PhiTrader";
+import PhiTrader from "views/phitrader/PhiTrader";
 import WalletOverview from "views/wallet/WalletOverview";
 import Wallets from "views/myassets/Wallets";
+import StrategyPage from "./views/strategies/StrategyPage";
+import StrategyPanel from "views/strategies/StrategyPanel";
+import StrategyGallery from "views/strategies/StrategyGallery";
+
+// Search
+import Search from "views/search/Search";
+import SearchStrategyResults from "views/search/SearchStrategyResults";
+import SearchUserResults from "views/search/SearchUserResults";
+
+// Generics
+import PageNotFound from "views/generics/PageNotFound";
 
 const routes = [
   {
@@ -46,7 +57,7 @@ const routes = [
         layout: "/auth"
       },
       {
-        path: "/confirmemail",
+        path: "/confirmemail/",
         name: "confirmemail",
         mini: "CE",
         component: ConfirmEmail,
@@ -60,7 +71,7 @@ const routes = [
         layout: "/auth"
       },
       {
-        path: "/setpassword",
+        path: "/setpassword/",
         name: "setpassword",
         mini: "SP",
         component: SetPassword,
@@ -68,21 +79,21 @@ const routes = [
       },
       // --------------------
       {
-        path: "/forgotpassword",
+        path: "/forgotpassword/",
         name: "forgotpassword",
         mini: "FP",
         component: ForgotPassword,
         layout: "/auth"
       },
       {
-        path: "/login",
+        path: "/login/",
         name: "login",
         mini: "L",
         component: Login,
         layout: "/auth"
       },
       {
-        path: "/register",
+        path: "/register/",
         name: "register",
         mini: "R",
         component: Register,
@@ -92,36 +103,79 @@ const routes = [
   },
   {
     collapse: true,
-    name: "auth",
+    name: "user",
     icon: "nc-icon nc-badge",
     state: "authCollapse",
     views: [
       {
-        path: "/lockscreen",
+        path: "/lockscreen/",
         name: "lockscreen",
         mini: "LS",
         component: LockScreen,
         layout: "/app"
       },
       {
-        path: "/user/myaccount",
+        path: "/u/myaccount/",
         name: "myaccount",
         mini: "MA",
         component: MyAccount,
         layout: "/app"
       },
       {
-        path: "/user/subscription",
+        path: "/myplan/",
         name: "usersubscription",
-        mini: "UP",
+        mini: "US",
         component: UserSubscription,
         layout: "/app"
       },
       {
-        path: "/order/success",
+        path: "/order/success/",
         name: "ordersuccess",
         mini: "OS",
         component: UserSubscription,
+        layout: "/app"
+      },
+      {
+        path: "/u/:username/",
+        name: "profile",
+        mini: "P",
+        component: UserProfile,
+        layout: "/app"
+      },
+      {
+        path: "/u/",
+        name: "profile",
+        mini: "P",
+        component: UserProfile,
+        layout: "/app"
+      },
+    ]
+  },
+  {
+    collapse: true,
+    name: "search",
+    icon: "nc-icon nc-zoom-split",
+    state: "searchCollapse",
+    views: [
+      {
+        path: "/search/strategies/",
+        name: "searchstrategy",
+        mini: "SS",
+        component: SearchStrategyResults,
+        layout: "/app"
+      },
+      {
+        path: "/search/users/",
+        name: "searchuser",
+        mini: "SU",
+        component: SearchUserResults,
+        layout: "/app"
+      },
+      {
+        path: "/search/",
+        name: "search",
+        mini: "S",
+        component: Search,
         layout: "/app"
       }
     ]
@@ -135,14 +189,14 @@ const routes = [
     views: [
       {
         sidebar: true,
-        path: "/myassets/wallets",
+        path: "/myassets/wallets/",
         name: "wallets",
         component: Wallets,
         layout: "/app"
       },
       {
         sidebar: true,
-        path: "/myassets/positions",
+        path: "/myassets/positions/",
         name: "positions",
         component: Positions,
         layout: "/app"
@@ -152,20 +206,20 @@ const routes = [
   {
     sidebar: true,
     collapse: true,
-    name: "wallet",
-    icon: "nc-icon nc-bank",
-    state: "walletCollapse",
+    name: "dashboards",
+    icon: "nc-icon nc-layout-11",
+    state: "dashboardsCollapse",
     views: [
       {
         sidebar: true,
-        path: "/wallet/overview",
+        path: "/dashboard/overview/",
         name: "walletoverview",
         component: WalletOverview,
         layout: "/app"
       },
       {
         sidebar: true,
-        path: "/wallet/openpositions",
+        path: "/dashboard/openpositions/",
         name: "openpositions",
         component: OpenPositions,
         layout: "/app"
@@ -175,26 +229,62 @@ const routes = [
   {
     sidebar: true,
     collapse: true,
-    name: "technicalAnalysis",
+    name: "strategies",
     icon: "nc-icon nc-bulb-63",
     state: "tcCollapse",
     views: [
       {
         sidebar: true,
-        path: "/analysis/strategies",
-        name: "strategies",
-        component: Strategies,
+        path: "/strategies/panel/",
+        name: "strategypanel",
+        component: StrategyPanel,
         layout: "/app"
       },
       {
         sidebar: true,
-        path: "/analysis/phitrader",
-        name: "phitrader",
-        component: PhiTrader,
+        path: "/strategies/gallery/",
+        name: "strategygallery",
+        component: StrategyGallery,
+        layout: "/app"
+      },
+      {
+        path: "/strategies/:uuid/",
+        name: "strategygallery",
+        component: StrategyPage,
+        layout: "/app"
+      },
+      {
+        path: "/strategies/",
+        name: "strategygallery",
+        component: StrategyPage,
         layout: "/app"
       },
     ]
   },
+  {
+    sidebar: true,
+    path: "/phitrader/",
+    name: "phitrader",
+    icon: "nc-icon nc-atom",
+    component: PhiTrader,
+    layout: "/app"
+  },
+
+  {
+    collapse: true,
+    name: "generics",
+    icon: "nc-icon nc-badge",
+    state: "genericCollapse",
+    views: [
+      {
+        path: "/notfound/",
+        name: "pagenotfound",
+        icon: "nc-icon nc-atom",
+        component: PageNotFound,
+        layout: "/app"
+      },
+    ]
+  }
 ]
 
 export default routes;

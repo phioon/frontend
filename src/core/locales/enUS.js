@@ -7,24 +7,33 @@ const locale = {
     label_loading: "Loading...",
     label_days: "days",
 
+    label_sharedLinkCopied: "Link copied to clipboard (CRTL-C).",
+
+    input_search: "Search...",
     input_select: "Select...",
     input_noOptions: "No options available..."
   },
   appnavbar: {
     title_default: "Dashboard",
-    title_openpositions: "Open Positions",
-    title_positions: "My Assets",
-    title_strategies: "Technical Analysis",
-    title_phitrader: "Technical Analysis",
+    title_empty: "",
     title_myaccount: "My Account",
+    title_openpositions: "Open Positions",
+    title_phitrader: "Technical Analysis",
+    title_positions: "My Assets",
+    title_recentsearches: "Recent Searches",
+    title_searchresults: "Results",
+    title_searchstrategyresults: "Strategies",
+    title_searchuserresults: "Users",
+    title_strategypanel: "Strategies",
+    title_strategypage: "Strategy",
+    title_strategygallery: "Strategies",
+    title_userprofile: "User",
     title_usersubscription: "My Plan",
     title_walletoverview: "Overview",
     title_wallets: "My Assets",
 
-    placeholder_search: "Search...",
-
-    label_myaccount: "My Account",
-    label_subscription: "Subscription",
+    label_profile: "Profile",
+    label_subscription: "My Plan",
     label_logout: "Log out"
   },
   assetfilter: {
@@ -42,13 +51,14 @@ const locale = {
     last: "Last"
   },
   charts: {
-    chart_title_profitability: "Profitability over time (%)",
-    chart_title_diversification: "Diversification (%)",
-    chart_title_profitabilityRanking: "Profitability Ranking (%)",
+    chart_profitability_title: "Profitability over time (%)",
+    chart_diversification_title: "Diversification (%)",
+    chart_profitabilityRanking_title: "Profitability Ranking (%)",
+    chart_usage_title: "Runs",
+    chart_usage_desc: "Last 30 days",
 
     chart_tooltip_profitability: "% Profitability",
 
-    label_groupBy: "Group By",
     label_order: "Order by",
     label_assets: "Asset",
     label_countries: "Country",
@@ -140,7 +150,10 @@ const locale = {
   },
   httptranslation: {
     wallet_limitReached: "Need more wallets to manage your investments? Go premium and enjoy it! ;)",
-    strategy_limitReached: "Neew more  strategies to improve your results? Go premium and enjoy it! ;)",
+    strategy_limitReached: "Neew more strategies to improve your results? Go premium and enjoy it! ;)",
+    strategy_addedToCollection: "Strategy added to your collection.",
+    strategy_removedFromCollection: "Strategy removed from your collection.",
+    strategy_thanksForFeedback: "Submitted! Thank you for your feedback. ;)",
 
     user_profileUpdated: "Profile updated!",
     user_planPastDue_p1: "hmm... Something wrong happened while renewing your Plan :/",
@@ -254,6 +267,10 @@ const locale = {
     enUS: "English",
     ptBR: "Português",
   },
+  linkitem: {
+    input_name: "Link Name",
+    input_url: "URL",
+  },
   locales: {
     enUS: "en-us",
     ptBR: "pt-br",
@@ -274,7 +291,6 @@ const locale = {
     currency: "Currency",
     percentage: "Percentage",
     number: "Number",
-    label_format: "Format",
 
     amountInvested_kpi_label: "Amount Invested",
     amountInvested_title_hint: "Operational Costs included.",
@@ -316,6 +332,7 @@ const locale = {
   myaccount: {
     title_personalData: "Personal Data",
     title_prefs: "Preferences",
+    title_links: "Links",
 
     input_email: "Email",
     btn_changePassword: "Change Password",
@@ -325,12 +342,14 @@ const locale = {
     input_nationality: "Nationality",
     input_birthday: "Birthday",
     input_birthday_hint: "I could send birthday gifts. Who knows...",
+    input_aboutMe: "About",
 
     input_currency: "Main Currency",
     input_currency_hint: "Do you invest in different countries? I could convert the currencies to your preferred one on dashboards and reports. ",
     input_language: "Language",
 
     error_username_minReq: "Letters (a-z), numbers (0-9), underscores (_) and periods (.)",
+    error_username_length: "It's important that it has between 3 and 32 characters. ;)",
     error_username_taken: "Username taken :/",
     error_username_couldNotCheck: "Something went wrong :/ Let's try again later.",
 
@@ -395,7 +414,7 @@ const locale = {
     input_constant: "Fixed Value",
     input_constant_hint: "A value that should be used to compare with the other indicator's value.",
 
-    warning_couldUseBasicWS: "Looking at this rule, seems like it would be possible to move it to Basic or Transition Workspace... Your strategy would become faster to execute and easier to understand. ;)",
+    warning_couldUseBasicWS: "Looking at this rule, seems like it would be possible to move it to workspace Basic... Your strategy would become faster to execute and easier to understand. ;)",
     error_instancesAreEqual: "Hmm... Am I wrong or these 2 elements are the same? They will always be equal each other, unless you want to compare them between different Time Intervals...",
 
     btn_add: "Add",
@@ -431,6 +450,14 @@ const locale = {
 
     btn_add: "Add",
     btn_save: "Save",
+  },
+  modalfollowers: {
+    title: "Followers",
+    label_noFollowers: "User doesn't have followers yet."
+  },
+  modalfollowing: {
+    title: "Following",
+    label_noFollowing: "User doesn't follow anyone yet."
   },
   modalmovingavgdetail: {
     title: "Moving Average",
@@ -520,13 +547,14 @@ const locale = {
   modalstrategy: {
     title_create: "Create Strategy",
     title_update: "Update Strategy",
+    title_view: "Strategy Details",
+
     label_intro_p1: "A Strategy is a set of rules/filters that can be applied to the relation between Price and Indicators.",
     label_intro_p2: "Once created, it can be applied to any time interval, unless you force it on the advanced workspace.",
 
     label_workspaces: "Workspaces",
 
     label_basic: "Basic",
-    label_transition: "Transition",
     label_basic_intro_p1: "Click or move the following indicators into the Workspace desired...",
     label_basic_intro_p2: "Then, reorder them accordingly to the way they should appear on a chart.",
 
@@ -540,7 +568,7 @@ const locale = {
     label_logic_dynamic: "Dynamic",
     label_logic_static: "Static",
     input_logic_hint: "A Dynamic Strategy can be applied to any time interval (w, d, m60...). It becomes Static if a specific interval is set for one of the rules.",
-    input_description: "Description",
+    input_description: "Technical Description",
     label_description_placeholder: "A detailed description may help other users understand how your Strategy works...",
     input_public: "Public",
     input_public_hint: "Other users can see this strategy.",
@@ -571,11 +599,38 @@ const locale = {
     alert_created_text_p2: "Now, you can run it and see the results! ;) ",
 
     error_name: "It's important that the name is less than 24 characters and unique between your Strategies.",
-    error_desc: "It seems too long... Please, try to keep it lesser than 1000 characters.",
+    error_desc: "It seems too long... Please, try to keep it lesser than 2000 characters.",
 
     btn_add: "Add",
     btn_create: "Create",
-    btn_update: "Update"
+    btn_update: "Update",
+    btn_view: "Back"
+  },
+  modalstrategyrating: {
+    input_review: "Review",
+
+    error_review: "It seems too long... Please, try to keep it lesser than 1000 characters.",
+
+    btn_footer: "Avaliar",
+  },
+  modalstrategyresults: {
+    label_createdBy: "Created by",
+
+    input_stockExchange: "Stock Exchange",
+    input_stockExchange_hint: "Which Stock Exchange are we talking about?",
+    input_interval: "Interval",
+    input_interval_hint: "Which time interval the Strategy's rules should be applied to?",
+
+    header_asset: "Asset",
+    header_name: "Name",
+    header_quote: "Quote",
+    header_volume: "Volume Avg.",
+    header_lastTradeTime: "Last trade time",
+
+    table_emptyData: "Right now, there are no assets matching this technical condition. Maybe later...",
+    table_noDataFound: "hmm... I couldn't find any asset with these filters. Did I miss something?",
+
+    btn_footer: "Back"
   },
   modalupdateposition: {
     title: "Update Position",
@@ -676,6 +731,11 @@ const locale = {
     item_buy: "Purchase",
     item_sell: "Sale",
   },
+  pagenotfound: {
+    label_title: "Page not available. :(",
+    label_desc: "The link you followed may be broken, or the page may have been removed.",
+    btn_footer: "Go back to PHIOON"
+  },
   phitrader: {
     title: "Phi Trader",
     label_intro_p1: "Hi! I'm Phi, the Artificial Intelligence behind PHIOON's main trading strategies...",
@@ -698,7 +758,7 @@ const locale = {
     card_title: "Positions",
     btn_newPosition: "New Position",
 
-    table_noDataFound: "hmm... I didn't find any Position with this filter. Did I miss something?! ",
+    table_noDataFound: "hmm... I couldn't find any position with these filters. Did I miss something?",
     table_emptyData: "Don't have your Positions here yet? Create it clicking on the button at your right. ;)",
 
     header_startedOn: "Started On",
@@ -748,6 +808,25 @@ const locale = {
     label_page: "Page",
     label_of: "of",
     label_rows: "rows",
+  },
+  search: {
+    label_noRecentSearch_title: "Search PHIOON",
+    label_noRecentSearch_desc: "Find users and strategies all around the world...",
+  },
+  searchresults: {
+    card_users_title: "Users",
+    card_strategies_title: "Strategies",
+
+    btn_seeMore: "See more",
+  },
+  searchstrategyresults: {
+    title: "Showing Strategies for"
+  },
+  searchuserresults: {
+    title: "Showing Users for"
+  },
+  recentsearches: {
+    btn_clear: "Clear recent searches"
   },
   register: {
     alert_generalErrorTitle: "Something went wrong...",
@@ -870,10 +949,12 @@ const locale = {
     alert_passwordReseted_text: "Now we can log in again. ;)",
   },
   sidebar: {
+    profile: "Profile",
+    profileMini: "P",
     myaccount: "My Account",
     myaccountMini: "MA",
-    subscription: "Subscription",
-    subscriptionMini: "S",
+    subscription: "My Plan",
+    subscriptionMini: "MP",
 
     myassets: "My Assets",
     wallets: "Wallets",
@@ -881,15 +962,18 @@ const locale = {
     positions: "Positions",
     positionsMini: "P",
 
-    wallet: "Wallet",
+    dashboards: "Dashboards",
     walletoverview: "Overview",
     walletoverviewMini: "O",
     openpositions: "Open Positions",
     openpositionsMini: "OP",
 
-    technicalAnalysis: "Technical Analysis",
-    strategiesMini: "S",
     strategies: "Strategies",
+    strategypanel: "Control Panel",
+    strategypanelMini: "CP",
+    strategygallery: "Gallery",
+    strategygalleryMini: "G",
+
     phitrader: "Phi Trader",
     phitraderMini: "PHI",
   },
@@ -898,31 +982,6 @@ const locale = {
   },
   stockexchangefilter: {
     label_title: "Stock Exchanges",
-  },
-  strategies: {
-    title: "Strategies",
-    btn_newStrategy: "New Strategy",
-
-    label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
-    label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can bring you strategies and indicators that are available there! ;)",
-    btn_goToWallets: "Go to Wallets",
-
-    label_noStrategies_p1: "Are you ready to start saving time and always having the best opportunities at one click?",
-    label_noStrategies_p2: "Go ahead and create your first Strategy !",
-
-    card_results_title: "Results",
-
-    input_stockExchange: "Stock Exchange",
-    input_stockExchange_hint: "Which Stock Exchange are we talking about?",
-    input_interval: "Interval",
-    input_interval_hint: "Which time interval the Strategy's rules should be applied in?",
-
-    btn_alert_cancel: "Cancel",
-    btn_alert_confirm: "Confirm",
-    alert_confirming_title: "Are you sure?",
-    alert_confirming_text: "Once deleted, it's not possible to recover it back.",
-    alert_deleted_title: "Deleted!",
-    alert_deleted_text: "Your Strategy has been deleted.",
   },
   strategycardmini: {
     label_public: "Public",
@@ -934,9 +993,7 @@ const locale = {
     icon_type_sell_hint: "Sale Strategy.",
 
     label_cat_basic: "Basic",
-    label_cat_basic_hint: "It looks for a specific ordering in the latest period (candle).",
-    label_cat_transition: "Transition",
-    label_cat_transition_hint: "It looks for moviments in the last 2 periods (candles). Example: \"Price overcoming EMA 34\".",
+    label_cat_basic_hint: "It looks for moviments in the last 2 periods (candles). Example: \"Price overcoming EMA 34\".",
     label_cat_advanced: "Advanced",
     label_cat_advanced_hint: "It's well planned to find specific moviments and behaviors.",
 
@@ -946,22 +1003,79 @@ const locale = {
     label_static: "Static",
     label_static_hint: "Some rules are fixed to a specific time interval.",
     label_category: "Category",
+  },
+  strategycomponents: {
+    btn_save: "Add to Saved",
+    btn_save_hint: "Add to Saved.",
+    btn_unsave: "Remove from Saved",
+    btn_unsave_hint: "Remove from Saved.",
+
+    btn_view: "See Rules",
+    btn_update: "Update",
+    btn_delete: "Delete",
+
+    btn_strategyPage: "See details",
+    btn_userProfile: "Go to User Profile",
+    btn_rate: "Rate",
+    btn_share: "Share",
 
     btn_run_hint: "Run Strategy.",
-    btn_view_hint: "View Strategy.",
-    btn_update_hint: "Update Strategy.",
-    btn_delete_hint: "Delete Strategy.",
   },
-  strategyresults: {
-    header_asset: "Asset",
-    header_name: "Name",
-    header_quote: "Quote",
-    header_volume: "Volume Avg.",
-    header_lastTradeTime: "Last trade time",
+  strategygallery: {
+    title: "Gallery",
 
-    table_firstLoad: "Run a Strategy and let's see what we can find... ;)",
-    table_emptyData: "Right now, there are no assets matching this technical condition. Maybe later...",
-    table_noDataFound: "hmm... Did I miss something?! Please, check your filters. ;)"
+    card_mostRuns_title: "Most Runs",
+    card_mostSaved_title: "Most Saved",
+
+    label_gallery_noStrategies_p1: "Oops! Something went wrong.",
+    label_gallery_noStrategies_p2: "Let me report my team about that...",
+  },
+  strategypage: {
+    label_createdBy: "Created by",
+
+    label_totalRuns: "Runs",
+    label_saved: "Saved",
+    label_rating: "Rating",
+
+    label_ratings_available_hint: "out of 5.",
+    label_ratings_notAvailable_hint: "There is no ratings enough.",
+
+    card_description_title: "Technical Description",
+    card_description_noDesc: "This strategy doesn't have a description yet... :(",
+
+    card_reviews_title: "Ratings e Reviews",
+    label_clickToRate: "Click to Rate",
+    label_tapToRate: "Tap to Rate",
+
+    card_indicators_title: "Indicators",
+
+    label_showMore: "Show more",
+    label_showLess: "Show less",
+  },
+  strategypanel: {
+    title: "Control Panel",
+    btn_newStrategy: "New",
+    btn_goToGallery: "Go to Gallery",
+
+    label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
+    label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can bring you strategies and indicators that are available there! ;)",
+    btn_goToWallets: "Go to Wallets",
+
+    label_myStrategies_noStrategies_p1: "Create, test and share strategies with your friends...",
+    label_myStrategies_noStrategies_p2: "Be aware when the market's best opportunities happen in real time.",
+
+    label_savedStrategies_noStrategies_p1: "You don't have strategies saved yet... ",
+    label_savedStrategies_noStrategies_p2: "You can always go to Gallery and see what most users are using lately. ;)",
+
+    card_myStrategies_title: "My Strategies",
+    card_savedStrategies_title: "Saved",
+
+    btn_alert_cancel: "Cancel",
+    btn_alert_confirm: "Confirm",
+    alert_confirming_title: "Are you sure?",
+    alert_confirming_text: "Once deleted, it's not possible to recover it back.",
+    alert_deleted_title: "Deleted!",
+    alert_deleted_text: "Your Strategy has been deleted.",
   },
   subscriptionbasic: {
     label_title: "BASIC",
@@ -1070,6 +1184,34 @@ const locale = {
     phibo_305_down_p2: "Resistance Lines are aligned down, increasing the probability of starting a Wave 3.",
     phibo_72_down_p1: "Price reached a technical resistance after a retracement of 21% from the recent bottom and drew a Pivot Down, increasing the probability of, at least, testing last bottom again.",
   },
+  userfollowingitem: {
+    label_follow: "Follow",
+    label_following: "Following",
+    label_unfollow: "Unfollow",
+  },
+  userprofile: {
+    label_editProfile: "Edit Profile",
+    label_follow: "Follow",
+    label_followBack: "Follow Back",
+    label_following: "Following",
+    label_unfollow: "Unfollow",
+    label_followers: "Followers",
+    label_share: "Share",
+    label_strategies: "Strategies",
+    label_report: "Report user",
+
+    tab_overview: "Overview",
+    tab_about: "About",
+
+    card_popularStrategies_title: "Popular Strategies",
+    label_showMore: "Show 2 more",
+    label_showLess: "Show less",
+
+    card_bio_title: "Bio",
+    card_bio_noBio: "User doesn't have a Bio yet... :(",
+
+    card_links_title: "Mais Informações",
+  },
   usersubscription: {
     label_monthly: "Monthly",
     label_yearly: "Yearly",
@@ -1095,7 +1237,7 @@ const locale = {
     card_title: "Wallets",
     btn_newWallet: "New Wallet",
 
-    table_noDataFound: "hmm... I didn't find any wallets with these filters. Did I miss something?. ;)",
+    table_noDataFound: "hmm... I couldn't find any wallet with these filters. Did I miss something?",
     table_emptyData: "Don't have a Wallet yet? Create it clicking on the button at your right. ;)",
 
     header_name: "Name",

@@ -25,7 +25,7 @@ class ModalUserCreated extends React.Component {
     let { redirectToLogin } = this.state;
 
     return (
-      <Modal isOpen={isOpen} size="md" toggle={() => this.props.toggleModal(modalId)} ref="modal_userCreated">
+      <Modal isOpen={isOpen} size="md" toggle={() => this.props.toggleModal(modalId)}>
         {redirectToLogin ? <Redirect to="/auth/login" /> : null}
         <div className="modal-header">
           <button

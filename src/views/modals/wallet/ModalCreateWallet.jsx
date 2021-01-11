@@ -264,9 +264,10 @@ class ModalCreateWallet extends React.Component {
               <label>{getString(prefs.locale, this.compId, "input_name")}</label>
               <Input
                 type="text"
-                name="name"
+                name="wallet_name"
+                autoComplete="off"
                 value={wallet.data.name}
-                onChange={e => this.onChange(e, e.target.name)}
+                onChange={e => this.onChange(e, "name")}
               />
               {wallet.states.name === "has-danger" ? (
                 <label className="error">
@@ -279,9 +280,9 @@ class ModalCreateWallet extends React.Component {
               <label>{getString(prefs.locale, this.compId, "input_description")}</label>
               <Input
                 type="text"
-                name="desc"
+                name="wallet_desc"
                 value={wallet.data.desc}
-                onChange={e => this.onChange(e, e.target.name)}
+                onChange={e => this.onChange(e, "desc")}
               />
             </FormGroup>
             {/* Stock Exchange */}

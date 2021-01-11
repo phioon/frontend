@@ -74,8 +74,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_auth',
     'knox',
-    'api_engine',
-    'app'
+    'app',
+    'market',
+    'search_engine'
 ]
 
 MIDDLEWARE = [
@@ -157,7 +158,7 @@ REST_AUTH_SERIALIZERS = {
 from datetime import timedelta
 REST_KNOX = {
     'TOKEN_LIMIT_PER_USER': 10,
-    'USER_SERIALIZER': 'api_engine.serializers.UserSerializer',
+    'USER_SERIALIZER': 'app.serializers_auth.UserSerializer',
     'TOKEN_TTL': timedelta(hours=4),
     'AUTO_REFRESH': True,
     'MIN_REFRESH_INTERVAL': 10800
