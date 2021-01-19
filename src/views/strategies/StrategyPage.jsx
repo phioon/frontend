@@ -474,7 +474,7 @@ class StrategyPage extends React.Component {
           {lines.length > 0 && lines.length > show &&
             <Button
               className="btn-round"
-              color="info"
+              color="default"
               size="sm"
               outline
               onClick={() => this.setState({ descShowMore: !descShowMore })}

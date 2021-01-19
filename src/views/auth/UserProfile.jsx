@@ -355,7 +355,7 @@ class UserProfile extends React.Component {
                 {user.strategies.length > 3 &&
                   <Button
                     className="btn-round"
-                    color="info"
+                    color="default"
                     size="sm"
                     outline
                     onClick={() => this.setState({ popularShowMore: !popularShowMore })}
