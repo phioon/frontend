@@ -342,7 +342,7 @@ const locale = {
     input_nationality: "Nationality",
     input_birthday: "Birthday",
     input_birthday_hint: "I could send birthday gifts. Who knows...",
-    input_aboutMe: "About",
+    input_aboutMe: "Bio",
 
     input_currency: "Main Currency",
     input_currency_hint: "Do you invest in different countries? I could convert the currencies to your preferred one on dashboards and reports. ",
@@ -606,8 +606,14 @@ const locale = {
     btn_update: "Update",
     btn_view: "Back"
   },
-  modalstrategyrating: {
-    input_review: "Review",
+  modalnewreview: {
+    title: "Review this strategy",
+
+    label_createdBy: "created by",
+
+    input_review: "Leave a review (optional)",
+    label_clickToRate: "Click to Rate",
+    label_tapToRate: "Tap to Rate",
 
     error_review: "It seems too long... Please, try to keep it lesser than 1000 characters.",
 
@@ -1024,6 +1030,10 @@ const locale = {
   strategygallery: {
     title: "Gallery",
 
+    label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
+    label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can bring you the most used strategies there! ;)",
+    btn_goToWallets: "Go to Wallets",
+
     card_mostRuns_title: "Most Runs",
     card_mostSaved_title: "Most Saved",
 
@@ -1041,16 +1051,17 @@ const locale = {
     label_ratings_notAvailable_hint: "There is no ratings enough.",
 
     card_description_title: "Technical Description",
-    card_description_noDesc: "This strategy doesn't have a description yet... :(",
+    card_description_empty: "This strategy doesn't have a description yet... :(",
+    btn_showMore: "Show more",
+    btn_showLess: "Show less",
 
     card_reviews_title: "Ratings e Reviews",
+    card_reviews_empty: "How did you like this strategy? Let us know... ;)",
     label_clickToRate: "Click to Rate",
     label_tapToRate: "Tap to Rate",
+    btn_review: "Write a Review",
 
     card_indicators_title: "Indicators",
-
-    label_showMore: "Show more",
-    label_showLess: "Show less",
   },
   strategypanel: {
     title: "Control Panel",
@@ -1204,7 +1215,7 @@ const locale = {
     tab_about: "About",
 
     card_popularStrategies_title: "Popular Strategies",
-    label_showMore: "Show 2 more",
+    label_showMore: "Show more",
     label_showLess: "Show less",
 
     card_bio_title: "Bio",

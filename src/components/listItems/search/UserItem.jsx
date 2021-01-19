@@ -41,13 +41,13 @@ class UserItem extends React.Component {
                   <span>{user.initials}</span>
                 </div>
                 <div>
+                  <p className="description">
+                    <small>@{user.username}</small>
+                  </p>
                   {size === "sm" ?
                     user.full_name :
                     <h5><small>{user.full_name}</small></h5>
                   }
-                  <p className="description">
-                    <small>@{user.username}</small>
-                  </p>
                 </div>
               </Col>
               {removableIndex >= 0 &&

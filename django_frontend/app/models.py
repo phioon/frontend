@@ -265,14 +265,19 @@ class Strategy(models.Model):
         }
         return data
 
-    def rate(self, user, value):
+    def rate(self, user, obj):
         try:
             # Try to update instance...
             instance = StrategyRating.objects.get(strategy=self, user=user)
-            instance.rating = value
+            instance.rating = obj['rating']
+
+            if 'review' in obj:
+                instance.review = obj['review']
             instance.save()
         except StrategyRating.DoesNotExist:
-            instance = StrategyRating.objects.create(strategy=self, user=user, rating=value)
+            instance = StrategyRating.objects.create(strategy=self,
+                                                     user=user,
+                                                     **obj)
 
         self.update_stats('ratings')
 
@@ -415,7 +420,7 @@ class StrategySaved(models.Model):
 class StrategyRating(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
     strategy = models.ForeignKey(Strategy, related_name='ratings', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='ratings', on_delete=models.CASCADE)
     rating = models.IntegerField(default=0, validators=[
         validators.MinValueValidator(1),
         validators.MaxValueValidator(5)]

@@ -164,7 +164,7 @@ class UserProfile extends React.Component {
         this.shareClick(obj.username)
         break;
       case "goToProfile":
-        this.goToProfile(obj.username)
+        this.goToProfile(obj.username || obj.owner_username)
         break;
       case "goToStrategyPage":
         this.goToStrategyPage(obj.uuid)
@@ -274,7 +274,7 @@ class UserProfile extends React.Component {
       </UncontrolledDropdown>
     )
   }
-  renderTheirActions(user) {
+  renderTheirActions(isLoading, user) {
     let { getString, prefs } = this.props;
     let { btnFollow_onHover, isLoading_follow } = this.state;
 
@@ -295,7 +295,7 @@ class UserProfile extends React.Component {
           onMouseOver={() => this.setState({ btnFollow_onHover: true })}
           onMouseOut={() => this.setState({ btnFollow_onHover: false })}
           onClick={() => this.onClick("follow", user)}
-          disabled={isLoading_follow ? true : false}
+          disabled={isLoading || isLoading_follow ? true : false}
         >
           {isLoading_follow ?
             <Spinner size="sm" /> :
@@ -345,8 +345,9 @@ class UserProfile extends React.Component {
               </CardHeader>
               {isPageLoading ?
                 <CardBody>
-                  {this.descriptionSkeleton()}
-                </CardBody> : <CardBody>
+                  {this.popularStrategySkeleton()}
+                </CardBody> :
+                <CardBody>
                   {this.popularStrategies(user.strategies)}
                 </CardBody>
               }
@@ -395,6 +396,20 @@ class UserProfile extends React.Component {
         )
     })
   }
+  popularStrategySkeleton(lines = 3) {
+    let amount = [...Array(lines)]
+
+    return amount.map((props, i) => (
+      <Row key={i} className="list-item">
+        <Col sm="2" xs="3">
+          <Button className="btn-icon btn-neutral" />
+        </Col>
+        <Col sm="7" xs="5">
+          <Skeleton />
+        </Col>
+      </Row>
+    ))
+  }
 
   aboutPane(isLoading, user) {
     return (
@@ -405,7 +420,7 @@ class UserProfile extends React.Component {
             {this.bioCard(isLoading, user)}
           </Col>
           <Col md="4">
-            {user.links && this.linksCard(user)}
+            {user.links && user.links.length > 0 && this.linksCard(user)}
           </Col>
         </Row>
       </TabPane>
@@ -613,7 +628,7 @@ class UserProfile extends React.Component {
                   <Col className="text-right">
                     {this.props.user.username === user.username ?
                       this.renderMyActions(user) :
-                      this.renderTheirActions(user)
+                      this.renderTheirActions(isPageLoading, user)
                     }
                   </Col>
                 </Row>

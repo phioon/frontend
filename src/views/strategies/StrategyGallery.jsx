@@ -1,20 +1,19 @@
 import React from "react";
+import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 // reactstrap components
 import {
+  Button,
   Card,
   CardHeader,
   CardTitle,
   CardBody,
+  CardFooter,
   Carousel,
   CarouselItem,
   CarouselControl,
   CarouselIndicators,
   Col,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
   Row,
 } from "reactstrap";
 
@@ -56,7 +55,10 @@ class StrategyGallery extends React.Component {
         strategy: { rules: "{}" },
       },
 
-      savedStrategyIds: []
+      cWallets: 0,
+      savedStrategyIds: [],
+
+      redirectTo: undefined,
     };
 
     this.resize = this.resize.bind(this);
@@ -98,14 +100,17 @@ class StrategyGallery extends React.Component {
   }
 
   async prepareRequirements() {
-    let tasks = [
-      this.prepareSavedStrategies(),
-      this.prepareMostRuns(),
-      this.prepareMostSaved()
-    ]
-    await Promise.all(tasks)
+    let wallets = await this.props.managers.app.walletData()
+    if (wallets.length > 0) {
+      let tasks = [
+        this.prepareSavedStrategies(),
+        this.prepareMostRuns(),
+        this.prepareMostSaved()
+      ]
+      await Promise.all(tasks)
+    }
 
-    this.setState({ pageFirstLoading: false })
+    this.setState({ pageFirstLoading: false, cWallets: wallets.length })
   }
   async prepareSavedStrategies() {
     let savedStrategies = await this.props.managers.app.savedStrategyData()
@@ -153,7 +158,7 @@ class StrategyGallery extends React.Component {
       if (x == maxItemsPerSlide - 1) {
         slides.push(items)
         items = []
-        maxItemsPerSlide += maxItemsPerSlide
+        maxItemsPerSlide += this.getMaxItemsPerSlide()
       }
     }
 
@@ -164,71 +169,6 @@ class StrategyGallery extends React.Component {
     this.moveSlide(carousel, "goto", 0)
 
     return carousel
-  }
-
-  renderStrategyItem(context, slide) {
-    let { isRunning } = this.state;
-
-    return slide.map((strategy) => {
-      strategy.isOwner = this.props.user.username === strategy.owner_username
-      strategy.isSaved = this.state.savedStrategyIds.includes(strategy.uuid)
-
-      return (
-        <Col key={"strategy__" + strategy.uuid} xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
-          <StrategyCardMini
-            managers={this.props.managers}
-            getString={this.props.getString}
-            prefs={this.props.prefs}
-            context={context}
-            strategy={deepCloneObj(strategy)}
-            onClick={this.onClick}
-            isRunning={isRunning}
-          />
-        </Col>
-      )
-    })
-  }
-  renderStrategySlides(context, slides) {
-    return slides.map((slide, key) => {
-      return (
-        <CarouselItem key={"item__" + key}>
-          <Row>
-            {this.renderStrategyItem(context, slide)}
-          </Row>
-          <br />
-          <br />
-        </CarouselItem>
-      )
-    })
-  }
-  moveSlide(carousel, action, index = 0) {
-    let newSlide = undefined
-
-    switch (action) {
-      case "next":
-        index = carousel.activeIndex
-
-        if (index == carousel.slides.length - 1)
-          newSlide = 0
-        else
-          newSlide = index + 1
-        break;
-      case "previous":
-        index = carousel.activeIndex
-
-        if (index == 0)
-          newSlide = carousel.slides.length - 1
-        else
-          newSlide = index - 1
-        break;
-      case "goto":
-        newSlide = index
-        break;
-    }
-
-    carousel.activeIndex = newSlide
-
-    this.setState({ [carousel.id]: carousel })
   }
 
   async onClick(action, obj) {
@@ -301,6 +241,100 @@ class StrategyGallery extends React.Component {
     this.props.history.push(path)
   }
 
+  renderNoWalletsCard(prefs, getString) {
+    return (
+      <Card className="card-stats">
+        <Row>
+          <Col xl="2" lg="2" md="3" xs="3" className="centered">
+            <div className="icon-big text-center">
+              <i className="nc-icon nc-alert-circle-i text-warning" />
+            </div>
+          </Col>
+          <Col xl="10" lg="10" md="9" xs="9">
+            <br />
+            <p className="card-description">{getString(prefs.locale, this.compId, "label_noWallets_p1")}</p>
+            <p className="card-description">{getString(prefs.locale, this.compId, "label_noWallets_p2")}</p>
+          </Col>
+        </Row>
+        <CardFooter className="centered">
+          <Button
+            className="btn-simple btn-round"
+            color="success"
+            data-dismiss="modal"
+            type="submit"
+            onClick={() => this.setState({ redirectTo: "/app/myassets/wallets/" })}
+          >
+            {getString(prefs.locale, this.compId, "btn_goToWallets")}
+          </Button>
+        </CardFooter>
+      </Card>
+    )
+  }
+  renderStrategyItem(context, slide) {
+    let { isRunning } = this.state;
+
+    return slide.map((strategy) => {
+      strategy.isOwner = this.props.user.username === strategy.owner_username
+      strategy.isSaved = this.state.savedStrategyIds.includes(strategy.uuid)
+
+      return (
+        <Col key={"strategy__" + strategy.uuid} xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
+          <StrategyCardMini
+            managers={this.props.managers}
+            getString={this.props.getString}
+            prefs={this.props.prefs}
+            context={context}
+            strategy={deepCloneObj(strategy)}
+            onClick={this.onClick}
+            isRunning={isRunning}
+          />
+        </Col>
+      )
+    })
+  }
+  renderStrategySlides(context, slides) {
+    return slides.map((slide, key) => {
+      return (
+        <CarouselItem key={"item__" + key}>
+          <Row>
+            {this.renderStrategyItem(context, slide)}
+          </Row>
+          <br />
+          <br />
+        </CarouselItem>
+      )
+    })
+  }
+  moveSlide(carousel, action, index = 0) {
+    let newSlide = undefined
+
+    switch (action) {
+      case "next":
+        index = carousel.activeIndex
+
+        if (index == carousel.slides.length - 1)
+          newSlide = 0
+        else
+          newSlide = index + 1
+        break;
+      case "previous":
+        index = carousel.activeIndex
+
+        if (index == 0)
+          newSlide = carousel.slides.length - 1
+        else
+          newSlide = index - 1
+        break;
+      case "goto":
+        newSlide = index
+        break;
+    }
+
+    carousel.activeIndex = newSlide
+
+    this.setState({ [carousel.id]: carousel })
+  }
+
   setFlag(context, value) {
     this.setState({ [`is${context}`]: value })
   }
@@ -323,7 +357,9 @@ class StrategyGallery extends React.Component {
       mostSaved,
 
       selected,
+      cWallets,
 
+      redirectTo,
     } = this.state;
 
     return (
@@ -370,65 +406,69 @@ class StrategyGallery extends React.Component {
             </Card>
           </> :
 
-          <>
-            {/* Most Runs */}
-            <Card className="card-plain">
-              <CardHeader>
-                <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_mostRuns_title")}</CardTitle>
-              </CardHeader>
-              <CardBody>
-                {mostRuns.slides.length == 0 ?
-                  <CarouselEmpty
-                    prefs={prefs}
-                    getString={getString}
-                    compId={this.compId} /> :
-                  <Carousel
-                    activeIndex={mostRuns.activeIndex}
-                    next={() => this.moveSlide(mostRuns, "next")}
-                    previous={() => this.moveSlide(mostRuns, "previous")}
-                    interval={false}>
-                    <CarouselIndicators
-                      items={Object.keys(mostRuns.slides)}
+          cWallets == 0 ?
+            // No Wallets
+            this.renderNoWalletsCard(prefs, getString) :
+            <>
+              {/* Most Runs */}
+              <Card className="card-plain">
+                <CardHeader>
+                  <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_mostRuns_title")}</CardTitle>
+                </CardHeader>
+                <CardBody>
+                  {mostRuns.slides.length == 0 ?
+                    <CarouselEmpty
+                      prefs={prefs}
+                      getString={getString}
+                      compId={this.compId} /> :
+                    <Carousel
                       activeIndex={mostRuns.activeIndex}
-                      onClickHandler={index => this.moveSlide(mostRuns, "goto", index)}
-                    />
-                    {this.renderStrategySlides(mostRuns.id, mostRuns.slides)}
-                    <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide(mostRuns, "previous")} />
-                    <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide(mostRuns, "next")} />
-                  </Carousel>
-                }
-              </CardBody>
-            </Card>
-            {/* Most Saved */}
-            <Card className="card-plain">
-              <CardHeader>
-                <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_mostSaved_title")}</CardTitle>
-              </CardHeader>
-              <CardBody>
-                {mostSaved.slides.length == 0 ?
-                  <CarouselEmpty
-                    prefs={prefs}
-                    getString={getString}
-                    compId={this.compId} /> :
-                  <Carousel
-                    activeIndex={mostSaved.activeIndex}
-                    next={() => this.moveSlide(mostSaved, "next")}
-                    previous={() => this.moveSlide(mostSaved, "previous")}
-                    interval={false}>
-                    <CarouselIndicators
-                      items={Object.keys(mostSaved.slides)}
+                      next={() => this.moveSlide(mostRuns, "next")}
+                      previous={() => this.moveSlide(mostRuns, "previous")}
+                      interval={false}>
+                      <CarouselIndicators
+                        items={Object.keys(mostRuns.slides)}
+                        activeIndex={mostRuns.activeIndex}
+                        onClickHandler={index => this.moveSlide(mostRuns, "goto", index)}
+                      />
+                      {this.renderStrategySlides(mostRuns.id, mostRuns.slides)}
+                      <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide(mostRuns, "previous")} />
+                      <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide(mostRuns, "next")} />
+                    </Carousel>
+                  }
+                </CardBody>
+              </Card>
+              {/* Most Saved */}
+              <Card className="card-plain">
+                <CardHeader>
+                  <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_mostSaved_title")}</CardTitle>
+                </CardHeader>
+                <CardBody>
+                  {mostSaved.slides.length == 0 ?
+                    <CarouselEmpty
+                      prefs={prefs}
+                      getString={getString}
+                      compId={this.compId} /> :
+                    <Carousel
                       activeIndex={mostSaved.activeIndex}
-                      onClickHandler={index => this.moveSlide(mostSaved, "goto", index)}
-                    />
-                    {this.renderStrategySlides(mostSaved.id, mostSaved.slides)}
-                    <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide(mostSaved, "previous")} />
-                    <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide(mostSaved, "next")} />
-                  </Carousel>
-                }
-              </CardBody>
-            </Card>
-          </>
+                      next={() => this.moveSlide(mostSaved, "next")}
+                      previous={() => this.moveSlide(mostSaved, "previous")}
+                      interval={false}>
+                      <CarouselIndicators
+                        items={Object.keys(mostSaved.slides)}
+                        activeIndex={mostSaved.activeIndex}
+                        onClickHandler={index => this.moveSlide(mostSaved, "goto", index)}
+                      />
+                      {this.renderStrategySlides(mostSaved.id, mostSaved.slides)}
+                      <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide(mostSaved, "previous")} />
+                      <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide(mostSaved, "next")} />
+                    </Carousel>
+                  }
+                </CardBody>
+              </Card>
+            </>
         }
+        {redirectTo && <Redirect to={redirectTo} />}
       </div>
     )
   }

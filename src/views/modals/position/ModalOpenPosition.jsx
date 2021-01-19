@@ -49,7 +49,7 @@ class ModalOpenPosition extends React.Component {
 
       assetOptions: [],
       currency: {},
-      opCostIsPercentage: false,   // true = Porcentage
+      opCostIsPercentage: true,   // true = Porcentage
 
       position: {
         data: {
@@ -634,30 +634,29 @@ class ModalOpenPosition extends React.Component {
               {/* Operational Cost Format */}
               <Col xs="2" md="2" className="centered">
                 <Button
-                  className="btn-icon btn-link"
-                  color="primary"
+                  className={`btn-icon btn-neutral btn-info ${opCostIsPercentage && "btn-round"}`}
                   id="opCost_percentage"
-                  value="%"
                   size="sm"
-                  type="button"
+                  color="info"
+                  outline={opCostIsPercentage}
                   onClick={e => this.changeInputFormat(e)}
                 >
                   %
-                    </Button>
+                </Button>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="opCost_percentage">
                   {this.props.getString(prefs.locale, this.compId, "opCost_percentage_hint")}
                 </UncontrolledTooltip>
                 <Button
-                  className="btn-icon btn-link"
-                  color="success"
+                  className={`btn-icon btn-neutral btn-success ${!opCostIsPercentage && "btn-round"}`}
                   id="opCost_currency"
                   name="opCost_currency"
+                  color="success"
                   size="sm"
-                  type="button"
+                  outline={!opCostIsPercentage}
                   onClick={e => this.changeInputFormat(e)}
                 >
                   $
-                    </Button>
+                </Button>
                 <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="opCost_currency">
                   {this.props.getString(prefs.locale, this.compId, "opCost_currency_hint")}
                 </UncontrolledTooltip>

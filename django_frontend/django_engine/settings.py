@@ -159,7 +159,7 @@ from datetime import timedelta
 REST_KNOX = {
     'TOKEN_LIMIT_PER_USER': 10,
     'USER_SERIALIZER': 'app.serializers_auth.UserSerializer',
-    'TOKEN_TTL': timedelta(hours=4),
+    'TOKEN_TTL': timedelta(hours=8),
     'AUTO_REFRESH': True,
     'MIN_REFRESH_INTERVAL': 10800
 }

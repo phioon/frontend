@@ -18,6 +18,7 @@ import Select from "react-select";
 // react component for creating dynamic tables
 import ReactTable from "react-table-v6";
 
+import ModalNewReview from "./ModalNewReview";
 import TimeManager from "../../../core/managers/TimeManager";
 import { CircularLoader } from "../../../components/Loaders";
 import {
@@ -27,6 +28,7 @@ import {
   orderBy,
   retrieveObjFromObjList,
   rtDefaultFilter,
+  sleep
 } from "../../../core/utils";
 
 class ModalStrategyResults extends React.Component {
@@ -36,6 +38,7 @@ class ModalStrategyResults extends React.Component {
 
     this.state = {
       firstLoading: true,
+      modal_strategyReview_isOpen: false,
 
       iItems: [],
       jsonLogic: {},
@@ -56,6 +59,8 @@ class ModalStrategyResults extends React.Component {
       stockExchange: {},
       currency: { code: "BRL", symbol: "R$", thousands_separator_symbol: ".", decimal_symbol: "," },
     }
+
+    this.toggleModal = this.toggleModal.bind(this);
   }
   componentDidMount() {
     this.prepareRequirements()
@@ -183,22 +188,42 @@ class ModalStrategyResults extends React.Component {
 
     let tableData = await this.prepareTableData(result)
 
+    this.askForReview(strategy, tableData)
+
     this.setState({ tableData, stockExchange, currency })
     this.props.setFlag("Running", false)
+  }
+
+  async askForReview(strategy, data) {
+    let isOwner = this.props.user.username === strategy.owner_username
+
+    if (!isOwner && data.length > 0 && strategy.my_rating == null) {
+      // There were results for this Strategy...
+      await sleep(17000)
+
+      if (this.props.isOpen) {
+        // [this] modal is still open...
+        this.toggleModal("strategyReview")
+      }
+    }
   }
 
   // Components
   renderLoading() {
     return (
       <>
-        <Row className="mt-5" />
+        <Row className="mt-4" />
+        <Row className="mt-3" />
+        <Row className="mt-3" />
         <div className="centered">
-          <CircularLoader size="lg" />
+          <CircularLoader size="md" />
         </div>
         <Row className="mt-5" />
         <Row className="mt-5" />
         <Row className="mt-5" />
-        <Row className="mt-5" />
+        <Row className="mt-4" />
+        <Row className="mt-3" />
+        <Row className="mt-3" />
       </>
     )
   }
@@ -227,10 +252,15 @@ class ModalStrategyResults extends React.Component {
     )
   }
 
+  toggleModal(modalId) {
+    this.setState({ [`modal_${modalId}_isOpen`]: !this.state[`modal_${modalId}_isOpen`] });
+  };
+
   render() {
     let { prefs, getString, modalId, isOpen, strategy, isRunning } = this.props;
     let {
       firstLoading,
+      modal_strategyReview_isOpen,
 
       tableData,
 
@@ -245,6 +275,15 @@ class ModalStrategyResults extends React.Component {
 
     return (
       <Modal isOpen={isOpen} size="xl" toggle={() => this.props.toggleModal(modalId)}>
+        <ModalNewReview
+          prefs={prefs}
+          getString={getString}
+          managers={this.props.managers}
+          modalId="strategyReview"
+          isOpen={modal_strategyReview_isOpen}
+          toggleModal={this.toggleModal}
+          strategy={strategy}
+        />
         <Card className="card-plain">
           <CardHeader className="modal-header">
             <button
@@ -259,15 +298,20 @@ class ModalStrategyResults extends React.Component {
             <h5 className="modal-title" id={modalId}>
               {strategy.name}
             </h5>
+            <br />
             <div className="description text-right">
               {getString(prefs.locale, this.compId, "label_createdBy")}:
-              <Button
-                className="btn-neutral description"
-                size="sm"
-                onClick={() => this.props.onClick("goToProfile", strategy)}
+              {" "}
+              <a
+                className="description"
+                href={this.props.managers.app.userProfilePath(strategy.owner_username)}
+                onClick={e => {
+                  e.preventDefault()
+                  this.props.onClick("goToProfile", strategy)
+                }}
               >
                 @{strategy.owner_username}
-              </Button>
+              </a>
             </div>
             <hr />
           </CardHeader>

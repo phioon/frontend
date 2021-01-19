@@ -10,6 +10,7 @@ class UserCustomManager(models.Manager):
     def search(self, query=None, top=None):
         qs = self.get_queryset()
         if query is not None:
+            qs = qs.filter(user__is_active__exact=True)
             keywords = utils_search.get_keyword_list(query=query)
 
             or_lookup = (Q(user__first_name__icontains=keywords[0]) |

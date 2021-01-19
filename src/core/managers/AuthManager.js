@@ -5,8 +5,9 @@ var __user = undefined;
 var __token = undefined;
 
 class AuthManager {
-  constructor(gtagManager, getHttpTranslation, setAuthStatus, setPrefs, setUser) {
+  constructor(appManager, gtagManager, getHttpTranslation, setAuthStatus, setPrefs, setUser) {
     this.managers = {
+      app: appManager,
       gtag: gtagManager
     }
     this.getHttpTranslation = getHttpTranslation
@@ -190,6 +191,9 @@ class AuthManager {
       sUser.user = result
       await this.storePrefs(sUser.user.prefs)
       this.setPrefs(sUser.user.prefs)
+
+      let syncFull = true
+      this.managers.app.userProfileRetrieve(syncFull, sUser.user.username)
 
       return await StorageManager.store(sKey, sUser)
     }

@@ -622,9 +622,7 @@ class AppManager {
       await this.myStrategyList(syncFull)
 
       // Checks if the updated strategy has been retrieved before...
-      console.log(strategy)
       let sStrategy = await StorageManager.getData(sKey_strategies, strategy.uuid)
-      console.log(sStrategy)
       if (sStrategy)
         this.strategyRetrieve(syncFull, strategy.uuid)      // async call
     }
@@ -775,6 +773,23 @@ class AppManager {
     this.finishRequest(sKey)
     return result
   }
+  async strategyReviews(uuid, cursor = null) {
+    let wsInfo = this.getApi("wsStrategies")
+
+    wsInfo.request += `${uuid}/reviews/`
+    if (cursor)
+      wsInfo.request += `?cursor=${cursor}`
+
+    wsInfo.method = "get"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+
+    let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status != 200)
+      this.getHttpTranslation(result, "strategyreviews", "strategy", true)
+
+    return result
+  }
   async strategyRate(payload) {
     // payload.rating needed...
     let wsInfo = this.getApi("wsStrategies")
@@ -813,7 +828,11 @@ class AppManager {
 
     if (result.status == 200) {
       let syncFull = true
-      await this.savedStrategyList(syncFull)
+      let tasks = [
+        this.savedStrategyList(syncFull),
+        this.strategyRetrieve(syncFull, uuid)
+      ]
+      await Promise.all(tasks)
     }
 
     return result
@@ -830,7 +849,11 @@ class AppManager {
 
     if (result.status == 200) {
       let syncFull = true
-      await this.savedStrategyList(syncFull)
+      let tasks = [
+        this.savedStrategyList(syncFull),
+        this.strategyRetrieve(syncFull, uuid)
+      ]
+      await Promise.all(tasks)
     }
 
     return result

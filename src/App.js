@@ -57,13 +57,14 @@ class App extends React.Component {
     this.getHttpTranslation = this.getHttpTranslation.bind(this);
     this.notify = this.notify.bind(this);
     this.managers = {
-      gtag: new GtagManager(),
       app: new AppManager(this.getHttpTranslation),
+      gtag: new GtagManager(),
       market: new MarketManager(this.getHttpTranslation),
       search: new SearchManager(this.getHttpTranslation),
       stripe: new StripeManager(this.getHttpTranslation)
     };
     this.managers.auth = new AuthManager(
+      this.managers.app,
       this.managers.gtag,
       this.getHttpTranslation,
       this.setAuthStatus,

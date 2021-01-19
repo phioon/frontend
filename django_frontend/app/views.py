@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 
 from rest_framework import status, generics, permissions
@@ -110,21 +111,30 @@ class StrategyList(generics.ListAPIView):
 
     def convert_order_by(self, order_by):
         if 'usage' in order_by:
-            order_by = order_by.replace('usage', 'stats__runs_last_14_days')
+            order_by = order_by.replace('usage', 'statistics__runs_last_14_days')
         elif 'rating' in order_by:
-            order_by = order_by.replace('rating', 'stats__rating_avg')
+            order_by = order_by.replace('rating', 'statistics__rating_avg')
         elif 'saved' in order_by:
-            order_by = order_by.replace('saved', 'stats__saved_count')
+            order_by = order_by.replace('saved', 'statistics__saved_count')
 
         return order_by
+
+
+class StrategyReviewList(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = serializers.StrategyReviewSerializer
+    pagination_class = paginators.ReviewCursorPagination
+    lookup_url_kwarg = 'uuid'
+
+    def get_queryset(self):
+        uuid = self.kwargs.get(self.lookup_url_kwarg)
+        strategy = get_object_or_404(models.Strategy, uuid=uuid)
+        return strategy.ratings.exclude(Q(review__isnull=True) | Q(review=''))
 
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def strategy_retrieve(request, uuid):
-    if len(uuid) != 32 or len(uuid) != 36:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
     is_valid = utils.is_valid_uuid(uuid)
     if not is_valid:
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -132,7 +142,7 @@ def strategy_retrieve(request, uuid):
     strategy = get_object_or_404(models.Strategy, uuid=uuid)
 
     if strategy.is_public:
-        serializer = serializers.StrategyDetailSerializer(strategy)
+        serializer = serializers.StrategyDetailSerializer(strategy, context={'request': request})
         return Response(serializer.data)
 
     res_obj = {'detail': 'not found'}
@@ -141,28 +151,30 @@ def strategy_retrieve(request, uuid):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def strategy_run(request, uuid):
-    strategy = get_object_or_404(models.Strategy, uuid=uuid)
-    strategy.run()
-    return Response(status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
 def strategy_rate(request, uuid):
     strategy = get_object_or_404(models.Strategy, uuid=uuid)
+    user = request.user
 
     if 'rating' not in request.data:
         raise ValidationError({'rating': 'is missing.'})
 
-    user = request.user
-    value = request.data['rating']
+    obj = {'rating': request.data['rating']}
+    if 'review' in request.data:
+        obj['review'] = request.data['review']
 
-    if isinstance(value, int):
-        strategy.rate(user=user, value=value)
+    if isinstance(obj['rating'], int):
+        strategy.rate(user=user, obj=obj)
         return Response(status=status.HTTP_200_OK)
 
     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def strategy_run(request, uuid):
+    strategy = get_object_or_404(models.Strategy, uuid=uuid)
+    strategy.run()
+    return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

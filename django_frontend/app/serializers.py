@@ -59,6 +59,7 @@ class PositionTypeSerializer(serializers.ModelSerializer):
 class StrategySerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
     owner_username = serializers.ReadOnlyField(source='owner.username')
+    my_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Strategy
@@ -82,19 +83,55 @@ class StrategySerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+    def get_my_rating(self, obj):
+        requestor = self.context['request'].user
+        my_rating = requestor.ratings.filter(strategy=obj)
+        if my_rating.exists():
+            my_rating = my_rating[0].rating
+        else:
+            my_rating = None
+
+        return my_rating
+
 
 class StrategyDetailSerializer(serializers.ModelSerializer):
     id = serializers.HiddenField(default=None)
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
     owner_username = serializers.ReadOnlyField(source='owner.username')
+    my_rating = serializers.SerializerMethodField()
     stats = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Strategy
         fields = '__all__'
 
+    def get_my_rating(self, obj):
+        requestor = self.context['request'].user
+        my_rating = requestor.ratings.filter(strategy=obj)
+        if my_rating.exists():
+            my_rating = my_rating[0].rating
+        else:
+            my_rating = None
+
+        return my_rating
+
     def get_stats(self, obj):
         return obj.stats
+
+
+class StrategyReviewSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source='user.username')
+    full_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.StrategyRating
+        fields = ['last_modified', 'username', 'full_name', 'rating', 'review']
+
+    def get_full_name(self, obj):
+        first_name = obj.user.first_name
+        last_name = obj.user.last_name
+        full_name = str(first_name + ' ' + last_name)
+        return full_name
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -146,7 +183,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def get_strategies(self, obj):
         strategies = obj.strategies.filter(is_public=True)
-        serializer = StrategyDetailSerializer(strategies, many=True)
+        serializer = StrategyDetailSerializer(strategies, many=True, context={'request': self.context['request']})
         return serializer.data
 
 

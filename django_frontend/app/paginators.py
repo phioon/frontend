@@ -8,9 +8,15 @@ class FollowingCursorPagination(pagination.CursorPagination):
     ordering = '-create_time'
 
 
+class ReviewCursorPagination(pagination.CursorPagination):
+    page_size = 5
+    max_page_size = 5
+    ordering = '-last_modified'
+
+
 class StandardPageNumberPagination(pagination.PageNumberPagination):
     page_size = 20
-    max_page_size = 100
+    max_page_size = 20
 
     def get_paginated_response(self, data):
         return Response({

@@ -28,7 +28,7 @@ import Skeleton from "react-loading-skeleton";
 import Moment from "moment";
 
 import ModalStrategy from "../modals/strategy/ModalStrategy";
-import ModalStrategyRating from "../modals/strategy/ModalStrategyRating";
+import ModalNewReview from "../modals/strategy/ModalNewReview";
 import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
 import ChartManager from "../../core/managers/ChartManager";
 import UsageOverTime from "../../components/cards/charts/UsageOverTime";
@@ -36,6 +36,7 @@ import PageNotFound from "../generics/PageNotFound";
 import {
   getDistinctValuesFromList,
   getValueListFromObjList,
+  getPaginationCursor,
   orderBy,
   retrieveObjFromObjList,
   verifyLength
@@ -53,7 +54,7 @@ class StrategyPage extends React.Component {
       notFound: undefined,
 
       modal_strategyDetail_isOpen: false,
-      modal_strategyRating_isOpen: false,
+      modal_strategyReview_isOpen: false,
       modal_strategyResults_isOpen: false,
       descShowMore: false,
 
@@ -63,6 +64,9 @@ class StrategyPage extends React.Component {
       rating: {
         data: { rating: 0, review: "", onHover: 0 },
         states: { review: "" }
+      },
+      reviews: {
+        data: { reviews: [], nextCursor: null }
       },
       strategy: {},
 
@@ -106,9 +110,14 @@ class StrategyPage extends React.Component {
     let strategy = tasks[0]
     let savedStrategyIds = tasks[1]
 
+    // Saved
     strategy.isSaved = savedStrategyIds.includes(strategy.uuid)
+    this.setState({ strategy, savedStrategyIds })
 
-    this.setState({ strategy, savedStrategyIds, isPageLoading: false })
+    // Reviews
+    await this.reviewsNextPage(strategy.uuid)
+
+    this.setState({ isPageLoading: false })
   }
   async prepareStrategy() {
     let { strategy } = this.state;
@@ -187,6 +196,20 @@ class StrategyPage extends React.Component {
 
     this.setState({ charts })
   }
+  async reviewsNextPage(uuid) {
+    let { reviews } = this.state;
+
+    let result = await this.props.managers.app.strategyReviews(uuid, reviews.data.nextCursor)
+
+    if (result.status == 200) {
+      let data = result.data
+      reviews.data.reviews = reviews.data.reviews.concat(data.results)
+
+      reviews.data.nextCursor = getPaginationCursor(data.next)
+    }
+
+    this.setState({ reviews })
+  }
 
   onChange(stateName, value) {
     let newState = { rating: this.state.rating }
@@ -211,26 +234,23 @@ class StrategyPage extends React.Component {
 
   async onClick(action, obj) {
     switch (action) {
-      case "run":
-        this.runClick()
+      case "delete":
+        this.deleteClick(obj)
         break;
       case "goToProfile":
         this.goToProfile(obj.owner_username)
         break;
-      case "view":
-        this.viewClick(obj)
-        break;
-      case "update":
-        this.updateClick(obj)
-        break;
-      case "delete":
-        this.deleteClick(obj)
-        break;
-      case "save":
-        await this.saveClick(obj)
+      case "openReview":
+        this.toggleModal("strategyReview")
         break;
       case "rate":
         this.rateClick(obj)
+        break;
+      case "run":
+        this.runClick()
+        break;
+      case "save":
+        await this.saveClick(obj)
         break;
       case "share":
         this.shareClick(obj.uuid)
@@ -238,43 +258,13 @@ class StrategyPage extends React.Component {
       case "tag":
         this.tagClick(obj)
         break;
+      case "update":
+        this.updateClick(obj)
+        break;
+      case "view":
+        this.viewClick(obj)
+        break;
     }
-  }
-  runClick() {
-    this.toggleModal("strategyResults")
-  }
-  goToProfile(username) {
-    let path = this.props.managers.app.userProfilePath(username)
-    this.props.history.push(path)
-  }
-  viewClick(obj) {
-    let objData = {
-      id: obj.id,
-      name: obj.name,
-      desc: obj.desc,
-      type: obj.type,
-      isDynamic: obj.is_dynamic,
-      isPublic: obj.is_public,
-      rules: obj.rules
-    }
-
-    this.setState({ action: "view", objData })
-    this.toggleModal("strategyDetail")
-  }
-  updateClick(obj) {
-    let objData = {
-      id: obj.id,
-      uuid: obj.uuid,
-      name: obj.name,
-      desc: obj.desc,
-      type: obj.type,
-      isDynamic: obj.is_dynamic,
-      isPublic: obj.is_public,
-      rules: obj.rules
-    }
-
-    this.setState({ action: "update", objData })
-    this.toggleModal("strategyDetail")
   }
   deleteClick(obj) {
     let { prefs, getString } = this.props;
@@ -298,6 +288,25 @@ class StrategyPage extends React.Component {
       )
     });
   }
+  goToProfile(username) {
+    let path = this.props.managers.app.userProfilePath(username)
+    this.props.history.push(path)
+  }
+  async rateClick(obj) {
+    obj.uuid = this.state.strategy.uuid
+    let result = await this.props.managers.app.strategyRate(obj)
+
+    if (result.status == 200) {
+
+      // Update [my_rating]
+      let { strategy } = this.state;
+      strategy.my_rating = obj.rating
+      this.setState({ strategy })
+    }
+  }
+  runClick() {
+    this.toggleModal("strategyResults")
+  }
   async saveClick(obj) {
     if (obj.isSaved)
       await this.props.managers.app.strategyUnsave(obj.uuid)
@@ -305,13 +314,6 @@ class StrategyPage extends React.Component {
       await this.props.managers.app.strategySave(obj.uuid)
 
     this.prepareRequirements()
-  }
-  rateClick(value) {
-    let payload = {
-      uuid: this.state.strategy.uuid,
-      rating: value
-    }
-    this.props.managers.app.strategyRate(payload)
   }
   shareClick(uuid) {
     let { getString, prefs } = this.props;
@@ -322,11 +324,40 @@ class StrategyPage extends React.Component {
     let message = getString(prefs.locale, "generic", "label_sharedLinkCopied")
     this.props.notify("br", "success", "nc-icon nc-send", "shareStrategy", message)
   }
-  tagClick(tag) {
+  tagClick(iTag) {
     let { strategy } = this.state;
 
-    tag = strategy.tags[tag]
+    let tag = strategy.tags[iTag]
     // Send User to Gallery, filtering [tag]
+  }
+  updateClick(obj) {
+    let objData = {
+      id: obj.id,
+      uuid: obj.uuid,
+      name: obj.name,
+      desc: obj.desc,
+      type: obj.type,
+      isDynamic: obj.is_dynamic,
+      isPublic: obj.is_public,
+      rules: obj.rules
+    }
+
+    this.setState({ action: "update", objData })
+    this.toggleModal("strategyDetail")
+  }
+  viewClick(obj) {
+    let objData = {
+      id: obj.id,
+      name: obj.name,
+      desc: obj.desc,
+      type: obj.type,
+      isDynamic: obj.is_dynamic,
+      isPublic: obj.is_public,
+      rules: obj.rules
+    }
+
+    this.setState({ action: "view", objData })
+    this.toggleModal("strategyDetail")
   }
 
   async deleteObject(obj) {
@@ -395,6 +426,7 @@ class StrategyPage extends React.Component {
       </UncontrolledDropdown>
     )
   }
+
   descriptionCard(isPageLoading, strategy, descShowMore) {
     let { getString, prefs } = this.props;
 
@@ -433,7 +465,7 @@ class StrategyPage extends React.Component {
                 </a>
               </div> :
               <div className="description text-center">
-                {getString(prefs.locale, this.compId, "card_description_noDesc")}
+                {getString(prefs.locale, this.compId, "card_description_empty")}
               </div>
             }
           </CardBody>
@@ -448,8 +480,8 @@ class StrategyPage extends React.Component {
               onClick={() => this.setState({ descShowMore: !descShowMore })}
             >
               {descShowMore ?
-                getString(prefs.locale, this.compId, "label_showLess") :
-                getString(prefs.locale, this.compId, "label_showMore")
+                getString(prefs.locale, this.compId, "btn_showLess") :
+                getString(prefs.locale, this.compId, "btn_showMore")
               }
             </Button>
           }
@@ -485,8 +517,163 @@ class StrategyPage extends React.Component {
       </div>
     )
   }
-  renderTags(strategy) {
 
+  reviewsCard(isPageLoading, strategy, reviews) {
+    let { prefs, getString } = this.props;
+
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle tag="h5">
+            <small>
+              {getString(prefs.locale, this.compId, "card_reviews_title")}
+            </small>
+          </CardTitle>
+        </CardHeader>
+        <CardBody>
+          {/* Click to Rate */}
+          {window.innerWidth < 768 ?
+            this.starsForDeviceSm(prefs, getString) :
+            this.starsForDeviceMd(prefs, getString)
+          }
+          {/* Reviews */}
+          {isPageLoading ?
+            "is Loading..." :
+
+            reviews.data.reviews.length === 0 ?
+              <Card className="card-plain">
+                <CardBody className="description text-center">
+                  <Row className="mt-4" />
+                  {getString(prefs.locale, this.compId, "card_reviews_empty")}
+                  <Row className="mt-4" />
+                </CardBody>
+              </Card> :
+              this.reviews(reviews)
+          }
+          {reviews.data.nextCursor &&
+            <Row className="justify-content-end">
+              <Button
+                className="btn-neutral description"
+                size="sm"
+                color="default"
+                onClick={() => this.reviewsNextPage(strategy.uuid)}
+              >
+                {getString(prefs.locale, this.compId, "btn_showMore")}...
+              </Button>
+            </Row>
+          }
+        </CardBody>
+        <CardFooter>
+          <Button
+            className="btn-round"
+            size="sm"
+            color="default"
+            onClick={() => this.onClick("openReview")}
+            outline
+          >
+            {getString(prefs.locale, this.compId, "btn_review")}
+          </Button>
+        </CardFooter>
+      </Card>
+    )
+  }
+  reviews(reviews) {
+    return reviews.data.reviews.map((obj, i) => {
+      return (
+        <Card key={`review_${i}`} className="card-review">
+          <CardHeader>
+            <small><b>{obj.full_name}</b></small>
+            <Row>
+              <Col>
+                {this.renderStars(obj)}
+              </Col>
+              <Col className="text-right">
+                <a>
+                  <label className="description">
+                    @{obj.username}
+                  </label>
+                </a>
+              </Col>
+            </Row>
+          </CardHeader>
+          <CardBody>
+            <p>
+              {obj.review}
+            </p>
+          </CardBody>
+        </Card>
+      )
+    })
+  }
+  starsForDeviceSm(prefs, getString) {
+    return (
+      <Row className="justify-content-center">
+        <Col md="6" className="description centered">
+          {window.innerWidth < 768 ?
+            getString(prefs.locale, this.compId, "label_tapToRate") :
+            getString(prefs.locale, this.compId, "label_clickToRate")
+          }
+        </Col>
+        {/* Starts */}
+        <Col md="6" className="centered">
+          <StrategyRating onClick={this.onClick} />
+        </Col>
+      </Row>
+    )
+  }
+  starsForDeviceMd(prefs, getString) {
+    return (
+      <Row className="justify-content-center">
+        <div md="6" className="description centered">
+          {getString(prefs.locale, this.compId, "label_clickToRate")}:
+        </div>
+        {" "}
+        {/* Starts */}
+        <StrategyRating onClick={this.onClick} />
+      </Row>
+    )
+  }
+  renderStars(obj) {
+    let value = obj.rating
+
+    let states = [
+      value > 0.75 ? "full" : value > 0.25 ? "half" : "empty",
+      value > 1.75 ? "full" : value > 1.25 ? "half" : "empty",
+      value > 2.75 ? "full" : value > 2.25 ? "half" : "empty",
+      value > 3.75 ? "full" : value > 3.25 ? "half" : "empty",
+      value > 4.75 ? "full" : value > 4.25 ? "half" : "empty",
+    ]
+
+    return states.map((state, i) => {
+      return (
+        <span key={i}>
+          {this.renderStar(state)}
+          {" "}
+        </span>
+      )
+    })
+  }
+  renderStar = (state) => {
+    let iClass = undefined
+    switch (state) {
+      case "empty":
+        iClass = "far fa-star"
+        break;
+      case "half":
+        iClass = "fas fa-star-half-alt"
+        break;
+      case "full":
+        iClass = "fas fa-star"
+        break;
+    }
+
+    return (
+      <small>
+        <i className={iClass} />
+      </small>
+    )
+  }
+  renderTags(strategy) {
     if (strategy.tags)
       return (
         <TagsInput
@@ -531,13 +718,14 @@ class StrategyPage extends React.Component {
       notFound,
 
       modal_strategyDetail_isOpen,
-      modal_strategyRating_isOpen,
+      modal_strategyReview_isOpen,
       modal_strategyResults_isOpen,
       descShowMore,
 
       action,
       objData,
 
+      reviews,
       strategy,
       myStrategyNames,
 
@@ -562,11 +750,14 @@ class StrategyPage extends React.Component {
           myStrategyNames={myStrategyNames}
           runItIfSuccess={this.prepareRequirements}
         />
-        <ModalStrategyRating
-          {...this.props}
-          modalId="strategyRating"
-          isOpen={modal_strategyRating_isOpen}
+        <ModalNewReview
+          prefs={prefs}
+          getString={getString}
+          managers={this.props.managers}
+          modalId="strategyReview"
+          isOpen={modal_strategyReview_isOpen}
           toggleModal={this.toggleModal}
+          onClick={this.onClick}
           strategy={strategy}
         />
         <ModalStrategyResults
@@ -580,6 +771,7 @@ class StrategyPage extends React.Component {
           strategy={strategy}
         />
 
+        {/* Header */}
         <Card className="card-plain card-user">
           <CardBody>
             <Row className="justify-content-center">
@@ -704,31 +896,11 @@ class StrategyPage extends React.Component {
         <Row>
           {/* Reviews */}
           <Col md="7">
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h5">
-                  <small>
-                    {getString(prefs.locale, this.compId, "card_reviews_title")}
-                  </small>
-                </CardTitle>
-              </CardHeader>
-              <CardBody>
-                <Row className="justify-content-center">
-                  {/* Stars */}
-                  <Col className="description centered">
-                    {window.innerWidth < 768 ?
-                      getString(prefs.locale, this.compId, "label_tapToRate") :
-                      getString(prefs.locale, this.compId, "label_clickToRate")
-                    }:
-                    <StrategyRating onClick={this.onClick} strategy={strategy} />
-                  </Col>
-                </Row>
-              </CardBody>
-            </Card>
+            {this.reviewsCard(isPageLoading, strategy, reviews)}
           </Col>
           {/* Indicator Tags */}
           <Col md="5">
-            <Card className="card-plain">
+            <Card>
               <CardBody>
                 <CardTitle tag="h5">
                   <small>

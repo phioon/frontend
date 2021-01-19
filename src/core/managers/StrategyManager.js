@@ -791,7 +791,7 @@ class StrategyManager {
           >
             <i id="strategy_save" className={strategy.isSaved ? "fas fa-bookmark" : "nc-icon nc-bookmark-2"} />
           </Button>
-          <UncontrolledTooltip delay={{ show: 1000 }} placement="top" target={`${context}__${strategy.uuid}`}>
+          <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={`${context}__${strategy.uuid}`}>
             {strategy.isSaved ?
               getString(prefs.locale, "strategycomponents", "btn_unsave_hint") :
               getString(prefs.locale, "strategycomponents", "btn_save_hint")
@@ -843,7 +843,7 @@ class StrategyManager {
           >
             <i id="strategy_view" className="far fa-eye" />
           </Button>
-          <UncontrolledTooltip delay={{ show: 1000 }} placement="top" target={`${context}__${strategy.uuid}`}>
+          <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={`${context}__${strategy.uuid}`}>
             {getString(prefs.locale, "strategycomponents", "btn_view")}
           </UncontrolledTooltip>
         </>

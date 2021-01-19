@@ -69,6 +69,9 @@ p{
     }
 }
 pre{
+    word-wrap: break-word;
+    white-space: pre-wrap;
+
     &.description{
         font-size: 14px;
         margin-bottom: 6px;

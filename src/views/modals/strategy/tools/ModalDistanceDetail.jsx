@@ -1007,13 +1007,13 @@ class ModalDistanceDetail extends React.Component {
                     />
                   </FormGroup>
                   <div className="text-center">
+                    {/* isThresholdPercentage */}
                     <Button
-                      className="btn-icon btn-link"
-                      color="primary"
+                      className={`btn-icon btn-neutral btn-info ${tool.isThresholdPercentage && "btn-round"}`}
                       id="threshold_percentage"
-                      value="%"
+                      color="info"
                       size="sm"
-                      type="button"
+                      outline={tool.isThresholdPercentage}
                       onClick={() => this.onChangeInputFormat("threshold", "percentage")}
                     >
                       %
@@ -1022,11 +1022,11 @@ class ModalDistanceDetail extends React.Component {
                       {this.props.getString(prefs.locale, this.compId, "threshold_percentage_hint")}
                     </UncontrolledTooltip>
                     <Button
-                      className="btn-icon btn-link"
+                      className={`btn-icon btn-neutral btn-success ${!tool.isThresholdPercentage && "btn-round"}`}
                       color="success"
                       id="threshold_currency"
                       size="sm"
-                      type="button"
+                      outline={!tool.isThresholdPercentage}
                       onClick={() => this.onChangeInputFormat("threshold", "currency")}
                     >
                       $

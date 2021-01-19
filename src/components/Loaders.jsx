@@ -35,12 +35,12 @@ export function CircularLoader(props) {
       size = 15
       break;
     case "md":
-      size = 40
+      size = 58
       break;
     case "lg":
       size = 67
       break;
   }
 
-  return <RingLoader color={colors.primary} size={67} />
+  return <RingLoader color={colors.primary} size={size} />
 }

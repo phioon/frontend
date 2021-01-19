@@ -54,8 +54,8 @@ class UserFollowingItem extends React.Component {
             <small className="description">@{item.username}</small>
           </a>
         </Col>
-        <Col className="text-right">
-          {user.username !== item.username &&
+        {user.username !== item.username &&
+          <Col xl="5" className="text-right">
             <Button
               className="btn-round description"
               size="sm"
@@ -81,8 +81,8 @@ class UserFollowingItem extends React.Component {
                   getString(prefs.locale, this.compId, "label_follow")
               }
             </Button>
-          }
-        </Col>
+          </Col>
+        }
       </Row>
     )
   }

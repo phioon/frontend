@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 import NotificationAlert from "react-notification-alert";
 // reactstrap components
 import {
-  Badge,
   Button,
   Card,
   CardHeader,
@@ -17,11 +16,6 @@ import {
   CarouselControl,
   CarouselIndicators,
   Col,
-  Form,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
   Row,
 } from "reactstrap";
 // react component used to create sweet alerts
@@ -163,7 +157,7 @@ class StrategyPanel extends React.Component {
       if (x == maxItemsPerSlide - 1) {
         slides.push(items)
         items = []
-        maxItemsPerSlide += maxItemsPerSlide
+        maxItemsPerSlide += this.getMaxItemsPerSlide()
       }
     }
 
@@ -389,6 +383,36 @@ class StrategyPanel extends React.Component {
     this.prepareMyStrategies()
   }
 
+  renderNoWalletsCard(prefs, getString) {
+    return (
+      <Card className="card-stats">
+        <Row>
+          <Col xl="2" lg="2" md="3" xs="3" className="centered">
+            <div className="icon-big text-center">
+              <i className="nc-icon nc-alert-circle-i text-warning" />
+            </div>
+          </Col>
+          <Col xl="10" lg="10" md="9" xs="9">
+            <br />
+            <p className="card-description">{getString(prefs.locale, this.compId, "label_noWallets_p1")}</p>
+            <p className="card-description">{getString(prefs.locale, this.compId, "label_noWallets_p2")}</p>
+          </Col>
+        </Row>
+        <CardFooter className="centered">
+          <Button
+            className="btn-simple btn-round"
+            color="success"
+            data-dismiss="modal"
+            type="submit"
+            onClick={() => this.setState({ redirectTo: "/app/myassets/wallets/" })}
+          >
+            {getString(prefs.locale, this.compId, "btn_goToWallets")}
+          </Button>
+        </CardFooter>
+      </Card>
+    )
+  }
+
   setFlag(context, value) {
     this.setState({ [`is${context}`]: value })
   }
@@ -472,37 +496,11 @@ class StrategyPanel extends React.Component {
                 <CarouselSkeleton />
               </CardBody>
             </Card>
-          </>
-          :
+          </> :
+
           cWallets == 0 ?
             // No wallets
-            <Card className="card-stats">
-              <Row>
-                <Col xl="2" lg="2" md="3" xs="3" className="centered">
-                  <div className="icon-big text-center">
-                    <i className="nc-icon nc-alert-circle-i text-warning" />
-                  </div>
-                </Col>
-                <Col xl="10" lg="10" md="9" xs="9">
-                  <br />
-                  <p className="card-description">{getString(prefs.locale, this.compId, "label_noWallets_p1")}</p>
-                  <p className="card-description">{getString(prefs.locale, this.compId, "label_noWallets_p2")}</p>
-                </Col>
-              </Row>
-              <CardFooter className="centered">
-                <Button
-                  className="btn-simple btn-round"
-                  color="success"
-                  data-dismiss="modal"
-                  type="submit"
-                  onClick={() => this.setState({ goToWallets: true })}
-                >
-                  {getString(prefs.locale, this.compId, "btn_goToWallets")}
-                </Button>
-                {this.state.goToWallets && <Redirect to="/app/myassets/wallets/" />}
-              </CardFooter>
-            </Card>
-            :
+            this.renderNoWalletsCard(prefs, getString) :
             <>
               {/* My Strategies */}
               <Card className="card-plain">
@@ -525,28 +523,6 @@ class StrategyPanel extends React.Component {
                       </Button>
                     </Col>
                   </Row>
-                  {/* Search... */}
-                  {myStrategies.slides.length > 0 &&
-                    <Row>
-                      <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6">
-                        <Form>
-                          <InputGroup className="no-border">
-                            <Input
-                              defaultValue=""
-                              placeholder={getString(prefs.locale, "generic", "input_search")}
-                              type="text"
-                              onChange={e => this.search(myStrategies.id, e.target.value)}
-                            />
-                            <InputGroupAddon addonType="append">
-                              <InputGroupText>
-                                <i className="nc-icon nc-zoom-split" />
-                              </InputGroupText>
-                            </InputGroupAddon>
-                          </InputGroup>
-                        </Form>
-                      </Col>
-                    </Row>
-                  }
                 </CardHeader>
                 <CardBody>
                   {myStrategies.slides.length == 0 ?
@@ -592,27 +568,6 @@ class StrategyPanel extends React.Component {
                       </Button>
                     </Col>
                   </Row>
-                  {/* Search... */}
-                  {savedStrategies.slides.length > 0 &&
-                    <Row>
-                      <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6">
-                        <Form>
-                          <InputGroup className="no-border">
-                            <Input
-                              defaultValue=""
-                              placeholder={getString(prefs.locale, "generic", "input_search")}
-                              type="text"
-                            />
-                            <InputGroupAddon addonType="append">
-                              <InputGroupText>
-                                <i className="nc-icon nc-zoom-split" />
-                              </InputGroupText>
-                            </InputGroupAddon>
-                          </InputGroup>
-                        </Form>
-                      </Col>
-                    </Row>
-                  }
                 </CardHeader>
                 <CardBody>
                   {savedStrategies.slides.length == 0 ?

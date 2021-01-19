@@ -22,6 +22,8 @@ const locale = {
     title_positions: "Meus Ativos",
     title_recentsearches: "Pesquisas Recentes",
     title_searchresults: "Resultado",
+    title_searchstrategyresults: "Estratégias",
+    title_searchuserresults: "Usuários",
     title_strategypanel: "Estratégias",
     title_strategypage: "Estratégia",
     title_strategygallery: "Estratégias",
@@ -340,7 +342,7 @@ const locale = {
     input_nationality: "Nacionalidade",
     input_birthday: "Data de Nascimento",
     input_birthday_hint: "Eu poderia enviar presentes de aniversário. Quem sabe...",
-    input_aboutMe: "Sobre",
+    input_aboutMe: "Bio",
 
     input_currency: "Moeda Principal",
     input_currency_hint: "Investe em diferentes países? Posso converter outras moedas para a de sua preferência em relatórios e dashboards. ",
@@ -604,8 +606,14 @@ const locale = {
     btn_update: "Alterar",
     btn_view: "Voltar"
   },
-  modalstrategyrating: {
-    input_review: "Avaliação",
+  modalnewreview: {
+    title: "Avalie esta estratégia",
+
+    label_createdBy: "criada por",
+
+    input_review: "Deixe um comentário (opcional)",
+    label_clickToRate: "Clique para Avaliar",
+    label_tapToRate: "Toque para Avaliar",
 
     error_review: "Avaliação muito longa, não? Tente mante-la com no máximo 1000 caracteres.",
 
@@ -1022,6 +1030,10 @@ const locale = {
   strategygallery: {
     title: "Galeria",
 
+    label_noWallets_p1: "Hmm... Parece que você ainda tem Carteiras criadas por aqui... Que tal criar a primeira?",
+    label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua e então trazer estratégias mais utilizadas por lá! ;)",
+    btn_goToWallets: "Ir para Carteiras",
+
     card_mostRuns_title: "As mais Executadas",
     card_mostSaved_title: "As mais Salvas",
 
@@ -1039,16 +1051,17 @@ const locale = {
     label_ratings_notAvailable_hint: "Não há avaliações suficientes.",
 
     card_description_title: "Descrição Técnica",
-    card_description_noDesc: "Esta estratégia ainda não possui uma descrição... :(",
+    card_description_empty: "Esta estratégia ainda não possui descrição... :(",
+    btn_showMore: "Mostrar mais",
+    btn_showLess: "Mostrar menos",
 
     card_reviews_title: "Avaliações e Comentários",
+    card_reviews_empty: "O que achou desta estratégia? Comente aí... ;)",
     label_clickToRate: "Clique para Avaliar",
     label_tapToRate: "Toque para Avaliar",
+    btn_review: "Deixar comentário",
 
     card_indicators_title: "Indicadores",
-
-    label_showMore: "Mostrar mais",
-    label_showLess: "Mostrar menos",
   },
   strategypanel: {
     title: "Painel de Controle",
@@ -1202,7 +1215,7 @@ const locale = {
     tab_about: "Sobre",
 
     card_popularStrategies_title: "Estratégias Populares",
-    label_showMore: "Mostrar mais 2",
+    label_showMore: "Mostrar mais",
     label_showLess: "Mostrar menos",
 
     card_bio_title: "Bio",
