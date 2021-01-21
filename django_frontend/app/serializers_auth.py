@@ -104,15 +104,16 @@ class ConfirmEmailSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         self._errors = {}
+        request = self.context['request']._request      # Django HttpRequest instance
 
         # Decode the uidb64 to uid to get User object
         try:
             uid = force_text(uid_decoder(attrs['uid']))
-            self.user = User._default_manager.get(pk=uid)
+            self.user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             raise ValidationError({'uid': ['Invalid value']})
 
-        if not views_auth.check_token(self.user, attrs['token']):
+        if not views_auth.check_token(request, self.user, attrs['token']):
             raise ValidationError({'token': ['Invalid value']})
 
         return attrs
