@@ -33,7 +33,10 @@ class StrategyRating extends React.Component {
     switch (stateName) {
       case "rating":
         if (autoSubmit && this.state[stateName] !== value) {
-          let payload = { rating: value }
+          let payload = {
+            uuid: this.props.strategy.uuid,
+            rating: value
+          }
           this.props.onClick("rate", payload)
         }
         break;

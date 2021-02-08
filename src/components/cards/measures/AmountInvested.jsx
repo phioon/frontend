@@ -38,7 +38,7 @@ class AmountInvested extends Component {
                     <>
                       {getString(prefs.locale, "measures", measure.id + "_kpi_label") + " "}
                       <i id={measure.id + "_title_hint"} className="nc-icon nc-alert-circle-i" />
-                      <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={measure.id + "_title_hint"}>
+                      <UncontrolledTooltip placement="top" target={measure.id + "_title_hint"}>
                         {getString(prefs.locale, "measures", measure.id + "_title_hint")}
                       </UncontrolledTooltip>
                     </>
@@ -59,7 +59,7 @@ class AmountInvested extends Component {
                 measure.percentage.data > 100 ? (
                   <>
                     <i id={measure.id + "_alert"} className="nc-icon nc-alert-circle-i text-warning" />
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "_alert"}>
+                    <UncontrolledTooltip placement="bottom" target={measure.id + "_alert"}>
                       {getString(prefs.locale, "measures", measure.id + "_alert_walletBallance")}
                     </UncontrolledTooltip>
                   </>
@@ -81,7 +81,7 @@ class AmountInvested extends Component {
               >
                 %
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "__percentage"}>
+              <UncontrolledTooltip placement="bottom" target={measure.id + "__percentage"}>
                 {measure.percentage &&
                   getString(prefs.locale, "measures", measure.percentage.hintId)
                 }
@@ -97,7 +97,7 @@ class AmountInvested extends Component {
               >
                 $
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "__currency"}>
+              <UncontrolledTooltip placement="bottom" target={measure.id + "__currency"}>
                 {measure.currency &&
                   getString(prefs.locale, "measures", measure.currency.hintId)
                 }

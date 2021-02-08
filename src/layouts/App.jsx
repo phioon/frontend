@@ -113,7 +113,7 @@ class AppLayout extends React.Component {
       }
     }
 
-    // Clean-ups: awaits 30 seconds...
+    // Clean-ups: wait 30 seconds...
     await sleep(30000)
     this.props.managers.search.multiSearchCleanUp()
   }

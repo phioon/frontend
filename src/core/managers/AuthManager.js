@@ -246,6 +246,7 @@ class AuthManager {
     const sKey_userProfiles = "userProfiles"
     const sKey_wallets = "wallets"
     const sKey_positions = "positions"
+    const sKey_myCollections = "myCollections"
     const sKey_myStrategies = "myStrategies"
 
     this.instantUser({})
@@ -255,6 +256,7 @@ class AuthManager {
     StorageManager.removeData(sKey_userProfiles)
     StorageManager.removeData(sKey_wallets)
     StorageManager.removeData(sKey_positions)
+    StorageManager.removeData(sKey_myCollections)
     StorageManager.removeData(sKey_myStrategies)
   }
 

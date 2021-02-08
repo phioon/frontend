@@ -105,7 +105,7 @@ class Diversification extends Component {
               >
                 {getString(prefs.locale, "charts", "label_assets")}
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="amountInvested_groupByAsset">
+              <UncontrolledTooltip placement="bottom" target="amountInvested_groupByAsset">
                 {getString(prefs.locale, "charts", chart.generic.groupByAsset.hintId)}
               </UncontrolledTooltip>
               {" "}
@@ -119,7 +119,7 @@ class Diversification extends Component {
               >
                 {getString(prefs.locale, "charts", "label_sectors")}
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="amountInvested_groupBySector">
+              <UncontrolledTooltip placement="bottom" target="amountInvested_groupBySector">
                 {getString(prefs.locale, "charts", chart.generic.groupBySector.hintId)}
               </UncontrolledTooltip>
               {" "}
@@ -133,7 +133,7 @@ class Diversification extends Component {
               >
                 {getString(prefs.locale, "charts", "label_countries")}
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="amountInvested_groupByCountry">
+              <UncontrolledTooltip placement="bottom" target="amountInvested_groupByCountry">
                 {getString(prefs.locale, "charts", chart.generic.groupByCountry.hintId)}
               </UncontrolledTooltip>
             </Col>

@@ -28,7 +28,7 @@
 
   .card-title {
     margin-top: 0;
-    margin-bottom: 5px;
+    margin-bottom: 15px;
   }
 
   .info-area {
@@ -40,6 +40,14 @@
     .icon > i {
       font-size: 2em;
     }
+  }
+
+  .description-box{
+    min-height: 40px;
+  }
+
+  pre{
+    font-size: $font-size-small;
   }
 
   .bg-icon{

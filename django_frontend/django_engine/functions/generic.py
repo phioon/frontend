@@ -1,18 +1,23 @@
-from app.models import Currency, Country, Subscription, SubscriptionPrice, PositionType
+from app import models as models_app
+from app import models_auth
 
 
 def app_initiator():
     # Before execute this function:
     #   1. Create superuser api
 
-    currency = Currency()
-    country = Country()
-    subscripton = Subscription()
-    subscriptonPrice = SubscriptionPrice()
-    pType = PositionType()
+    # Auth
+    models_auth.UserCustom.init()
 
-    currency.init()
-    country.init()
-    subscripton.init()
-    subscriptonPrice.init()
-    pType.init()
+    # User
+    models_app.Currency.init()
+    models_app.Country.init()
+    models_app.Subscription.init()
+    models_app.SubscriptionPrice.init()
+
+    # Wallet
+    models_app.PositionType.init()
+
+    # Strategy
+    models_app.Strategy.init()
+    models_app.Collection.init()

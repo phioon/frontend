@@ -15,8 +15,8 @@ class ReviewCursorPagination(pagination.CursorPagination):
 
 
 class StandardPageNumberPagination(pagination.PageNumberPagination):
-    page_size = 20
-    max_page_size = 20
+    page_size = 8
+    max_page_size = 8
 
     def get_paginated_response(self, data):
         return Response({

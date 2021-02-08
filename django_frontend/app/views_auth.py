@@ -48,62 +48,55 @@ class UserRegisterAPIView(generics.GenericAPIView):
     serializer_class = serializers_auth.UserRegisterSerializer
     permission_classes = [permissions.AllowAny]
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        nationality = get_object_or_404(models_app.Country, pk=request.data['nationality'])
-        subscription = get_object_or_404(models_app.Subscription, name='basic')
+    def post(self, request):
+        data = request.data
 
-        if nationality:
-            user = serializer.save()
+        register_serializer = serializers_auth.UserRegisterSerializer(data=data)
+        register_serializer.is_valid(raise_exception=True)
 
-            if user:
-                try:
-                    userCustom = models_auth.UserCustom.objects.create(
-                        user=user,
-                        nationality=nationality,
-                        subscription=subscription)
+        data['nationality'] = get_object_or_404(models_app.Country, pk=data['nationality'])
+        data['subscription'] = get_object_or_404(models_app.Subscription, name='basic')
 
-                    models_auth.UserPreferences.objects.create(
-                        user=user,
-                        locale=request.data['locale'],
-                        currency=nationality.currency)
-                except:
-                    user.delete()
-                    obj_res = {"message": "Something went wrong. UserCustom could not be created."}
-                    return Response(obj_res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        user = register_serializer.save()
 
-                if userCustom:
-                    # Send Confirmation Email
-                    subject_template_name = 'emails/<locale>/user_created_subject.txt'
-                    html_email_template_name = 'emails/<locale>/user_created_email.html'
+        if isinstance(user, User):
+            data['user'] = user
+            custom_user = models_auth.UserCustom.create_user_custom(data)
 
-                    subject_template_name = subject_template_name.replace('<locale>', request.data['locale'])
-                    html_email_template_name = html_email_template_name.replace('<locale>', request.data['locale'])
+            if custom_user['status'] == 200:
+                # Send Confirmation Email
+                subject_template_name = 'emails/<locale>/user_created_subject.txt'
+                html_email_template_name = 'emails/<locale>/user_created_email.html'
 
-                    current_site = get_current_site(request)
-                    context = {
-                        'user': user,
-                        'protocol': 'https' if request.is_secure() else 'http',
-                        'domain': current_site.domain,
-                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                        'token': default_token_generator.make_token(user),
-                    }
+                subject_template_name = subject_template_name.replace('<locale>', data['locale'])
+                html_email_template_name = html_email_template_name.replace('<locale>', data['locale'])
 
-                    obj_res = utils.send_mail(
-                        subject_template_name=subject_template_name,
-                        email_template_name=html_email_template_name,
-                        context=context,
-                        to_email=user.email,
-                        html_email_template_name=html_email_template_name
-                    )
-                    if obj_res['status'] == status.HTTP_200_OK:
-                        obj_res['result'] = {"message": "User has been created. Confirmation email sent!"}
-                    else:
-                        obj_res['result'] = {"message": "User has been created, but confirmation email could not be sent."}
+                current_site = get_current_site(request)
+                context = {
+                    'user': user,
+                    'protocol': 'https' if request.is_secure() else 'http',
+                    'domain': current_site.domain,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': default_token_generator.make_token(user),
+                }
 
-                    return Response(data=obj_res['result'], status=obj_res['status'])
+                result_email = utils.send_mail(
+                    subject_template_name=subject_template_name,
+                    email_template_name=html_email_template_name,
+                    context=context,
+                    to_email=user.email,
+                    html_email_template_name=html_email_template_name
+                )
+                if result_email['status'] == status.HTTP_200_OK:
+                    result_email['data'] = {'message': 'User has been created. Confirmation email sent!'}
+                else:
+                    result_email['data'] = {'message': 'User has been created, but confirmation email could not be sent.'}
+
+                return Response(status=result_email['status'], data=result_email['data'])
+            else:
+                # User Custom not created...
+                user.delete()
+                return Response(status=custom_user['status'], data=custom_user['data'])
 
 
 class UserRetrieveAPIView(generics.RetrieveAPIView):

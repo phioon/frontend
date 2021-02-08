@@ -3,9 +3,10 @@ from django.core.mail import EmailMultiAlternatives
 from django.template import loader
 from rest_framework import status
 from operator import itemgetter
-import uuid
+import json
 import smtplib
 import time
+import uuid
 
 
 # Function copied from class django.contrib.auth_app.forms.PasswordResetForm
@@ -59,6 +60,14 @@ def convert_epoch_to_timestamp(epoch):
 
 
 # Data structures
+def is_serializable(s):
+    try:
+        json.loads(s)
+        return True
+    except json.decoder.JSONDecodeError:
+        return False
+
+
 def order_by_asc(obj_list, field):
     obj_list = sorted(obj_list, key=itemgetter(field))
     return obj_list

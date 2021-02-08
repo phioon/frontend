@@ -66,7 +66,7 @@ class Winners extends Component {
               >
                 %
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "__percentage"}>
+              <UncontrolledTooltip placement="bottom" target={measure.id + "__percentage"}>
                 {measure.percentage &&
                   getString(prefs.locale, "measures", measure.percentage.hintId)
                 }
@@ -82,7 +82,7 @@ class Winners extends Component {
               >
                 #
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "__number"}>
+              <UncontrolledTooltip placement="bottom" target={measure.id + "__number"}>
                 {measure.number &&
                   getString(prefs.locale, "measures", measure.number.hintId)
                 }

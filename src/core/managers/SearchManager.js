@@ -192,7 +192,7 @@ class SearchManager {
 			let index = indexOfObj(sData, keyField, obj[keyField])
 
 			if (index >= 0)
-				sData = await this.recentSearchRemove(indexOfObj(sData, keyField, obj[keyField]))
+				sData = await this.recentSearchRemove(index)
 		}
 		else
 			sData = []

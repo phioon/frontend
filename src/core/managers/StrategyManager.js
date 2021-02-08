@@ -701,7 +701,7 @@ class StrategyManager {
   }
   // .. Buttons
   // Components
-  runBtn(prefs, getString, onClick, strategy, isRunning, size = "sm") {
+  runBtn(prefs, getString, onClick, strategy, isRunning, context = "any", size = "sm") {
     return (
       <>
         <Button
@@ -709,13 +709,13 @@ class StrategyManager {
           size={size}
           color="info"
           outline
-          id={"run__" + strategy.uuid}
+          id={`run__${context}__${strategy.uuid}`}
           disabled={isRunning}
           onClick={() => onClick("run", strategy)}
         >
           <i id="strategy_run" className="nc-icon nc-button-play" />
         </Button>
-        <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={"run__" + strategy.uuid}>
+        <UncontrolledTooltip placement="bottom" target={`run__${context}__${strategy.uuid}`}>
           {getString(prefs.locale, "strategycomponents", "btn_run_hint")}
         </UncontrolledTooltip>
       </>
@@ -784,14 +784,35 @@ class StrategyManager {
       return (
         <>
           <Button
+            className="btn-icon btn-round"
+            size={size}
+            color={strategy.isSaved ? "success" : "default"}
+            outline
+            id={`save__${context}__${strategy.uuid}`}
+            onClick={() => onClick("save", strategy)}
+          >
+            <i id="strategy_save" className={strategy.isSaved ? "nc-icon nc-check-2" : "nc-icon nc-simple-add"} />
+          </Button>
+          <UncontrolledTooltip placement="bottom" target={`save__${context}__${strategy.uuid}`}>
+            {strategy.isSaved ?
+              getString(prefs.locale, "strategycomponents", "btn_unsave_hint") :
+              getString(prefs.locale, "strategycomponents", "btn_save_hint")
+            }
+          </UncontrolledTooltip>
+        </>
+      )
+    else if (format === "btn-neutral")
+      return (
+        <>
+          <Button
             className={`btn-icon btn-neutral btn-${size}`}
             color={strategy.isSaved ? "success" : "default"}
-            id={`${context}__${strategy.uuid}`}
+            id={`save__${context}__${strategy.uuid}`}
             onClick={() => onClick("save", strategy)}
           >
             <i id="strategy_save" className={strategy.isSaved ? "fas fa-bookmark" : "nc-icon nc-bookmark-2"} />
           </Button>
-          <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={`${context}__${strategy.uuid}`}>
+          <UncontrolledTooltip placement="bottom" target={`save__${context}__${strategy.uuid}`}>
             {strategy.isSaved ?
               getString(prefs.locale, "strategycomponents", "btn_unsave_hint") :
               getString(prefs.locale, "strategycomponents", "btn_save_hint")
@@ -843,7 +864,7 @@ class StrategyManager {
           >
             <i id="strategy_view" className="far fa-eye" />
           </Button>
-          <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={`${context}__${strategy.uuid}`}>
+          <UncontrolledTooltip placement="bottom" target={`${context}__${strategy.uuid}`}>
             {getString(prefs.locale, "strategycomponents", "btn_view")}
           </UncontrolledTooltip>
         </>

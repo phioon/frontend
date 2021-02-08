@@ -376,7 +376,7 @@ class App extends React.Component {
                     <CircularLoader size="lg" />
                   </div> :
                   isAuthenticated ?
-                    <Redirect to={this.managers.app.userProfilePath(user.username)} /> :
+                    <Redirect to="/app/home/" /> :
                     <AuthLayout {...props}
                       managers={this.managers}
                       prefs={prefs}

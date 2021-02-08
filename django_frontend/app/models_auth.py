@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q, Count
 
+from django_engine import settings
 from app import models as models_app
 from search_engine import utils as utils_search
 
@@ -55,6 +56,80 @@ class UserCustom(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    @staticmethod
+    def create_user_custom(data):
+        try:
+            user_custom = UserCustom.objects.get_or_create(
+                user=data['user'],
+                defaults={
+                    'nationality': data['nationality'],
+                    'subscription': data['subscription']
+                })[0]
+
+            user_prefs = UserPreferences.objects.get_or_create(
+                user=data['user'],
+                defaults={
+                    'locale': data['locale'],
+                    'currency': data['nationality'].currency
+                })[0]
+
+            obj_res = {
+                'status': 200,
+                'data': user_custom
+            }
+        except:
+            obj_res = {
+                'status': 500,
+                'data': {'message': 'Something went wrong. UserCustom could not be created.'}
+            }
+
+        return obj_res
+
+    @staticmethod
+    def create_user(data):
+        user = User.objects.filter(username=data['username'])
+
+        if not user.exists():
+            user = User.objects.create_user(**data)
+
+        return user
+
+    @staticmethod
+    def init():
+        # Default data for Reference users
+        user_data = {
+            'is_active': True,
+            'password': settings.DEFAULT_PWD,
+            'email': 'helpme@phioon.com'
+        }
+        custom_data = {
+            'subscription': models_app.Subscription.objects.get(pk='basic'),
+            'nationality': models_app.Country.objects.get(pk='BR'),
+            'locale': 'ptBR'
+        }
+
+        # 1 Nationality: BR
+        # 1.1 Phioon Team
+        user_data['first_name'] = 'Phioon'
+        user_data['last_name'] = 'Team'
+        user_data['username'] = 'phioon'
+        custom_data['user'] = UserCustom.create_user(user_data)
+
+        if isinstance(custom_data['user'], User):
+            UserCustom.create_user_custom(custom_data)
+
+        # 2. Nationality: US
+        # 2.1 Larry Williams
+        user_data['first_name'] = 'Larry'
+        user_data['last_name'] = 'Williams'
+        user_data['username'] = 'larry.williams'
+        custom_data['user'] = UserCustom.create_user(user_data)
+        custom_data['nationality'] = models_app.Country.objects.get(pk='US')
+        custom_data['locale'] = 'enUS'
+
+        if isinstance(custom_data['user'], User):
+            UserCustom.create_user_custom(custom_data)
 
 
 class UserPreferences(models.Model):

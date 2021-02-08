@@ -133,7 +133,7 @@ class ProfitabilityRanking extends Component {
                   <i className="fas fa-sort-amount-up" />
                 }
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="top" target="profitabilityRanking_orderBy_hint">
+              <UncontrolledTooltip placement="top" target="profitabilityRanking_orderBy_hint">
                 {rankingType == "top" ?
                   getString(prefs.locale, "charts", "profitabilityRanking_lesser_hint") :
                   getString(prefs.locale, "charts", "profitabilityRanking_greater_hint")
@@ -171,7 +171,7 @@ class ProfitabilityRanking extends Component {
                 {getString(prefs.locale, "charts", "label_assets")}
               </Button>
               {" "}
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="profitabilityRanking_groupByAsset">
+              <UncontrolledTooltip placement="bottom" target="profitabilityRanking_groupByAsset">
                 {getString(prefs.locale, "charts", chart.generic.groupByAsset.hintId)}
               </UncontrolledTooltip>
               <Button
@@ -184,7 +184,7 @@ class ProfitabilityRanking extends Component {
               >
                 {getString(prefs.locale, "charts", "label_wallets")}
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="profitabilityRanking_groupByWallet">
+              <UncontrolledTooltip placement="bottom" target="profitabilityRanking_groupByWallet">
                 {getString(prefs.locale, "charts", chart.generic.groupByAsset.hintId)}
               </UncontrolledTooltip>
             </Col>

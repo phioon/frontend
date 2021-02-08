@@ -565,6 +565,7 @@ class UserProfile extends React.Component {
           toggleModal={this.toggleModal}
           onClick={this.onClick}
           username={user.username}
+          rows={user.amount_following}
         />
         <ModalFollowers
           prefs={prefs}
@@ -576,6 +577,7 @@ class UserProfile extends React.Component {
           toggleModal={this.toggleModal}
           onClick={this.onClick}
           username={user.username}
+          rows={user.amount_followers}
         />
         <ModalStrategy
           {...this.props}

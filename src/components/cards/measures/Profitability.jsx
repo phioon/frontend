@@ -38,7 +38,7 @@ class Profitability extends Component {
                     <>
                       {getString(prefs.locale, "measures", measure.id + "_kpi_label") + " "}
                       <i id={measure.id + "_title_hint"} className="nc-icon nc-alert-circle-i" />
-                      <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={measure.id + "_title_hint"}>
+                      <UncontrolledTooltip placement="top" target={measure.id + "_title_hint"}>
                         {getString(prefs.locale, "measures", measure.id + "_title_hint")}
                       </UncontrolledTooltip>
                     </>
@@ -72,7 +72,7 @@ class Profitability extends Component {
               >
                 %
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "__percentage"}>
+              <UncontrolledTooltip placement="bottom" target={measure.id + "__percentage"}>
                 {measure.percentage &&
                   getString(prefs.locale, "measures", measure.percentage.hintId)
                 }
@@ -88,7 +88,7 @@ class Profitability extends Component {
               >
                 $
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "__currency"}>
+              <UncontrolledTooltip placement="bottom" target={measure.id + "__currency"}>
                 {measure.currency &&
                   getString(prefs.locale, "measures", measure.currency.hintId)
                 }

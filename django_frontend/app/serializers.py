@@ -7,6 +7,27 @@ from datetime import datetime
 from app import models
 
 
+class CollectionSerializer(serializers.ModelSerializer):
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    owner_username = serializers.ReadOnlyField(source='owner.username')
+    strategies = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Collection
+        fields = '__all__'
+
+    def get_strategies(self, obj):
+        order_by = '-usage'
+        if 'order_by' in self.context['request'].query_params:
+            order_by = self.context['request'].query_params['order_by']
+        order_by = models.Strategy.convert_order_by(order_by)
+
+        strategies = obj.strategies.filter(is_public=True).order_by(order_by)
+
+        serializer = StrategySerializer(strategies, many=True)
+        return serializer.data
+
+
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Country
@@ -57,9 +78,24 @@ class PositionTypeSerializer(serializers.ModelSerializer):
 
 
 class StrategySerializer(serializers.ModelSerializer):
+    owner_username = serializers.ReadOnlyField(source='owner.username')
+    stats = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Strategy
+        fields = ['uuid', 'owner_username', 'name', 'desc', 'type', 'is_dynamic', 'stats']
+
+    def get_stats(self, obj):
+        data = {'ratings': obj.get_rating_stats()}
+        return data
+
+
+class StrategyDetailSerializer(serializers.ModelSerializer):
+    id = serializers.HiddenField(default=None)
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
     owner_username = serializers.ReadOnlyField(source='owner.username')
     my_rating = serializers.SerializerMethodField()
+    stats = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Strategy
@@ -82,28 +118,6 @@ class StrategySerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-
-    def get_my_rating(self, obj):
-        requestor = self.context['request'].user
-        my_rating = requestor.ratings.filter(strategy=obj)
-        if my_rating.exists():
-            my_rating = my_rating[0].rating
-        else:
-            my_rating = None
-
-        return my_rating
-
-
-class StrategyDetailSerializer(serializers.ModelSerializer):
-    id = serializers.HiddenField(default=None)
-    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    owner_username = serializers.ReadOnlyField(source='owner.username')
-    my_rating = serializers.SerializerMethodField()
-    stats = serializers.SerializerMethodField()
-
-    class Meta:
-        model = models.Strategy
-        fields = '__all__'
 
     def get_my_rating(self, obj):
         requestor = self.context['request'].user

@@ -525,7 +525,7 @@ class ModalOpenPosition extends React.Component {
                     {" "}
                     <i id={"input_date_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
-                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_date_hint"}>
+                  <UncontrolledTooltip placement="top" target={"input_date_hint"}>
                     {getString(prefs.locale, this.compId, "input_date_hint")}
                   </UncontrolledTooltip>
                   <ReactDatetime
@@ -550,7 +550,7 @@ class ModalOpenPosition extends React.Component {
                     {" "}
                     <i id={"input_price_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
-                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_price_hint"}>
+                  <UncontrolledTooltip placement="top" target={"input_price_hint"}>
                     {getString(prefs.locale, this.compId, "input_price_hint")}
                   </UncontrolledTooltip>
                   <CurrencyInput
@@ -578,7 +578,7 @@ class ModalOpenPosition extends React.Component {
                     {" "}
                     <i id={"input_cost_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
-                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_cost_hint"}>
+                  <UncontrolledTooltip placement="top" target={"input_cost_hint"}>
                     {getString(prefs.locale, this.compId, "input_cost_hint")}
                   </UncontrolledTooltip>
                   <CurrencyInput
@@ -610,7 +610,7 @@ class ModalOpenPosition extends React.Component {
                     {" "}
                     <i id={"input_opCost_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
-                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_opCost_hint"}>
+                  <UncontrolledTooltip placement="top" target={"input_opCost_hint"}>
                     {getString(prefs.locale, this.compId, "input_opCost_hint")}
                   </UncontrolledTooltip>
                   <CurrencyInput
@@ -643,7 +643,7 @@ class ModalOpenPosition extends React.Component {
                 >
                   %
                 </Button>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="opCost_percentage">
+                <UncontrolledTooltip placement="bottom" target="opCost_percentage">
                   {this.props.getString(prefs.locale, this.compId, "opCost_percentage_hint")}
                 </UncontrolledTooltip>
                 <Button
@@ -657,7 +657,7 @@ class ModalOpenPosition extends React.Component {
                 >
                   $
                 </Button>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target="opCost_currency">
+                <UncontrolledTooltip placement="bottom" target="opCost_currency">
                   {this.props.getString(prefs.locale, this.compId, "opCost_currency_hint")}
                 </UncontrolledTooltip>
               </Col>
@@ -673,7 +673,7 @@ class ModalOpenPosition extends React.Component {
                     {" "}
                     <i id={"input_totalCost_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
-                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_totalCost_hint"}>
+                  <UncontrolledTooltip placement="top" target={"input_totalCost_hint"}>
                     {getString(prefs.locale, this.compId, "input_totalCost_hint")}
                   </UncontrolledTooltip>
                   <CurrencyInput

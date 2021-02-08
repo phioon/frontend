@@ -128,7 +128,7 @@ class StrategyPage extends React.Component {
     }
     else {
       // [strategy] param was not given...
-      window.location.pathname = `/app/strategies/panel/`
+      window.location.pathname = `/app/home/`
     }
 
     let result = await this.props.managers.app.strategyRetrieve(false, strategy.uuid)
@@ -142,9 +142,7 @@ class StrategyPage extends React.Component {
       this.prepareCharts(strategy)
 
       if (this.props.user.username === strategy.owner_username) {
-        let myStrategy = await this.props.managers.app.myStrategyRetrieve(strategy.uuid)
         strategy.isOwner = true
-        strategy.id = myStrategy.id
 
         await this.prepareMyStrategyNames()
       }
@@ -274,16 +272,16 @@ class StrategyPage extends React.Component {
         <ReactBSAlert
           warning
           style={{ display: "block", marginTop: "-100px" }}
-          title={getString(prefs.locale, "strategypanel", "alert_confirming_title")}
+          title={getString(prefs.locale, "strategies", "alert_confirming_title")}
           onConfirm={() => this.deleteObject(obj)}
           onCancel={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
           cancelBtnBsStyle="danger"
-          confirmBtnText={getString(prefs.locale, "strategypanel", "btn_alert_confirm")}
-          cancelBtnText={getString(prefs.locale, "strategypanel", "btn_alert_cancel")}
+          confirmBtnText={getString(prefs.locale, "strategies", "btn_alert_confirm")}
+          cancelBtnText={getString(prefs.locale, "strategies", "btn_alert_cancel")}
           showCancel
         >
-          {getString(prefs.locale, "strategypanel", "alert_confirming_text")}
+          {getString(prefs.locale, "strategies", "alert_confirming_text")}
         </ReactBSAlert>
       )
     });
@@ -293,11 +291,9 @@ class StrategyPage extends React.Component {
     this.props.history.push(path)
   }
   async rateClick(obj) {
-    obj.uuid = this.state.strategy.uuid
     let result = await this.props.managers.app.strategyRate(obj)
 
     if (result.status == 200) {
-
       // Update [my_rating]
       let { strategy } = this.state;
       strategy.my_rating = obj.rating
@@ -330,9 +326,11 @@ class StrategyPage extends React.Component {
     let tag = strategy.tags[iTag]
     // Send User to Gallery, filtering [tag]
   }
-  updateClick(obj) {
+  async updateClick(obj) {
+    obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
+    obj = obj.data
+
     let objData = {
-      id: obj.id,
       uuid: obj.uuid,
       name: obj.name,
       desc: obj.desc,
@@ -345,7 +343,10 @@ class StrategyPage extends React.Component {
     this.setState({ action: "update", objData })
     this.toggleModal("strategyDetail")
   }
-  viewClick(obj) {
+  async viewClick(obj) {
+    obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
+    obj = obj.data
+
     let objData = {
       id: obj.id,
       name: obj.name,
@@ -376,11 +377,11 @@ class StrategyPage extends React.Component {
         <ReactBSAlert
           success
           style={{ display: "block", marginTop: "-100px" }}
-          title={getString(prefs.locale, "strategypanel", "alert_deleted_title")}
+          title={getString(prefs.locale, "strategies", "alert_deleted_title")}
           onConfirm={() => this.hideAlert()}
           confirmBtnBsStyle="primary"
         >
-          {getString(prefs.locale, "strategypanel", "alert_deleted_text")}
+          {getString(prefs.locale, "strategies", "alert_deleted_text")}
         </ReactBSAlert>
       )
     });
@@ -389,13 +390,17 @@ class StrategyPage extends React.Component {
   }
 
   // Components
-  renderActions(strategy, isRunning) {
+  renderActions(isPageLoading, strategy, isRunning) {
     let { getString, prefs } = this.props;
 
     return (
       <UncontrolledDropdown>
         {/* Run */}
-        {this.props.managers.strategy.runBtn(prefs, getString, this.onClick, strategy, isRunning, "md")}
+        {this.props.managers.strategy.runBtn(prefs, getString, this.onClick, strategy, isRunning, "any", "md")}
+        {/* Save */}
+        {!isPageLoading && !strategy.isOwner &&
+          this.props.managers.strategy.saveBtn(prefs, getString, this.onClick, strategy, "any", "btn", "md")
+        }
         {/* ... */}
         <DropdownToggle
           className="btn-md btn-icon btn-round btn-simple"
@@ -493,15 +498,17 @@ class StrategyPage extends React.Component {
     if (lines.length > 0) {
       return (
         <div className="typography-line">
-          {
-            lines.map((line, i) => {
-              if (i < show || show === 0)
-                return (
-                  <pre key={i} className="description">
-                    {line}
-                  </pre>
-                )
-            })
+          {lines.map((line, i) => {
+            if (i < show || show === 0)
+              return (
+                <pre key={i} className="description">
+                  {line.length > 0 ?
+                    line :
+                    " "
+                  }
+                </pre>
+              )
+          })
           }
         </div>
       )
@@ -510,6 +517,7 @@ class StrategyPage extends React.Component {
   descriptionSkeleton() {
     return (
       <div>
+        <Skeleton />
         <Skeleton />
         <Skeleton />
         <Skeleton />
@@ -533,8 +541,8 @@ class StrategyPage extends React.Component {
         <CardBody>
           {/* Click to Rate */}
           {window.innerWidth < 768 ?
-            this.starsForDeviceSm(prefs, getString) :
-            this.starsForDeviceMd(prefs, getString)
+            this.starsForDeviceSm(prefs, getString, strategy) :
+            this.starsForDeviceMd(prefs, getString, strategy)
           }
           {/* Reviews */}
           {isPageLoading ?
@@ -605,7 +613,7 @@ class StrategyPage extends React.Component {
       )
     })
   }
-  starsForDeviceSm(prefs, getString) {
+  starsForDeviceSm(prefs, getString, strategy) {
     return (
       <Row className="justify-content-center">
         <Col md="6" className="description centered">
@@ -616,12 +624,12 @@ class StrategyPage extends React.Component {
         </Col>
         {/* Starts */}
         <Col md="6" className="centered">
-          <StrategyRating onClick={this.onClick} />
+          <StrategyRating onClick={this.onClick} strategy={strategy} />
         </Col>
       </Row>
     )
   }
-  starsForDeviceMd(prefs, getString) {
+  starsForDeviceMd(prefs, getString, strategy) {
     return (
       <Row className="justify-content-center">
         <div md="6" className="description centered">
@@ -629,7 +637,7 @@ class StrategyPage extends React.Component {
         </div>
         {" "}
         {/* Starts */}
-        <StrategyRating onClick={this.onClick} />
+        <StrategyRating onClick={this.onClick} strategy={strategy} />
       </Row>
     )
   }
@@ -787,28 +795,18 @@ class StrategyPage extends React.Component {
               </Col>
               {/* Header */}
               <Col xs="6" md="7" xs="8">
-                <Row>
-                  {/* Name */}
-                  <Col className="align-center">
-                    <a className="muted" href="" onClick={e => e.preventDefault()}>
-                      <small className="description">
-                        #{strategy.uuid}
-                      </small>
-                      <h5 className="title">
-                        {isPageLoading ?
-                          <Skeleton /> :
-                          strategy.name
-                        }
-                      </h5>
-                    </a>
-                  </Col>
-                  {/* Save */}
-                  {!isPageLoading && !strategy.isOwner &&
-                    <Col md="2" xs="3" className="text-right">
-                      {this.props.managers.strategy.saveBtn(prefs, getString, this.onClick, strategy, "any", "btn", "lg")}
-                    </Col>
-                  }
-                </Row>
+                {/* Name */}
+                <a className="muted" href="" onClick={e => e.preventDefault()}>
+                  <small className="description">
+                    #{strategy.uuid}
+                  </small>
+                  <h5 className="title">
+                    {isPageLoading ?
+                      <Skeleton /> :
+                      strategy.name
+                    }
+                  </h5>
+                </a>
                 {/* Username */}
                 {isPageLoading ?
                   <Skeleton /> :
@@ -830,7 +828,7 @@ class StrategyPage extends React.Component {
                 {/* Button Actions */}
                 <Row>
                   <Col className="text-right">
-                    {this.renderActions(strategy, isRunning)}
+                    {this.renderActions(isPageLoading, strategy, isRunning)}
                   </Col>
                 </Row>
               </Col>
@@ -854,9 +852,7 @@ class StrategyPage extends React.Component {
                 <h6 id="stats_rating">
                   {
                     strategy.stats ?
-                      strategy.stats.ratings.count >= 5 ?
-                        strategy.stats.ratings.avg :
-                        "-" :
+                      strategy.stats.ratings.avg :
                       null
                   }
                   <br />
@@ -864,14 +860,6 @@ class StrategyPage extends React.Component {
                     {getString(prefs.locale, this.compId, "label_rating")}
                   </small>
                 </h6>
-                {strategy.stats &&
-                  <UncontrolledTooltip delay={{ show: 1000 }} placement="bottom" target={"stats_rating"}>
-                    {strategy.stats.ratings.count >= 5 ?
-                      getString(prefs.locale, this.compId, "label_ratings_available_hint") :
-                      getString(prefs.locale, this.compId, "label_ratings_notAvailable_hint")
-                    }
-                  </UncontrolledTooltip>
-                }
               </Col>
             </Row>
             <hr />
@@ -879,27 +867,21 @@ class StrategyPage extends React.Component {
         </Card>
         {/* Description and Chart */}
         <Row>
-          {/* Description */}
           <Col md="7">
+            {/* Description */}
             {this.descriptionCard(isPageLoading, strategy, descShowMore)}
+            {/* Reviews */}
+            {this.reviewsCard(isPageLoading, strategy, reviews)}
           </Col>
-          {/* Usage Chart */}
           <Col md="5">
+            {/* Usage Chart */}
             <UsageOverTime
               getString={getString}
               prefs={prefs}
               pageFirstLoading={isPageLoading}
               chart={charts.strategies.usage}
             />
-          </Col>
-        </Row>
-        <Row>
-          {/* Reviews */}
-          <Col md="7">
-            {this.reviewsCard(isPageLoading, strategy, reviews)}
-          </Col>
-          {/* Indicator Tags */}
-          <Col md="5">
+            {/* Indicator Tags */}
             <Card>
               <CardBody>
                 <CardTitle tag="h5">

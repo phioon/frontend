@@ -158,8 +158,10 @@ class ModalFollowers extends React.Component {
       )
     })
   }
-  renderSkeletons(amount = 10) {
-    let rows = [...new Array(amount)]
+  renderSkeletons(rows = 10) {
+    if (rows > 10)
+      rows = 10
+    rows = [...new Array(rows)]
 
     return rows.map((prop, i) => {
       return (
@@ -202,7 +204,7 @@ class ModalFollowers extends React.Component {
           </CardHeader>
           <div className="card-body" ref={this.userFollowingRef}>
             {firstLoading ?
-              this.renderSkeletons() :
+              this.renderSkeletons(this.props.rows) :
               iUsers.length === 0 ?
                 <div className="description centered">
                   {getString(prefs.locale, this.compId, "label_noFollowers")}

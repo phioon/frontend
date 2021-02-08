@@ -6,6 +6,8 @@ from search_engine import utils as utils_search
 from datetime import datetime, timedelta
 import uuid
 
+from app.init import strategies as init_strategies
+
 
 class Currency(models.Model):
     code = models.CharField(max_length=8, verbose_name='ISO 4217 Code', primary_key=True)
@@ -17,7 +19,8 @@ class Currency(models.Model):
     def __str__(self):
         return self.code
 
-    def init(self):
+    @staticmethod
+    def init():
         Currency.objects.update_or_create(
             code='BRL',
             defaults={'symbol': 'R$',
@@ -53,7 +56,8 @@ class Country(models.Model):
     def __str__(self):
         return self.code
 
-    def init(self):
+    @staticmethod
+    def init():
         Country.objects.update_or_create(
             code='BR',
             defaults={'name': 'Brazil',
@@ -83,7 +87,8 @@ class Subscription(models.Model):
     def __str__(self):
         return self.name
 
-    def init(self):
+    @staticmethod
+    def init():
         Subscription.objects.update_or_create(
             name='basic',
             defaults={'label': 'Basic'})
@@ -107,7 +112,8 @@ class SubscriptionPrice(models.Model):
     def __str__(self):
         return self.name
 
-    def init(self):
+    @staticmethod
+    def init():
         premium = Subscription.objects.get(name='premium')
         platinum = Subscription.objects.get(name='platinum')
 
@@ -132,7 +138,8 @@ class PositionType(models.Model):
     def __str__(self):
         return self.name
 
-    def init(self):
+    @staticmethod
+    def init():
         PositionType.objects.update_or_create(
             name='buy',
             defaults={'desc': 'Buy'})
@@ -245,11 +252,45 @@ class Strategy(models.Model):
 
     is_public = models.BooleanField(default=True, verbose_name='Visibility')
     is_dynamic = models.BooleanField(default=False, verbose_name='Logic type')
+
     rules = models.JSONField()
     tags = models.JSONField(default=list)
 
     def __str__(self):
         return str(self.pk)
+
+    @staticmethod
+    def init():
+        # 1. Larry Williams
+        owner = User.objects.get(username='larry.williams')
+        strategies = [
+            init_strategies.larry_williams_9_1_long,
+            init_strategies.larry_williams_9_1_short,
+            init_strategies.larry_williams_9_2_9_3_long,
+            init_strategies.larry_williams_9_2_9_3_short,
+            init_strategies.larry_williams_9_4_long,
+            init_strategies.larry_williams_9_4_short,
+        ]
+        for strategy in strategies:
+            instance = Strategy.objects.update_or_create(owner=owner, name=strategy['name'], defaults={**strategy})[0]
+            StrategyStats.objects.get_or_create(strategy=instance)
+
+        # 2. Phioon
+        # 2.1 MA Crossings
+        owner = User.objects.get(username='phioon')
+        strategies = [
+            init_strategies.golden_cross,
+            init_strategies.death_cross,
+            init_strategies.crossing_mme8_mme17_long,
+            init_strategies.crossing_mme8_mme17_short,
+            init_strategies.crossing_mme9_mma21_long,
+            init_strategies.crossing_mme9_mma21_short,
+            init_strategies.crossing_mme17_mme72_long,
+            init_strategies.crossing_mme17_mme72_short,
+        ]
+        for strategy in strategies:
+            instance = Strategy.objects.update_or_create(owner=owner, name=strategy['name'], defaults={**strategy})[0]
+            StrategyStats.objects.get_or_create(strategy=instance)
 
     @property
     def search_rank(self):
@@ -265,6 +306,18 @@ class Strategy(models.Model):
         }
         return data
 
+    @staticmethod
+    def convert_order_by(order_by):
+        if 'usage' in order_by:
+            order_by = order_by.replace('usage', 'statistics__runs_last_14_days')
+        elif 'rating' in order_by:
+            order_by = order_by.replace('rating', 'statistics__rating_avg')
+        elif 'saved' in order_by:
+            order_by = order_by.replace('saved', 'statistics__saved_count')
+
+        return order_by
+
+    # Actions
     def rate(self, user, obj):
         try:
             # Try to update instance...
@@ -446,3 +499,45 @@ class StrategyUsage(models.Model):
 
     def __str__(self):
         return str(self.strategy.pk) + '__' + str(self.date)
+
+
+class Collection(models.Model):
+    name = models.CharField(max_length=64, db_index=True)
+    is_public = models.BooleanField(default=True)
+
+    owner = models.ForeignKey(User, related_name='collections', editable=False, on_delete=models.CASCADE)
+    strategies = models.ManyToManyField(Strategy, through='CollectionMembership')
+
+    def __str__(self):
+        return self.name
+
+    @staticmethod
+    def init():
+        # Collection Owner
+        col_owner = User.objects.get(username='phioon')
+
+        # 1. MA Crossings
+        collection = Collection.objects.update_or_create(owner=col_owner, name='ma_crossings')[0]
+        strategies = Strategy.objects.filter(owner=col_owner,
+                                             desc__icontains='#crossing #movingAverage').order_by('last_modified')
+        for x in range(0, len(strategies)):
+            collection.strategies.add(strategies[x], through_defaults={'index': x})
+
+        # 2. Classics
+        owner = User.objects.get(username='larry.williams')
+        collection = Collection.objects.update_or_create(owner=col_owner, name='classics')[0]
+        strategies = Strategy.objects.filter(owner=owner,
+                                             desc__icontains='#classics').order_by('last_modified')
+        for x in range(0, len(strategies)):
+            collection.strategies.add(strategies[x], through_defaults={'index': x})
+
+
+class CollectionMembership(models.Model):
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
+    strategy = models.ForeignKey(Strategy, on_delete=models.CASCADE)
+    index = models.IntegerField()
+
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['index']

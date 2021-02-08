@@ -95,7 +95,7 @@ class StrategyPopularItem extends React.Component {
           }
         </Col>
         <Col xs="1" className="centered">
-          {this.props.managers.strategy.saveBtn(prefs, getString, this.onClick, strategy, "any", "btn")}
+          {this.props.managers.strategy.saveBtn(prefs, getString, this.onClick, strategy, "any", "btn", "sm")}
         </Col>
 
         <Col sm="7" xs="5">

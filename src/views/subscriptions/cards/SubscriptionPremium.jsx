@@ -67,7 +67,7 @@ class SubscriptionPremium extends React.Component {
               {` ${getString(prefs.locale, this.compId, "label_stockExchange")}`}
               {" "}
               <i id={"label_stockExchange_hint"} className="nc-icon nc-alert-circle-i" />
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"label_stockExchange_hint"}>
+              <UncontrolledTooltip placement="bottom" target={"label_stockExchange_hint"}>
                 {getString(prefs.locale, this.compId, "label_stockExchange_hint")}
               </UncontrolledTooltip>
             </li>
@@ -84,7 +84,7 @@ class SubscriptionPremium extends React.Component {
               {` ${getString(prefs.locale, this.compId, "label_dashboards")}`}
               {" "}
               <i id={"label_dashboards_hint"} className="nc-icon nc-alert-circle-i" />
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"label_dashboards_hint"}>
+              <UncontrolledTooltip placement="bottom" target={"label_dashboards_hint"}>
                 {getString(prefs.locale, this.compId, "label_dashboards_hint")}
               </UncontrolledTooltip>
             </li>

@@ -68,7 +68,7 @@ class SubscriptionBasic extends React.Component {
               {` ${getString(prefs.locale, this.compId, "label_staticPanels")}`}
               {" "}
               <i id={"label_staticPanels_hint"} className="nc-icon nc-alert-circle-i" />
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"label_staticPanels_hint"}>
+              <UncontrolledTooltip placement="bottom" target={"label_staticPanels_hint"}>
                 {getString(prefs.locale, this.compId, "label_staticPanels_hint")}
               </UncontrolledTooltip>
             </li>

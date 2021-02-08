@@ -3,6 +3,7 @@ import os
 # P H I O O N
 # Variables
 API_KEY = 'ycjOzOP5loHPPIbfMW6tA7AreqAlq0z4yqxStxk2B8Iwges581rK5V8kIgg4'
+DEFAULT_PWD = 'ycjOzOP5loHPPIbfMW6tA7AreqAlq0z4yqxStxk2B8Iwges581rK5V8kIgg4'
 
 BACKEND_API_USER = 'frontend_api'
 BACKEND_API_PWD = '#P1q2w3e4r$Api'

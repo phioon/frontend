@@ -109,7 +109,10 @@ class ModalNewReview extends React.Component {
     }
   }
   rateClick(obj) {
-    let payload = { rating: obj.data.rating }
+    let payload = {
+      uuid: this.props.strategy.uuid,
+      rating: obj.data.rating
+    }
     if (obj.data.review.length > 0)
       payload.review = obj.data.review
 
@@ -129,7 +132,7 @@ class ModalNewReview extends React.Component {
         </Col>
         {/* Starts */}
         <Col md="6" className="centered">
-          <StrategyRating onClick={this.onChange} rating={strategy.my_rating} />
+          <StrategyRating onClick={this.onChange} strategy={strategy} rating={strategy.my_rating} />
         </Col>
       </Row>
     )
@@ -142,7 +145,7 @@ class ModalNewReview extends React.Component {
         </div>
         {" "}
         {/* Starts */}
-        <StrategyRating onClick={this.onChange} rating={strategy.my_rating} />
+        <StrategyRating onClick={this.onChange} strategy={strategy} rating={strategy.my_rating} />
       </Row>
     )
   }

@@ -395,7 +395,7 @@ class ModalSlopeDetail extends React.Component {
             {" "}
             <i id={"input_interval_hint"} className="nc-icon nc-alert-circle-i" />
           </label>
-          <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_interval_hint"}>
+          <UncontrolledTooltip placement="top" target={"input_interval_hint"}>
             {getString(prefs.locale, this.compId, "input_interval_hint")}
           </UncontrolledTooltip>
           <Select
@@ -416,7 +416,7 @@ class ModalSlopeDetail extends React.Component {
               {" "}
               <i id={"input_indicator_hint"} className="nc-icon nc-alert-circle-i" />
             </label>
-            <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_indicator_hint"}>
+            <UncontrolledTooltip placement="top" target={"input_indicator_hint"}>
               {getString(prefs.locale, this.compId, "input_indicator_hint")}
             </UncontrolledTooltip>
             <Select
@@ -438,7 +438,7 @@ class ModalSlopeDetail extends React.Component {
               {" "}
               <i id={"input_periods_hint"} className="nc-icon nc-alert-circle-i" />
             </label>
-            <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_periods_hint"}>
+            <UncontrolledTooltip placement="top" target={"input_periods_hint"}>
               {getString(prefs.locale, this.compId, "input_periods_hint")}
             </UncontrolledTooltip>
             <Select
@@ -457,7 +457,7 @@ class ModalSlopeDetail extends React.Component {
               {" "}
               <i id={"input_offset_hint"} className="nc-icon nc-alert-circle-i" />
             </label>
-            <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_offset_hint"}>
+            <UncontrolledTooltip placement="top" target={"input_offset_hint"}>
               {getString(prefs.locale, this.compId, "input_offset_hint")}
             </UncontrolledTooltip>
             <Select
@@ -532,7 +532,7 @@ class ModalSlopeDetail extends React.Component {
                       {" "}
                       <i id={"input_slope_hint"} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_slope_hint"}>
+                    <UncontrolledTooltip placement="top" target={"input_slope_hint"}>
                       {getString(prefs.locale, this.compId, "input_slope_hint")}
                     </UncontrolledTooltip>
                     <Select

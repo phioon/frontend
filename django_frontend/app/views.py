@@ -9,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 
 from django.utils.timezone import make_aware
 from datetime import datetime
+import json
 
 from app import models, serializers, paginators
 from app.permissions import IsOwner
@@ -43,9 +44,81 @@ class CurrencyList(generics.ListAPIView):
     queryset = models.Currency.objects.all()
 
 
+class MyCollectionList(generics.ListAPIView):
+    permission_classes = [IsOwner]
+    serializer_class = serializers.CollectionSerializer
+
+    def get_queryset(self):
+        return models.Collection.objects.filter(owner=self.request.user)
+
+
+class MyCollectionDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsOwner]
+    serializer_class = serializers.CollectionSerializer
+
+    def get_queryset(self):
+        return models.Collection.objects.filter(owner=self.request.user)
+
+
+class CollectionList(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = serializers.CollectionSerializer
+
+    def get_queryset(self):
+        # 1. Payload
+        # 1.1 Order By: handled within serializer
+        # 1.2 Filters
+        filters = {'is_public': True}
+        ignore_params = ['is_public', 'order_by']
+        for k in self.request.query_params:
+            if k not in ignore_params:
+                param = self.request.query_params[k]
+                if utils.is_serializable(param):
+                    filters[k] = json.loads(param)
+                else:
+                    filters[k] = param
+
+        # 2. Queryset
+        collections = models.Collection.objects.filter(**filters)
+
+        return collections
+
+
+class CollectionStrategyList(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = serializers.StrategySerializer
+
+    def get_queryset(self):
+        pk = self.kwargs.get(self.lookup_field)
+        collection = get_object_or_404(models.Collection, pk=pk)
+
+        # 1. Payload
+        # 1.1 Order By
+        order_by = '-usage'
+        if 'order_by' in self.request.query_params:
+            order_by = self.request.query_params['order_by']
+        order_by = models.Strategy.convert_order_by(order_by)
+
+        # 1.2 Filters
+        strategies = collection.strategies.filter(is_public=True)
+
+        # 2. Queryset
+        strategies = strategies.order_by(order_by)
+
+        return strategies
+
+
+class CollectionDetail(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = serializers.CollectionSerializer
+
+    def get_queryset(self):
+        return models.Collection.objects.filter(is_public=True)
+
+
 class MyStrategyList(generics.ListCreateAPIView):
     permission_classes = [IsOwner]
-    serializer_class = serializers.StrategySerializer
+    serializer_class = serializers.StrategyDetailSerializer
 
     def get_queryset(self):
         return models.Strategy.objects.filter(owner=self.request.user)
@@ -53,7 +126,8 @@ class MyStrategyList(generics.ListCreateAPIView):
 
 class MyStrategyDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwner]
-    serializer_class = serializers.StrategySerializer
+    serializer_class = serializers.StrategyDetailSerializer
+    lookup_field = 'uuid'
 
     def get_queryset(self):
         return models.Strategy.objects.filter(owner=self.request.user)
@@ -61,7 +135,7 @@ class MyStrategyDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class SavedSrategyList(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = serializers.StrategySerializer
+    serializer_class = serializers.StrategyDetailSerializer
 
     def get_queryset(self):
         user = self.request.user
@@ -81,27 +155,18 @@ class StrategyList(generics.ListAPIView):
         if 'order_by' not in self.request.query_params:
             raise ValidationError({'order_by': 'is missing.'})
         order_by = self.request.query_params['order_by']
-        order_by = self.convert_order_by(order_by)
+        order_by = models.Strategy.convert_order_by(order_by)
 
         # 1.2 Filters
-        f_keys = f_values = []
-        filters = {}
-        if 'f_keys' in self.request.query_params:
-            if 'f_values' not in self.request.query_params:
-                raise ValidationError({'f_values': 'is missing.'})
-
-            f_keys = self.request.query_params['f_keys'].split(',')
-            f_values = self.request.query_params['f_values'].split(',')
-
-            if len(f_keys) != len(f_values):
-                raise ValidationError({'f_keys': 'is expected to have the same size as "f_values".'})
-
-            for x in range(0, len(f_keys)):
-                if f_keys[x]:
-                    # Key is not empty
-                    filters[f_keys[x]] = f_values[x]
-
-        filters['is_public'] = True  # MANDATORY filter.
+        filters = {'is_public': True}
+        ignore_params = ['is_public', 'order_by', 'page', 'page_size']
+        for k in self.request.query_params:
+            if k not in ignore_params:
+                param = self.request.query_params[k]
+                if utils.is_serializable(param):
+                    filters[k] = json.loads(param)
+                else:
+                    filters[k] = param
 
         # 2. Queryset
         strategies = models.Strategy.objects.filter(**filters)
@@ -109,15 +174,14 @@ class StrategyList(generics.ListAPIView):
 
         return strategies
 
-    def convert_order_by(self, order_by):
-        if 'usage' in order_by:
-            order_by = order_by.replace('usage', 'statistics__runs_last_14_days')
-        elif 'rating' in order_by:
-            order_by = order_by.replace('rating', 'statistics__rating_avg')
-        elif 'saved' in order_by:
-            order_by = order_by.replace('saved', 'statistics__saved_count')
 
-        return order_by
+class StrategyDetail(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = serializers.StrategyDetailSerializer
+    lookup_field = 'uuid'
+
+    def get_queryset(self):
+        return models.Strategy.objects.filter(is_public=True)
 
 
 class StrategyReviewList(generics.ListAPIView):
@@ -130,23 +194,6 @@ class StrategyReviewList(generics.ListAPIView):
         uuid = self.kwargs.get(self.lookup_url_kwarg)
         strategy = get_object_or_404(models.Strategy, uuid=uuid)
         return strategy.ratings.exclude(Q(review__isnull=True) | Q(review=''))
-
-
-@api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
-def strategy_retrieve(request, uuid):
-    is_valid = utils.is_valid_uuid(uuid)
-    if not is_valid:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    strategy = get_object_or_404(models.Strategy, uuid=uuid)
-
-    if strategy.is_public:
-        serializer = serializers.StrategyDetailSerializer(strategy, context={'request': request})
-        return Response(serializer.data)
-
-    res_obj = {'detail': 'not found'}
-    return Response(data=res_obj, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['POST'])

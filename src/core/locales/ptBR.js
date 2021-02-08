@@ -16,6 +16,7 @@ const locale = {
   appnavbar: {
     title_default: "Dashboard",
     title_empty: "",
+    title_home: "Início",
     title_myaccount: "Minha Conta",
     title_openpositions: "Posições Abertas",
     title_phitrader: "Análise Técnica",
@@ -24,9 +25,8 @@ const locale = {
     title_searchresults: "Resultado",
     title_searchstrategyresults: "Estratégias",
     title_searchuserresults: "Usuários",
-    title_strategypanel: "Estratégias",
+    title_strategies: "Meus Ativos",
     title_strategypage: "Estratégia",
-    title_strategygallery: "Estratégias",
     title_userprofile: "Usuário",
     title_usersubscription: "Meu Plano",
     title_walletoverview: "Visão Geral",
@@ -147,6 +147,17 @@ const locale = {
     input_email: "E-mail",
     btn_recover: "Recuperar",
     label_emailSent: "Envei um e-mail para você com instruções para recuperar seu acesso. Dê uma olhada lá, por gentileza. ;)"
+  },
+  home: {
+    label_noWallets_p1: "Hmm... Parece que você ainda tem Carteiras criadas por aqui... Que tal criar a primeira?",
+    label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua e então trazer estratégias mais utilizadas por lá! ;)",
+    btn_goToWallets: "Ir para Carteiras",
+
+    card_shortcuts_title: "Atalhos",
+    card_mostRuns_title: "Tendência no PHIOON",
+    card_topRated_title: "Mais bem Avaliadas",
+    card_classics_title: "Clássicas",
+    card_ma_crossings_title: "Cruzamento de Médias Móveis",
   },
   httptranslation: {
     wallet_limitReached: "Precisa de mais carteiras para gerenciar seus investimentos? Atualize seu plano e aproveite! ;)",
@@ -374,7 +385,7 @@ const locale = {
   modalcreatewallet: {
     title: "Criar Carteira",
     label_intro_p1: "Vejo que você ainda não tem carteiras por aqui...",
-    label_intro_p2: "Que tal criarmos sua primeira carteira? Assim, poderemos criar Posições, acessar Análises Técnicas, e muito mais!",
+    label_intro_p2: "Que tal criarmos sua primeira carteira? Assim, poderemos criar Posições, ver Estratégias, analisar operações do Phi Trader e muito mais!",
 
     input_name: "Nome",
     input_description: "Descrição",
@@ -815,22 +826,6 @@ const locale = {
     label_of: "de",
     label_rows: "linhas",
   },
-  search: {
-    label_noRecentSearch_title: "Procure no PHIOON",
-    label_noRecentSearch_desc: "Encontre usuários e estratégias por todo o mundo...",
-  },
-  searchresults: {
-    card_users_title: "Usuários",
-    card_strategies_title: "Estratégias",
-
-    btn_seeMore: "Ver mais",
-  },
-  searchstrategyresults: {
-    title: "Mostrando Estratégias para"
-  },
-  searchuserresults: {
-    title: "Mostrando Usuários para"
-  },
   recentsearches: {
     btn_clear: "Limpar Pesquisas Recentes"
   },
@@ -874,6 +869,22 @@ const locale = {
     label_basic_noItems_p2: "Tente arrasta-los para esta área.",
     label_basic_onlyOneItem: "Estamos quase lá... Continue arrastando os indicadores para esta área. Preciso de ao menos dois deles aqui. ;)",
     label_explain_gte: ">=",
+  },
+  search: {
+    label_noRecentSearch_title: "Procure no PHIOON",
+    label_noRecentSearch_desc: "Encontre usuários e estratégias por todo o mundo...",
+  },
+  searchresults: {
+    card_users_title: "Usuários",
+    card_strategies_title: "Estratégias",
+
+    btn_seeMore: "Ver mais",
+  },
+  searchstrategyresults: {
+    title: "Mostrando Estratégias para"
+  },
+  searchuserresults: {
+    title: "Mostrando Usuários para"
   },
   sectors: {
     basic_materials: "Materiais Básicos",
@@ -962,23 +973,21 @@ const locale = {
     subscription: "Meu Plano",
     subscriptionMini: "MP",
 
+    home: "Início",
+
     myassets: "Meus Ativos",
     wallets: "Carteiras",
     walletsMini: "C",
     positions: "Posições",
     positionsMini: "P",
+    strategies: "Estratégias",
+    strategiesMini: "E",
 
     dashboards: "Dashboards",
     walletoverview: "Visão Geral",
     walletoverviewMini: "VG",
     openpositions: "Posições Abertas",
     openpositionsMini: "PA",
-
-    strategies: "Estratégias",
-    strategypanel: "Painel",
-    strategypanelMini: "P",
-    strategygallery: "Galeria",
-    strategygalleryMini: "G",
 
     phitrader: "Phi Trader",
     phitraderMini: "PHI",
@@ -995,20 +1004,15 @@ const locale = {
     label_private: "Privada",
     label_private_hint: "Apenas você pode ver esta Estratégia.",
 
-    icon_type_buy_hint: "Estratégia de Compra.",
-    icon_type_sell_hint: "Estratégia de Venda.",
+    icon_type_buy_hint: "Estratégia de Compra",
+    icon_type_sell_hint: "Estratégia de Venda",
 
-    label_cat_basic: "Básica",
-    label_cat_basic_hint: "Procura por movimentos dentro dos 2 últimos períodos (candles). Exemplo: \"Preço superando MME 34.\"",
-    label_cat_advanced: "Avançada",
-    label_cat_advanced_hint: "Geralmente, é bem planejada para identificar movimentos técnicos específicos.",
-
-    label_logic: "Lógica",
     label_dynamic: "Dinâmica",
-    label_dynamic_hint: "Se aplica completamente a qualquer tempo gráfico (semanal, diário, m60...)",
+    label_dynamic_hint: "Se aplica a qualquer tempo gráfico.",
     label_static: "Estática",
     label_static_hint: "Algumas regras estão fixadas para tempos gráficos específicos.",
-    label_category: "Categoria",
+    label_public: "Pública",
+    label_private: "Privada"
   },
   strategycomponents: {
     btn_save: "Adicionar à Salvas",
@@ -1026,19 +1030,6 @@ const locale = {
     btn_share: "Compartilhar",
 
     btn_run_hint: "Executar Estratégia.",
-  },
-  strategygallery: {
-    title: "Galeria",
-
-    label_noWallets_p1: "Hmm... Parece que você ainda tem Carteiras criadas por aqui... Que tal criar a primeira?",
-    label_noWallets_p2: "Dessa forma, vou saber em qual Bolsa de Valores você atua e então trazer estratégias mais utilizadas por lá! ;)",
-    btn_goToWallets: "Ir para Carteiras",
-
-    card_mostRuns_title: "As mais Executadas",
-    card_mostSaved_title: "As mais Salvas",
-
-    label_gallery_noStrategies_p1: "Oops! Algo deu errado.",
-    label_gallery_noStrategies_p2: "Estou avisando meu time sobre isso...",
   },
   strategypage: {
     label_createdBy: "Criada por",
@@ -1063,8 +1054,8 @@ const locale = {
 
     card_indicators_title: "Indicadores",
   },
-  strategypanel: {
-    title: "Painel de Controle",
+  strategies: {
+    title: "Estratégias",
     btn_newStrategy: "Nova Estratégia",
     btn_goToGallery: "Ir para Galeria",
 
@@ -1076,7 +1067,7 @@ const locale = {
     label_myStrategies_noStrategies_p2: "Saiba quando as melhores oportunidades do mercado acontecem em tempo real.",
 
     label_savedStrategies_noStrategies_p1: "Você não tem estratégias salvas ainda... ",
-    label_savedStrategies_noStrategies_p2: "Na Galeria, você encontra as estratégias mais populares entre os usuários. ;)",
+    label_savedStrategies_noStrategies_p2: "Na página Início, você encontra as estratégias mais populares entre os usuários. ;)",
 
     card_myStrategies_title: "Minhas",
     card_savedStrategies_title: "Salvas",

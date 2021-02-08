@@ -14,9 +14,22 @@ const config = {
       syncLimit: 43200,
       version: 0.01
     },
+    myCollections: {
+      syncLimit: 60,
+      version: 0.01
+    },
+    collections: {
+      syncLimit: 60,
+      version: 0.01
+    },
     myStrategies: {
       syncLimit: 15,
       version: 0.03
+    },
+    shortcuts: {
+      // Used only locally. There is no sync with DB...
+      syncLimit: 0,
+      version: 0.01
     },
     savedStrategies: {
       syncLimit: 15,

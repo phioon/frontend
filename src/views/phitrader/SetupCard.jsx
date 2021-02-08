@@ -169,7 +169,7 @@ class SetupCard extends React.Component {
             <Row>
               <Col>
                 <h5 id={"asset_name_" + setup.id}>{setup.asset_label}</h5>
-                <UncontrolledTooltip delay={{ show: 200 }} placement="top-start" target={"asset_name_" + setup.id}>
+                <UncontrolledTooltip placement="top-start" target={"asset_name_" + setup.id}>
                   {setup.asset_name}
                 </UncontrolledTooltip>
               </Col>
@@ -239,7 +239,7 @@ class SetupCard extends React.Component {
                       {" "}
                       <i id={"priceLimit_hint_" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"priceLimit_hint_" + setup.id}>
+                    <UncontrolledTooltip placement="top" target={"priceLimit_hint_" + setup.id}>
                       {getString(prefs.locale, this.compId, "priceLimit_hint")}
                     </UncontrolledTooltip>
                   </Col>
@@ -255,7 +255,7 @@ class SetupCard extends React.Component {
                       {" "}
                       <i id={"stopLoss_hint_" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"stopLoss_hint_" + setup.id}>
+                    <UncontrolledTooltip placement="bottom" target={"stopLoss_hint_" + setup.id}>
                       {getString(prefs.locale, this.compId, "stopLoss_hint")}
                     </UncontrolledTooltip>
                   </Col>
@@ -271,7 +271,7 @@ class SetupCard extends React.Component {
                       {" "}
                       <i id={"target_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"target_hint" + setup.id}>
+                    <UncontrolledTooltip placement="bottom" target={"target_hint" + setup.id}>
                       {getString(prefs.locale, this.compId, "target_hint")}
                     </UncontrolledTooltip>
                   </Col>
@@ -290,7 +290,7 @@ class SetupCard extends React.Component {
                       {" "}
                       <i id={"gainlossPercent_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"gainlossPercent_hint" + setup.id}>
+                    <UncontrolledTooltip placement="bottom" target={"gainlossPercent_hint" + setup.id}>
                       {setup.is_success === false ?
                         getString(prefs.locale, this.compId, "lossPercent_hint") :
                         getString(prefs.locale, this.compId, "gainPercent_hint")
@@ -313,7 +313,7 @@ class SetupCard extends React.Component {
                       {getString(prefs.locale, this.compId, "label_riskReward")}{" "}
                       <i id={"riskReward_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"riskReward_hint" + setup.id}>
+                    <UncontrolledTooltip placement="bottom" target={"riskReward_hint" + setup.id}>
                       {getString(prefs.locale, this.compId, "riskReward_hint")}
                     </UncontrolledTooltip>
                   </Col>
@@ -336,7 +336,7 @@ class SetupCard extends React.Component {
                       {getString(prefs.locale, this.compId, "label_successRate")}{" "}
                       <i id={"successRate_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"successRate_hint" + setup.id}>
+                    <UncontrolledTooltip placement="top" target={"successRate_hint" + setup.id}>
                       {getString(prefs.locale, this.compId, "successRate_hint")}
                     </UncontrolledTooltip>
                   </Col>
@@ -348,7 +348,7 @@ class SetupCard extends React.Component {
                       }
                     </label>
                     {!setup.success_rate &&
-                      <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"successRate_value_hint" + setup.id}>
+                      <UncontrolledTooltip placement="top" target={"successRate_value_hint" + setup.id}>
                         {getString(prefs.locale, this.compId, "notAvailableData_hint")}
                       </UncontrolledTooltip>
                     }
@@ -361,7 +361,7 @@ class SetupCard extends React.Component {
                       {getString(prefs.locale, this.compId, "label_estimatedTime")}{" "}
                       <i id={"estimatedTime_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"estimatedTime_hint" + setup.id}>
+                    <UncontrolledTooltip placement="bottom" target={"estimatedTime_hint" + setup.id}>
                       {getString(prefs.locale, this.compId, "estimatedTime_hint")}
                     </UncontrolledTooltip>
                   </Col>
@@ -373,7 +373,7 @@ class SetupCard extends React.Component {
                       }
                     </label>
                     {!setup.avg_duration_gain &&
-                      <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"estimatedTime_value_hint" + setup.id}>
+                      <UncontrolledTooltip placement="bottom" target={"estimatedTime_value_hint" + setup.id}>
                         {getString(prefs.locale, this.compId, "notAvailableData_hint")}
                       </UncontrolledTooltip>
                     }
@@ -386,7 +386,7 @@ class SetupCard extends React.Component {
                       {getString(prefs.locale, this.compId, "label_occurrencies")}{" "}
                       <i id={"occurrencies_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"occurrencies_hint" + setup.id}>
+                    <UncontrolledTooltip placement="bottom" target={"occurrencies_hint" + setup.id}>
                       {getString(prefs.locale, this.compId, "occurrencies_hint")}
                     </UncontrolledTooltip>
                   </Col>
@@ -403,7 +403,7 @@ class SetupCard extends React.Component {
                       {getString(prefs.locale, this.compId, "label_lastOccurrence")}{" "}
                       <i id={"lastOccurrence_hint" + setup.id} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"lastOccurrence_hint" + setup.id}>
+                    <UncontrolledTooltip placement="bottom" target={"lastOccurrence_hint" + setup.id}>
                       {getString(prefs.locale, this.compId, "lastOccurrence_hint")}
                     </UncontrolledTooltip>
                   </Col>
@@ -415,7 +415,7 @@ class SetupCard extends React.Component {
                       }
                     </label>
                     {!setup.last_ended_occurrence &&
-                      <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"lastOccurrence_value_hint" + setup.id}>
+                      <UncontrolledTooltip placement="bottom" target={"lastOccurrence_value_hint" + setup.id}>
                         {getString(prefs.locale, this.compId, "notAvailableData_hint")}
                       </UncontrolledTooltip>
                     }
@@ -435,7 +435,7 @@ class SetupCard extends React.Component {
             {" "}
             {TimeManager.getLocaleDateString(setup.started_on, false)}
           </h6>
-          <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"startedOn_hint_" + setup.id}>
+          <UncontrolledTooltip placement="top" target={"startedOn_hint_" + setup.id}>
             {getString(prefs.locale, this.compId, "startedOn_hint")}
           </UncontrolledTooltip>
           <br />
@@ -445,7 +445,7 @@ class SetupCard extends React.Component {
               <label id={"progressBar_start_" + setup.id}>
                 {this.handleKpiPresentation("currency", setup.stop_loss)}
               </label>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="top-start" target={"progressBar_start_" + setup.id}>
+              <UncontrolledTooltip placement="top-start" target={"progressBar_start_" + setup.id}>
                 {getString(prefs.locale, this.compId, "progressBar_stopLoss_hint")}
               </UncontrolledTooltip>
             </Col>
@@ -453,7 +453,7 @@ class SetupCard extends React.Component {
               <label id={"progressBar_end_" + setup.id}>
                 {setup.ended_on ? setup.ended_on : this.handleKpiPresentation("currency", setup.target)}
               </label>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="top-end" target={"progressBar_end_" + setup.id}>
+              <UncontrolledTooltip placement="top-end" target={"progressBar_end_" + setup.id}>
                 {setup.ended_on ?
                   getString(prefs.locale, this.compId, "progressBar_endedOn_hint") :
                   getString(prefs.locale, this.compId, "progressBar_target_hint")

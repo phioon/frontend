@@ -23,14 +23,14 @@ import MyAccount from "views/auth/MyAccount.jsx";
 import UserSubscription from "views/subscriptions/UserSubscription.jsx";
 
 // App
+import Home from "views/Home/Home";
 import OpenPositions from "views/wallet/OpenPositions";
 import Positions from "views/myassets/Positions";
 import PhiTrader from "views/phitrader/PhiTrader";
+import StrategyPage from "./views/strategies/StrategyPage";
+import Strategies from "views/myassets/Strategies";
 import WalletOverview from "views/wallet/WalletOverview";
 import Wallets from "views/myassets/Wallets";
-import StrategyPage from "./views/strategies/StrategyPage";
-import StrategyPanel from "views/strategies/StrategyPanel";
-import StrategyGallery from "views/strategies/StrategyGallery";
 
 // Search
 import Search from "views/search/Search";
@@ -182,6 +182,14 @@ const routes = [
   },
   {
     sidebar: true,
+    path: "/home/",
+    name: "home",
+    icon: "nc-icon nc-compass-05",
+    component: Home,
+    layout: "/app"
+  },
+  {
+    sidebar: true,
     collapse: true,
     name: "myassets",
     icon: "nc-icon nc-money-coins",
@@ -199,6 +207,19 @@ const routes = [
         path: "/myassets/positions/",
         name: "positions",
         component: Positions,
+        layout: "/app"
+      },
+      {
+        sidebar: true,
+        path: "/myassets/strategies/",
+        name: "strategies",
+        component: Strategies,
+        layout: "/app"
+      },
+      {
+        path: "/myassets/",
+        name: "wallets",
+        component: Wallets,
         layout: "/app"
       },
     ]
@@ -227,35 +248,20 @@ const routes = [
     ]
   },
   {
-    sidebar: true,
     collapse: true,
     name: "strategies",
     icon: "nc-icon nc-bulb-63",
     state: "tcCollapse",
     views: [
       {
-        sidebar: true,
-        path: "/strategies/panel/",
-        name: "strategypanel",
-        component: StrategyPanel,
-        layout: "/app"
-      },
-      {
-        sidebar: true,
-        path: "/strategies/gallery/",
-        name: "strategygallery",
-        component: StrategyGallery,
-        layout: "/app"
-      },
-      {
         path: "/strategies/:uuid/",
-        name: "strategygallery",
+        name: "strategypage",
         component: StrategyPage,
         layout: "/app"
       },
       {
         path: "/strategies/",
-        name: "strategygallery",
+        name: "home",
         component: StrategyPage,
         layout: "/app"
       },
@@ -269,7 +275,12 @@ const routes = [
     component: PhiTrader,
     layout: "/app"
   },
-
+  {
+    path: "/",
+    name: "home",
+    component: Home,
+    layout: "/app"
+  },
   {
     collapse: true,
     name: "generics",

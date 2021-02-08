@@ -16,6 +16,7 @@ const locale = {
   appnavbar: {
     title_default: "Dashboard",
     title_empty: "",
+    title_home: "Home",
     title_myaccount: "My Account",
     title_openpositions: "Open Positions",
     title_phitrader: "Technical Analysis",
@@ -24,9 +25,8 @@ const locale = {
     title_searchresults: "Results",
     title_searchstrategyresults: "Strategies",
     title_searchuserresults: "Users",
-    title_strategypanel: "Strategies",
+    title_strategies: "My Assets",
     title_strategypage: "Strategy",
-    title_strategygallery: "Strategies",
     title_userprofile: "User",
     title_usersubscription: "My Plan",
     title_walletoverview: "Overview",
@@ -147,6 +147,17 @@ const locale = {
     input_email: "Email",
     btn_recover: "Recover",
     label_emailSent: "I've emailed you instructions for recovering your access. Please, check if you received it. ;)"
+  },
+  home: {
+    label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
+    label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can bring you the most used strategies there! ;)",
+    btn_goToWallets: "Go to Wallets",
+
+    card_shortcuts_title: "Shortcuts",
+    card_mostRuns_title: "Trending on PHIOON",
+    card_topRated_title: "Top Rated",
+    card_classics_title: "Classics",
+    card_ma_crossings_title: "Moving Average Crossing",
   },
   httptranslation: {
     wallet_limitReached: "Need more wallets to manage your investments? Go premium and enjoy it! ;)",
@@ -374,7 +385,7 @@ const locale = {
   modalcreatewallet: {
     title: "Create Wallet",
     label_intro_p1: "I see you don't have a wallet yet...",
-    label_intro_p2: "What if we create your first wallet now? Then, we'll be able to open Positions, take a look at Technical Analysis, and so on!",
+    label_intro_p2: "What if we create your first wallet now? Then, we'll be able to open Positions, see Strategies, check Phi Trader's operations and much more!",
 
     input_name: "Name",
     input_description: "Description",
@@ -473,10 +484,10 @@ const locale = {
   },
   modalopenposition: {
     title: "Open a new Position",
-    hint: "A Position is made of 2 Transactions: Open (e.g Buy) and Close (e.g Sale). For now, only open info is needed.",
+    hint: "A Position is made of 2 Transactions: Open (e.g Buy) and Close (e.g Sell). For now, only open info is needed.",
 
-    input_type_buy: "BUY",
-    input_type_sell: "SELL",
+    input_type_buy: "LONG",
+    input_type_sell: "SHORT",
 
     input_wallet: "Wallet",
     input_asset: "Asset",
@@ -575,9 +586,9 @@ const locale = {
     input_private: "Private",
     input_private_hint: "Only you can see this strategy.",
     input_buy: "Buy",
-    input_buy_hint: "Purchase Strategy.",
+    input_buy_hint: "Buy Strategy.",
     input_sell: "Sell",
-    input_sell_hint: "Sale Strategy.",
+    input_sell_hint: "Sell Strategy.",
 
     label_basic_0: "Now",
     label_basic_0_intro: "How indicators should be aligned on the latest period (candle)?",
@@ -646,8 +657,8 @@ const locale = {
     tab_openInfo: "OPEN",
     tab_closeInfo: "CLOSE",
 
-    input_type_buy: "BUY",
-    input_type_sell: "SELL",
+    input_type_buy: "LONG",
+    input_type_sell: "SHORT",
     input_wallet: "Wallet",
     input_asset: "Asset",
     input_amount: "Amount",
@@ -734,8 +745,8 @@ const locale = {
     "12": "Dec",
   },
   openpositions: {
-    item_buy: "Purchase",
-    item_sell: "Sale",
+    item_buy: "Long",
+    item_sell: "Short",
   },
   pagenotfound: {
     label_title: "Page not available. :(",
@@ -778,8 +789,8 @@ const locale = {
     header_totalCost: "Total Cost",
     header_actions: "Actions",
 
-    item_buy: "Purchase",
-    item_sell: "Sale",
+    item_buy: "Long",
+    item_sell: "Short",
 
     btn_alert_cancel: "Cancel",
     btn_alert_confirm: "Confirm",
@@ -814,22 +825,6 @@ const locale = {
     label_page: "Page",
     label_of: "of",
     label_rows: "rows",
-  },
-  search: {
-    label_noRecentSearch_title: "Search PHIOON",
-    label_noRecentSearch_desc: "Find users and strategies all around the world...",
-  },
-  searchresults: {
-    card_users_title: "Users",
-    card_strategies_title: "Strategies",
-
-    btn_seeMore: "See more",
-  },
-  searchstrategyresults: {
-    title: "Showing Strategies for"
-  },
-  searchuserresults: {
-    title: "Showing Users for"
   },
   recentsearches: {
     btn_clear: "Clear recent searches"
@@ -874,6 +869,22 @@ const locale = {
     label_basic_noItems_p2: "Try dragging and dropping them into this area.",
     label_basic_onlyOneItem: "We're almost there... Keep dropping indicators here. I need at least 2 of them. ;)",
     label_explain_gte: ">=",
+  },
+  search: {
+    label_noRecentSearch_title: "Search PHIOON",
+    label_noRecentSearch_desc: "Find users and strategies all around the world...",
+  },
+  searchresults: {
+    card_users_title: "Users",
+    card_strategies_title: "Strategies",
+
+    btn_seeMore: "See more",
+  },
+  searchstrategyresults: {
+    title: "Showing Strategies for"
+  },
+  searchuserresults: {
+    title: "Showing Users for"
   },
   sectors: {
     basic_materials: "Basic Materials",
@@ -962,23 +973,21 @@ const locale = {
     subscription: "My Plan",
     subscriptionMini: "MP",
 
+    home: "Home",
+
     myassets: "My Assets",
     wallets: "Wallets",
     walletsMini: "W",
     positions: "Positions",
     positionsMini: "P",
+    strategies: "Strategies",
+    strategiesMini: "S",
 
     dashboards: "Dashboards",
     walletoverview: "Overview",
     walletoverviewMini: "O",
     openpositions: "Open Positions",
     openpositionsMini: "OP",
-
-    strategies: "Strategies",
-    strategypanel: "Control Panel",
-    strategypanelMini: "CP",
-    strategygallery: "Gallery",
-    strategygalleryMini: "G",
 
     phitrader: "Phi Trader",
     phitraderMini: "PHI",
@@ -995,20 +1004,15 @@ const locale = {
     label_private: "Private",
     label_private_hint: "Only you can see this strategy.",
 
-    icon_type_buy_hint: "Purchase Strategy.",
-    icon_type_sell_hint: "Sale Strategy.",
+    icon_type_buy_hint: "Buy Strategy",
+    icon_type_sell_hint: "Sell Strategy",
 
-    label_cat_basic: "Basic",
-    label_cat_basic_hint: "It looks for moviments in the last 2 periods (candles). Example: \"Price overcoming EMA 34\".",
-    label_cat_advanced: "Advanced",
-    label_cat_advanced_hint: "It's well planned to find specific moviments and behaviors.",
-
-    label_logic: "Type",
     label_dynamic: "Dynamic",
-    label_dynamic_hint: "It can be completely applied to any time interval (weekly, daily, m60...)",
+    label_dynamic_hint: "Applies to any time interval.",
     label_static: "Static",
-    label_static_hint: "Some rules are fixed to a specific time interval.",
-    label_category: "Category",
+    label_static_hint: "Some rules are fixed to specific time intervals.",
+    label_public: "Public",
+    label_private: "Private"
   },
   strategycomponents: {
     btn_save: "Add to Saved",
@@ -1026,19 +1030,6 @@ const locale = {
     btn_share: "Share",
 
     btn_run_hint: "Run Strategy.",
-  },
-  strategygallery: {
-    title: "Gallery",
-
-    label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
-    label_noWallets_p2: "That way, I'll know which Stock Exchange you operate in, so I can bring you the most used strategies there! ;)",
-    btn_goToWallets: "Go to Wallets",
-
-    card_mostRuns_title: "Most Runs",
-    card_mostSaved_title: "Most Saved",
-
-    label_gallery_noStrategies_p1: "Oops! Something went wrong.",
-    label_gallery_noStrategies_p2: "Let me report my team about that...",
   },
   strategypage: {
     label_createdBy: "Created by",
@@ -1063,9 +1054,9 @@ const locale = {
 
     card_indicators_title: "Indicators",
   },
-  strategypanel: {
-    title: "Control Panel",
-    btn_newStrategy: "New",
+  strategies: {
+    title: "Strategies",
+    btn_newStrategy: "New Strategy",
     btn_goToGallery: "Go to Gallery",
 
     label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
@@ -1076,9 +1067,9 @@ const locale = {
     label_myStrategies_noStrategies_p2: "Be aware when the market's best opportunities happen in real time.",
 
     label_savedStrategies_noStrategies_p1: "You don't have strategies saved yet... ",
-    label_savedStrategies_noStrategies_p2: "You can always go to Gallery and see what most users are using lately. ;)",
+    label_savedStrategies_noStrategies_p2: "You can always go to Home page and see what most users are using lately. ;)",
 
-    card_myStrategies_title: "My Strategies",
+    card_myStrategies_title: "My",
     card_savedStrategies_title: "Saved",
 
     btn_alert_cancel: "Cancel",
@@ -1236,8 +1227,8 @@ const locale = {
     label_title: "Wallets",
   },
   walletoverview: {
-    item_buy: "Purchase",
-    item_sell: "Sale",
+    item_buy: "Long",
+    item_sell: "Short",
 
     item_open: "Open",
     item_closed: "Closed",

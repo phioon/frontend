@@ -291,7 +291,7 @@ class ModalCreateWallet extends React.Component {
                 {" "}
                 <i id={"input_stockExchange_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_stockExchange_hint"}>
+              <UncontrolledTooltip placement="top" target={"input_stockExchange_hint"}>
                 {getString(prefs.locale, this.compId, "input_stockExchange_hint")}
               </UncontrolledTooltip>
               <Select
@@ -310,7 +310,7 @@ class ModalCreateWallet extends React.Component {
                 {" "}
                 <i id={"input_balance_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_balance_hint"}>
+              <UncontrolledTooltip placement="top" target={"input_balance_hint"}>
                 {getString(prefs.locale, this.compId, "input_balance_hint")}
               </UncontrolledTooltip>
               <CurrencyInput

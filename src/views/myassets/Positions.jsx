@@ -188,7 +188,7 @@ class Positions extends React.Component {
               >
                 <i id="position_edit" className="far fa-edit" />
               </Button>{" "}
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"edit_" + obj.id}>
+              <UncontrolledTooltip placement="bottom" target={"edit_" + obj.id}>
                 {getString(prefs.locale, this.compId, "positions_edit_hint")}
               </UncontrolledTooltip>
               {/* use this button to remove the data row */}
@@ -204,7 +204,7 @@ class Positions extends React.Component {
               >
                 <i id="position_delete" className="fa fa-times" />
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"delete_" + obj.id}>
+              <UncontrolledTooltip placement="bottom" target={"delete_" + obj.id}>
                 {getString(prefs.locale, this.compId, "positions_delete_hint")}
               </UncontrolledTooltip>
             </div>

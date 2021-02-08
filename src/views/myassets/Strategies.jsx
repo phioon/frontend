@@ -23,10 +23,10 @@ import ReactBSAlert from "react-bootstrap-sweetalert";
 
 import ModalStrategy from "../modals/strategy/ModalStrategy";
 
-import StrategyCardMini from "./components/StrategyCardMini";
+import StrategyCardMini from "../strategies/components/StrategyCardMini";
 import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
-import CarouselSkeleton from "./components/CarouselSkeleton";
-import CarouselEmpty from "./components/CarouselEmpty";
+import CarouselSkeleton from "../strategies/components/CarouselSkeleton";
+import CarouselEmpty from "../strategies/components/CarouselEmpty";
 import {
   deepCloneObj,
   getDistinctValuesFromList,
@@ -34,7 +34,7 @@ import {
   orderBy,
 } from "../../core/utils";
 
-class StrategyPanel extends React.Component {
+class Strategies extends React.Component {
   constructor(props) {
     super(props);
     this.compId = this.constructor.name.toLowerCase();
@@ -99,17 +99,17 @@ class StrategyPanel extends React.Component {
   }
   getMaxItemsPerSlide() {
     if (window.innerWidth < 576)
-      return 2
-    else if (window.innerWidth < 768)
-      return 2
-    else if (window.innerWidth < 990)
-      return 3
-    else if (window.innerWidth < 1200)
-      return 3
-    else if (window.innerWidth < 1600)
       return 4
-    else
+    else if (window.innerWidth < 768)
+      return 4
+    else if (window.innerWidth < 990)
+      return 6
+    else if (window.innerWidth < 1200)
+      return 6
+    else if (window.innerWidth < 1600)
       return 8
+    else
+      return 16
   }
 
   async prepareRequirements() {
@@ -266,15 +266,19 @@ class StrategyPanel extends React.Component {
         break;
     }
   }
-  runClick(obj) {
+  async runClick(obj) {
     let { selected } = this.state;
 
-    selected.strategy = obj
+    obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
+    selected.strategy = obj.data
 
     this.setState({ selected })
     this.toggleModal("strategyResults")
   }
-  viewClick(obj) {
+  async viewClick(obj) {
+    obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
+    obj = obj.data
+
     let objData = {
       id: obj.id,
       name: obj.name,
@@ -318,7 +322,10 @@ class StrategyPanel extends React.Component {
     this.setState({ action: "create", objData })
     this.toggleModal("strategyDetail")
   }
-  updateClick(obj) {
+  async updateClick(obj) {
+    obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
+    obj = obj.data
+
     let objData = {
       id: obj.id,
       uuid: obj.uuid,
@@ -505,12 +512,12 @@ class StrategyPanel extends React.Component {
               {/* My Strategies */}
               <Card className="card-plain">
                 <CardHeader>
-                  {/* Title and Button*/}
+                  {/* Title and Button */}
                   <Row>
-                    <Col xs="8">
+                    <Col>
                       <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_myStrategies_title")}</CardTitle>
                     </Col>
-                    <Col xs="4" className="text-right">
+                    <Col className="text-right">
                       <Button
                         id="strategy_new"
                         type="submit"
@@ -551,23 +558,7 @@ class StrategyPanel extends React.Component {
               {/* Saved Strategies */}
               <Card className="card-plain">
                 <CardHeader>
-                  {/* Title and Button*/}
-                  <Row>
-                    <Col>
-                      <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_savedStrategies_title")}</CardTitle>
-                    </Col>
-                    <Col className="text-right">
-                      <Button
-                        type="submit"
-                        className="btn-round"
-                        outline
-                        color="success"
-                        onClick={() => this.setState({ redirectTo: "/app/strategies/gallery/" })}
-                      >
-                        {getString(prefs.locale, this.compId, "btn_goToGallery")}
-                      </Button>
-                    </Col>
-                  </Row>
+                  <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_savedStrategies_title")}</CardTitle>
                 </CardHeader>
                 <CardBody>
                   {savedStrategies.slides.length == 0 ?
@@ -601,9 +592,9 @@ class StrategyPanel extends React.Component {
   }
 }
 
-export default StrategyPanel;
+export default Strategies;
 
-StrategyPanel.propTypes = {
+Strategies.propTypes = {
   prefs: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
   managers: PropTypes.object.isRequired,

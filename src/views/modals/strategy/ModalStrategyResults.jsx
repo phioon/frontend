@@ -177,7 +177,7 @@ class ModalStrategyResults extends React.Component {
     let { filters } = this.state;
 
     // Stats...
-    this.props.managers.app.strategyRun(strategy.uuid)
+    this.props.managers.app.strategyRun(strategy)
 
     let stockExchange = await this.props.managers.market.stockExchangeRetrieve(filters.general.stockExchange.value)
     let currency = await this.props.managers.app.currencyRetrieve(stockExchange.currency_code)
@@ -324,7 +324,7 @@ class ModalStrategyResults extends React.Component {
                     {" "}
                     <i id={"input_stockExchange_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
-                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_stockExchange_hint"}>
+                  <UncontrolledTooltip placement="top" target={"input_stockExchange_hint"}>
                     {getString(prefs.locale, this.compId, "input_stockExchange_hint")}
                   </UncontrolledTooltip>
                   <Select
@@ -345,7 +345,7 @@ class ModalStrategyResults extends React.Component {
                     {" "}
                     <i id={"input_interval_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
-                  <UncontrolledTooltip delay={{ show: 200 }} placement="top" target={"input_interval_hint"}>
+                  <UncontrolledTooltip placement="top" target={"input_interval_hint"}>
                     {getString(prefs.locale, this.compId, "input_interval_hint")}
                   </UncontrolledTooltip>
                   <Select

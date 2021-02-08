@@ -96,6 +96,17 @@
             }
         }
 
+        &.btn-orange{
+            color: $new-orange !important;
+
+            &:hover,
+            &:focus,
+            &:active,
+            &:active:focus{
+                color: darken($new-orange, 3%) !important;
+            }
+        }
+
         &.active,
         &:active,
         &:active:focus,

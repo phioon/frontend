@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import classnames from "classnames";
 // reactstrap components
 import {
+  Badge,
   Button,
   Card,
   CardBody,
@@ -16,20 +17,21 @@ import {
   UncontrolledTooltip,
 } from "reactstrap";
 
+import { round } from "../../../core/utils";
+import { Collapse } from "bootstrap";
+
 class StrategyCardMini extends React.Component {
   constructor(props) {
     super(props);
     this.compId = this.constructor.name.toLowerCase();
 
+    this.state = {
+      onHover: undefined
+    }
+
     this.onClick = this.onClick.bind(this);
   }
 
-  getCategoryId(rules) {
-    if (Object.keys(rules.advanced).length > 0)
-      return "label_cat_advanced"
-    else
-      return "label_cat_basic"
-  }
   onClick(action, strategy) {
     this.props.onClick(action, strategy)
 
@@ -42,16 +44,71 @@ class StrategyCardMini extends React.Component {
     }
   }
 
-  renderActions(context) {
-    if (context === "myStrategies")
-      return this.renderMyActions();
-    else if (context === "savedStrategies")
-      return this.renderSavedActions();
+  cutLine(line, limitLength, blankSpaceLookup) {
+    let nextSpace = line.indexOf(" ", blankSpaceLookup)
 
-    else if (context === "mostRuns")
-      return this.renderGalleryActions();
-    else if (context === "mostSaved")
-      return this.renderGalleryActions();
+    if (nextSpace > 0 && nextSpace < limitLength)
+      line = line.substring(0, nextSpace)
+    else
+      line = line.substring(0, limitLength)
+
+    return line
+  }
+  getDescTitle(desc) {
+    let lines = []
+    let title = undefined
+    let addDots = undefined
+    let limitLength = 58
+    let blankSpaceLookup = 50
+
+    if (desc) {
+      lines = desc.split("\n")
+      title = lines[0]
+
+      if (title.length > limitLength) {
+        // Title is long enough for 2 lines
+        title = this.cutLine(title, limitLength, blankSpaceLookup)
+        addDots = true
+      }
+      else if (lines.length > 1) {
+        if (title.length < limitLength / 2) {
+          // Title needs only 1 line. Bring the next line and cut it if needed
+          title += `\n`
+          title += this.cutLine(lines[1], round(limitLength / 2, 0), round(blankSpaceLookup / 2, 0))
+          addDots = true
+        }
+        else
+          addDots = true
+      }
+
+      if (addDots)
+        title += `...`
+    }
+    else {
+      // No description
+      title = ``
+    }
+
+    return title
+  }
+
+  renderActions(context) {
+    let actions = null;
+
+    switch (context) {
+      case "myStrategies":
+        actions = this.renderMyActions();
+        break;
+      case "savedStrategies":
+        actions = this.renderSavedActions();
+        break;
+
+      default:
+        actions = this.renderHomeActions();
+        break;
+    }
+
+    return actions
   }
   renderMyActions() {
     let { prefs, getString, strategy, context, isRunning } = this.props;
@@ -60,7 +117,7 @@ class StrategyCardMini extends React.Component {
       <div className="text-right">
         <UncontrolledDropdown>
           {/* Run */}
-          {this.props.managers.strategy.runBtn(prefs, getString, this.onClick, strategy, isRunning)}
+          {this.props.managers.strategy.runBtn(prefs, getString, this.onClick, strategy, isRunning, context)}
           {/* ... */}
           <DropdownToggle
             className="btn-sm btn-icon btn-round btn-simple"
@@ -72,7 +129,6 @@ class StrategyCardMini extends React.Component {
           <DropdownMenu right>
             {/* Strategy Page */}
             {this.props.managers.strategy.goToStrategyPageBtn(prefs, getString, this.onClick, strategy)}
-            <DropdownItem divider />
             {/* Edit */}
             {strategy.isOwner && this.props.managers.strategy.editBtn(prefs, getString, this.onClick, strategy)}
             {/* Delete */}
@@ -94,7 +150,9 @@ class StrategyCardMini extends React.Component {
       <div className="text-right">
         <UncontrolledDropdown>
           {/* Run */}
-          {this.props.managers.strategy.runBtn(prefs, getString, this.onClick, strategy, isRunning)}
+          {this.props.managers.strategy.runBtn(prefs, getString, this.onClick, strategy, isRunning, context)}
+          {/* Save */}
+          {this.props.managers.strategy.saveBtn(prefs, getString, this.onClick, strategy, context, "btn", "sm")}
           {/* ... */}
           <DropdownToggle
             className="btn-sm btn-icon btn-round btn-simple"
@@ -106,7 +164,6 @@ class StrategyCardMini extends React.Component {
           <DropdownMenu right>
             {/* Strategy Page */}
             {this.props.managers.strategy.goToStrategyPageBtn(prefs, getString, this.onClick, strategy)}
-            <DropdownItem divider />
             {/* Edit */}
             {strategy.isOwner && this.props.managers.strategy.editBtn(prefs, getString, this.onClick, strategy)}
             <DropdownItem divider />
@@ -122,14 +179,16 @@ class StrategyCardMini extends React.Component {
       </div>
     )
   }
-  renderGalleryActions() {
+  renderHomeActions() {
     let { prefs, getString, strategy, context, isRunning } = this.props;
 
     return (
       <div className="text-right">
         <UncontrolledDropdown>
           {/* Run */}
-          {this.props.managers.strategy.runBtn(prefs, getString, this.onClick, strategy, isRunning)}
+          {this.props.managers.strategy.runBtn(prefs, getString, this.onClick, strategy, isRunning, context)}
+          {/* Save */}
+          {this.props.managers.strategy.saveBtn(prefs, getString, this.onClick, strategy, context, "btn", "sm")}
           {/* ... */}
           <DropdownToggle
             className="btn-sm btn-icon btn-round btn-simple"
@@ -141,9 +200,6 @@ class StrategyCardMini extends React.Component {
           <DropdownMenu right>
             {/* Strategy Page */}
             {this.props.managers.strategy.goToStrategyPageBtn(prefs, getString, this.onClick, strategy)}
-            <DropdownItem divider />
-            {/* Edit */}
-            {strategy.isOwner && this.props.managers.strategy.editBtn(prefs, getString, this.onClick, strategy)}
             <DropdownItem divider />
             {/* Save/Unsave */}
             {this.props.managers.strategy.saveBtn(prefs, getString, this.onClick, strategy, context)}
@@ -158,68 +214,84 @@ class StrategyCardMini extends React.Component {
     )
   }
 
-  render() {
-    let { prefs, getString, context, strategy } = this.props;
+  renderStars(value) {
+    let states = [
+      value > 0.75 ? "full" : value > 0.25 ? "half" : "empty",
+      value > 1.75 ? "full" : value > 1.25 ? "half" : "empty",
+      value > 2.75 ? "full" : value > 2.25 ? "half" : "empty",
+      value > 3.75 ? "full" : value > 3.25 ? "half" : "empty",
+      value > 4.75 ? "full" : value > 4.25 ? "half" : "empty",
+    ]
+
+    return states.map((state, i) => {
+      return (
+        <span key={i}>
+          {this.renderStar(state)}
+          {" "}
+        </span>
+      )
+    })
+  }
+  renderStar = (state) => {
+    let iClass = undefined
+    switch (state) {
+      case "empty":
+        iClass = "far fa-star"
+        break;
+      case "half":
+        iClass = "fas fa-star-half-alt"
+        break;
+      case "full":
+        iClass = "fas fa-star"
+        break;
+    }
 
     return (
-      <Card className="card-stats-mini">
+      <small>
+        <i className={iClass} />
+      </small>
+    )
+  }
+
+  render() {
+    let { prefs, getString, context, strategy } = this.props;
+    let { onHover } = this.state;
+
+    return (
+      <Card className="card-stats-mini"
+        onMouseOver={() => this.setState({ onHover: true })}
+        onMouseLeave={() => this.setState({ onHover: false })}
+      >
         <CardBody>
           {/* Name */}
-          <CardTitle draggable>
+          <CardTitle>
+            <a
+              href={this.props.managers.app.strategyPagePath(strategy.uuid)}
+              onClick={e => {
+                e.preventDefault()
+                this.onClick("goToStrategyPage", strategy)
+              }}
+            >
+              <b>{strategy.name}</b>
+            </a>
+            {/* Stars */}
             <Row>
-              <Col xs="9" className="align-center">
-                <a
-                  href={this.props.managers.app.strategyPagePath(strategy.uuid)}
-                  onClick={e => {
-                    e.preventDefault()
-                    this.onClick("goToStrategyPage", strategy)
-                  }}
-                >
-                  {strategy.name}
-                </a>
-              </Col>
-              {/* Save */}
-              {context !== "myStrategies" &&
-                <Col className="text-right">
-                  {this.props.managers.strategy.saveBtn(prefs, getString, this.onClick, strategy, context, "btn")}
-                </Col>
-              }
+              <Button
+                className="btn-neutral"
+                color="orange"
+                size="sm"
+                onClick={() => this.onClick("openReview", strategy)}
+              >
+                {strategy.stats && this.renderStars(strategy.stats.ratings.avg)}
+              </Button>
             </Row>
           </CardTitle>
-          {/* Category */}
-          <Row>
-            <Col>
-              <label>{getString(prefs.locale, this.compId, "label_category")}</label>
-            </Col>
-            <Col className="text-right">
-              <label id={"category__" + strategy.uuid}>
-                {getString(prefs.locale, this.compId, this.getCategoryId(strategy.rules))}
-              </label>
-            </Col>
-            <UncontrolledTooltip delay={{ show: 500 }} placement="top" target={"category__" + strategy.uuid}>
-              {getString(prefs.locale, this.compId, [this.getCategoryId(strategy.rules) + "_hint"])}
-            </UncontrolledTooltip>
-          </Row>
-          {/* Logic */}
-          <Row>
-            <Col>
-              <label>{getString(prefs.locale, this.compId, "label_logic")}</label>
-            </Col>
-            <Col className="text-right">
-              <label id={"logic__" + strategy.uuid}>
-                {strategy.is_dynamic ?
-                  getString(prefs.locale, this.compId, "label_dynamic") :
-                  getString(prefs.locale, this.compId, "label_static")}
-              </label>
-            </Col>
-            <UncontrolledTooltip delay={{ show: 500 }} placement="top" target={"logic__" + strategy.uuid}>
-              {strategy.is_dynamic ?
-                getString(prefs.locale, this.compId, "label_dynamic_hint") :
-                getString(prefs.locale, this.compId, "label_static_hint")
-              }
-            </UncontrolledTooltip>
-          </Row>
-          <br />
+          {/* Desc */}
+          <div className="description-box">
+            <pre className="description">
+              {this.getDescTitle(strategy.desc)}
+            </pre>
+          </div>
           {/* Owner */}
           <Row>
             <Col className="text-right">
@@ -231,23 +303,63 @@ class StrategyCardMini extends React.Component {
                   this.onClick("goToProfile", strategy)
                 }}
               >
-                @{strategy.owner_username}
+                <small>
+                  - @{strategy.owner_username}
+                </small>
               </a>
             </Col>
           </Row>
-
+          <Row>
+            <Col>
+              {/* Logic */}
+              <label>
+                <Badge id={`logic__${context}__${strategy.uuid}`} color="default" pill>
+                  {strategy.is_dynamic ?
+                    getString(prefs.locale, this.compId, "label_dynamic") :
+                    getString(prefs.locale, this.compId, "label_static")}
+                </Badge>
+              </label>
+              <UncontrolledTooltip placement="bottom" target={`logic__${context}__${strategy.uuid}`}>
+                {strategy.is_dynamic ?
+                  getString(prefs.locale, this.compId, "label_dynamic_hint") :
+                  getString(prefs.locale, this.compId, "label_static_hint")
+                }
+              </UncontrolledTooltip>
+              {" "}
+              {context === "myStrategies" &&
+                <label>
+                  <Badge color="default" pill>
+                    {strategy.is_public ?
+                      getString(prefs.locale, this.compId, "label_public") :
+                      getString(prefs.locale, this.compId, "label_private")}
+                  </Badge>
+                </label>
+              }
+            </Col>
+          </Row>
           <hr />
           {/* Action buttons */}
           {this.renderActions(context)}
-
-        </CardBody>
+        </CardBody >
         {/* Background Icon */}
-        <div className={classnames("bg-icon", strategy.type == "buy" ? "icon-success" : "icon-danger")}>
-          {strategy.type == "buy" ?
-            <i className="nc-icon nc-spaceship" /> :
-            <i className="nc-icon nc-spaceship fa-rotate-90" />
+        < div id={`type__${context}__${strategy.uuid}`
+        }
+          className={classnames("bg-icon", strategy.type == "buy" ? "icon-success" : "icon-danger")}
+        >
+          {
+            strategy.type == "buy" ?
+              <i className="nc-icon nc-spaceship" /> :
+              <i className="nc-icon nc-spaceship fa-rotate-90" />
           }
-        </div>
+          < UncontrolledTooltip placement="bottom" target={`type__${context}__${strategy.uuid}`
+          }>
+            {
+              strategy.type == "buy" ?
+                getString(prefs.locale, this.compId, "icon_type_buy_hint") :
+                getString(prefs.locale, this.compId, "icon_type_sell_hint")
+            }
+          </UncontrolledTooltip >
+        </div >
       </Card >
     )
   }

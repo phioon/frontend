@@ -63,7 +63,7 @@ class AmountPositions extends Component {
               >
                 #
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={measure.id + "__number"}>
+              <UncontrolledTooltip placement="bottom" target={measure.id + "__number"}>
                 {measure.number &&
                   getString(prefs.locale, "measures", measure.number.hintId)
                 }

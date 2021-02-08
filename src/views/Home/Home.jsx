@@ -17,16 +17,16 @@ import {
   Row,
 } from "reactstrap";
 
+import ModalNewReview from "../modals/strategy/ModalNewReview";
 import ModalStrategy from "../modals/strategy/ModalStrategy";
 import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
 
-import StrategyCardMini from "./components/StrategyCardMini";
-import CarouselEmpty from "./components/CarouselEmpty";
-import CarouselSkeleton from "./components/CarouselSkeleton";
+import StrategyCardMini from "../strategies/components/StrategyCardMini";
+import CarouselSkeleton from "../strategies/components/CarouselSkeleton";
 
 import { getValueListFromObjList, deepCloneObj } from "../../core/utils";
 
-class StrategyGallery extends React.Component {
+class Home extends React.Component {
   constructor(props) {
     super(props);
     this.compId = this.constructor.name.toLowerCase();
@@ -36,17 +36,33 @@ class StrategyGallery extends React.Component {
       isRunning: false,
       modal_strategyDetail_isOpen: false,
       modal_strategyResults_isOpen: false,
+      modal_strategyReview_isOpen: false,
 
       action: "view",
       objData: {},
 
+      shortcuts: {
+        id: "shortcuts",
+        slides: [],
+        activeIndex: 0,
+      },
       mostRuns: {
         id: "mostRuns",
         slides: [],
         activeIndex: 0,
       },
-      mostSaved: {
-        id: "mostSaved",
+      topRated: {
+        id: "topRated",
+        slides: [],
+        activeIndex: 0,
+      },
+      classics: {
+        id: "classics",
+        slides: [],
+        activeIndex: 0,
+      },
+      ma_crossings: {
+        id: "ma_crossings",
         slides: [],
         activeIndex: 0,
       },
@@ -103,14 +119,24 @@ class StrategyGallery extends React.Component {
     let wallets = await this.props.managers.app.walletData()
     if (wallets.length > 0) {
       let tasks = [
+        this.prepareShortcuts(),
         this.prepareSavedStrategies(),
         this.prepareMostRuns(),
-        this.prepareMostSaved()
+        this.prepareTopRated(),
+        this.prepareCollections()
       ]
       await Promise.all(tasks)
     }
 
     this.setState({ pageFirstLoading: false, cWallets: wallets.length })
+  }
+  async prepareShortcuts() {
+    let shortcuts = await this.props.managers.app.shortcutList()
+    shortcuts = shortcuts.slice(0, 12)
+
+    let carousel = this.prepareSlides(this.state.shortcuts, shortcuts)
+
+    this.setState({ shortcuts: carousel })
   }
   async prepareSavedStrategies() {
     let savedStrategies = await this.props.managers.app.savedStrategyData()
@@ -132,19 +158,40 @@ class StrategyGallery extends React.Component {
 
     this.setState({ mostRuns: carousel })
   }
-  async prepareMostSaved() {
+  async prepareTopRated() {
     // 1. Query
     let query = {
       filters: {},
-      order_by: "-saved"
+      order_by: "-rating"
     }
     // 2. Strategies
     let strategies = await this.props.managers.app.strategyData(false, query)
 
     // 3. Carousel
-    let carousel = this.prepareSlides(this.state.mostSaved, strategies.results)
+    let carousel = this.prepareSlides(this.state.topRated, strategies.results)
 
-    this.setState({ mostSaved: carousel })
+    this.setState({ topRated: carousel })
+  }
+  // Collections
+  async prepareCollections() {
+    // 1. Query
+    let query = {
+      filters: {
+        owner__username: "phioon",
+        name__in: ["classics", "ma_crossings"]
+      },
+      order_by: "-usage"
+    }
+
+    let collections = await this.props.managers.app.collectionData(false, query)
+
+    for (var col of collections)
+      this.prepareCollection(col)
+  }
+  prepareCollection(collection) {
+    let carousel = this.prepareSlides(this.state[collection.name], collection.strategies)
+
+    this.setState({ [collection.name]: carousel })
   }
 
   prepareSlides(carousel, strategies) {
@@ -182,6 +229,12 @@ class StrategyGallery extends React.Component {
       case "save":
         await this.saveClick(obj)
         break;
+      case "rate":
+        this.rateClick(obj)
+        break;
+      case "openReview":
+        this.openReviewClick(obj)
+        break;
       case "share":
         this.shareClick(obj.uuid)
         break;
@@ -193,17 +246,20 @@ class StrategyGallery extends React.Component {
         break;
     }
   }
-  runClick(obj) {
+  async runClick(obj) {
     let { selected } = this.state;
 
-    selected.strategy = obj
+    obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
+    selected.strategy = obj.data
 
     this.setState({ selected })
     this.toggleModal("strategyResults")
   }
-  viewClick(obj) {
+  async viewClick(obj) {
+    obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
+    obj = obj.data
+
     let objData = {
-      id: obj.id,
       name: obj.name,
       desc: obj.desc,
       type: obj.type,
@@ -223,6 +279,17 @@ class StrategyGallery extends React.Component {
 
     this.prepareSavedStrategies()
   }
+  openReviewClick(obj) {
+    let { selected } = this.state;
+
+    selected.strategy = obj
+
+    this.setState({ selected })
+    this.toggleModal("strategyReview")
+  }
+  async rateClick(obj) {
+    await this.props.managers.app.strategyRate(obj)
+  }
   shareClick(uuid) {
     let { getString, prefs } = this.props;
 
@@ -241,6 +308,58 @@ class StrategyGallery extends React.Component {
     this.props.history.push(path)
   }
 
+  carouselSkeleton(prefs, getString) {
+    return (
+      <>
+        <Card className="card-plain">
+          <CardHeader>
+            <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_mostRuns_title")}</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <CarouselSkeleton />
+          </CardBody>
+        </Card>
+        <Card className="card-plain">
+          <CardHeader>
+            <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_topRated_title")}</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <CarouselSkeleton />
+          </CardBody>
+        </Card>
+      </>
+    )
+  }
+  carousel(carousel) {
+    let { prefs, getString } = this.props;
+
+    if (carousel.slides.length > 0)
+      return (
+        <Card className="card-plain">
+          <CardHeader>
+            <CardTitle tag="h4" className="description">
+              {getString(prefs.locale, this.compId, `card_${carousel.id}_title`)}
+            </CardTitle>
+          </CardHeader>
+          <CardBody>
+            <Carousel
+              activeIndex={carousel.activeIndex}
+              next={() => this.moveSlide(carousel, "next")}
+              previous={() => this.moveSlide(carousel, "previous")}
+              interval={false}>
+              <CarouselIndicators
+                items={Object.keys(carousel.slides)}
+                activeIndex={carousel.activeIndex}
+                onClickHandler={index => this.moveSlide(carousel, "goto", index)}
+              />
+              {this.renderStrategySlides(carousel.id, carousel.slides)}
+              <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide(carousel, "previous")} />
+              <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide(carousel, "next")} />
+            </Carousel>
+          </CardBody>
+        </Card>
+      )
+  }
   renderNoWalletsCard(prefs, getString) {
     return (
       <Card className="card-stats">
@@ -349,12 +468,16 @@ class StrategyGallery extends React.Component {
       isRunning,
       modal_strategyDetail_isOpen,
       modal_strategyResults_isOpen,
+      modal_strategyReview_isOpen,
 
       action,
       objData,
 
+      shortcuts,
       mostRuns,
-      mostSaved,
+      topRated,
+      classics,
+      ma_crossings,
 
       selected,
       cWallets,
@@ -364,6 +487,16 @@ class StrategyGallery extends React.Component {
 
     return (
       <div className="content">
+        <ModalNewReview
+          prefs={prefs}
+          getString={getString}
+          managers={this.props.managers}
+          modalId="strategyReview"
+          isOpen={modal_strategyReview_isOpen}
+          toggleModal={this.toggleModal}
+          onClick={this.onClick}
+          strategy={selected.strategy}
+        />
         <ModalStrategy
           {...this.props}
           modalId="strategyDetail"
@@ -382,90 +515,24 @@ class StrategyGallery extends React.Component {
           onClick={this.onClick}
           strategy={selected.strategy}
         />
-        <div className="header text-center">
-          <h3 className="title">{getString(prefs.locale, this.compId, "title")}</h3>
-        </div>
         {pageFirstLoading ?
           // Carousel Skeleton
-          <>
-            <Card className="card-plain">
-              <CardHeader>
-                <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_mostRuns_title")}</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <CarouselSkeleton />
-              </CardBody>
-            </Card>
-            <Card className="card-plain">
-              <CardHeader>
-                <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_mostSaved_title")}</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <CarouselSkeleton />
-              </CardBody>
-            </Card>
-          </> :
+          this.carouselSkeleton(prefs, getString) :
 
           cWallets == 0 ?
             // No Wallets
             this.renderNoWalletsCard(prefs, getString) :
             <>
+              {/* Shortcuts */}
+              {this.carousel(shortcuts)}
               {/* Most Runs */}
-              <Card className="card-plain">
-                <CardHeader>
-                  <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_mostRuns_title")}</CardTitle>
-                </CardHeader>
-                <CardBody>
-                  {mostRuns.slides.length == 0 ?
-                    <CarouselEmpty
-                      prefs={prefs}
-                      getString={getString}
-                      compId={this.compId} /> :
-                    <Carousel
-                      activeIndex={mostRuns.activeIndex}
-                      next={() => this.moveSlide(mostRuns, "next")}
-                      previous={() => this.moveSlide(mostRuns, "previous")}
-                      interval={false}>
-                      <CarouselIndicators
-                        items={Object.keys(mostRuns.slides)}
-                        activeIndex={mostRuns.activeIndex}
-                        onClickHandler={index => this.moveSlide(mostRuns, "goto", index)}
-                      />
-                      {this.renderStrategySlides(mostRuns.id, mostRuns.slides)}
-                      <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide(mostRuns, "previous")} />
-                      <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide(mostRuns, "next")} />
-                    </Carousel>
-                  }
-                </CardBody>
-              </Card>
-              {/* Most Saved */}
-              <Card className="card-plain">
-                <CardHeader>
-                  <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_mostSaved_title")}</CardTitle>
-                </CardHeader>
-                <CardBody>
-                  {mostSaved.slides.length == 0 ?
-                    <CarouselEmpty
-                      prefs={prefs}
-                      getString={getString}
-                      compId={this.compId} /> :
-                    <Carousel
-                      activeIndex={mostSaved.activeIndex}
-                      next={() => this.moveSlide(mostSaved, "next")}
-                      previous={() => this.moveSlide(mostSaved, "previous")}
-                      interval={false}>
-                      <CarouselIndicators
-                        items={Object.keys(mostSaved.slides)}
-                        activeIndex={mostSaved.activeIndex}
-                        onClickHandler={index => this.moveSlide(mostSaved, "goto", index)}
-                      />
-                      {this.renderStrategySlides(mostSaved.id, mostSaved.slides)}
-                      <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => this.moveSlide(mostSaved, "previous")} />
-                      <CarouselControl direction="next" directionText="Next" onClickHandler={() => this.moveSlide(mostSaved, "next")} />
-                    </Carousel>
-                  }
-                </CardBody>
-              </Card>
+              {this.carousel(mostRuns)}
+              {/* Classics */}
+              {this.carousel(classics)}
+              {/* MA Crossings */}
+              {this.carousel(ma_crossings)}
+              {/* Top Rated */}
+              {this.carousel(topRated)}
             </>
         }
         {redirectTo && <Redirect to={redirectTo} />}
@@ -474,9 +541,9 @@ class StrategyGallery extends React.Component {
   }
 }
 
-export default StrategyGallery;
+export default Home;
 
-StrategyGallery.propTypes = {
+Home.propTypes = {
   prefs: PropTypes.object.isRequired,
   getString: PropTypes.func.isRequired,
   managers: PropTypes.object.isRequired,

@@ -114,7 +114,7 @@ class Wallets extends React.Component {
                 <i id="wallet_edit" className="far fa-edit" />
               </Button>
               {" "}
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"edit_" + obj.id}>
+              <UncontrolledTooltip placement="bottom" target={"edit_" + obj.id}>
                 {getString(prefs.locale, this.compId, "wallets_edit_hint")}
               </UncontrolledTooltip>
               {/* use this button to remove the data row */}
@@ -130,7 +130,7 @@ class Wallets extends React.Component {
               >
                 <i id="wallet_delete" className="fa fa-times" />
               </Button>
-              <UncontrolledTooltip delay={{ show: 200 }} placement="bottom" target={"delete_" + obj.id}>
+              <UncontrolledTooltip placement="bottom" target={"delete_" + obj.id}>
                 {getString(prefs.locale, this.compId, "wallets_delete_hint")}
               </UncontrolledTooltip>
             </div>

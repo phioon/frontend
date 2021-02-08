@@ -6,6 +6,7 @@ import {
   getObjsFieldNotNull,
   getObjsFieldNull,
   httpRequest,
+  indexOfObj,
   joinObjLists,
   orderBy,
   retrieveObjFromObjList,
@@ -57,6 +58,22 @@ class AppManager {
           }
         },
         request: "/api/app/positions/"
+      },
+      wsMyCollections: {
+        options: {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        },
+        request: "/api/app/mycollections/"
+      },
+      wsCollections: {
+        options: {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        },
+        request: "/api/app/collections/"
       },
       wsMyStrategies: {
         options: {
@@ -546,9 +563,127 @@ class AppManager {
     return dimension
   }
 
+  // My Collections
+  async myCollectionList(syncFull = false) {
+    const sKey = "myCollections"
+    await this.startRequest(sKey)
+    let result = undefined
+
+    if (!syncFull) {
+      result = await StorageManager.isUpToDate(this.sModule, sKey)
+      if (result) {
+        this.finishRequest(sKey)
+        return result
+      }
+    }
+
+    let wsInfo = this.getApi("wsMyCollections")
+    wsInfo.method = "get"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    if (result.status == 200)
+      result = await StorageManager.store(sKey, result.data)
+    else {
+      this.getHttpTranslation(result, "mycollectionlist", "collection", true)
+      result = await StorageManager.getItem(sKey)
+    }
+
+    this.finishRequest(sKey)
+    return result
+  }
+  async myCollectionData(syncFull = false) {
+    let sItem = await this.myCollectionList(syncFull)
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
+  }
+
+  // Collections (Review it)
+  async collectionList(syncFull = false, query) {
+    // [!] Do not implement this.startRequest(). It was made to process concurrent calls...
+    const sKey = "collections"
+    let result = undefined
+
+    query = this.formatedQuery(query)
+    let strQueryParams = this.queryParamsAsString(query)
+
+    if (!syncFull) {
+      result = await StorageManager.isUpToDate(this.sModule, sKey, strQueryParams)
+      if (result) {
+        return result
+      }
+    }
+
+    let wsInfo = this.getApi("wsCollections")
+    wsInfo.method = "get"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+    wsInfo.params = query
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, wsInfo.params)
+
+    if (result.status == 200)
+      result = await StorageManager.store(sKey, result.data, strQueryParams)
+    else {
+      this.getHttpTranslation(result, "collectionlist", "collection", true)
+      result = await StorageManager.getItem(sKey, strQueryParams)
+    }
+
+    return result
+  }
+  async collectionData(syncFull = false, query) {
+    let sItem = await this.collectionList(syncFull, query)
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
+  }
+  async collectionStrategyList(pk) {
+    const sKey = "strategies"
+
+    let strQueryParams = `collection__id=${pk}`
+
+    let result = await StorageManager.isUpToDate(this.sModule, sKey, strQueryParams)
+    if (result) {
+      return result
+    }
+
+    let wsInfo = this.getApi("wsCollections")
+    wsInfo.request += `${pk}/strategies/`
+    wsInfo.method = "get"
+    wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
+
+    result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    // Figure out the best way to store this data. Following approach will not work.
+
+    if (result.status == 200)
+      result = await StorageManager.store(sKey, result.data, strQueryParams)
+    else {
+      this.getHttpTranslation(result, "collectionstrategylist", "strategy", true)
+      result = await StorageManager.getItem(sKey, strQueryParams)
+    }
+
+    return result
+  }
+  async collectionStrategyData(pk) {
+    let sItem = await this.collectionStrategyList(pk)
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
+  }
+
   // My Strategies
   async myStrategyList(syncFull = false) {
     const sKey = "myStrategies"
+    const sKey_strategies = "strategies"
     await this.startRequest(sKey)
     let result = undefined
 
@@ -565,8 +700,14 @@ class AppManager {
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
-    if (result.status == 200)
+    if (result.status == 200) {
       result = await StorageManager.store(sKey, result.data)
+
+      for (var item of result.data) {
+        // MyStrategy uses detailed serializer. So keep it stored in [Strategies] too...
+        await StorageManager.store(sKey_strategies, item, item.uuid)
+      }
+    }
     else {
       this.getHttpTranslation(result, "mystrategylist", "strategy", true)
       result = await StorageManager.getItem(sKey)
@@ -612,7 +753,7 @@ class AppManager {
     const sKey_strategies = "strategies"
 
     let wsInfo = this.getApi("wsMyStrategies")
-    wsInfo.request += strategy.id + "/"
+    wsInfo.request += strategy.uuid + "/"
     wsInfo.method = "patch"
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, null, strategy)
@@ -634,7 +775,7 @@ class AppManager {
     const sKey_strategies = "strategies"
 
     var wsInfo = this.getApi("wsMyStrategies")
-    wsInfo.request += strategy.id + "/"
+    wsInfo.request += strategy.uuid + "/"
     wsInfo.method = "delete"
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
@@ -655,6 +796,7 @@ class AppManager {
   // Saved Strategies
   async savedStrategyList(syncFull = false) {
     const sKey = "savedStrategies"
+    const sKey_strategies = "strategies"
     await this.startRequest(sKey)
     let result = undefined
 
@@ -672,8 +814,14 @@ class AppManager {
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
     result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
 
-    if (result.status == 200)
+    if (result.status == 200) {
       result = await StorageManager.store(sKey, result.data)
+
+      for (var item of result.data) {
+        // MyStrategy uses detailed serializer. So keep it stored in [Strategies] too...
+        await StorageManager.store(sKey_strategies, item, item.uuid)
+      }
+    }
     else {
       this.getHttpTranslation(result, "savedstrategylist", "strategy", true)
       result = await StorageManager.getItem(sKey)
@@ -706,7 +854,6 @@ class AppManager {
       query.page = 1
 
     query = this.formatedQuery(query)
-
     let strQueryParams = this.queryParamsAsString(query)
 
     if (!syncFull) {
@@ -803,13 +950,15 @@ class AppManager {
 
     return result
   }
-  async strategyRun(uuid) {
+  async strategyRun(strategy) {
     let wsInfo = this.getApi("wsStrategies")
-    wsInfo.request += uuid + "/run/"
+    wsInfo.request += strategy.uuid + "/run/"
     wsInfo.method = "post"
     wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
 
     let result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers)
+
+    this.shortcutAdd(strategy, "strategy")
 
     if (result.status !== 200)
       this.getHttpTranslation(result, "strategyrun", "strategy")
@@ -867,18 +1016,10 @@ class AppManager {
         case "filters":
           if (Object.keys(v0).length > 0) {
             // Object has data...
-            formatedQuery["f_keys"] = ""
-            formatedQuery["f_values"] = ""
-
-            for (var [k0, v0] of Object.entries(v0)) {
+            for (var [k1, v1] of Object.entries(v0)) {
               // For each filter...
-              formatedQuery["f_keys"] += `${String(k0)},`
-              formatedQuery["f_values"] += `${String(v0)},`
+              formatedQuery[k1] = JSON.stringify(v1)
             }
-
-            // Remove last comma...
-            formatedQuery["f_keys"] = formatedQuery["f_keys"].slice(0, -1)
-            formatedQuery["f_values"] = formatedQuery["f_values"].slice(0, -1)
           }
           break;
         default:
@@ -910,6 +1051,61 @@ class AppManager {
   }
   strategyPagePath(uuid) {
     return `/app/strategies/${uuid}/`
+  }
+
+  // Shortcuts
+  async shortcutList() {
+    // Stack structure. Last added item appears first.
+    const sKey = "shortcuts"
+
+    let sData = await StorageManager.getData(sKey)
+    if (!sData)
+      sData = []
+
+    return sData
+  }
+  async shortcutAdd(obj, context) {
+    const sKey = "shortcuts"
+
+    obj.context = context
+    let keyField = undefined
+
+    switch (context) {
+      case "strategy":
+        keyField = "uuid"
+        break;
+      case "user":
+        keyField = "username"
+        break;
+      default:
+        return
+    }
+
+    let sData = await StorageManager.getData(sKey)
+    if (sData) {
+      // There are stored shortcuts...
+      // Removes older shortcut for the same object (if it exists)
+      let index = indexOfObj(sData, keyField, obj[keyField])
+
+      if (index >= 0)
+        sData = await this.shortcutRemove(index)
+    }
+    else
+      sData = []
+
+    sData.splice(0, 0, obj)
+
+    return await StorageManager.store(sKey, sData)
+  }
+  async shortcutRemove(index) {
+    const sKey = "shortcuts"
+    let sData = await StorageManager.getData(sKey)
+
+    if (sData && index >= 0) {
+      sData.splice(index, 1)
+      await StorageManager.store(sKey, sData)
+    }
+    return sData
   }
 
   // Position Type
