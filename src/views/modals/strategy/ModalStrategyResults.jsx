@@ -61,6 +61,7 @@ class ModalStrategyResults extends React.Component {
     }
 
     this.toggleModal = this.toggleModal.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
   componentDidMount() {
     this.prepareRequirements()
@@ -168,6 +169,9 @@ class ModalStrategyResults extends React.Component {
     switch (action) {
       case "run":
         this.runClick(obj)
+        break;
+      default:
+        this.props.onClick(action, obj)
         break;
     }
   }
@@ -282,6 +286,7 @@ class ModalStrategyResults extends React.Component {
           modalId="strategyReview"
           isOpen={modal_strategyReview_isOpen}
           toggleModal={this.toggleModal}
+          onClick={this.onClick}
           strategy={strategy}
         />
         <Card className="card-plain">

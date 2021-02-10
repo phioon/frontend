@@ -269,11 +269,12 @@ class Strategies extends React.Component {
   async runClick(obj) {
     let { selected } = this.state;
 
+    this.toggleModal("strategyResults")
+
     obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
     selected.strategy = obj.data
 
     this.setState({ selected })
-    this.toggleModal("strategyResults")
   }
   async viewClick(obj) {
     obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
@@ -419,6 +420,32 @@ class Strategies extends React.Component {
       </Card>
     )
   }
+  carouselSkeleton(prefs, getString) {
+    return (
+      <>
+        <Card className="card-plain">
+          <CardHeader>
+            <CardTitle tag="h3" className="description">
+              {getString(prefs.locale, this.compId, "card_myStrategies_title")}
+            </CardTitle>
+          </CardHeader>
+          <CardBody>
+            <CarouselSkeleton />
+          </CardBody>
+        </Card>
+        <Card className="card-plain">
+          <CardHeader>
+            <CardTitle tag="h3" className="description">
+              {getString(prefs.locale, this.compId, "card_savedStrategies_title")}
+            </CardTitle>
+          </CardHeader>
+          <CardBody>
+            <CarouselSkeleton />
+          </CardBody>
+        </Card>
+      </>
+    )
+  }
 
   setFlag(context, value) {
     this.setState({ [`is${context}`]: value })
@@ -486,24 +513,7 @@ class Strategies extends React.Component {
 
         {pageFirstLoading ?
           // Carousel Skeleton
-          <>
-            <Card className="card-plain">
-              <CardHeader>
-                <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_myStrategies_title")}</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <CarouselSkeleton />
-              </CardBody>
-            </Card>
-            <Card className="card-plain">
-              <CardHeader>
-                <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_savedStrategies_title")}</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <CarouselSkeleton />
-              </CardBody>
-            </Card>
-          </> :
+          this.carouselSkeleton(prefs, getString) :
 
           cWallets == 0 ?
             // No wallets
@@ -515,7 +525,9 @@ class Strategies extends React.Component {
                   {/* Title and Button */}
                   <Row>
                     <Col>
-                      <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_myStrategies_title")}</CardTitle>
+                      <CardTitle tag="h3" className="description">
+                        {getString(prefs.locale, this.compId, "card_myStrategies_title")}
+                      </CardTitle>
                     </Col>
                     <Col className="text-right">
                       <Button
@@ -558,7 +570,9 @@ class Strategies extends React.Component {
               {/* Saved Strategies */}
               <Card className="card-plain">
                 <CardHeader>
-                  <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_savedStrategies_title")}</CardTitle>
+                  <CardTitle tag="h3" className="description">
+                    {getString(prefs.locale, this.compId, "card_savedStrategies_title")}
+                  </CardTitle>
                 </CardHeader>
                 <CardBody>
                   {savedStrategies.slides.length == 0 ?

@@ -512,6 +512,18 @@ larry_williams_9_1_long = {
                     "slope": {
                         "<": [
                             {
+                                "var": "<interval>_ema_close9__p3"
+                            },
+                            {
+                                "var": "<interval>_ema_close9__p4"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "slope": {
+                        "<": [
+                            {
                                 "var": "<interval>_ema_close9__p2"
                             },
                             {
@@ -586,6 +598,18 @@ larry_williams_9_1_short = {
         "basic_1": {},
         "advanced": {
             "and": [
+                {
+                    "slope": {
+                        ">": [
+                            {
+                                "var": "<interval>_ema_close9__p3"
+                            },
+                            {
+                                "var": "<interval>_ema_close9__p4"
+                            }
+                        ]
+                    }
+                },
                 {
                     "slope": {
                         ">": [
@@ -706,6 +730,18 @@ larry_williams_9_2_9_3_long = {
                             }
                         ]
                     }
+                },
+                {
+                    "comparison": {
+                        ">=": [
+                            {
+                                "var": "<interval>_low__p1"
+                            },
+                            {
+                                "var": "<interval>_low__p0"
+                            }
+                        ]
+                    }
                 }
             ]
         }
@@ -800,6 +836,18 @@ larry_williams_9_2_9_3_short = {
                             },
                             {
                                 "var": "<interval>_low__p0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "comparison": {
+                        "<=": [
+                            {
+                                "var": "<interval>_high__p1"
+                            },
+                            {
+                                "var": "<interval>_high__p0"
                             }
                         ]
                     }

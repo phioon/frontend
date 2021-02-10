@@ -13,7 +13,7 @@ function SkeletonCol() {
   return (
     <Col xl={window.innerWidth > 1600 ? "2" : "3"} lg="4" md="4" sm="6" >
       <Card className="card-plain">
-        <Skeleton height={115} />
+        <Skeleton height={275} />
       </Card>
     </Col>
   )

@@ -249,11 +249,12 @@ class Home extends React.Component {
   async runClick(obj) {
     let { selected } = this.state;
 
+    this.toggleModal("strategyResults")
+
     obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
     selected.strategy = obj.data
 
     this.setState({ selected })
-    this.toggleModal("strategyResults")
   }
   async viewClick(obj) {
     obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
@@ -313,7 +314,9 @@ class Home extends React.Component {
       <>
         <Card className="card-plain">
           <CardHeader>
-            <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_mostRuns_title")}</CardTitle>
+            <CardTitle tag="h3" className="description">
+              {getString(prefs.locale, this.compId, "card_shortcuts_title")}
+            </CardTitle>
           </CardHeader>
           <CardBody>
             <CarouselSkeleton />
@@ -321,7 +324,19 @@ class Home extends React.Component {
         </Card>
         <Card className="card-plain">
           <CardHeader>
-            <CardTitle tag="h4">{getString(prefs.locale, this.compId, "card_topRated_title")}</CardTitle>
+            <CardTitle tag="h3" className="description">
+              {getString(prefs.locale, this.compId, "card_mostRuns_title")}
+            </CardTitle>
+          </CardHeader>
+          <CardBody>
+            <CarouselSkeleton />
+          </CardBody>
+        </Card>
+        <Card className="card-plain">
+          <CardHeader>
+            <CardTitle tag="h3" className="description">
+              {getString(prefs.locale, this.compId, "card_topRated_title")}
+            </CardTitle>
           </CardHeader>
           <CardBody>
             <CarouselSkeleton />
@@ -337,7 +352,7 @@ class Home extends React.Component {
       return (
         <Card className="card-plain">
           <CardHeader>
-            <CardTitle tag="h4" className="description">
+            <CardTitle tag="h3" className="description">
               {getString(prefs.locale, this.compId, `card_${carousel.id}_title`)}
             </CardTitle>
           </CardHeader>
