@@ -590,10 +590,10 @@ const locale = {
     input_sell: "Sell",
     input_sell_hint: "Sell Strategy.",
 
-    label_basic_0: "Now",
-    label_basic_0_intro: "How indicators should be aligned on the latest period (candle)?",
-    label_basic_1: "Before",
-    label_basic_1_intro: "How indicators should be aligned on the previous period (candle)?",
+    label_basic_0: "Last Candle",
+    label_basic_0_intro: "Define how indicators should be aligned",
+    label_basic_1: "Previous Candle",
+    label_basic_1_intro: "Define how indicators should be aligned",
     btn_goToRules: "See rules...",
     btn_goToExplainer: "See explanation...",
 
