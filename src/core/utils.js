@@ -439,6 +439,16 @@ export function getIconFromURL(value) {
 }
 
 // String
+export function cutLine(line, limitLength, blankSpaceLookup) {
+  let nextSpace = line.indexOf(" ", blankSpaceLookup)
+
+  if (nextSpace > 0 && nextSpace < limitLength)
+    line = line.substring(0, nextSpace)
+  else
+    line = line.substring(0, limitLength)
+
+  return line
+}
 export function substringText(text, maxLength) {
   text = String(text)
   maxLength = maxLength - 3
@@ -513,6 +523,7 @@ export function verifyLength(value, minLen, maxLen = undefined) {
   return false;
 }
 export function verifyOnlyLetters(value) {
+  value = value.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   return /^[a-zA-Z- ]+$/.test(value);
 }
 export function verifyURL(value) {

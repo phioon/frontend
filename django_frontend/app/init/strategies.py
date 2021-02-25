@@ -1040,3 +1040,218 @@ larry_williams_9_4_short = {
         }
     }
 }
+# Classis
+pc_long = {
+    'name': '[Compra] Ponto Contínuo',
+    'is_public': True,
+    'is_dynamic': True,
+    'type': 'buy',
+    'tags': ["high", "sma_close21", "low"],
+    'desc': '• [Preço] em tendência de alta sofre pullback, se aproxima da [MMA 21] e pode retomar tendência.\n'
+            '\n'
+            '• Contexto:\n'
+            '  1. Ativo em tendência de alta.\n'
+            '  2. [Preço] fez pullback.\n'
+            '  3. [MMA 21] e [Mínima] ficam muito próximas (0,38%). [Candle R1] é o candle mais próximo da [MMA 21].\n'
+            '  4. Em todo o momento, [MMA 21] permanece inclinada para cima.\n'
+            '\n'
+            'Quando entrar? Quando o [Preço] romper a [Máxima] do [Candle R1].\n'
+            'Stop Loss? Na [Mínima] do [Candle R1].\n'
+            '\n'
+            '• Glossário:\n'
+            '  .. MMA = Média Móvel Aritmética ou Simples\n'
+            '  .. Candle R* = Candle ou período de tempo considerado como Referência para o setup.\n'
+            '\n'
+            '#classics #PontoContinuo #PC #mediaMovel',
+    'rules': {
+        "basic_0": {
+            "and": [
+                {
+                    ">": [
+                        {
+                            "var": "<interval>_high__p0"
+                        },
+                        {
+                            "var": "<interval>_sma_close21__p0"
+                        }
+                    ]
+                }
+            ]
+        },
+        "basic_1": {},
+        "advanced": {
+            "and": [
+                {
+                    "slope": {
+                        ">": [
+                            {
+                                "var": "<interval>_sma_close21__p3"
+                            },
+                            {
+                                "var": "<interval>_sma_close21__p4"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "slope": {
+                        ">": [
+                            {
+                                "var": "<interval>_sma_close21__p0"
+                            },
+                            {
+                                "var": "<interval>_sma_close21__p1"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "distance": {
+                        "distance": [
+                            {
+                                "var": "<interval>_sma_close21__p0"
+                            },
+                            {
+                                "var": "<interval>_low__p0"
+                            },
+                            {
+                                "perc": 0.38
+                            }
+                        ]
+                    }
+                },
+                {
+                    "comparison": {
+                        ">=": [
+                            {
+                                "var": "<interval>_high__p1"
+                            },
+                            {
+                                "var": "<interval>_high__p0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "comparison": {
+                        ">=": [
+                            {
+                                "var": "<interval>_low__p1"
+                            },
+                            {
+                                "var": "<interval>_low__p0"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}
+pc_short = {
+    'name': '[Venda] Ponto Contínuo',
+    'is_public': True,
+    'is_dynamic': True,
+    'type': 'sell',
+    'tags': ["high", "sma_close21", "low"],
+    'desc': '• [Preço] em tendência de baixa sofre pullback, se aproxima da [MMA 21] e pode retomar tendência.\n'
+            '\n'
+            '• Contexto:\n'
+            '  1. Ativo em tendência de baixa.\n'
+            '  2. [Preço] fez pullback.\n'
+            '  3. [MMA 21] e [Máxima] ficam muito próximas (0,38%). [Candle R1] é o candle mais próximo da [MMA 21].\n'
+            '  4. Em todo o momento, [MMA 21] permanece inclinada para baixo.\n'
+            '\n'
+            'Quando entrar? Quando o [Preço] romper a [Mínima] do [Candle R1].\n'
+            'Stop Loss? Na [Máxima] do [Candle R1].\n'
+            '\n'
+            '• Glossário:\n'
+            '  .. MMA = Média Móvel Aritmética ou Simples\n'
+            '  .. Candle R* = Candle ou período de tempo considerado como Referência para o setup.\n'
+            '\n'
+            '#classics #PontoContinuo #PC #mediaMovel',
+    'rules': {
+        "basic_0": {
+            "and": [
+                {
+                    ">": [
+                        {
+                            "var": "<interval>_sma_close21__p0"
+                        },
+                        {
+                            "var": "<interval>_low__p0"
+                        }
+                    ]
+                }
+            ]
+        },
+        "basic_1": {},
+        "advanced": {
+            "and": [
+                {
+                    "slope": {
+                        "<": [
+                            {
+                                "var": "<interval>_sma_close21__p3"
+                            },
+                            {
+                                "var": "<interval>_sma_close21__p4"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "slope": {
+                        "<": [
+                            {
+                                "var": "<interval>_sma_close21__p0"
+                            },
+                            {
+                                "var": "<interval>_sma_close21__p1"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "distance": {
+                        "distance": [
+                            {
+                                "var": "<interval>_sma_close21__p0"
+                            },
+                            {
+                                "var": "<interval>_high__p0"
+                            },
+                            {
+                                "perc": 0.38
+                            }
+                        ]
+                    }
+                },
+                {
+                    "comparison": {
+                        "<=": [
+                            {
+                                "var": "<interval>_low__p1"
+                            },
+                            {
+                                "var": "<interval>_low__p0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "comparison": {
+                        "<=": [
+                            {
+                                "var": "<interval>_high__p1"
+                            },
+                            {
+                                "var": "<interval>_high__p0"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

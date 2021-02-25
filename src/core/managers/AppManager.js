@@ -910,7 +910,11 @@ class AppManager {
       result = await StorageManager.store(sKey, result.data, uuid)
     else if (result.response.status == 404) {
       // Clean cache...
+      let obj = { uuid: uuid }
+      await this.shortcutRemoveObj(obj, "strategy")
       StorageManager.removeItem(sKey, uuid)
+
+      this.getHttpTranslation(result, "strategyretrieve", "strategy", true)
     }
     else {
       // Other error codes...
@@ -1088,7 +1092,7 @@ class AppManager {
       let index = indexOfObj(sData, keyField, obj[keyField])
 
       if (index >= 0)
-        sData = await this.shortcutRemove(index)
+        sData = await this.shortcutRemoveIndex(index)
     }
     else
       sData = []
@@ -1097,7 +1101,31 @@ class AppManager {
 
     return await StorageManager.store(sKey, sData)
   }
-  async shortcutRemove(index) {
+  async shortcutRemoveObj(obj, context) {
+    const sKey = "shortcuts"
+    let sData = await StorageManager.getData(sKey)
+    let keyField = undefined
+
+    switch (context) {
+      case "strategy":
+        keyField = "uuid"
+        break;
+      case "user":
+        keyField = "username"
+        break;
+      default:
+        return
+    }
+
+    for (let x = 0; x < sData.length; x++) {
+      if (obj[keyField] === sData[x][keyField]) {
+        sData.splice(x, 1)
+        await StorageManager.store(sKey, sData)
+      }
+    }
+    return sData
+  }
+  async shortcutRemoveIndex(index) {
     const sKey = "shortcuts"
     let sData = await StorageManager.getData(sKey)
 

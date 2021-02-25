@@ -292,6 +292,15 @@ class Strategy(models.Model):
             instance = Strategy.objects.update_or_create(owner=owner, name=strategy['name'], defaults={**strategy})[0]
             StrategyStats.objects.get_or_create(strategy=instance)
 
+        # 2.2 Others
+        strategies = [
+            init_strategies.pc_long,
+            init_strategies.pc_short
+        ]
+        for strategy in strategies:
+            instance = Strategy.objects.update_or_create(owner=owner, name=strategy['name'], defaults={**strategy})[0]
+            StrategyStats.objects.get_or_create(strategy=instance)
+
     @property
     def search_rank(self):
         rank = self.statistics.runs_last_30_days * self.saved.count()
@@ -526,7 +535,7 @@ class Collection(models.Model):
         # 2. Classics
         owner = User.objects.get(username='larry.williams')
         collection = Collection.objects.update_or_create(owner=col_owner, name='classics')[0]
-        strategies = Strategy.objects.filter(owner=owner,
+        strategies = Strategy.objects.filter(owner__in=[owner, col_owner],
                                              desc__icontains='#classics').order_by('last_modified')
         for x in range(0, len(strategies)):
             collection.strategies.add(strategies[x], through_defaults={'index': x})

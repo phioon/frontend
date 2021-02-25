@@ -165,6 +165,7 @@ const locale = {
     strategy_addedToCollection: "Strategy added to your collection.",
     strategy_removedFromCollection: "Strategy removed from your collection.",
     strategy_thanksForFeedback: "Submitted! Thank you for your feedback. ;)",
+    strategy_notAvailable: "Strategy not available anymore :/ Maybe its owner deleted or it's not Public anymore.",
 
     user_profileUpdated: "Profile updated!",
     user_planPastDue_p1: "hmm... Something wrong happened while renewing your Plan :/",
@@ -631,12 +632,14 @@ const locale = {
     btn_footer: "Avaliar",
   },
   modalstrategyresults: {
-    label_createdBy: "Created by",
-
     input_stockExchange: "Stock Exchange",
     input_stockExchange_hint: "Which Stock Exchange are we talking about?",
     input_interval: "Interval",
     input_interval_hint: "Which time interval the Strategy's rules should be applied to?",
+
+    label_readMore: "more",
+    label_loading: "Making sure everything is ready...",
+    label_running: "Looking for assets matching this Strategy...",
 
     header_asset: "Asset",
     header_name: "Name",
@@ -1065,6 +1068,7 @@ const locale = {
 
     label_myStrategies_noStrategies_p1: "Create, test and share strategies with your friends...",
     label_myStrategies_noStrategies_p2: "Be aware when the market's best opportunities happen in real time.",
+    btn_learnMore: "How does it work?",
 
     label_savedStrategies_noStrategies_p1: "You don't have strategies saved yet... ",
     label_savedStrategies_noStrategies_p2: "You can always go to Home page and see what most users are using lately. ;)",

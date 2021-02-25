@@ -165,6 +165,7 @@ const locale = {
     strategy_addedToCollection: "Estratégia adicionada à sua coleção.",
     strategy_removedFromCollection: "Estratégia removida da sua coleção.",
     strategy_thanksForFeedback: "Enviado! Obrigado pelo feedback. ;)",
+    strategy_notAvailable: "Estratégia não está mais disponível :/ Ela pode ter sido deletada ou deixou de ser Pública.",
 
     user_profileUpdated: "Perfil atualizado!",
     user_planPastDue_p1: "hmm... Houve algum problema com a renovação do seu plano :/",
@@ -631,12 +632,13 @@ const locale = {
     btn_footer: "Rate",
   },
   modalstrategyresults: {
-    label_createdBy: "Criada por",
-
     input_stockExchange: "Bolsa de Valores",
     input_stockExchange_hint: "Estamos falando de qual Bolsa de Valores?",
     input_interval: "Intervalo",
     input_interval_hint: "As regras da estratégia devem ser aplicada em qual tempo gráfico?",
+
+    label_loading: "Confirmando se está tudo pronto...",
+    label_running: "Procurando por ativos que se encaixam nesta Estratégia...",
 
     header_asset: "Ativo",
     header_name: "Nome",
@@ -1065,6 +1067,7 @@ const locale = {
 
     label_myStrategies_noStrategies_p1: "Crie, teste e compartilhe estratégias com seus amigos...",
     label_myStrategies_noStrategies_p2: "Saiba quando as melhores oportunidades do mercado acontecem em tempo real.",
+    btn_learnMore: "Como funciona?",
 
     label_savedStrategies_noStrategies_p1: "Você não tem estratégias salvas ainda... ",
     label_savedStrategies_noStrategies_p2: "Na página Início, você encontra as estratégias mais populares entre os usuários. ;)",

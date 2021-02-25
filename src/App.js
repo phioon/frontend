@@ -241,7 +241,7 @@ class App extends React.Component {
       }
     }
     else if (rResult.response) {
-      rData = JSON.stringify(rResult.response.data)
+      rData = JSON.stringify(rResult.response.data).toLowerCase()
       // Bad Requests
       if (badRequestCodes.includes(rResult.response.status)) {
         switch (model) {
@@ -254,11 +254,11 @@ class App extends React.Component {
                   msg.id = model + "_usernameAlreadyExists"
                 break;
               case "login":
-                if (rData.includes("Unable to log in with provided credentials"))
+                if (rData.includes("unable to log in with provided credentials"))
                   msg.id = model + "_invalidCredentials"
                 else if (rData.includes("email not confirmed"))
                   msg.id = model + "_emailNotConfirmed"
-                else if (rData.includes("Maximum amount of tokens"))
+                else if (rData.includes("maximum amount of tokens"))
                   msg.id = model + "_amountOfSessions"
                 else if (rData.includes("entirely numeric"))
                   msg.id = model + "_password_entirelyNumeric"
@@ -272,7 +272,7 @@ class App extends React.Component {
                   msg.id = model + "_password_tooSimilar"
                 break;
               case "modalchangepassword":
-                if (rData.includes("Invalid password"))
+                if (rData.includes("invalid password"))
                   msg.id = model + "_password_invalid"
                 else if (rData.includes("password is entirely numeric"))
                   msg.id = model + "_password_entirelyNumeric"
@@ -311,7 +311,7 @@ class App extends React.Component {
       else if (goneCodes.includes(rResult.response.status)) {
         switch (model) {
           case "user":
-            if (rData.includes("Token is expired")) {
+            if (rData.includes("token is expired")) {
               if (context == "confirmemail")
                 msg.id = model + "_tokenExpired_confirmEmail"
               else
@@ -330,8 +330,14 @@ class App extends React.Component {
             if (rData.includes("email could not be sent"))
               msg.id = model + "_emailCouldNotBeSent"
             break;
+          case "strategyretrieve":
+            if (rData.includes("not found")) {
+              msg.color = "warning"
+              msg.id = model + "_notAvailable"
+            }
+            break;
           default:
-            if (rData.includes("Max retries exceeded"))
+            if (rData.includes("max retries exceeded"))
               msg.id = "backend_serviceUnavailable"
             else
               msg.id = "general_internalErrorCodes"

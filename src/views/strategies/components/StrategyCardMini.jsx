@@ -17,8 +17,7 @@ import {
   UncontrolledTooltip,
 } from "reactstrap";
 
-import { round } from "../../../core/utils";
-import { Collapse } from "bootstrap";
+import { cutLine, round } from "../../../core/utils";
 
 class StrategyCardMini extends React.Component {
   constructor(props) {
@@ -44,16 +43,6 @@ class StrategyCardMini extends React.Component {
     }
   }
 
-  cutLine(line, limitLength, blankSpaceLookup) {
-    let nextSpace = line.indexOf(" ", blankSpaceLookup)
-
-    if (nextSpace > 0 && nextSpace < limitLength)
-      line = line.substring(0, nextSpace)
-    else
-      line = line.substring(0, limitLength)
-
-    return line
-  }
   getDescTitle(desc) {
     let lines = []
     let title = undefined
@@ -67,14 +56,14 @@ class StrategyCardMini extends React.Component {
 
       if (title.length > limitLength) {
         // Title is long enough for 2 lines
-        title = this.cutLine(title, limitLength, blankSpaceLookup)
+        title = cutLine(title, limitLength, blankSpaceLookup)
         addDots = true
       }
       else if (lines.length > 1) {
         if (title.length < limitLength / 2) {
           // Title needs only 1 line. Bring the next line and cut it if needed
           title += `\n`
-          title += this.cutLine(lines[1], round(limitLength / 2, 0), round(blankSpaceLookup / 2, 0))
+          title += cutLine(lines[1], round(limitLength / 2, 0), round(blankSpaceLookup / 2, 0))
           addDots = true
         }
         else

@@ -22,6 +22,7 @@ import {
 import ReactBSAlert from "react-bootstrap-sweetalert";
 
 import ModalStrategy from "../modals/strategy/ModalStrategy";
+import ModalFrame from "../modals/iframe/ModalFrame";
 
 import StrategyCardMini from "../strategies/components/StrategyCardMini";
 import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
@@ -45,6 +46,7 @@ class Strategies extends React.Component {
 
       modal_strategyDetail_isOpen: false,
       modal_strategyResults_isOpen: false,
+      modal_frame_isOpen: false,
 
       action: "create",
       objData: {},
@@ -61,7 +63,7 @@ class Strategies extends React.Component {
       },
 
       selected: {
-        strategy: { rules: "{}" },
+        strategy: { rules: {} },
       },
 
       cWallets: 0,
@@ -93,8 +95,7 @@ class Strategies extends React.Component {
     let maxItemsPerSlide = this.getMaxItemsPerSlide()
 
     if (this.state.myStrategies.maxItemsPerSlide != maxItemsPerSlide) {
-      this.prepareMyStrategies()            // async call
-      this.prepareSavedStrategies()         // async call
+      this.prepareRequirements()            // async call
     }
   }
   getMaxItemsPerSlide() {
@@ -113,8 +114,6 @@ class Strategies extends React.Component {
   }
 
   async prepareRequirements() {
-    // Check User's subscription
-
     let wallets = await this.props.managers.app.walletData()
 
     let tasks = [
@@ -237,6 +236,9 @@ class Strategies extends React.Component {
 
   async onClick(action, obj) {
     switch (action) {
+      case "learnMore":
+        this.toggleModal("frame")
+        break;
       case "run":
         this.runClick(obj)
         break;
@@ -269,11 +271,9 @@ class Strategies extends React.Component {
   async runClick(obj) {
     let { selected } = this.state;
 
+    selected.strategy = obj
+
     this.toggleModal("strategyResults")
-
-    obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
-    selected.strategy = obj.data
-
     this.setState({ selected })
   }
   async viewClick(obj) {
@@ -467,6 +467,7 @@ class Strategies extends React.Component {
 
       modal_strategyDetail_isOpen,
       modal_strategyResults_isOpen,
+      modal_frame_isOpen,
 
       action,
       objData,
@@ -505,6 +506,12 @@ class Strategies extends React.Component {
           isRunning={isRunning}
           onClick={this.onClick}
           strategy={selected.strategy}
+        />
+        <ModalFrame
+          modalId="frame"
+          isOpen={modal_frame_isOpen}
+          toggleModal={this.toggleModal}
+          src={"https://www.youtube.com/embed/videoseries?list=PL07A92TyrGLl0lLBzMChQIPOZN8u-f-hv"}
         />
         <div className="header text-center">
           <h3 className="title">{getString(prefs.locale, this.compId, "title")}</h3>
@@ -545,11 +552,25 @@ class Strategies extends React.Component {
                 </CardHeader>
                 <CardBody>
                   {myStrategies.slides.length == 0 ?
-                    <CarouselEmpty
-                      prefs={prefs}
-                      getString={getString}
-                      compId={this.compId}
-                      context={myStrategies.id} /> :
+                    <>
+                      <CarouselEmpty
+                        prefs={prefs}
+                        getString={getString}
+                        compId={this.compId}
+                        context={myStrategies.id} />
+                      <Row className="mt-3" />
+                      <Row className="justify-content-center">
+                        <Button
+                          className="btn-round"
+                          color="default"
+                          size="sm"
+                          outline
+                          onClick={() => this.onClick("learnMore")}
+                        >
+                          {getString(prefs.locale, this.compId, "btn_learnMore")}
+                        </Button>
+                      </Row>
+                    </> :
                     <Carousel
                       activeIndex={myStrategies.activeIndex}
                       next={() => this.moveSlide(myStrategies, "next")}

@@ -17,17 +17,19 @@ import {
 import Select from "react-select";
 // react component for creating dynamic tables
 import ReactTable from "react-table-v6";
-
+import Skeleton from "react-loading-skeleton";
 import ModalNewReview from "./ModalNewReview";
 import TimeManager from "../../../core/managers/TimeManager";
 import { CircularLoader } from "../../../components/Loaders";
 import {
+  cutLine,
   convertFloatToCurrency,
   getDistinctValuesFromList,
   integerWithThousandsSeparator,
   orderBy,
   retrieveObjFromObjList,
   rtDefaultFilter,
+  round,
   sleep
 } from "../../../core/utils";
 
@@ -37,12 +39,15 @@ class ModalStrategyResults extends React.Component {
     this.compId = this.constructor.name.toLowerCase();
 
     this.state = {
-      firstLoading: true,
+      isFirstLoad: true,
+      isReady: false,
+      showRunBtn: false,
       modal_strategyReview_isOpen: false,
 
       iItems: [],
       jsonLogic: {},
 
+      strategy: { rules: {} },
       tableData: [],
 
       stockExchangeOptions: [],
@@ -67,8 +72,8 @@ class ModalStrategyResults extends React.Component {
     this.prepareRequirements()
   }
   componentDidUpdate(prevProps) {
-    if (prevProps.isOpen !== this.props.isOpen)
-      this.setState({ firstLoading: true })
+    if (prevProps.isOpen !== this.props.isOpen && this.props.isOpen)
+      this.prepareStrategy()
   }
   async prepareRequirements() {
     let { prefs, getString } = this.props;
@@ -109,6 +114,29 @@ class ModalStrategyResults extends React.Component {
         }
 
     this.setState({ stockExchangeOptions, intervalOptions })
+  }
+  async prepareStrategy() {
+    let { modalId, strategy } = this.props;
+    this.setState({ isFirstLoad: true, isReady: false })
+
+    let result = await this.props.managers.app.strategyRetrieve(false, strategy.uuid)
+    await sleep(1500)
+
+    if (result.data) {
+      strategy = result.data
+
+      // Title
+      strategy.title = this.getDescTitle(strategy.desc)
+      if (strategy.title.length > 0)
+        if (strategy.title.substring(strategy.title.length - 3) === "...")
+          strategy.readMore = true
+    }
+    else {
+      // Something wrong happened...
+      this.props.toggleModal(modalId)
+    }
+
+    this.setState({ strategy, isReady: true })
   }
   prepareRules(strategy, filters) {
     let jsonRules = { and: [] }
@@ -157,7 +185,7 @@ class ModalStrategyResults extends React.Component {
         break;
     }
 
-    if (!this.state.firstLoading && runStrategy && this.props.strategy.uuid) {
+    if (!this.state.isFirstLoad && runStrategy && this.props.strategy.uuid) {
       // Selection changed...
       this.runClick(this.props.strategy)
     }
@@ -176,7 +204,7 @@ class ModalStrategyResults extends React.Component {
     }
   }
   async runClick(strategy) {
-    this.setState({ firstLoading: false })
+    this.setState({ isFirstLoad: false })
     this.props.setFlag("Running", true)
     let { filters } = this.state;
 
@@ -212,8 +240,48 @@ class ModalStrategyResults extends React.Component {
     }
   }
 
+  getDescTitle(desc) {
+    let lines = []
+    let title = undefined
+    let addDots = undefined
+    let limitLength = 130
+    let blankSpaceLookup = 120
+
+    if (desc) {
+      lines = desc.split("\n")
+      title = lines[0]
+
+      if (title.length > limitLength) {
+        // Title is long enough for 2 lines
+        title = cutLine(title, limitLength, blankSpaceLookup)
+        addDots = true
+      }
+      else if (lines.length > 1) {
+        if (title.length < limitLength / 2) {
+          // Title needs only 1 line. Bring the next line and cut it if needed
+          title += `\n`
+          title += cutLine(lines[1], round(limitLength / 2, 0), round(blankSpaceLookup / 2, 0))
+          addDots = true
+        }
+        else
+          addDots = true
+      }
+
+      if (addDots)
+        title += `...`
+    }
+    else {
+      // No description
+      title = ``
+    }
+
+    return title
+  }
+
   // Components
-  renderLoading() {
+  renderLoading(msgId) {
+    let { prefs, getString } = this.props;
+
     return (
       <>
         <Row className="mt-4" />
@@ -222,6 +290,10 @@ class ModalStrategyResults extends React.Component {
         <div className="centered">
           <CircularLoader size="md" />
         </div>
+        <br />
+        <p className="text-center description">
+          {getString(prefs.locale, this.compId, `label_${msgId}`)}
+        </p>
         <Row className="mt-5" />
         <Row className="mt-5" />
         <Row className="mt-5" />
@@ -261,11 +333,13 @@ class ModalStrategyResults extends React.Component {
   };
 
   render() {
-    let { prefs, getString, modalId, isOpen, strategy, isRunning } = this.props;
+    let { prefs, getString, modalId, isOpen, isRunning } = this.props;
     let {
-      firstLoading,
+      isFirstLoad,
+      isReady,
       modal_strategyReview_isOpen,
 
+      strategy,
       tableData,
 
       stockExchangeOptions,
@@ -300,23 +374,50 @@ class ModalStrategyResults extends React.Component {
             >
               <i className="nc-icon nc-simple-remove" />
             </button>
+
+
             <h5 className="modal-title" id={modalId}>
-              {strategy.name}
+              {isReady ?
+                strategy.name :
+                <Skeleton width={200} />
+              }
             </h5>
             <br />
+
+            <pre>
+              {isReady ?
+                strategy.title :
+                <Skeleton />
+              }
+              {isReady && strategy.readMore &&
+                <a
+                  className="description"
+                  href={this.props.managers.app.strategyPagePath(strategy.uuid)}
+                  onClick={e => {
+                    e.preventDefault()
+                    this.props.onClick("goToStrategyPage", strategy)
+                  }}
+                >
+                  {" "}{getString(prefs.locale, this.compId, "label_readMore")}
+                </a>
+              }
+            </pre>
+
+            <Row className="mt-3" />
             <div className="description text-right">
-              {getString(prefs.locale, this.compId, "label_createdBy")}:
-              {" "}
-              <a
-                className="description"
-                href={this.props.managers.app.userProfilePath(strategy.owner_username)}
-                onClick={e => {
-                  e.preventDefault()
-                  this.props.onClick("goToProfile", strategy)
-                }}
-              >
-                @{strategy.owner_username}
-              </a>
+              {isReady ?
+                <a
+                  className="description"
+                  href={this.props.managers.app.userProfilePath(strategy.owner_username)}
+                  onClick={e => {
+                    e.preventDefault()
+                    this.props.onClick("goToProfile", strategy)
+                  }}
+                >
+                  -{" "}@{strategy.owner_username}
+                </a> :
+                <Skeleton width={150} />
+              }
             </div>
             <hr />
           </CardHeader>
@@ -367,10 +468,12 @@ class ModalStrategyResults extends React.Component {
             </Row>
             <Row className="mt-4" />
 
-            {firstLoading ?
-              this.renderRunBtn(strategy, isRunning) :
+            {isFirstLoad ?
+              isReady ?
+                this.renderRunBtn(strategy, isRunning) :
+                this.renderLoading("loading") :
               isRunning ?
-                this.renderLoading() :
+                this.renderLoading("running") :
                 <ReactTable
                   data={tableData}
                   filterable={tableData.length > 0 ? true : false}

@@ -68,7 +68,7 @@ class Home extends React.Component {
       },
 
       selected: {
-        strategy: { rules: "{}" },
+        strategy: { rules: {} },
       },
 
       cWallets: 0,
@@ -96,8 +96,7 @@ class Home extends React.Component {
     let maxItemsPerSlide = this.getMaxItemsPerSlide()
 
     if (this.state.mostRuns.maxItemsPerSlide != maxItemsPerSlide) {
-      this.prepareMostRuns()          // async call
-      this.prepareMostSaved()         // async call
+      this.prepareRequirements()          // async call
     }
   }
   getMaxItemsPerSlide() {
@@ -117,6 +116,7 @@ class Home extends React.Component {
 
   async prepareRequirements() {
     let wallets = await this.props.managers.app.walletData()
+
     if (wallets.length > 0) {
       let tasks = [
         this.prepareShortcuts(),
@@ -249,11 +249,9 @@ class Home extends React.Component {
   async runClick(obj) {
     let { selected } = this.state;
 
+    selected.strategy = obj
+
     this.toggleModal("strategyResults")
-
-    obj = await this.props.managers.app.strategyRetrieve(false, obj.uuid)
-    selected.strategy = obj.data
-
     this.setState({ selected })
   }
   async viewClick(obj) {

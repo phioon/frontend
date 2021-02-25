@@ -546,7 +546,17 @@ class StrategyPage extends React.Component {
           }
           {/* Reviews */}
           {isPageLoading ?
-            "is Loading..." :
+            <Card className="card-plain">
+              <CardBody>
+                <Row className="mt-4" />
+                <Row className="justify-content-center">
+                  <Col xs="6">
+                    <Skeleton />
+                  </Col>
+                </Row>
+                <Row className="mt-4" />
+              </CardBody>
+            </Card> :
 
             reviews.data.reviews.length === 0 ?
               <Card className="card-plain">
