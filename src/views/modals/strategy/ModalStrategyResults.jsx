@@ -120,7 +120,6 @@ class ModalStrategyResults extends React.Component {
     this.setState({ isFirstLoad: true, isReady: false })
 
     let result = await this.props.managers.app.strategyRetrieve(false, strategy.uuid)
-    await sleep(1500)
 
     if (result.data) {
       strategy = result.data

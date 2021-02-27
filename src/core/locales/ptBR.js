@@ -637,6 +637,7 @@ const locale = {
     input_interval: "Intervalo",
     input_interval_hint: "As regras da estratégia devem ser aplicada em qual tempo gráfico?",
 
+    label_readMore: "mais",
     label_loading: "Confirmando se está tudo pronto...",
     label_running: "Procurando por ativos que se encaixam nesta Estratégia...",
 
