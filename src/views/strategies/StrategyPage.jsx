@@ -1,5 +1,4 @@
 import React from "react";
-import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 // reactstrap components
 import {
@@ -10,15 +9,11 @@ import {
   CardBody,
   CardFooter,
   Col,
-  Collapse,
   Row,
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
-  Input,
   UncontrolledDropdown,
-  UncontrolledTooltip,
-  Spinner,
 } from "reactstrap";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
@@ -27,6 +22,7 @@ import TagsInput from "react-tagsinput";
 import Skeleton from "react-loading-skeleton";
 import Moment from "moment";
 
+import TimeManager from "../../core/managers/TimeManager";
 import ModalStrategy from "../modals/strategy/ModalStrategy";
 import ModalNewReview from "../modals/strategy/ModalNewReview";
 import ModalStrategyResults from "../modals/strategy/ModalStrategyResults";
@@ -195,14 +191,21 @@ class StrategyPage extends React.Component {
     this.setState({ charts })
   }
   async reviewsNextPage(uuid) {
+    let { prefs, getString } = this.props;
     let { reviews } = this.state;
 
     let result = await this.props.managers.app.strategyReviews(uuid, reviews.data.nextCursor)
 
     if (result.status == 200) {
       let data = result.data
-      reviews.data.reviews = reviews.data.reviews.concat(data.results)
+      for (var review of data.results) {
+        let relativeTime = TimeManager.getMoment(review.last_modified)
 
+        relativeTime = relativeTime.locale(getString(prefs.locale, "locales", prefs.locale))
+        review.last_modified_relative = relativeTime.fromNow()
+      }
+
+      reviews.data.reviews = reviews.data.reviews.concat(data.results)
       reviews.data.nextCursor = getPaginationCursor(data.next)
     }
 
@@ -600,7 +603,16 @@ class StrategyPage extends React.Component {
       return (
         <Card key={`review_${i}`} className="card-review">
           <CardHeader>
-            <small><b>{obj.full_name}</b></small>
+            <Row>
+              <Col>
+                <small><b>{obj.full_name}</b></small>
+              </Col>
+              <Col className="text-right">
+                <label className="description">
+                  {obj.last_modified_relative}
+                </label>
+              </Col>
+            </Row>
             <Row>
               <Col>
                 {this.renderStars(obj)}

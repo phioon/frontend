@@ -511,15 +511,15 @@ class ModalStrategyResults extends React.Component {
                         let tzDatetime = TimeManager.tzConvert(stockExchange.se_timezone, cell.value, true)
                         tzDatetime.locale(getString(prefs.locale, "locales", prefs.locale))
 
-                        let calendarTime = tzDatetime.calendar(null, {
-                          sameDay: `[${getString(prefs.locale, "momentcalendar", "sameDay")}] LT`,
-                          nextDay: `[${getString(prefs.locale, "momentcalendar", "nextDay")}] LT`,
-                          nextWeek: `[${getString(prefs.locale, "momentcalendar", "next")}] dddd[,] LT`,
-                          lastDay: `[${getString(prefs.locale, "momentcalendar", "lastDay")}] LT`,
-                          lastWeek: `[${getString(prefs.locale, "momentcalendar", "last")}] dddd[,] LT`,
+                        let relativeTime = tzDatetime.calendar(null, {
+                          sameDay: `[${getString(prefs.locale, "momentrelative", "sameDay")}] LT`,
+                          nextDay: `[${getString(prefs.locale, "momentrelative", "nextDay")}] LT`,
+                          nextWeek: `[${getString(prefs.locale, "momentrelative", "next")}] dddd[,] LT`,
+                          lastDay: `[${getString(prefs.locale, "momentrelative", "lastDay")}] LT`,
+                          lastWeek: `[${getString(prefs.locale, "momentrelative", "last")}] dddd[,] LT`,
                           sameElse: `L LT`
                         })
-                        return calendarTime
+                        return relativeTime
                       }
                     }
                   ]}

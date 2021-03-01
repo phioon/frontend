@@ -43,13 +43,6 @@ const locale = {
     signUp: "Sign Up",
     login: "Login"
   },
-  momentcalendar: {
-    sameDay: "Today, at",
-    next: "Next",
-    nextDay: "Tomorrow, at",
-    lastDay: "Yesterday, at",
-    last: "Last"
-  },
   charts: {
     chart_profitability_title: "Profitability over time (%)",
     chart_diversification_title: "Diversification (%)",
@@ -718,6 +711,13 @@ const locale = {
     footer_p2: "We are happy to help you ;)",
 
     btn_goToLogin: "Go to Login"
+  },
+  momentrelative: {
+    sameDay: "Today, at",
+    next: "Next",
+    nextDay: "Tomorrow, at",
+    lastDay: "Yesterday, at",
+    last: "Last"
   },
   monthLong: {
     "01": "January",
