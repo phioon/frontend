@@ -81,7 +81,7 @@ export function indexOfObj(objList, keyField = "id", value) {
   }
   return -1
 }
-export function applyFilterToObjList(objList, filters = { field: [undefined] }) {
+export function queryObjList(objList, filters = { field: [undefined] }) {
   // Filter object and return only the matching occurrencies
   let data = []
 
@@ -143,6 +143,21 @@ export function getObjsFieldNotNull(objList, field) {
       newObjList.push(obj)
 
   return newObjList
+}
+export function getObjPropByStringPath(obj, path = "prop1.prop2.prop3") {
+  path = path.split(".")
+  let prop = obj[path.splice(0, 1)]
+
+  for (var p of path) {
+    if (p in prop)
+      prop = prop[p]
+    else {
+      prop = undefined
+      break;
+    }
+  }
+
+  return prop
 }
 export function removeFieldFromObjList(objList, field) {
   for (var obj of objList)

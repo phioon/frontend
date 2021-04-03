@@ -95,7 +95,7 @@ class Wallets extends React.Component {
           id: obj.id,
           name: obj.name,
           desc: obj.desc,
-          stockExchange: obj.stockExchange.se_name,
+          stockExchange: obj.stockExchange.name,
           currency: obj.currency.code,
           balance: convertFloatToCurrency(obj.balance, obj.currency),
           actions: (

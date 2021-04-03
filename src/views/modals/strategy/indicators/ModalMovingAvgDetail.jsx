@@ -15,7 +15,7 @@ import {
 // react plugin used to create DropdownMenu for selecting items
 import Select from "react-select";
 
-import { applyFilterToObjList, retrieveObjFromObjList, getDistinctValuesFromList } from "../../../../core/utils";
+import { queryObjList, retrieveObjFromObjList, getDistinctValuesFromList } from "../../../../core/utils";
 
 class ModalMovingAvgDetail extends React.Component {
   constructor(props) {
@@ -157,7 +157,7 @@ class ModalMovingAvgDetail extends React.Component {
 
     switch (fieldName) {
       case "periods":
-        selection = applyFilterToObjList(items, filters)
+        selection = queryObjList(items, filters)
         newState.periodOptions = []
 
         for (var obj of selection) {
@@ -192,7 +192,7 @@ class ModalMovingAvgDetail extends React.Component {
       periods: [indicator.data.periods.value],
     }
 
-    let filteredItems = applyFilterToObjList(items, filters)
+    let filteredItems = queryObjList(items, filters)
 
     // The filtering above MUST return only 1 item
     if (filteredItems.length == 1)

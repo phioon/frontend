@@ -25,7 +25,7 @@ __backendApiPass__ = '#P1q2w3e4r$Api'
 @api_view(['GET'])
 @permission_classes([IsPremium | IsPlatinum | permissions.IsAuthenticated, ])
 def TechnicalConditionList(request):
-    backendRequest = __backendHost__ + '/api/market/technicalConditions/'
+    backendRequest = __backendHost__ + '/api/market/technical_conditions/'
 
     try:
         r = requests.get(backendRequest,
@@ -42,7 +42,7 @@ def TechnicalConditionList(request):
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def StockExchangeList(request):
-    backendRequest = __backendHost__ + '/api/market/stockExchanges/'
+    backendRequest = __backendHost__ + '/api/market/stock_exchanges/'
 
     try:
         r = requests.get(backendRequest,
@@ -66,12 +66,12 @@ def AssetList(request):
     try:
         r = requests.post(backendRequest,
                           auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                          data=data,
+                          json=data,
                           params=params)
     except requests.exceptions.Timeout:
         r = requests.post(backendRequest,
                           auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                          data=data,
+                          json=data,
                           params=params)
     except requests.exceptions.RequestException as ex:
         obj_res = {'message': str(ex)}
@@ -107,12 +107,12 @@ def D_RawList(request):
     try:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
+                         json=data,
                          params=params)
     except requests.exceptions.Timeout:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
+                         json=data,
                          params=params)
     except requests.exceptions.RequestException as ex:
         obj_res = {'message': str(ex)}
@@ -131,12 +131,12 @@ def D_QuoteLatestList(request):
     try:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
+                         json=data,
                          params=params)
     except requests.exceptions.Timeout:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
+                         json=data,
                          params=params)
     except requests.exceptions.RequestException as ex:
         obj_res = {'message': str(ex)}
@@ -155,12 +155,12 @@ def D_SmaLatestList(request):
     try:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
+                         json=data,
                          params=params)
     except requests.exceptions.Timeout:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
+                         json=data,
                          params=params)
     except requests.exceptions.RequestException as ex:
         obj_res = {'message': str(ex)}
@@ -179,12 +179,12 @@ def D_EmaLatestList(request):
     try:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
+                         json=data,
                          params=params)
     except requests.exceptions.Timeout:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
+                         json=data,
                          params=params)
     except requests.exceptions.RequestException as ex:
         obj_res = {'message': str(ex)}
@@ -203,12 +203,12 @@ def D_PhiboLatestList(request):
     try:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
+                         json=data,
                          params=params)
     except requests.exceptions.Timeout:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
+                         json=data,
                          params=params)
     except requests.exceptions.RequestException as ex:
         obj_res = {'message': str(ex)}
@@ -227,12 +227,12 @@ def D_RocLatestList(request):
     try:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
+                         json=data,
                          params=params)
     except requests.exceptions.Timeout:
         r = requests.get(backendRequest,
                          auth=HTTPBasicAuth(__backendApiUser__, __backendApiPass__),
-                         data=data,
+                         json=data,
                          params=params)
     except requests.exceptions.RequestException as ex:
         obj_res = {'message': str(ex)}
@@ -264,8 +264,8 @@ def D_setupList(request):
 
 @api_view(['GET'])
 @permission_classes([IsPremium | IsPlatinum | permissions.IsAuthenticated, ])
-def D_setupSummaryList(request):
-    backendRequest = __backendHost__ + '/api/market/d/setupSummary/'
+def D_setupStatsList(request):
+    backendRequest = __backendHost__ + '/api/market/d/setup_stats/'
 
     params = request.query_params
 

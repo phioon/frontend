@@ -15,7 +15,7 @@ import {
 // react plugin used to create DropdownMenu for selecting items
 import Select from "react-select";
 
-import { applyFilterToObjList, retrieveObjFromObjList, getDistinctValuesFromList } from "../../../../core/utils";
+import { queryObjList, retrieveObjFromObjList, getDistinctValuesFromList } from "../../../../core/utils";
 
 class ModalQuoteDetail extends React.Component {
   constructor(props) {
@@ -142,7 +142,7 @@ class ModalQuoteDetail extends React.Component {
     let { items } = this.props;
 
     let filters = { id: [indicator.data.type.value] }
-    let filteredItems = applyFilterToObjList(items, filters)
+    let filteredItems = queryObjList(items, filters)
 
     // The filtering above MUST return only 1 item
     if (filteredItems.length == 1)

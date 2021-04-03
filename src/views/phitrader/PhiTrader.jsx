@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   CardBody,
+  CardTitle,
   CardFooter,
   Row,
   Col
@@ -18,8 +19,8 @@ import DimensionSelect from "../../components/cards/filters/selects/DimensionSel
 import DimentionTimeInterval from "../../components/cards/filters/selects/DimensionTimeInterval";
 
 import TimeManager from "../../core/managers/TimeManager";
-import SetupCard from "./SetupCard";
-import { getDistinctValuesFromList, retrieveObjFromObjList } from "../../core/utils";
+import PhiOperationCard from "./PhiOperationCard";
+import { getDistinctValuesFromList, queryObjList } from "../../core/utils";
 
 class PhiTrader extends React.Component {
   constructor(props) {
@@ -55,7 +56,10 @@ class PhiTrader extends React.Component {
     // Check User's subscription
 
     let dimensions = await this.prepareDimensions()
-    dimensions.setups = await this.prepareCards(dimensions.setups)
+    dimensions.setups = await this.prepareOperations(dimensions.setups)
+
+    // Customization
+    dimensions.statuses.data = this.translateObjField(dimensions.statuses.id, dimensions.statuses.data, "label")
 
     this.setState({ dimensions, pageFirstLoading: false })
   }
@@ -90,104 +94,143 @@ class PhiTrader extends React.Component {
     rawData = await Promise.all(rawData)
 
     for (var dimension of Object.values(rawData)) {
-      switch (dimension.id) {
-        case "statuses":
-          if (!dimension.error) {
-            dimension.data = this.translateObjField(dimension.id, dimension.data, "label")
-          }
-
-        // No breaks... It will continue to default...
-        // !!! ATENTION !!! If another case is added bellow this point, we need to copy default's content into this case statement.
-        default:
-          if (dimensions[dimension.id].id) {
-            // Dimension has been already created for another Stock Exchange...
-            dimensions[dimension.id].data = dimensions[dimension.id].data.concat(dimension.data)
-          }
-          else {
-            // Dimension will be created for the first time...
-            dimensions[dimension.id] = dimension
-          }
-          break;
+      if (dimensions[dimension.id].id) {
+        // Dimension has been already created for another Stock Exchange...
+        dimensions[dimension.id].data = dimensions[dimension.id].data.concat(dimension.data)
+      }
+      else {
+        // Dimension will be created for the first time...
+        dimensions[dimension.id] = dimension
       }
     }
 
     return dimensions
   }
 
-  async prepareCards(dSetups) {
+  async prepareOperations(dSetups) {
     let wallets = await this.props.managers.app.walletList()
     let stockExchanges = getDistinctValuesFromList(wallets.data, "se_short")
 
     this.setState({ cWallets: wallets.data.length })
 
-    let summaries = []
+    let statsList = []
 
     for (var se of stockExchanges) {
-      let summaryResult = await this.props.managers.market.dSetupSummaryList(se)
+      let statsResult = await this.props.managers.market.dSetupStatsList(se)
 
-      if (!summaryResult.data)
-        summaryResult.data = []
+      if (!statsResult.data)
+        statsResult.data = []
 
-      summaries = summaries.concat(summaryResult.data)
+      statsList = statsList.concat(statsResult.data)
     }
 
     let assets = getDistinctValuesFromList(dSetups.data, "asset_symbol")
     assets = await this.props.managers.market.assetList(false, assets)
 
     for (var obj of dSetups.data) {
+      let se = await this.props.managers.market.stockExchangeRetrieve(assets[obj.asset_symbol].data.stock_exchange)
       let tc = await this.props.managers.market.technicalConditionRetrieve(obj.tc_id)
-      let se = await this.props.managers.market.stockExchangeRetrieve(assets[obj.asset_symbol].data.stockExchange)
       let currency = await this.props.managers.app.currencyRetrieve(se.currency_code)
-      let ss = retrieveObjFromObjList(summaries, "asset_setup", obj.asset_setup)
 
-      obj.started_on = obj.started_on
+      let high = assets[obj.asset_symbol].data.high
+      let low = assets[obj.asset_symbol].data.low
+      let lastTradeDate = TimeManager.getDatetimeString(assets[obj.asset_symbol].data.last_trade_time, false)
+
+      // 1. Basic data
+      obj.radar_on = TimeManager.getLocaleDateString(obj.radar_on, false)
+      obj.started_on = TimeManager.getLocaleDateString(obj.started_on, false)
       obj.asset_label = assets[obj.asset_symbol].data.asset_label
       obj.asset_name = assets[obj.asset_symbol].data.asset_name
-      obj.price = assets[obj.asset_symbol].data.price
+      obj.asset_price = assets[obj.asset_symbol].data.price
       obj.type = tc.type
       obj.currency = currency
-      obj.tc_id = tc.id
+
+      // 2. Latest Historical Fields
+      obj.last_entry_price = this.getLastObjValue(obj.entry_price, -1)
+      obj.last_stop_loss = this.getLastObjValue(obj.stop_loss, -1)
+      obj.last_target = this.getLastObjValue(obj.target, -1)
+      obj.last_loss_percent = this.getLastObjValue(obj.loss_percent, -1)
+      obj.last_gain_percent = this.getLastObjValue(obj.gain_percent, -1)
+      obj.last_risk_reward = this.getLastObjValue(obj.risk_reward, -1)
+
+      // 3. Update setup with latest data available (realtime)
+      switch (obj.status) {
+        case "waiting":
+          if (obj.type === "long") {
+            if (low && low <= obj.last_stop_loss) {
+              obj.status = "canceled"
+              obj.ended_on = lastTradeDate
+            }
+            else if (high && high >= obj.last_entry_price) {
+              obj.status = "in_progress"
+              obj.started_on = lastTradeDate
+            }
+          }
+          else
+            if (high && high >= obj.last_stop_loss) {
+              obj.status = "canceled"
+              obj.ended_on = lastTradeDate
+            }
+            else if (low && low <= obj.last_entry_price) {
+              obj.status = "in_progress"
+              obj.started_on = lastTradeDate
+            }
+          break;
+
+        case "in_progress":
+          if (obj.type === "long") {
+            if (high && high >= obj.last_target) {
+              obj.status = "gain"
+              obj.ended_on = lastTradeDate
+            }
+            else if (low && low <= obj.last_stop_loss) {
+              obj.status = "loss"
+              obj.ended_on = lastTradeDate
+            }
+          }
+          else {
+            if (low && low <= obj.last_target) {
+              obj.status = "gain"
+              obj.ended_on = lastTradeDate
+            }
+            else if (high && high >= obj.last_stop_loss) {
+              obj.status = "loss"
+              obj.ended_on = lastTradeDate
+            }
+          }
+          break;
+      }
 
       if (obj.ended_on)
         obj.ended_on = TimeManager.getLocaleDateString(obj.ended_on, false)
-      else {
-        let high = assets[obj.asset_symbol].data.high
-        let low = assets[obj.asset_symbol].data.low
-        let lastTradeDate = TimeManager.getLocaleDateString(assets[obj.asset_symbol].data.asset_lastTradeTime, false)
 
-        if (obj.type === "purchase") {
-          if (high && high >= obj.target) {
-            obj.is_success = true
-            obj.ended_on = lastTradeDate
-          }
-          else if (low && low <= obj.stop_loss) {
-            obj.is_success = false
-            obj.ended_on = lastTradeDate
-          }
-        }
-        else if (obj.type === "sale") {
-          if (low && low <= obj.target) {
-            obj.is_success = true
-            obj.ended_on = lastTradeDate
-          }
-          else if (high && high >= obj.stop_loss) {
-            obj.is_success = false
-            obj.ended_on = lastTradeDate
-          }
-        }
-      }
-
+      // 4. Deltas
       obj.delta = {
-        stopLoss_maxPrice: tc.type === "purchase" ? obj.max_price - obj.stop_loss : obj.stop_loss - obj.max_price,
-        stopLoss_target: tc.type === "purchase" ? obj.target - obj.stop_loss : obj.stop_loss - obj.target,
-        stopLoss_assetPrice: tc.type === "purchase" ? obj.price - obj.stop_loss : obj.stop_loss - obj.price,
+        stopLoss_entryPrice: tc.type === "long" ?
+          obj.last_entry_price - obj.last_stop_loss :
+          obj.last_stop_loss - obj.last_entry_price,
+
+        stopLoss_target: tc.type === "long" ?
+          obj.last_target - obj.last_stop_loss :
+          obj.last_stop_loss - obj.last_target,
+
+        stopLoss_assetPrice: tc.type === "long" ?
+          obj.asset_price - obj.last_stop_loss :
+          obj.last_stop_loss - obj.asset_price,
       }
 
-      obj.occurrencies = ss.occurrencies
-      obj.avg_duration_gain = ss.avg_duration_gain
-      obj.last_ended_occurrence = ss.last_ended_occurrence
-      obj.last_was_success = ss.last_was_success
-      obj.success_rate = ss.success_rate
+      // 5. Technical Condition Stats
+      let filters = {
+        asset_symbol: obj.asset_symbol,
+        tc_id: obj.tc_id
+      }
+      let tcStats = queryObjList(statsList, filters)[0]
+
+      obj.occurrencies = tcStats.occurrencies
+      obj.avg_duration_gain = tcStats.avg_duration_gain
+      obj.last_ended_occurrence = tcStats.last_ended_occurrence
+      obj.last_was_success = tcStats.last_was_success
+      obj.success_rate = tcStats.success_rate
     }
 
     return dSetups
@@ -203,6 +246,13 @@ class PhiTrader extends React.Component {
     }
 
     return objList
+  }
+  getLastObjValue(kpiObj, index = -1) {
+    let value = undefined
+
+    if (typeof kpiObj === "object")
+      value = kpiObj.slice(index)[0].value
+    return value
   }
 
   handleLinks(callers, dimensions, selection, tDimension) {
@@ -313,7 +363,7 @@ class PhiTrader extends React.Component {
     this.setState({ dimensions })
   }
 
-  TimelineItems(dSetups) {
+  phiOperations(dSetups) {
     // SETUPS
     let selection = []
 
@@ -326,11 +376,10 @@ class PhiTrader extends React.Component {
 
     return selection.map((setup) => {
       return (
-        <SetupCard
+        <PhiOperationCard
           {...this.props}
           key={setup.id}
-          setup={setup}
-          isPurchase={setup.type == "purchase" ? true : false}
+          operation={setup}
         />
       )
     });
@@ -384,15 +433,6 @@ class PhiTrader extends React.Component {
               alertNoEntriesTxtId="alert_timeInterval_noPositionsOpened"
             />
           </Col>
-          <Col key={`filter__assets`} xs="6" md="3" xl={window.innerWidth > 1600 ? "2" : "3"}>
-            <DimensionSelect
-              getString={this.props.getString}
-              prefs={this.props.prefs}
-              titleTxtId="label_asset"
-              onSelectionChange={this.onSelectionChange}
-              dimension={dimensions.mAssets}
-            />
-          </Col>
           <Col key={`filter__statuses`} xs="6" md="3" xl={window.innerWidth > 1600 ? "2" : "3"}>
             <DimensionSelect
               getString={this.props.getString}
@@ -400,6 +440,15 @@ class PhiTrader extends React.Component {
               titleTxtId="label_status"
               onSelectionChange={this.onSelectionChange}
               dimension={dimensions.statuses}
+            />
+          </Col>
+          <Col key={`filter__assets`} xs="6" md="3" xl={window.innerWidth > 1600 ? "2" : "3"}>
+            <DimensionSelect
+              getString={this.props.getString}
+              prefs={this.props.prefs}
+              titleTxtId="label_asset"
+              onSelectionChange={this.onSelectionChange}
+              dimension={dimensions.mAssets}
             />
           </Col>
           <Col key={`filter__stockExchanges`} xs="6" md="3" xl={window.innerWidth > 1600 ? "2" : "3"}>
@@ -414,22 +463,14 @@ class PhiTrader extends React.Component {
         </FilterCard>
 
         {pageFirstLoading ?
-          <Card className="card-timeline card-plain">
-            <CardBody>
-              <ul className="timeline">
-                <li className="">
-                  <div className="timeline-panel">
-                    <Skeleton height={420} />
-                  </div>
-                </li>
-                <li className="timeline-inverted">
-                  <div className="timeline-panel">
-                    <Skeleton height={420} />
-                  </div>
-                </li>
-              </ul>
-            </CardBody>
-          </Card> :
+          <>
+            <Card className="card-plain">
+              <Skeleton height={202} />
+            </Card>
+            <Card className="card-plain">
+              <Skeleton height={202} />
+            </Card>
+          </> :
           cWallets == 0 ?
             // No wallets
             <Card className="card-stats">
@@ -477,14 +518,12 @@ class PhiTrader extends React.Component {
                   </Row>
                 </CardBody>
               </Card> :
-              // Setups
-              <Card className="card-timeline card-plain">
-                <CardBody>
-                  <ul className="timeline">
-                    {this.TimelineItems(dimensions.setups)}
-                  </ul>
-                </CardBody>
-              </Card>
+              <>
+                <CardTitle tag="h3" className="description">
+                  {getString(prefs.locale, this.compId, "section_operations")}
+                </CardTitle>
+                {this.phiOperations(dimensions.setups)}
+              </>
         }
       </div>
     );
