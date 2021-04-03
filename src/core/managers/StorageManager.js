@@ -37,7 +37,7 @@ const config = {
     },
     strategies: {
       syncLimit: 15,
-      version: 0.04
+      version: 0.05
     },
     positionTypes: {
       syncLimit: 43200,
@@ -115,7 +115,7 @@ const config = {
     },
     stockExchanges: {
       syncLimit: 43200,
-      version: 0.03
+      version: 0.04
     },
     technicalConditions: {
       syncLimit: 43200,

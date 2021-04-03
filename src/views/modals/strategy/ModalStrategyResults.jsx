@@ -229,7 +229,7 @@ class ModalStrategyResults extends React.Component {
     let isOwner = this.props.user.username === strategy.owner_username
 
     if (!isOwner && data.length > 0 && strategy.my_rating == null) {
-      // There were results for this Strategy...
+      // There are results for this Strategy...
       await sleep(17000)
 
       if (this.props.isOpen) {

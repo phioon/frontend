@@ -107,6 +107,8 @@ class StrategyManager {
 
     rawData = await Promise.all(rawData)
 
+    console.log(rawData)
+
     result = rawData[0].data
     for (var x = 1; x < rawData.length; x++)
       result = joinContentObjLists(result, rawData[x].data, "asset_symbol")
