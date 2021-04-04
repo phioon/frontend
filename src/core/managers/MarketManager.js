@@ -1365,10 +1365,10 @@ class MarketManager {
       for (var obj of sItem.data) {
         let option = {
           value: obj.se_short,
-          label: obj.se_name,
+          label: obj.name,
 
           se_short: obj.se_short,
-          se_name: obj.se_name,
+          name: obj.name,
           timezone: obj.timezone,
           currency_code: obj.currency_code
         }
