@@ -897,7 +897,7 @@ class MarketManager {
   // .. Functions
   static async isDIndicatorCached(sData) {
     let stockExchanges = await StorageManager.getData("stockExchanges")
-    let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", sData.stockExchange)
+    let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", sData.stock_exchange)
 
     let syncToleranceDaily = (1440 * 1) + (60 * 20)
     let syncToleranceWeekend = (1440 * 3) + (60 * 20)

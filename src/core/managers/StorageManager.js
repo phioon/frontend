@@ -91,19 +91,19 @@ const config = {
     },
     dEma: {
       syncLimit: 60,
-      version: 0.06
+      version: 0.07
     },
     dQuote: {
       syncLimit: 15,
-      version: 0.06
+      version: 0.07
     },
     dPhibo: {
       syncLimit: 60,
-      version: 0.06
+      version: 0.07
     },
     dRoc: {
       syncLimit: 60,
-      version: 0.06
+      version: 0.07
     },
     dSetups: {
       syncLimit: 60,
