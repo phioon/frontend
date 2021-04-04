@@ -21,7 +21,7 @@ import {
 import Select from "react-select";
 
 import LabelAlert from "../../../../components/LabelAlert";
-import { applyFilterToObjList, retrieveObjFromObjList, getDistinctValuesFromList, orderBy, deepCloneObj } from "../../../../core/utils";
+import { queryObjList, retrieveObjFromObjList, getDistinctValuesFromList, orderBy, deepCloneObj } from "../../../../core/utils";
 
 class ModalComparisonDetail extends React.Component {
   constructor(props) {
@@ -459,7 +459,7 @@ class ModalComparisonDetail extends React.Component {
         break;
 
       case "indicator_0":
-        selection = applyFilterToObjList(items, filters)
+        selection = queryObjList(items, filters)
         newState[`${fieldName}_options`] = this.prepareIndicatorOptions(selection)
         newState[`${fieldName}_options_isOpen`] = newState[`${fieldName}_options`].length > 0
 
@@ -470,7 +470,7 @@ class ModalComparisonDetail extends React.Component {
         }
         break;
       case "indicator_1":
-        selection = applyFilterToObjList(items, filters)
+        selection = queryObjList(items, filters)
         newState[`${fieldName}_options`] = this.prepareIndicatorOptions(selection)
         newState[`${fieldName}_options_isOpen`] = newState[`${fieldName}_options`].length > 0
 
@@ -482,12 +482,12 @@ class ModalComparisonDetail extends React.Component {
         break;
 
       case "instance_0":
-        selection = applyFilterToObjList(items, filters)
+        selection = queryObjList(items, filters)
         newState[`${fieldName}_options`] = this.prepareInstanceOptions(selection)
         newState[`${fieldName}_options_isOpen`] = newState[`${fieldName}_options`].length > 0
         break;
       case "instance_1":
-        selection = applyFilterToObjList(items, filters)
+        selection = queryObjList(items, filters)
         newState[`${fieldName}_options`] = this.prepareInstanceOptions(selection)
         newState[`${fieldName}_options_isOpen`] = newState[`${fieldName}_options`].length > 0
         break;

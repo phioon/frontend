@@ -45,7 +45,7 @@ import RulesExplainer from "./RulesExplainer";
 import LabelAlert from "../../../components/LabelAlert";
 import {
   areObjsEqual,
-  applyFilterToObjList,
+  queryObjList,
   getDistinctValuesFromList,
   retrieveObjFromObjList,
   verifyLength,
@@ -408,7 +408,7 @@ class ModalStrategy extends React.Component {
     }
 
     let filters = { subcategory: [subcatId] }
-    iItems = applyFilterToObjList(iItems, filters)
+    iItems = queryObjList(iItems, filters)
     let subcategories = getDistinctValuesFromList(iItems, "subcategory")
 
     return subcategories.map((subcatId) => {
@@ -460,7 +460,7 @@ class ModalStrategy extends React.Component {
     let { isDragging } = this.state;
 
     let filters = { type: ["basic"] }
-    let reversedWS = applyFilterToObjList(workspaces.slice(), filters)
+    let reversedWS = queryObjList(workspaces.slice(), filters)
     reversedWS.reverse()
 
     return reversedWS.map((ws) => {
@@ -526,7 +526,7 @@ class ModalStrategy extends React.Component {
     let { isDragging } = this.state;
 
     let filters = { type: ["advanced"] }
-    let reversedWS = applyFilterToObjList(workspaces.slice(), filters)
+    let reversedWS = queryObjList(workspaces.slice(), filters)
     reversedWS.reverse()
 
     return reversedWS.map((ws) => {
@@ -1045,7 +1045,7 @@ class ModalStrategy extends React.Component {
           isOpen={modal_quoteDetail_isOpen}
           toggleModal={this.toggleModal}
           onCommit={this.onWSCommit}
-          items={selected.subcatId === "quote" ? applyFilterToObjList(iItems, { subcategory: [selected.subcatId] }) : []}
+          items={selected.subcatId === "quote" ? queryObjList(iItems, { subcategory: [selected.subcatId] }) : []}
           action={selected.subcatId === "quote" ? selected.action : ""}
           workspace={selected.subcatId === "quote" ? selected.workspace.items : []}
           wsId={selected.subcatId === "quote" ? selected.workspace.id : ""}
@@ -1058,7 +1058,7 @@ class ModalStrategy extends React.Component {
           isOpen={modal_movingAverageDetail_isOpen}
           toggleModal={this.toggleModal}
           onCommit={this.onWSCommit}
-          items={selected.subcatId === "moving_average" ? applyFilterToObjList(iItems, { subcategory: [selected.subcatId] }) : []}
+          items={selected.subcatId === "moving_average" ? queryObjList(iItems, { subcategory: [selected.subcatId] }) : []}
           action={selected.subcatId === "moving_average" ? selected.action : ""}
           workspace={selected.subcatId === "moving_average" ? selected.workspace.items : []}
           wsId={selected.subcatId === "moving_average" ? selected.workspace.id : ""}
@@ -1071,7 +1071,7 @@ class ModalStrategy extends React.Component {
           isOpen={modal_phiboDetail_isOpen}
           toggleModal={this.toggleModal}
           onCommit={this.onWSCommit}
-          items={selected.subcatId === "phibo" ? applyFilterToObjList(iItems, { subcategory: [selected.subcatId] }) : []}
+          items={selected.subcatId === "phibo" ? queryObjList(iItems, { subcategory: [selected.subcatId] }) : []}
           action={selected.subcatId === "phibo" ? selected.action : ""}
           workspace={selected.subcatId === "phibo" ? selected.workspace.items : []}
           wsId={selected.subcatId === "phibo" ? selected.workspace.id : ""}
@@ -1102,7 +1102,7 @@ class ModalStrategy extends React.Component {
           currency={currency}
           toolId={selected.toolId}
           toolIndex={selected.toolIndex}
-          items={selected.toolId === "distance" ? applyFilterToObjList(iItems, { category: ["price_lagging", "constant"] }) : []}
+          items={selected.toolId === "distance" ? queryObjList(iItems, { category: ["price_lagging", "constant"] }) : []}
           action={selected.toolId === "distance" ? selected.action : ""}
           wsId={selected.toolId === "distance" ? selected.workspace.id : ""}
           selectedItem={selected.toolId === "distance" ? selected.workspace.items[selected.toolIndex] : {}}
@@ -1116,7 +1116,7 @@ class ModalStrategy extends React.Component {
           onCommit={this.onWSCommit}
           toolId={selected.toolId}
           toolIndex={selected.toolIndex}
-          items={selected.toolId === "slope" ? applyFilterToObjList(iItems, { subcategory: ["moving_average"] }) : []}
+          items={selected.toolId === "slope" ? queryObjList(iItems, { subcategory: ["moving_average"] }) : []}
           action={selected.toolId === "slope" ? selected.action : ""}
           wsId={selected.toolId === "slope" ? selected.workspace.id : ""}
           selectedItem={selected.toolId === "slope" ? selected.workspace.items[selected.toolIndex] : {}}

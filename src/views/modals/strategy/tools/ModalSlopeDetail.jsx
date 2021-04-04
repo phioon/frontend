@@ -19,7 +19,7 @@ import {
 import Select from "react-select";
 
 import LabelAlert from "../../../../components/LabelAlert";
-import { applyFilterToObjList, deepCloneObj, getDistinctValuesFromList, retrieveObjFromObjList } from "../../../../core/utils";
+import { queryObjList, deepCloneObj, getDistinctValuesFromList, retrieveObjFromObjList } from "../../../../core/utils";
 
 class ModalSlopeDetail extends React.Component {
   constructor(props) {
@@ -287,7 +287,7 @@ class ModalSlopeDetail extends React.Component {
         break;
 
       case "periods":
-        selection = applyFilterToObjList(items, filters)
+        selection = queryObjList(items, filters)
         newState[`${fieldName}_options`] = this.preparePeriods_options(selection)
         newState[`${fieldName}_options_isOpen`] = newState[`${fieldName}_options`].length > 0
         break;
@@ -306,7 +306,7 @@ class ModalSlopeDetail extends React.Component {
       indicator: [tool.data.indicator.value],
       periods: [tool.data.periods.value],
     }
-    let filteredItems = applyFilterToObjList(items, filters)
+    let filteredItems = queryObjList(items, filters)
     // The filtering above MUST return only 1 item
     if (filteredItems.length == 1) {
       selectedItems.push(deepCloneObj(filteredItems[0]))

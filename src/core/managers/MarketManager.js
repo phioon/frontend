@@ -151,7 +151,7 @@ class MarketManager {
         method: "get",
         request: "/api/market/<timeInterval>/setups/"
       },
-      wsSetupSummary: {
+      wsSetupStats: {
         options: {
           headers: {
             "Content-Type": "application/json",
@@ -162,7 +162,7 @@ class MarketManager {
           },
         },
         method: "get",
-        request: "/api/market/<timeInterval>/setupSummary/"
+        request: "/api/market/<timeInterval>/setup_stats/"
       },
       wsStockExchanges: {
         options: {
@@ -172,7 +172,7 @@ class MarketManager {
           }
         },
         method: "get",
-        request: "/api/market/stockExchanges/"
+        request: "/api/market/stock_exchanges/"
       },
       wsTechnicalConditions: {
         options: {
@@ -182,7 +182,7 @@ class MarketManager {
           }
         },
         method: "get",
-        request: "/api/market/technicalConditions/"
+        request: "/api/market/technical_conditions/"
       },
     }
     this.workingOffline = false
@@ -223,7 +223,7 @@ class MarketManager {
       delete assets.version                 // Removes first position (key 'version')
 
       for (var [k, v] of Object.entries(assets))
-        if (v.data.stockExchange != se_short)
+        if (v.data.stock_exchange != se_short)
           delete assets[k]
 
       assets = Object.keys(assets)
@@ -254,16 +254,15 @@ class MarketManager {
           syncList.push(a)                  // Insert Asset into syncList
       }
 
-    // console.log(`syncList: ${syncList}`)
-
     if (syncList.length > 0) {
       let wsInfo = this.getApi("wsAssets")
       wsInfo.options.headers.Authorization = "token " + AuthManager.instantToken()
       wsInfo.options.data = {
         detailed: detailed,
         stockExchange: se_short,
-        assets: syncList.join(','),
+        assets: syncList,
       }
+
       result = await httpRequest(wsInfo.method, wsInfo.request, wsInfo.options.headers, undefined, wsInfo.options.data)
 
       if (result.status == 200)
@@ -388,15 +387,15 @@ class MarketManager {
     let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", strStockExchange)
 
     if (stockExchange) {
-      let tz = stockExchange.se_timezone
+      let tz = stockExchange.timezone
       let tz_now = TimeManager.tzConvert(tz, new Date())
       let tz_mTime = TimeManager.tzConvert(tz, TimeManager.getMoment(mTime))
       let now_weekDay = TimeManager.tzGetWeekday(tz, tz_now)
 
       if ([1, 2, 3, 4, 5].includes(now_weekDay)) {
         // Today is a weekday
-        let now_mAfterMarketOpens = TimeManager.timeDiff(tz_now.format("HH:mm:ss"), stockExchange.se_startTime)
-        let now_mAfterMarketCloses = TimeManager.timeDiff(tz_now.format("HH:mm:ss"), stockExchange.se_endTime)
+        let now_mAfterMarketOpens = TimeManager.timeDiff(tz_now.format("HH:mm:ss"), stockExchange.start_time)
+        let now_mAfterMarketCloses = TimeManager.timeDiff(tz_now.format("HH:mm:ss"), stockExchange.end_time)
 
         if (now_mAfterMarketOpens < 0) {
           // It's morning. Market didn't open yet.
@@ -429,8 +428,8 @@ class MarketManager {
     // Keep in mind that at this point, market is always closed...
 
     if (stockExchange) {
-      let tz = stockExchange.se_timezone
-      let se_endTime = TimeManager.getTzMoment(String(tz_mTime.format("YYYY-MM-DD") + "T" + stockExchange.se_endTime), tz)
+      let tz = stockExchange.timezone
+      let endTime = TimeManager.getTzMoment(String(tz_mTime.format("YYYY-MM-DD") + "T" + stockExchange.end_time), tz)
       let mTime_weekDay = TimeManager.tzGetWeekday(tz, tz_mTime)
 
       let syncTolerance = 60 * 12
@@ -446,24 +445,24 @@ class MarketManager {
       }
 
       // console.log(`tz_mTime: ${tz_mTime}`)
-      // console.log(`se_endTime: ${se_endTime}`)
+      // console.log(`endTime: ${endTime}`)
 
       // console.log(`syncTolerance: ${syncTolerance}`)
-      // console.log(`diff: ${TimeManager.timestampDiff(se_endTime)}`)
+      // console.log(`diff: ${TimeManager.timestampDiff(endTime)}`)
 
       if ([1, 2, 3, 4, 5].includes(mTime_weekDay)) {
         // Last time it was modified was a weekday
-        let mAfterMarketCloses = TimeManager.timestampDiff(tz_mTime, se_endTime)
+        let mAfterMarketCloses = TimeManager.timestampDiff(tz_mTime, endTime)
 
-        if (mAfterMarketCloses >= 60 && TimeManager.timestampDiff(se_endTime) > -syncTolerance) {
+        if (mAfterMarketCloses >= 60 && TimeManager.timestampDiff(endTime) > -syncTolerance) {
           // Price has been updated after market was closed.
-          // Time difference between se_endTime and now is under tolerance
+          // Time difference between endTime and now is under tolerance
           return true
         }
       }
       else {
         // Last time it was modified was on Weekend
-        if (TimeManager.timestampDiff(se_endTime) > -syncTolerance)
+        if (TimeManager.timestampDiff(endTime) > -syncTolerance)
           return true
       }
     }
@@ -579,7 +578,7 @@ class MarketManager {
 
     if (result.status == 200) {
       result = result.data
-      result.stockExchange = stockExchange
+      result.stock_exchange = stockExchange
 
       if (sItem) {
         // Stored data may be up to date, but stored instances are not enough. 
@@ -653,7 +652,7 @@ class MarketManager {
 
     if (result.status == 200) {
       result = result.data
-      result.stockExchange = stockExchange
+      result.stock_exchange = stockExchange
 
       if (sItem) {
         // Stored data may be up to date, but stored instances are not enough. 
@@ -727,7 +726,7 @@ class MarketManager {
 
     if (result.status == 200) {
       result = result.data
-      result.stockExchange = stockExchange
+      result.stock_exchange = stockExchange
 
       if (sItem) {
         // Stored data may be up to date, but stored instances are not enough. 
@@ -801,7 +800,7 @@ class MarketManager {
 
     if (result.status == 200) {
       result = result.data
-      result.stockExchange = stockExchange
+      result.stock_exchange = stockExchange
 
       if (sItem) {
         // Stored data may be up to date, but stored instances are not enough. 
@@ -875,7 +874,7 @@ class MarketManager {
 
     if (result.status == 200) {
       result = result.data
-      result.stockExchange = stockExchange
+      result.stock_exchange = stockExchange
 
       if (sItem) {
         // Stored data may be up to date, but stored instances are not enough. 
@@ -898,12 +897,12 @@ class MarketManager {
   // .. Functions
   static async isDIndicatorCached(sData) {
     let stockExchanges = await StorageManager.getData("stockExchanges")
-    let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", sData.stockExchange)
+    let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", sData.stock_exchange)
 
     let syncToleranceDaily = (1440 * 1) + (60 * 20)
     let syncToleranceWeekend = (1440 * 3) + (60 * 20)
 
-    let tz = stockExchange.se_timezone
+    let tz = stockExchange.timezone
     let tz_sDate = TimeManager.tzConvert(tz, sData.latest_datetime, true, true)
     let sDateWeekday = new Date(tz_sDate).getDay()
 
@@ -1051,7 +1050,7 @@ class MarketManager {
     if (sItem.data) {
       for (var obj of sItem.data) {
         obj.value = obj.id
-        obj.status = obj.ended_on ? "closed" : "open"
+        // obj.status = obj.ended_on ? "closed" : "open"
 
         obj.links = {}
         obj.links[dAssets] = [obj.asset_symbol]
@@ -1062,7 +1061,7 @@ class MarketManager {
         data.push(obj)
       }
 
-      data = orderBy(data, ["-started_on"])
+      data = orderBy(data, ["-radar_on"])
       dimension.data = data
     }
 
@@ -1077,7 +1076,7 @@ class MarketManager {
 
     if (sItem.data) {
       for (var obj of sItem.data) {
-        let strDate = obj.started_on
+        let strDate = obj.radar_on
         if (!dateAsKey[strDate]) {
           dateAsKey[strDate] = {}
 
@@ -1108,7 +1107,7 @@ class MarketManager {
 
     if (sItem.data) {
       for (var obj of sItem.data) {
-        let status = obj.ended_on ? "closed" : "open"
+        let status = obj.status
 
         if (!statusAsKey[status]) {
           statusAsKey[status] = {}
@@ -1169,13 +1168,13 @@ class MarketManager {
     return dimension
   }
 
-  // Setup Summary (Phi Trader)
+  // Setup Stats (Phi Trader)
   // .. [d] Data
-  async dSetupSummaryList(stockExchange) {
-    const sKey = "dSetupSummary"
+  async dSetupStatsList(stockExchange) {
+    const sKey = "dSetupStats"
     await this.startRequest(sKey)
 
-    let wsInfo = this.getApi("wsSetupSummary")
+    let wsInfo = this.getApi("wsSetupStats")
     let result = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange)
 
     if (result) {
@@ -1196,15 +1195,15 @@ class MarketManager {
       result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
-      this.getHttpTranslation(result, "dSetupSummaryList", "dSetupSummary", true)
+      this.getHttpTranslation(result, "dSetupStatsList", "dSetupStats", true)
       result = await StorageManager.getItem(sKey, stockExchange)
     }
 
     this.finishRequest(sKey)
     return result
   }
-  async dSetupSummaryData(stockExchange) {
-    let sItem = await this.dSetupSummaryList(stockExchange)
+  async dSetupStatsData(stockExchange) {
+    let sItem = await this.dSetupStatsList(stockExchange)
 
     if (sItem && sItem.data)
       return sItem.data
@@ -1278,12 +1277,12 @@ class MarketManager {
     if (sData.length > 0 && dateFrom) {
       let asset = await StorageManager.getData("assets", sData[0].asset_symbol)
       let stockExchanges = await StorageManager.getData("stockExchanges")
-      let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", asset.stockExchange)
+      let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", asset.stock_exchange)
 
       let syncToleranceDaily = (1440 * 2) + (60 * 8)
       let syncToleranceWeekend = (1440 * 4) + (60 * 8)
 
-      let tz = stockExchange.se_timezone
+      let tz = stockExchange.timezone
       let sFirstDate = sData[sData.length - 1].d_datetime
       let sLastDate = sData[0].d_datetime
       let tz_sLastDate = TimeManager.tzConvert(tz, sData[0].d_datetime, true, true)
@@ -1370,7 +1369,7 @@ class MarketManager {
 
           se_short: obj.se_short,
           se_name: obj.se_name,
-          se_timezone: obj.se_timezone,
+          timezone: obj.timezone,
           currency_code: obj.currency_code
         }
 
@@ -1386,13 +1385,13 @@ class MarketManager {
     let stockExchange = retrieveObjFromObjList(stockExchanges, "se_short", strStockExchange)
 
     if (stockExchange) {
-      let tz = stockExchange.se_timezone
+      let tz = stockExchange.timezone
       let now_tz = TimeManager.tzConvert(tz, new Date())
       let weekDay = TimeManager.tzGetWeekday(tz, now_tz)
 
       if (weekDay >= 1 && weekDay <= 5) {
-        let mAfterMarketOpens = TimeManager.timeDiff(now_tz.format("HH:mm:ss"), stockExchange.se_startTime)
-        let mAfterMarketCloses = TimeManager.timeDiff(now_tz.format("HH:mm:ss"), stockExchange.se_endTime)
+        let mAfterMarketOpens = TimeManager.timeDiff(now_tz.format("HH:mm:ss"), stockExchange.start_time)
+        let mAfterMarketCloses = TimeManager.timeDiff(now_tz.format("HH:mm:ss"), stockExchange.end_time)
 
         // Considers that prices can be updated up to 60 minutes after market is closed.
         if (mAfterMarketOpens >= 0 && mAfterMarketCloses <= 60)

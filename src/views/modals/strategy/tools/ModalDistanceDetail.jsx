@@ -23,7 +23,7 @@ import Select from "react-select";
 import CurrencyInput from "../../../../components/CurrencyInput";
 import LabelAlert from "../../../../components/LabelAlert";
 import {
-  applyFilterToObjList,
+  queryObjList,
   convertMaskedStringToFloat,
   convertFloatToCurrency,
   convertFloatToPercentage,
@@ -531,7 +531,7 @@ class ModalDistanceDetail extends React.Component {
         break;
 
       case "indicator_0":
-        selection = applyFilterToObjList(items, filters)
+        selection = queryObjList(items, filters)
         newState[`${fieldName}_options`] = this.prepareIndicatorOptions(selection)
         newState[`${fieldName}_options_isOpen`] = newState[`${fieldName}_options`].length > 0
 
@@ -542,7 +542,7 @@ class ModalDistanceDetail extends React.Component {
         }
         break;
       case "indicator_1":
-        selection = applyFilterToObjList(items, filters)
+        selection = queryObjList(items, filters)
         newState[`${fieldName}_options`] = this.prepareIndicatorOptions(selection)
         newState[`${fieldName}_options_isOpen`] = newState[`${fieldName}_options`].length > 0
 
@@ -554,12 +554,12 @@ class ModalDistanceDetail extends React.Component {
         break;
 
       case "instance_0":
-        selection = applyFilterToObjList(items, filters)
+        selection = queryObjList(items, filters)
         newState[`${fieldName}_options`] = this.prepareInstanceOptions(selection)
         newState[`${fieldName}_options_isOpen`] = newState[`${fieldName}_options`].length > 0
         break;
       case "instance_1":
-        selection = applyFilterToObjList(items, filters)
+        selection = queryObjList(items, filters)
         newState[`${fieldName}_options`] = this.prepareInstanceOptions(selection)
         newState[`${fieldName}_options_isOpen`] = newState[`${fieldName}_options`].length > 0
         break;

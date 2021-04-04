@@ -108,7 +108,7 @@ class AppLayout extends React.Component {
       this.props.managers.market.technicalConditionList()                 // async call
 
       for (var se_short of stockExchanges) {
-        this.props.managers.market.dSetupSummaryList(se_short)            // async call
+        this.props.managers.market.dSetupStatsList(se_short)              // async call
         this.props.managers.market.dSetupList(se_short)                   // async call
       }
     }

@@ -37,7 +37,7 @@ const config = {
     },
     strategies: {
       syncLimit: 15,
-      version: 0.04
+      version: 0.05
     },
     positionTypes: {
       syncLimit: 43200,
@@ -75,7 +75,7 @@ const config = {
   market: {
     assets: {
       syncLimit: 12,
-      version: 0.05
+      version: 0.06
     },
     dRaw: {
       syncLimit: 60,
@@ -83,7 +83,7 @@ const config = {
     },
     indicators: {
       syncLimit: 43200,
-      version: 0.23
+      version: 0.24
     },
     dSma: {
       syncLimit: 60,
@@ -91,35 +91,35 @@ const config = {
     },
     dEma: {
       syncLimit: 60,
-      version: 0.06
+      version: 0.07
     },
     dQuote: {
       syncLimit: 15,
-      version: 0.06
+      version: 0.07
     },
     dPhibo: {
       syncLimit: 60,
-      version: 0.06
+      version: 0.07
     },
     dRoc: {
       syncLimit: 60,
-      version: 0.06
+      version: 0.07
     },
     dSetups: {
       syncLimit: 60,
       version: 0.07
     },
-    dSetupSummary: {
+    dSetupStats: {
       syncLimit: 60,
       version: 0.06
     },
     stockExchanges: {
       syncLimit: 43200,
-      version: 0.01
+      version: 0.04
     },
     technicalConditions: {
       syncLimit: 43200,
-      version: 0.01
+      version: 0.02
     },
   },
   search: {
@@ -266,7 +266,7 @@ class StorageManager {
 
     switch (sKey) {
       case "assets":
-        isMarketOpen = await MarketManager.isMarketOpen(result[strData].stockExchange)
+        isMarketOpen = await MarketManager.isMarketOpen(result[strData].stock_exchange)
 
         if (isMarketOpen) {
           // Market is Open
@@ -275,14 +275,14 @@ class StorageManager {
         }
         else {
           // Market is Closed
-          let isAssetUpToDate = await MarketManager.isAssetUpToDate(result[strData].stockExchange, mTime)
+          let isAssetUpToDate = await MarketManager.isAssetUpToDate(result[strData].stock_exchange, mTime)
 
           isUpToDate = isAssetUpToDate || (result.data && mTime &&
             TimeManager.timestampDelta(mTime, TimeManager.getUTCDatetime()) < config[sModule][sKey].syncLimit)
         }
         break;
       case "dQuote":
-        isMarketOpen = await MarketManager.isMarketOpen(result[strData].stockExchange)
+        isMarketOpen = await MarketManager.isMarketOpen(result[strData].stock_exchange)
 
         if (isMarketOpen) {
           // Market is Open

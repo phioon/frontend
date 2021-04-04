@@ -89,7 +89,7 @@ class ModalStrategyResults extends React.Component {
       let stockExchange = await this.props.managers.market.stockExchangeRetrieve(se_short)
       let option = {
         value: stockExchange.se_short,
-        label: stockExchange.se_name
+        label: stockExchange.name
       }
 
       stockExchangeOptions.push(option)
@@ -229,7 +229,7 @@ class ModalStrategyResults extends React.Component {
     let isOwner = this.props.user.username === strategy.owner_username
 
     if (!isOwner && data.length > 0 && strategy.my_rating == null) {
-      // There were results for this Strategy...
+      // There are results for this Strategy...
       await sleep(17000)
 
       if (this.props.isOpen) {
@@ -508,7 +508,7 @@ class ModalStrategyResults extends React.Component {
                       accessor: "last_trade_time",
                       filterable: false,
                       Cell: (cell) => {
-                        let tzDatetime = TimeManager.tzConvert(stockExchange.se_timezone, cell.value, true)
+                        let tzDatetime = TimeManager.tzConvert(stockExchange.timezone, cell.value, true)
                         tzDatetime.locale(getString(prefs.locale, "locales", prefs.locale))
 
                         let relativeTime = tzDatetime.calendar(null, {

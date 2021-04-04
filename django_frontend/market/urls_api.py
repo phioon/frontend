@@ -3,8 +3,8 @@ from . import views
 
 # Models
 urlpatterns = [
-    path('technicalConditions/', views.TechnicalConditionList, name='technical_condition'),
-    path('stockExchanges/', views.StockExchangeList, name='stock-exchange'),
+    path('technical_conditions/', views.TechnicalConditionList, name='technical-conditions'),
+    path('stock_exchanges/', views.StockExchangeList, name='stock-exchange'),
     path('assets/', views.AssetList, name='asset'),
     path('indicators/', views.IndicatorList, name='indicators'),
 ]
@@ -19,5 +19,5 @@ urlpatterns += [
     path('d/roc/latest/', views.D_RocLatestList, name='d-roc_latest_data'),
 
     path('d/setups/', views.D_setupList, name='d-setup'),
-    path('d/setupSummary/', views.D_setupSummaryList, name='D-setup-summary'),
+    path('d/setup_stats/', views.D_setupStatsList, name='D-setup-stats'),
 ]

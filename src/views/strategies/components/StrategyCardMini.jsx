@@ -331,21 +331,17 @@ class StrategyCardMini extends React.Component {
           {this.renderActions(context)}
         </CardBody >
         {/* Background Icon */}
-        < div id={`type__${context}__${strategy.uuid}`
-        }
-          className={classnames("bg-icon", strategy.type == "buy" ? "icon-success" : "icon-danger")}
+        <div id={`type__${context}__${strategy.uuid}`}
+          className={classnames("icon-bg", strategy.type == "buy" ? "icon-success" : "icon-danger")}
         >
-          {
-            strategy.type == "buy" ?
-              <i className="nc-icon nc-spaceship" /> :
-              <i className="nc-icon nc-spaceship fa-rotate-90" />
+          {strategy.type == "buy" ?
+            <i className="nc-icon nc-spaceship" /> :
+            <i className="nc-icon nc-spaceship fa-rotate-90" />
           }
-          < UncontrolledTooltip placement="bottom" target={`type__${context}__${strategy.uuid}`
-          }>
-            {
-              strategy.type == "buy" ?
-                getString(prefs.locale, this.compId, "icon_type_buy_hint") :
-                getString(prefs.locale, this.compId, "icon_type_sell_hint")
+          <UncontrolledTooltip placement="bottom" target={`type__${context}__${strategy.uuid}`}>
+            {strategy.type == "buy" ?
+              getString(prefs.locale, this.compId, "icon_type_buy_hint") :
+              getString(prefs.locale, this.compId, "icon_type_sell_hint")
             }
           </UncontrolledTooltip >
         </div >
