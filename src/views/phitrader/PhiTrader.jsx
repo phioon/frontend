@@ -520,7 +520,7 @@ class PhiTrader extends React.Component {
               </Card> :
               <>
                 <CardTitle tag="h3" className="description">
-                  {getString(prefs.locale, this.compId, "section_operations")}
+                  {getString(prefs.locale, this.compId, "section_trades")}
                 </CardTitle>
                 {this.phiOperations(dimensions.setups)}
               </>

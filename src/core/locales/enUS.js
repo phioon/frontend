@@ -810,19 +810,19 @@ const locale = {
   phitrader: {
     title: "Phi Trader",
     label_intro_p1: "Hi! I'm Phi, the Artificial Intelligence behind PHIOON's main trading strategies...",
-    label_intro_p2: "Here, I'll expose all my operations, with details like: entry point, target, stop loss and the reason of it.",
+    label_intro_p2: "Here, I'll expose all my trades, with details like: entry point, target, stop loss and the reason of it.",
     label_intro_p3: "Be aware that they",
     label_intro_notRecommendation: "are not recommendations",
     label_intro_p4: "but I believe you could use my experience to analyze and learning with them.",
 
     label_noWallets_p1: "Hmm... Seems like you don't have a Wallet created so far... Let's create one?",
-    label_noWallets_p2: "That way, I'll know which Stock Exchange you work with, so I can share my operations with you! ;)",
+    label_noWallets_p2: "That way, I'll know which Stock Exchange you work with, so I can share my trades with you! ;)",
     btn_goToWallets: "Go to Wallets",
 
     label_noNews_p1: "Hmm... I don't have any operations so far.",
     label_noNews_p2: "As soon as I see an opportunity, I'll let you know! ;)",
 
-    section_operations: "Operations",
+    section_trades: "Trades",
     item_waiting: "Waiting",
     item_canceled: "Canceled",
     item_in_progress: "On-Going",

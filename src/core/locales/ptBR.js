@@ -822,7 +822,7 @@ const locale = {
     label_noNews_p1: "Hmm... Não tenho posições abertas no momento.",
     label_noNews_p2: "Assim que eu ver uma oportunidade, te aviso! ;)",
 
-    section_operations: "Operações",
+    section_trades: "Operações",
     item_waiting: "No Radar",
     item_canceled: "Cancelada",
     item_in_progress: "Ativa",

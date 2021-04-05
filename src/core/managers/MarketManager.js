@@ -1149,7 +1149,7 @@ class MarketManager {
           stockExchangeAsKey[obj.se_short] = {}
 
           stockExchangeAsKey[obj.se_short].value = obj.se_short
-          stockExchangeAsKey[obj.se_short].label = stockExchange.se_name
+          stockExchangeAsKey[obj.se_short].label = stockExchange.name
 
           stockExchangeAsKey[obj.se_short].links = {}
           stockExchangeAsKey[obj.se_short].links[dSetups] = []
@@ -1360,7 +1360,7 @@ class MarketManager {
     let options = []
 
     if (sItem.data) {
-      sItem.data = orderBy(sItem.data, ["se_name"])
+      sItem.data = orderBy(sItem.data, ["name"])
 
       for (var obj of sItem.data) {
         let option = {
