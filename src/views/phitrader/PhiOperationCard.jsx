@@ -594,10 +594,15 @@ class PhiOperationCard extends React.Component {
                 size="sm"
                 color={this.badgeStatusColor(operation)}
                 outline={!operation.ended_on}
-                id={`filter__type__${operation.id}`}
+                id={`status__${operation.id}`}
               >
                 <small>{getString(prefs.locale, "phitrader", [`item_${operation.status}`])}</small>
               </Button>
+              {["canceled"].includes(operation.status) &&
+                <UncontrolledTooltip placement="right-start" target={`status__${operation.id}`}>
+                  {getString(prefs.locale, this.compId, `status_${operation.status}_hint`)}
+                </UncontrolledTooltip>
+              }
             </Col>
             <Col className="text-right">
               <Collapse isOpen={!isOpen}>

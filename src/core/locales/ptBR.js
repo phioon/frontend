@@ -757,8 +757,11 @@ const locale = {
     btn_footer: "Voltar para PHIOON"
   },
   phioperationcard: {
-    label_long: "COMPRA",
-    label_short: "VENDA",
+    status_canceled_hint: "Preço alcançou Stop Loss antes de ativar a operação.",
+
+    icon_type_long_hint: "Operação de Compra",
+    icon_type_short_hint: "Operação de Venda",
+
     label_entryPrice: "ENTRADA",
     label_maxPrice: "PREÇO MÁXIMO",
     label_minPrice: "PREÇO MÍNIMO",
@@ -804,8 +807,6 @@ const locale = {
     progressBar_stopLoss_hint: "Stop Loss",
     progressBar_target_hint: "Alvo",
     progressBar_endedOn_hint: "Data de conclusão da Operação.",
-    icon_type_long_hint: "Operação de Compra",
-    icon_type_short_hint: "Operação de Venda",
   },
   phitrader: {
     title: "Phi Trader",
@@ -822,7 +823,7 @@ const locale = {
     label_noNews_p1: "Hmm... Não tenho posições abertas no momento.",
     label_noNews_p2: "Assim que eu ver uma oportunidade, te aviso! ;)",
 
-    section_trades: "Operações",
+    section_operations: "Operações",
     item_waiting: "No Radar",
     item_canceled: "Cancelada",
     item_in_progress: "Ativa",
