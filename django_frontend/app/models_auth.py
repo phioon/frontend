@@ -4,6 +4,7 @@ from django.db.models import Q, Count
 
 from django_engine import settings
 from app import models as models_app
+from app.locale import get_translation
 from search_engine import utils as utils_search
 
 
@@ -50,12 +51,12 @@ class UserCustom(models.Model):
     about_me = models.CharField(max_length=2048, blank=True, default='')
     links = models.JSONField(default=list)
 
+    def __str__(self):
+        return self.user.username
+
     @property
     def search_rank(self):
         return self.user.followers.count()
-
-    def __str__(self):
-        return self.user.username
 
     @staticmethod
     def create_user_custom(data):
@@ -106,8 +107,7 @@ class UserCustom(models.Model):
         custom_data = {
             'subscription': models_app.Subscription.objects.get(pk='basic'),
             'nationality': models_app.Country.objects.get(pk='BR'),
-            'locale': 'ptBR'
-        }
+            'locale': 'ptBR'}
 
         # 1 Nationality: BR
         # 1.1 Phioon Team
@@ -130,6 +130,25 @@ class UserCustom(models.Model):
 
         if isinstance(custom_data['user'], User):
             UserCustom.create_user_custom(custom_data)
+
+    def create_first_wallet(self):
+        locale = self.user.userPrefs.locale
+        currency = self.user.userPrefs.currency
+
+        wallet = models_app.Wallet.objects.get_or_create(
+            owner=self.user,
+            name=get_translation(locale=locale, comp_id='wallet', str_id='first_name'),
+            defaults={
+                'desc': '',
+                'currency': currency,
+                'se_short': 'BVMF'
+            })[0]
+
+        obj_res = {
+            'status': 200,
+            'data': wallet
+        }
+        return obj_res
 
 
 class UserPreferences(models.Model):

@@ -64,6 +64,9 @@ class UserRegisterAPIView(generics.GenericAPIView):
             custom_user = models_auth.UserCustom.create_user_custom(data)
 
             if custom_user['status'] == 200:
+                # Create main wallet
+                custom_user['data'].create_first_wallet()
+
                 # Send Confirmation Email
                 subject_template_name = 'emails/<locale>/user_created_subject.txt'
                 html_email_template_name = 'emails/<locale>/user_created_email.html'
