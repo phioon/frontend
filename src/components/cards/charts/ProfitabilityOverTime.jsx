@@ -164,7 +164,7 @@ class ProfitabilityOverTime extends Component {
               >
                 {getString(prefs.locale, "charts", "label_assets")}
               </Button>
-              <UncontrolledTooltip placement="bottom" target="result_groupByAsset">
+              <UncontrolledTooltip placement="bottom-end" target="result_groupByAsset">
                 {chart.monthly.groupByAsset.data.datasets &&
                   chart.monthly.groupByAsset.data.datasets.length < dimensionsLimit ?
                   getString(prefs.locale, "charts", chart.daily.groupByAsset.hintId) :
@@ -188,7 +188,7 @@ class ProfitabilityOverTime extends Component {
               >
                 {getString(prefs.locale, "charts", "label_wallets")}
               </Button>
-              <UncontrolledTooltip placement="bottom" target="result_groupByWallet">
+              <UncontrolledTooltip placement="bottom-end" target="result_groupByWallet">
                 {
                   chart.monthly.groupByWallet.data.datasets &&
                     chart.monthly.groupByWallet.data.datasets.length < dimensionsLimit ?
@@ -207,7 +207,7 @@ class ProfitabilityOverTime extends Component {
               >
                 {getString(prefs.locale, "charts", "label_overall")}
               </Button>
-              <UncontrolledTooltip placement="bottom" target="result_overall">
+              <UncontrolledTooltip placement="bottom-end" target="result_overall">
                 {getString(prefs.locale, "charts", chart.daily.overall.hintId)}
               </UncontrolledTooltip>
             </Col>

@@ -592,7 +592,7 @@ class MyAccount extends React.Component {
                         {" "}
                         <i id="input_birthday_hint" className="nc-icon nc-alert-circle-i" />
                       </label>
-                      <UncontrolledTooltip placement="top" target="input_birthday_hint">
+                      <UncontrolledTooltip placement="top-end" target="input_birthday_hint">
                         <label>{getString(prefs.locale, this.compId, "input_birthday_hint")}</label>
                       </UncontrolledTooltip>
                       <ReactDatetime
@@ -720,7 +720,7 @@ class MyAccount extends React.Component {
                     {" "}
                     <i id="input_currency_hint" className="nc-icon nc-alert-circle-i" />
                   </label>
-                  <UncontrolledTooltip placement="top" target="input_currency_hint">
+                  <UncontrolledTooltip placement="top-end" target="input_currency_hint">
                     {getString(prefs.locale, this.compId, "input_currency_hint")}
                   </UncontrolledTooltip>
                   <Select

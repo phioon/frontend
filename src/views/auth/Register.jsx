@@ -479,7 +479,8 @@ class Register extends React.Component {
                             type="checkbox"
                             name="cbTerms"
                             checked={user.data.cbTerms}
-                            onChange={e => this.onChange("cbTerms", e.target.checked)} />
+                            onChange={e => this.onChange("cbTerms", e.target.checked)}
+                          />
                           <span className="form-check-sign" />
                           {getString(prefs.locale, this.compId, "checkbox_iAgreeToThe") + " "}
                           <a href="#" onClick={e => e.preventDefault()}>

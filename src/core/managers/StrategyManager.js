@@ -702,6 +702,8 @@ class StrategyManager {
   // .. Buttons
   // Components
   runBtn(prefs, getString, onClick, strategy, isRunning, context = "any", size = "sm") {
+    let tooltipPlacement = context === "any" ? "top-start" : "top-end"
+
     return (
       <>
         <Button
@@ -715,7 +717,7 @@ class StrategyManager {
         >
           <i id="strategy_run" className="nc-icon nc-button-play" />
         </Button>
-        <UncontrolledTooltip placement="bottom" target={`run__${context}__${strategy.uuid}`}>
+        <UncontrolledTooltip placement={tooltipPlacement} target={`run__${context}__${strategy.uuid}`}>
           {getString(prefs.locale, "strategycomponents", "btn_run_hint")}
         </UncontrolledTooltip>
       </>
@@ -768,6 +770,8 @@ class StrategyManager {
     )
   }
   saveBtn(prefs, getString, onClick, strategy, context = "any", format = "listItem", size = "md") {
+    let tooltipPlacement = context === "any" ? "top-start" : "top-end"
+
     if (format === "listItem")
       return (
         <DropdownItem
@@ -793,7 +797,7 @@ class StrategyManager {
           >
             <i id="strategy_save" className={strategy.isSaved ? "nc-icon nc-check-2" : "nc-icon nc-simple-add"} />
           </Button>
-          <UncontrolledTooltip placement="bottom" target={`save__${context}__${strategy.uuid}`}>
+          <UncontrolledTooltip placement={tooltipPlacement} target={`save__${context}__${strategy.uuid}`}>
             {strategy.isSaved ?
               getString(prefs.locale, "strategycomponents", "btn_unsave_hint") :
               getString(prefs.locale, "strategycomponents", "btn_save_hint")
@@ -842,6 +846,8 @@ class StrategyManager {
     )
   }
   viewBtn(prefs, getString, onClick, strategy, context = "any", format = "listItem") {
+    let tooltipPlacement = context === "any" ? "top-start" : "top-end"
+
     if (format === "listItem")
       return (
         <DropdownItem
@@ -864,7 +870,7 @@ class StrategyManager {
           >
             <i id="strategy_view" className="far fa-eye" />
           </Button>
-          <UncontrolledTooltip placement="bottom" target={`${context}__${strategy.uuid}`}>
+          <UncontrolledTooltip placement={tooltipPlacement} target={`${context}__${strategy.uuid}`}>
             {getString(prefs.locale, "strategycomponents", "btn_view")}
           </UncontrolledTooltip>
         </>

@@ -701,7 +701,7 @@ class ModalDistanceDetail extends React.Component {
             {" "}
             <i id={"input_interval_0_hint"} className="nc-icon nc-alert-circle-i" />
           </label>
-          <UncontrolledTooltip placement="top" target={"input_interval_0_hint"}>
+          <UncontrolledTooltip placement="top-start" target={"input_interval_0_hint"}>
             {getString(prefs.locale, this.compId, "input_interval_hint")}
           </UncontrolledTooltip>
           <Select
@@ -722,7 +722,7 @@ class ModalDistanceDetail extends React.Component {
               {" "}
               <i id={"input_subcategory_0_hint"} className="nc-icon nc-alert-circle-i" />
             </label>
-            <UncontrolledTooltip placement="top" target={"input_subcategory_0_hint"}>
+            <UncontrolledTooltip placement="top-start" target={"input_subcategory_0_hint"}>
               {getString(prefs.locale, this.compId, "input_subcategory_hint")}
             </UncontrolledTooltip>
             <Select
@@ -743,7 +743,7 @@ class ModalDistanceDetail extends React.Component {
               {" "}
               <i id={"input_indicator_0_hint"} className="nc-icon nc-alert-circle-i" />
             </label>
-            <UncontrolledTooltip placement="top" target={"input_indicator_0_hint"}>
+            <UncontrolledTooltip placement="top-start" target={"input_indicator_0_hint"}>
               {getString(prefs.locale, this.compId, "input_indicator_hint")}
             </UncontrolledTooltip>
             <Select
@@ -786,7 +786,7 @@ class ModalDistanceDetail extends React.Component {
             {" "}
             <i id={"input_interval_1_hint"} className="nc-icon nc-alert-circle-i" />
           </label>
-          <UncontrolledTooltip placement="top" target={"input_interval_1_hint"}>
+          <UncontrolledTooltip placement="top-start" target={"input_interval_1_hint"}>
             {getString(prefs.locale, this.compId, "input_interval_hint")}
           </UncontrolledTooltip>
           <Select
@@ -807,7 +807,7 @@ class ModalDistanceDetail extends React.Component {
               {" "}
               <i id={"input_subcategory_1_hint"} className="nc-icon nc-alert-circle-i" />
             </label>
-            <UncontrolledTooltip placement="top" target={"input_subcategory_1_hint"}>
+            <UncontrolledTooltip placement="top-start" target={"input_subcategory_1_hint"}>
               {getString(prefs.locale, this.compId, "input_subcategory_hint")}
             </UncontrolledTooltip>
             <Select
@@ -828,7 +828,7 @@ class ModalDistanceDetail extends React.Component {
               {" "}
               <i id={"input_indicator_1_hint"} className="nc-icon nc-alert-circle-i" />
             </label>
-            <UncontrolledTooltip placement="top" target={"input_indicator_1_hint"}>
+            <UncontrolledTooltip placement="top-start" target={"input_indicator_1_hint"}>
               {getString(prefs.locale, this.compId, "input_indicator_hint")}
             </UncontrolledTooltip>
             <Select
@@ -915,7 +915,7 @@ class ModalDistanceDetail extends React.Component {
                       {" "}
                       <i id={"input_instance_0_hint"} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip placement="top" target={"input_instance_0_hint"}>
+                    <UncontrolledTooltip placement="top-start" target={"input_instance_0_hint"}>
                       {getString(prefs.locale, this.compId, "input_instance_hint")}
                     </UncontrolledTooltip>
                     <Select
@@ -934,7 +934,7 @@ class ModalDistanceDetail extends React.Component {
                       {" "}
                       <i id={"input_offset_0_hint"} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip placement="top" target={"input_offset_0_hint"}>
+                    <UncontrolledTooltip placement="top-start" target={"input_offset_0_hint"}>
                       {getString(prefs.locale, this.compId, "input_offset_hint")}
                     </UncontrolledTooltip>
                     <Select
@@ -956,7 +956,7 @@ class ModalDistanceDetail extends React.Component {
                       {" "}
                       <i id={"input_constant_0_hint"} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip placement="top" target={"input_constant_0_hint"}>
+                    <UncontrolledTooltip placement="top-start" target={"input_constant_0_hint"}>
                       {getString(prefs.locale, this.compId, "input_constant_hint")}
                     </UncontrolledTooltip>
                     <Input
@@ -986,7 +986,7 @@ class ModalDistanceDetail extends React.Component {
                       {" "}
                       <i id={"input_threshold_hint"} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip placement="top" target={"input_threshold_hint"}>
+                    <UncontrolledTooltip placement="top-start" target={"input_threshold_hint"}>
                       {getString(prefs.locale, this.compId, "input_threshold_hint")}
                     </UncontrolledTooltip>
                     <CurrencyInput
@@ -1045,7 +1045,7 @@ class ModalDistanceDetail extends React.Component {
                       {" "}
                       <i id={"input_instance_1_hint"} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip placement="top" target={"input_instance_1_hint"}>
+                    <UncontrolledTooltip placement="top-start" target={"input_instance_1_hint"}>
                       {getString(prefs.locale, this.compId, "input_instance_hint")}
                     </UncontrolledTooltip>
                     <Select
@@ -1064,7 +1064,7 @@ class ModalDistanceDetail extends React.Component {
                       {" "}
                       <i id={"input_offset_1_hint"} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip placement="top" target={"input_offset_1_hint"}>
+                    <UncontrolledTooltip placement="top-start" target={"input_offset_1_hint"}>
                       {getString(prefs.locale, this.compId, "input_offset_hint")}
                     </UncontrolledTooltip>
                     <Select
@@ -1085,7 +1085,7 @@ class ModalDistanceDetail extends React.Component {
                       {" "}
                       <i id={"input_constant_1_hint"} className="nc-icon nc-alert-circle-i" />
                     </label>
-                    <UncontrolledTooltip placement="top" target={"input_constant_1_hint"}>
+                    <UncontrolledTooltip placement="top-start" target={"input_constant_1_hint"}>
                       {getString(prefs.locale, this.compId, "input_constant_hint")}
                     </UncontrolledTooltip>
                     <Input

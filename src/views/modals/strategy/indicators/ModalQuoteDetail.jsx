@@ -203,7 +203,7 @@ class ModalQuoteDetail extends React.Component {
                 {" "}
                 <i id={"input_type_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
-              <UncontrolledTooltip placement="top" target={"input_type_hint"}>
+              <UncontrolledTooltip placement="top-start" target={"input_type_hint"}>
                 {getString(prefs.locale, this.compId, "input_type_hint")}
               </UncontrolledTooltip>
               <Select

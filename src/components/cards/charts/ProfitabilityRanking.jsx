@@ -171,7 +171,7 @@ class ProfitabilityRanking extends Component {
                 {getString(prefs.locale, "charts", "label_assets")}
               </Button>
               {" "}
-              <UncontrolledTooltip placement="bottom" target="profitabilityRanking_groupByAsset">
+              <UncontrolledTooltip placement="bottom-end" target="profitabilityRanking_groupByAsset">
                 {getString(prefs.locale, "charts", chart.generic.groupByAsset.hintId)}
               </UncontrolledTooltip>
               <Button
@@ -184,7 +184,7 @@ class ProfitabilityRanking extends Component {
               >
                 {getString(prefs.locale, "charts", "label_wallets")}
               </Button>
-              <UncontrolledTooltip placement="bottom" target="profitabilityRanking_groupByWallet">
+              <UncontrolledTooltip placement="bottom-end" target="profitabilityRanking_groupByWallet">
                 {getString(prefs.locale, "charts", chart.generic.groupByAsset.hintId)}
               </UncontrolledTooltip>
             </Col>

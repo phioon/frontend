@@ -201,7 +201,7 @@ class SubscriptionCurrent extends React.Component {
                 {" "}
                 <i id={"subscription_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
-              <UncontrolledTooltip placement="top" target={"subscription_hint"}>
+              <UncontrolledTooltip placement="top-start" target={"subscription_hint"}>
                 {getString(prefs.locale, this.compId, "label_subscription_hint")}
               </UncontrolledTooltip>
             </Col>
@@ -218,7 +218,7 @@ class SubscriptionCurrent extends React.Component {
                   {" "}
                   <i id={"label_expiresOn_hint"} className="nc-icon nc-alert-circle-i" />
                 </label>
-                <UncontrolledTooltip placement="bottom" target={"label_expiresOn_hint"}>
+                <UncontrolledTooltip placement="top-start" target={"label_expiresOn_hint"}>
                   {getString(prefs.locale, this.compId, "label_expiresOn_hint")}
                 </UncontrolledTooltip>
               </Col>
@@ -238,7 +238,7 @@ class SubscriptionCurrent extends React.Component {
                   {" "}
                   <i id={"label_renewsOn_hint"} className="nc-icon nc-alert-circle-i" />
                 </label>
-                <UncontrolledTooltip placement="bottom" target={"label_renewsOn_hint"}>
+                <UncontrolledTooltip placement="top-start" target={"label_renewsOn_hint"}>
                   {getString(prefs.locale, this.compId, "label_renewsOn_hint")}
                 </UncontrolledTooltip>
               </Col>
@@ -288,7 +288,7 @@ class SubscriptionCurrent extends React.Component {
                   <br />
                   <i id={"positions_hint"} className="nc-icon nc-alert-circle-i" />
                 </h6>
-                <UncontrolledTooltip placement="bottom" target={"positions_hint"}>
+                <UncontrolledTooltip placement="top-start" target={"positions_hint"}>
                   {getString(prefs.locale, this.compId, "label_positions_hint")}
                 </UncontrolledTooltip>
               </Col>
@@ -303,7 +303,7 @@ class SubscriptionCurrent extends React.Component {
                   <small>{getString(prefs.locale, this.compId, "label_result")}</small>
                   <br />
                   <i id={"result_hint"} className="nc-icon nc-alert-circle-i" />
-                  <UncontrolledTooltip placement="bottom" target={"result_hint"}>
+                  <UncontrolledTooltip placement="top-start" target={"result_hint"}>
                     {getString(prefs.locale, this.compId, "label_result_hint")}
                   </UncontrolledTooltip>
                 </h6>
@@ -322,7 +322,7 @@ class SubscriptionCurrent extends React.Component {
                   <small>{getString(prefs.locale, this.compId, "label_volume")}</small>
                   <br />
                   <i id={"volume_hint"} className="nc-icon nc-alert-circle-i" />
-                  <UncontrolledTooltip placement="bottom" target={"volume_hint"}>
+                  <UncontrolledTooltip placement="top-start" target={"volume_hint"}>
                     {getString(prefs.locale, this.compId, "label_volume_hint")}
                   </UncontrolledTooltip>
                 </h6>
@@ -339,7 +339,7 @@ class SubscriptionCurrent extends React.Component {
                   <br />
                   <i id={"strategies_hint"} className="nc-icon nc-alert-circle-i" />
                 </h6>
-                <UncontrolledTooltip placement="bottom" target={"strategies_hint"}>
+                <UncontrolledTooltip placement="top-start" target={"strategies_hint"}>
                   {getString(prefs.locale, this.compId, "label_strategies_hint")}
                 </UncontrolledTooltip>
               </Col>
@@ -359,7 +359,7 @@ class SubscriptionCurrent extends React.Component {
                     <br />
                     <i id={"phiOperations_hint"} className="nc-icon nc-alert-circle-i" />
                   </h6>
-                  <UncontrolledTooltip placement="bottom" target={"phiOperations_hint"}>
+                  <UncontrolledTooltip placement="top-start" target={"phiOperations_hint"}>
                     {getString(prefs.locale, this.compId, "label_phiOperations_hint")}
                   </UncontrolledTooltip>
                 </Col>

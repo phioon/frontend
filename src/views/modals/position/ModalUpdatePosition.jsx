@@ -592,7 +592,7 @@ class ModalUpdatePosition extends React.Component {
                 {" "}
                 <i id={"input_s_price_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
-              <UncontrolledTooltip placement="top" target={"input_s_price_hint"}>
+              <UncontrolledTooltip placement="top-start" target={"input_s_price_hint"}>
                 {getString(prefs.locale, this.compId, "input_price_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
@@ -620,7 +620,7 @@ class ModalUpdatePosition extends React.Component {
                 {" "}
                 <i id={"input_s_cost_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
-              <UncontrolledTooltip placement="top" target={"input_s_cost_hint"}>
+              <UncontrolledTooltip placement="top-start" target={"input_s_cost_hint"}>
                 {getString(prefs.locale, this.compId, "input_cost_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
@@ -653,7 +653,7 @@ class ModalUpdatePosition extends React.Component {
                 {" "}
                 <i id={"input_s_opCost_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
-              <UncontrolledTooltip placement="top" target={"input_s_opCost_hint"}>
+              <UncontrolledTooltip placement="top-start" target={"input_s_opCost_hint"}>
                 {getString(prefs.locale, this.compId, "input_opCost_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
@@ -686,7 +686,7 @@ class ModalUpdatePosition extends React.Component {
             >
               %
             </Button>
-            <UncontrolledTooltip placement="bottom" target="opCost_percentage">
+            <UncontrolledTooltip placement="bottom-end" target="opCost_percentage">
               {getString(prefs.locale, this.compId, "opCost_percentage_hint")}
             </UncontrolledTooltip>
             <Button
@@ -700,7 +700,7 @@ class ModalUpdatePosition extends React.Component {
             >
               $
             </Button>
-            <UncontrolledTooltip placement="bottom" target="opCost_currency">
+            <UncontrolledTooltip placement="bottom-end" target="opCost_currency">
               {getString(prefs.locale, this.compId, "opCost_currency_hint")}
             </UncontrolledTooltip>
           </Col>
@@ -716,7 +716,7 @@ class ModalUpdatePosition extends React.Component {
                 {" "}
                 <i id={"input_s_totalCost_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
-              <UncontrolledTooltip placement="top" target={"input_s_totalCost_hint"}>
+              <UncontrolledTooltip placement="top-start" target={"input_s_totalCost_hint"}>
                 {getString(prefs.locale, this.compId, "input_totalCost_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
@@ -780,7 +780,7 @@ class ModalUpdatePosition extends React.Component {
                 {" "}
                 <i id={"input_e_price_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
-              <UncontrolledTooltip placement="top" target={"input_e_price_hint"}>
+              <UncontrolledTooltip placement="top-start" target={"input_e_price_hint"}>
                 {getString(prefs.locale, this.compId, "input_price_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
@@ -808,7 +808,7 @@ class ModalUpdatePosition extends React.Component {
                 {" "}
                 <i id={"input_e_cost_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
-              <UncontrolledTooltip placement="top" target={"input_e_cost_hint"}>
+              <UncontrolledTooltip placement="top-start" target={"input_e_cost_hint"}>
                 {getString(prefs.locale, this.compId, "input_cost_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
@@ -840,7 +840,7 @@ class ModalUpdatePosition extends React.Component {
                 {" "}
                 <i id={"input_e_opCost_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
-              <UncontrolledTooltip placement="top" target={"input_e_opCost_hint"}>
+              <UncontrolledTooltip placement="top-start" target={"input_e_opCost_hint"}>
                 {getString(prefs.locale, this.compId, "input_opCost_hint")}
               </UncontrolledTooltip>
               <CurrencyInput
@@ -873,8 +873,8 @@ class ModalUpdatePosition extends React.Component {
               onClick={e => this.changeInputFormat(e)}
             >
               %
-                    </Button>
-            <UncontrolledTooltip placement="bottom" target="opCost_percentage">
+            </Button>
+            <UncontrolledTooltip placement="bottom-end" target="opCost_percentage">
               {getString(prefs.locale, this.compId, "opCost_percentage_hint")}
             </UncontrolledTooltip>
             <Button
@@ -888,7 +888,7 @@ class ModalUpdatePosition extends React.Component {
             >
               $
                     </Button>
-            <UncontrolledTooltip placement="bottom" target="opCost_currency">
+            <UncontrolledTooltip placement="bottom-end" target="opCost_currency">
               {getString(prefs.locale, this.compId, "opCost_currency_hint")}
             </UncontrolledTooltip>
           </Col>
@@ -904,7 +904,7 @@ class ModalUpdatePosition extends React.Component {
                 {" "}
                 <i id={"input_e_totalCost_hint"} className="nc-icon nc-alert-circle-i" />
               </label>
-              <UncontrolledTooltip placement="top" target={"input_e_totalCost_hint"}>
+              <UncontrolledTooltip placement="top-start" target={"input_e_totalCost_hint"}>
                 {getString(prefs.locale, this.compId, "input_totalCost_hint")}
               </UncontrolledTooltip>
               <CurrencyInput

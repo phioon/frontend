@@ -429,7 +429,7 @@ class ModalStrategyResults extends React.Component {
                     {" "}
                     <i id={"input_stockExchange_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
-                  <UncontrolledTooltip placement="top" target={"input_stockExchange_hint"}>
+                  <UncontrolledTooltip placement="top-start" target={"input_stockExchange_hint"}>
                     {getString(prefs.locale, this.compId, "input_stockExchange_hint")}
                   </UncontrolledTooltip>
                   <Select
@@ -450,7 +450,7 @@ class ModalStrategyResults extends React.Component {
                     {" "}
                     <i id={"input_interval_hint"} className="nc-icon nc-alert-circle-i" />
                   </label>
-                  <UncontrolledTooltip placement="top" target={"input_interval_hint"}>
+                  <UncontrolledTooltip placement="top-start" target={"input_interval_hint"}>
                     {getString(prefs.locale, this.compId, "input_interval_hint")}
                   </UncontrolledTooltip>
                   <Select

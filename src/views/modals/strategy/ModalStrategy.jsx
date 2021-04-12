@@ -1006,7 +1006,7 @@ class ModalStrategy extends React.Component {
                   {" "}
                   <i id={"input_wsDestination_hint"} className="nc-icon nc-alert-circle-i" />
                 </label>
-                <UncontrolledTooltip placement="top" target={"input_wsDestination_hint"}>
+                <UncontrolledTooltip placement="top-start" target={"input_wsDestination_hint"}>
                   {getString(prefs.locale, this.compId, "input_wsDestination_hint")}
                 </UncontrolledTooltip>
                 <Select

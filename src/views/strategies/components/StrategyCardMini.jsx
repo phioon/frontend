@@ -308,7 +308,7 @@ class StrategyCardMini extends React.Component {
                     getString(prefs.locale, this.compId, "label_static")}
                 </Badge>
               </label>
-              <UncontrolledTooltip placement="bottom" target={`logic__${context}__${strategy.uuid}`}>
+              <UncontrolledTooltip placement="bottom-start" target={`logic__${context}__${strategy.uuid}`}>
                 {strategy.is_dynamic ?
                   getString(prefs.locale, this.compId, "label_dynamic_hint") :
                   getString(prefs.locale, this.compId, "label_static_hint")
@@ -338,7 +338,7 @@ class StrategyCardMini extends React.Component {
             <i className="nc-icon nc-spaceship" /> :
             <i className="nc-icon nc-spaceship fa-rotate-90" />
           }
-          <UncontrolledTooltip placement="bottom" target={`type__${context}__${strategy.uuid}`}>
+          <UncontrolledTooltip placement="top-start" target={`type__${context}__${strategy.uuid}`}>
             {strategy.type == "buy" ?
               getString(prefs.locale, this.compId, "icon_type_buy_hint") :
               getString(prefs.locale, this.compId, "icon_type_sell_hint")
