@@ -71,7 +71,10 @@ class PhiTrader extends React.Component {
     let wallets = await this.props.managers.app.walletList()
     let stockExchanges = getDistinctValuesFromList(wallets.data, "se_short")
 
-    for (var se of stockExchanges)
+    for (var se of stockExchanges) {
+      // Sending a first event to update cache data
+      await this.props.managers.market.dSetupList(se)
+
       for (var dimension of Object.keys(dimensions)) {
         switch (dimension) {
           case "mAssets":
@@ -91,6 +94,7 @@ class PhiTrader extends React.Component {
             break;
         }
       }
+    }
     rawData = await Promise.all(rawData)
 
     for (var dimension of Object.values(rawData)) {

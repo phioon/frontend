@@ -986,7 +986,7 @@ class MarketManager {
 
     if (result.status == 200) {
       result = result.data
-      result = orderBy(result, ["-started_on"])
+      result = orderBy(result, ["-radar_on"])
       result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
