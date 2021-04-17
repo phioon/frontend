@@ -329,7 +329,7 @@ class MeasureManager {
       let dateList = []
 
       for (var dRaw of dRaws.data) {
-        let d_date = TimeManager.getDateString(dRaw.d_datetime)
+        let d_date = TimeManager.getDateString(dRaw.datetime)
         dateList.push(d_date)
 
         if (d_date >= started_on && d_date <= ended_on) {
@@ -397,12 +397,12 @@ class MeasureManager {
       let monthList = []
 
       for (var dRaw of dRaws.data) {
-        let month = TimeManager.getYearMonthString(dRaw.d_datetime)
-        let d_date = TimeManager.getDateString(dRaw.d_datetime)
+        let month = TimeManager.getYearMonthString(dRaw.datetime)
+        let d_date = TimeManager.getDateString(dRaw.datetime)
         dateList.push(d_date)
 
         if (!monthList.includes(month)) {
-          let last_day_of_the_month = TimeManager.getDateString(dRaw.d_datetime)
+          let last_day_of_the_month = TimeManager.getDateString(dRaw.datetime)
 
           if (d_date >= started_on && d_date <= ended_on) {
             let tResult_currency = 0

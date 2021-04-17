@@ -79,7 +79,7 @@ const config = {
     },
     dRaw: {
       syncLimit: 60,
-      version: 0.05
+      version: 0.06
     },
     indicators: {
       syncLimit: 43200,

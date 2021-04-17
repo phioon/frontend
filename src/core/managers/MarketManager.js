@@ -1257,8 +1257,8 @@ class MarketManager {
       result = result.data
 
       if (sData)
-        result = joinObjLists(result, sData, "d_datetime")
-      result = orderBy(result, ["-d_datetime"])              // DESC order is used in MeasureManager
+        result = joinObjLists(result, sData, "datetime")
+      result = orderBy(result, ["-datetime"])              // DESC order is used in MeasureManager
 
       result = await StorageManager.store(sKey, result, asset)
     }
@@ -1272,7 +1272,7 @@ class MarketManager {
   }
   // .. [d] Functions
   static async isDRawCached(sData, dateFrom, dateTo) {
-    sData = orderBy(sData, ["-d_datetime"])
+    sData = orderBy(sData, ["-datetime"])
 
     if (sData.length > 0 && dateFrom) {
       let asset = await StorageManager.getData("assets", sData[0].asset_symbol)
@@ -1283,9 +1283,9 @@ class MarketManager {
       let syncToleranceWeekend = (1440 * 4) + (60 * 8)
 
       let tz = stockExchange.timezone
-      let sFirstDate = sData[sData.length - 1].d_datetime
-      let sLastDate = sData[0].d_datetime
-      let tz_sLastDate = TimeManager.tzConvert(tz, sData[0].d_datetime, true, true)
+      let sFirstDate = sData[sData.length - 1].datetime
+      let sLastDate = sData[0].datetime
+      let tz_sLastDate = TimeManager.tzConvert(tz, sData[0].datetime, true, true)
       let sLastDateWeekday = new Date(tz_sLastDate).getDay()
       let pDateFrom = TimeManager.getUTCDatetime(dateFrom)
       let pDateTo = TimeManager.getUTCDatetime(dateTo)
