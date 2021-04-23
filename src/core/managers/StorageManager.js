@@ -77,13 +77,21 @@ const config = {
       syncLimit: 12,
       version: 0.06
     },
-    dRaw: {
-      syncLimit: 60,
-      version: 0.06
+    stockExchanges: {
+      syncLimit: 43200,
+      version: 0.04
+    },
+    technicalConditions: {
+      syncLimit: 43200,
+      version: 0.02
     },
     indicators: {
       syncLimit: 43200,
-      version: 0.24
+      version: 0.26
+    },
+    dRaw: {
+      syncLimit: 60,
+      version: 0.06
     },
     dSma: {
       syncLimit: 60,
@@ -113,13 +121,25 @@ const config = {
       syncLimit: 60,
       version: 0.06
     },
-    stockExchanges: {
-      syncLimit: 43200,
-      version: 0.04
+    m60Sma: {
+      syncLimit: 15,
+      version: 0.01
     },
-    technicalConditions: {
-      syncLimit: 43200,
-      version: 0.02
+    m60Ema: {
+      syncLimit: 15,
+      version: 0.01
+    },
+    m60Quote: {
+      syncLimit: 15,
+      version: 0.01
+    },
+    m60Phibo: {
+      syncLimit: 15,
+      version: 0.01
+    },
+    m60Roc: {
+      syncLimit: 15,
+      version: 0.01
     },
   },
   search: {

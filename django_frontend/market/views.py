@@ -24,7 +24,7 @@ __backendApiPass__ = '#P1q2w3e4r$Api'
 
 @api_view(['GET'])
 @permission_classes([IsPremium | IsPlatinum | permissions.IsAuthenticated, ])
-def TechnicalConditionList(request):
+def technical_condition_list(request):
     backendRequest = __backendHost__ + '/api/market/technical_conditions/'
 
     try:
@@ -41,7 +41,7 @@ def TechnicalConditionList(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-def StockExchangeList(request):
+def stock_exchange_list(request):
     backendRequest = __backendHost__ + '/api/market/stock_exchanges/'
 
     try:
@@ -58,7 +58,7 @@ def StockExchangeList(request):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def AssetList(request):
+def asset_list(request):
     backendRequest = __backendHost__ + '/api/market/assets/'
     params = request.query_params
     data = request.data
@@ -81,7 +81,7 @@ def AssetList(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-def IndicatorList(request):
+def indicator_list(request):
     backendRequest = __backendHost__ + '/api/market/indicators/'
 
     try:
@@ -98,8 +98,8 @@ def IndicatorList(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-def D_RawList(request):
-    backendRequest = __backendHost__ + '/api/market/d/raw/'
+def raw_list(request, interval):
+    backendRequest = __backendHost__ + '/api/market/' + interval + '/raw/'
 
     params = request.query_params
 
@@ -119,8 +119,8 @@ def D_RawList(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-def D_QuoteLatestList(request):
-    backendRequest = __backendHost__ + '/api/market/d/quote/latest/'
+def quote_latest_list(request, interval):
+    backendRequest = __backendHost__ + '/api/market/' + interval + '/quote/latest/'
 
     params = request.query_params
 
@@ -140,8 +140,8 @@ def D_QuoteLatestList(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-def D_SmaLatestList(request):
-    backendRequest = __backendHost__ + '/api/market/d/sma/latest/'
+def sma_latest_list(request, interval):
+    backendRequest = __backendHost__ + '/api/market/' + interval + '/sma/latest/'
 
     params = request.query_params
 
@@ -161,8 +161,8 @@ def D_SmaLatestList(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-def D_EmaLatestList(request):
-    backendRequest = __backendHost__ + '/api/market/d/ema/latest/'
+def ema_latest_list(request, interval):
+    backendRequest = __backendHost__ + '/api/market/' + interval + '/ema/latest/'
 
     params = request.query_params
 
@@ -182,8 +182,8 @@ def D_EmaLatestList(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-def D_PhiboLatestList(request):
-    backendRequest = __backendHost__ + '/api/market/d/phibo/latest/'
+def phibo_latest_list(request, interval):
+    backendRequest = __backendHost__ + '/api/market/' + interval + '/phibo/latest/'
 
     params = request.query_params
 
@@ -203,8 +203,8 @@ def D_PhiboLatestList(request):
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-def D_RocLatestList(request):
-    backendRequest = __backendHost__ + '/api/market/d/roc/latest/'
+def roc_latest_list(request, interval):
+    backendRequest = __backendHost__ + '/api/market/' + interval + '/roc/latest/'
 
     params = request.query_params
 
@@ -224,8 +224,8 @@ def D_RocLatestList(request):
 
 @api_view(['GET'])
 @permission_classes([IsPremium | IsPlatinum | permissions.IsAuthenticated, ])
-def D_setupList(request):
-    backendRequest = __backendHost__ + '/api/market/d/setups/'
+def setup_list(request, interval):
+    backendRequest = __backendHost__ + '/api/market/' + interval + '/setups/'
 
     params = request.query_params
 
@@ -246,8 +246,8 @@ def D_setupList(request):
 
 @api_view(['GET'])
 @permission_classes([IsPremium | IsPlatinum | permissions.IsAuthenticated, ])
-def D_setupStatsList(request):
-    backendRequest = __backendHost__ + '/api/market/d/setup_stats/'
+def setup_stats_list(request, interval):
+    backendRequest = __backendHost__ + '/api/market/' + interval + '/setup_stats/'
 
     params = request.query_params
 

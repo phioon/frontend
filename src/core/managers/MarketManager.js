@@ -525,29 +525,15 @@ class MarketManager {
     return retrieveObjFromObjList(sData, "id", pk)
   }
   // .. Quote
-  async quoteData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    let sItem = undefined
-    switch (interval) {
-      case "d":
-        sItem = await this.dQuoteList(stockExchange, instances, lastPeriods)
-        break;
-      default:
-        break;
-    }
-
-    if (sItem && sItem.data)
-      return sItem.data
-
-    // Return it with http error details
-    return sItem
-  }
-  async dQuoteList(stockExchange, instances = [], lastPeriods = 1) {
+  async quoteList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
     // Both 'stockExchange' and 'instances' are required.
     if (!stockExchange || instances.length == 0)
       return {}
 
-    const sKey = "dQuote"
-    const interval = "d"
+    console.log(`stockExchange: ${stockExchange}`)
+
+    interval = String(interval).toLowerCase()
+    const sKey = `${interval}Quote`
     await this.startRequest(sKey)
 
     let sItem = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
@@ -592,22 +578,14 @@ class MarketManager {
       result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
-      this.getHttpTranslation(result, "dQuoteList", "dQuote", true)
+      this.getHttpTranslation(result, "quoteList", sKey, true)
     }
 
     this.finishRequest(sKey)
     return result
   }
-  // .. SMA
-  async smaData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    let sItem = undefined
-    switch (interval) {
-      case "d":
-        sItem = await this.dSmaList(stockExchange, instances, lastPeriods)
-        break;
-      default:
-        break;
-    }
+  async quoteData(stockExchange, interval, instances, lastPeriods) {
+    let sItem = await this.quoteList(stockExchange, interval, instances, lastPeriods)
 
     if (sItem && sItem.data)
       return sItem.data
@@ -615,13 +593,13 @@ class MarketManager {
     // Return it with http error details
     return sItem
   }
-  async dSmaList(stockExchange, instances = [], lastPeriods = 1) {
+  // .. SMA
+  async smaList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
     // Both 'stockExchange' and 'instances' are required.
     if (!stockExchange || instances.length == 0)
       return {}
 
-    const sKey = "dSma"
-    const interval = "d"
+    const sKey = `${interval}Sma`
     await this.startRequest(sKey)
 
     let sItem = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
@@ -666,22 +644,14 @@ class MarketManager {
       result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
-      this.getHttpTranslation(result, "dSmaList", "dSma", true)
+      this.getHttpTranslation(result, "smaList", sKey, true)
     }
 
     this.finishRequest(sKey)
     return result
   }
-  // .. EMA
-  async emaData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    let sItem = undefined
-    switch (interval) {
-      case "d":
-        sItem = await this.dEmaList(stockExchange, instances, lastPeriods)
-        break;
-      default:
-        break;
-    }
+  async smaData(stockExchange, interval, instances, lastPeriods) {
+    let sItem = await this.smaList(stockExchange, interval, instances, lastPeriods)
 
     if (sItem && sItem.data)
       return sItem.data
@@ -689,13 +659,13 @@ class MarketManager {
     // Return it with http error details
     return sItem
   }
-  async dEmaList(stockExchange, instances = [], lastPeriods = 1) {
+  // .. EMA
+  async emaList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
     // Both 'stockExchange' and 'instances' are required.
     if (!stockExchange || instances.length == 0)
       return {}
 
-    const sKey = "dEma"
-    const interval = "d"
+    const sKey = `${interval}Ema`
     await this.startRequest(sKey)
 
     let sItem = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
@@ -740,22 +710,14 @@ class MarketManager {
       result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
-      this.getHttpTranslation(result, "dEmaList", "dEma", true)
+      this.getHttpTranslation(result, "emaList", sKey, true)
     }
 
     this.finishRequest(sKey)
     return result
   }
-  // .. Phibo
-  async phiboData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    let sItem = undefined
-    switch (interval) {
-      case "d":
-        sItem = await this.dPhiboList(stockExchange, instances, lastPeriods)
-        break;
-      default:
-        break;
-    }
+  async emaData(stockExchange, interval, instances, lastPeriods) {
+    let sItem = await this.emaList(stockExchange, interval, instances, lastPeriods)
 
     if (sItem && sItem.data)
       return sItem.data
@@ -763,13 +725,13 @@ class MarketManager {
     // Return it with http error details
     return sItem
   }
-  async dPhiboList(stockExchange, instances = [], lastPeriods = 1) {
+  // .. Phibo
+  async phiboList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
     // Both 'stockExchange' and 'instances' are required.
     if (!stockExchange || instances.length == 0)
       return {}
 
-    const sKey = "dPhibo"
-    const interval = "d"
+    const sKey = `${interval}Phibo`
     await this.startRequest(sKey)
 
     let sItem = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
@@ -814,22 +776,14 @@ class MarketManager {
       result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
-      this.getHttpTranslation(result, "dPhiboList", "dPhibo", true)
+      this.getHttpTranslation(result, "phiboList", sKey, true)
     }
 
     this.finishRequest(sKey)
     return result
   }
-  // .. ROC
-  async rocData(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
-    let sItem = undefined
-    switch (interval) {
-      case "d":
-        sItem = await this.dRocList(stockExchange, instances, lastPeriods)
-        break;
-      default:
-        break;
-    }
+  async phiboData(stockExchange, interval, instances, lastPeriods) {
+    let sItem = await this.phiboList(stockExchange, interval, instances, lastPeriods)
 
     if (sItem && sItem.data)
       return sItem.data
@@ -837,13 +791,13 @@ class MarketManager {
     // Return it with http error details
     return sItem
   }
-  async dRocList(stockExchange, instances = [], lastPeriods = 1) {
+  // .. ROC
+  async rocList(stockExchange, interval = "d", instances = [], lastPeriods = 1) {
     // Both 'stockExchange' and 'instances' are required.
     if (!stockExchange || instances.length == 0)
       return {}
 
-    const sKey = "dRoc"
-    const interval = "d"
+    const sKey = `${interval}Roc`
     await this.startRequest(sKey)
 
     let sItem = await StorageManager.isUpToDate(this.sModule, sKey, stockExchange, { instances })
@@ -888,11 +842,20 @@ class MarketManager {
       result = await StorageManager.store(sKey, result, stockExchange)
     }
     else {
-      this.getHttpTranslation(result, "dRocList", "dRoc", true)
+      this.getHttpTranslation(result, "rocList", sKey, true)
     }
 
     this.finishRequest(sKey)
     return result
+  }
+  async rocData(stockExchange, interval, instances, lastPeriods) {
+    let sItem = await this.rocList(stockExchange, interval, instances, lastPeriods)
+
+    if (sItem && sItem.data)
+      return sItem.data
+
+    // Return it with http error details
+    return sItem
   }
   // .. Functions
   static async isDIndicatorCached(sData) {

@@ -190,6 +190,7 @@ const locale = {
     // Time Intervals
     any: "Qualquer",
     d: "Diário",
+    m60: "60 minutos",
     // Sub Categories
     quote: "Cotação",
     moving_average: "Média Móvel",

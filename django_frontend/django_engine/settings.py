@@ -28,7 +28,7 @@ else:
     # [DEV] environment
     DEBUG = True
     ACCESS_PRD_DB = False                   # Set 'True' to access PRD data (remember to turn the proxy on)
-    REDIRECT_MARKET_API_TO_PRD = False      # Set 'True' to redirect market calls to PRD (assetList, StockExchangeList)
+    REDIRECT_MARKET_API_TO_PRD = False      # Set 'True' to redirect market calls to PRD (assetList, stock_exchange_list)
 
     DB_DEFAULT['HOST'] = '127.0.0.1'
     STRIPE_API_KEY = 'sk_test_51HkbgHHiGSreEiGHJaeuPY9Vu4eVBNqCR8PCgSSs6PuHPB7UBlS9mz4mW72nrZ71ykyVdG6Ey5VUk6M7mfIHa0ON00hfr4vW3j'
